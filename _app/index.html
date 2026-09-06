@@ -37,7 +37,11 @@
     <meta name="color-scheme" content="light dark">
     <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
     <link rel="alternate icon" href="/favicon.ico">
-    <link rel="apple-touch-icon" href="./assets/favicon.svg">
+    <!-- iOS reads only this for the home screen and its tabs, and only as a
+         PNG: an SVG here is ignored and a generic tile shown instead. The
+         mark sits on white because iOS rounds the corners itself and paints
+         anything transparent black. -->
+    <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png">
 
     <!-- Colours the strips Safari draws above and below the page, behind the
          status bar and around the address pill. Those are browser UI, so no
