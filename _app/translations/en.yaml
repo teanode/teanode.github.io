@@ -31,7 +31,7 @@ welcome:
   lead: >-
     Give every side project and every early startup a real address at its own
     domain, without running a mailbox for each one. TeaNode is a small
-    self-hosted mail server. It receives mail for all of your domains, checks
+    open source mail server you run yourself. It receives mail for all of your domains, checks
     that it is genuine, and forwards it to the inbox you already read, or to a
     webhook. You can reply and send from those addresses too, signed with the
     domain's key so the mail arrives instead of landing in spam.
