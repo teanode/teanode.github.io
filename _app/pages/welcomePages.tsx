@@ -351,9 +351,9 @@ const Cell = ({ value }: { value: string }) => {
 const Section = ({ children, band, decoration, sx }: { children: ReactNode, band?: boolean, decoration?: ReactNode, sx?: object }) => (
   <Box
     sx={{
-      // Not clipped: the steam straddles the seam, half above it, and the
-      // route lines are sized to fit inside.
-      position: 'relative',
+      // Clipped sideways only: the route is drawn wider than the window. Up
+      // and down is left alone, so the steam can straddle the seam.
+      position: 'relative', overflowX: 'clip',
       ...(band && { bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#0c0c0e' : '#f7f7f6'), borderBottom: 1, borderColor: 'divider' }),
     }}
   >

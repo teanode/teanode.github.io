@@ -18,19 +18,25 @@ import { brand } from '../theme'
 const reducedMotion = () =>
   typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-// The dashed lines. Each is drawn in a box 1400 wide and pinned to an edge of
-// whatever the route sits behind, top or bottom, so it stays in the margin
-// however tall the section turns out: one above the diagram on the right, one
-// along the foot, and neither across a word or a box.
+// The dashed lines. Each is drawn at one pixel per unit in a box 2800 wide,
+// centred on the section and pinned to its top or bottom edge, so it stays
+// in the margin however tall the section turns out and stays the same size
+// however wide the window is: an envelope is an envelope, not a billboard.
+// The middle 1400 units are what a laptop sees; wider windows see more of
+// the line, narrower ones less. One line runs above the diagram on the
+// right, one along the foot, and neither crosses a word or a box.
+const width = 2800
 type Line = { d: string, height: number, edge: 'top' | 'bottom', opacity: number, envelopes: { duration: number, begin: number }[], rest: [number, number] }
 
 const routes: Line[] = [
-  { d: 'M 720 30 C 950 150, 1060 50, 1440 150', height: 200, edge: 'top', opacity: 0.4, envelopes: [{ duration: 24, begin: -6 }], rest: [1000, 96] },
-  { d: 'M -40 40 C 300 90, 700 0, 1000 45 S 1300 90, 1440 20', height: 100, edge: 'bottom', opacity: 0.55, envelopes: [{ duration: 30, begin: 0 }, { duration: 30, begin: -15 }], rest: [420, 40] },
+  { d: 'M 1420 30 C 1650 150, 1760 50, 2140 150 S 2520 60, 2840 120', height: 200, edge: 'top', opacity: 0.4, envelopes: [{ duration: 30, begin: -6 }], rest: [1700, 96] },
+  { d: 'M -40 60 C 300 20, 500 90, 700 40 C 1000 90, 1400 0, 1700 45 S 2000 90, 2140 20 S 2500 70, 2840 40', height: 100, edge: 'bottom', opacity: 0.55, envelopes: [{ duration: 44, begin: 0 }, { duration: 44, begin: -22 }], rest: [1120, 40] },
 ]
 
 // A shorter route for the head of a document: one line above the title, one
-// envelope.
+// envelope. The title sits in a column of fixed width, so this one is sized
+// to the column.
+const shortWidth = 1260
 const shortRoutes: Line[] = [
   { d: 'M -20 40 C 200 0, 380 70, 640 30 S 1000 0, 1240 40', height: 80, edge: 'top', opacity: 0.45, envelopes: [{ duration: 20, begin: -4 }], rest: [700, 22] },
 ]
@@ -58,6 +64,7 @@ export const Route = ({ short }: { short?: boolean }) => {
   const paper = theme.palette.background.paper
   const still = reducedMotion()
   const lines = short ? shortRoutes : routes
+  const box = short ? shortWidth : width
   return (
     <>
       {lines.map((line) => (
@@ -65,11 +72,14 @@ export const Route = ({ short }: { short?: boolean }) => {
           key={line.d}
           component='svg'
           aria-hidden='true'
-          viewBox={`0 0 1400 ${line.height}`}
-          preserveAspectRatio='xMinYMin meet'
+          viewBox={`0 0 ${box} ${line.height}`}
+          preserveAspectRatio='xMidYMin meet'
           sx={{
-            position: 'absolute', left: 0, width: '100%', [line.edge]: 0, aspectRatio: `1400 / ${line.height}`,
+            position: 'absolute', [line.edge]: 0, height: line.height,
             pointerEvents: 'none', display: { xs: 'none', md: 'block' },
+            ...(short
+              ? { left: 0, width: '100%', height: 'auto', aspectRatio: `${box} / ${line.height}` }
+              : { left: '50%', width: box, ml: `${-box / 2}px` }),
           }}
         >
           <path d={line.d} fill='none' stroke={brand.leaf} strokeWidth='1.5' strokeDasharray='6 8' opacity={line.opacity}/>
