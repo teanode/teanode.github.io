@@ -27,12 +27,27 @@ hljs.registerAliases(['html'], { languageName: 'xml' })
 hljs.registerAliases(['shell', 'sh', 'console'], { languageName: 'bash' })
 hljs.registerAliases(['env', 'dotenv'], { languageName: 'ini' })
 
-// Nothing back for a fence with no language, or one naming a grammar that is
-// not registered, so the caller escapes the block and prints it plain rather
-// than colouring it as a guess.
+// What a block with no language named can be taken for. Most of the
+// documents write their commands and files as indented blocks with no fence
+// label, so without a guess almost nothing would be coloured. The guess is
+// confined to the few grammars those blocks actually are, and a block the
+// detector is not sure about is printed plain rather than coloured wrongly:
+// a DNS record or a table of output has no grammar, and painting it as one
+// is worse than leaving it alone.
+const guessable = ['bash', 'yaml', 'ini', 'json', 'go', 'sql']
+
+// How sure the detector has to be. highlight.js scores a match by how much of
+// the text its grammar recognised; below this a short block of prose-like
+// output can score as shell because it contains a word shell knows.
+const minimumRelevance = 6
+
+// Nothing back for a fence naming a grammar that is not registered, or for a
+// block the detector cannot place, so the caller escapes the block and prints
+// it plain rather than colouring it as a guess.
 export const highlight = (code: string, language?: string): string => {
-  if (language && hljs.getLanguage(language)) {
-    return hljs.highlight(code, { language, ignoreIllegals: true }).value
+  if (language) {
+    return hljs.getLanguage(language) ? hljs.highlight(code, { language, ignoreIllegals: true }).value : ''
   }
-  return ''
+  const guess = hljs.highlightAuto(code, guessable)
+  return guess.language && guess.relevance >= minimumRelevance ? guess.value : ''
 }

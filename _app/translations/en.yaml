@@ -22,6 +22,8 @@ docs:
   notFound: That document does not exist.
   onThisPage: On this page
   failed: That document could not be loaded.
+  copy: Copy
+  copied: Copied
 notFound:
   title: This page does not exist
   body: The address may have been mistyped, or the link that led here may be out of date.
