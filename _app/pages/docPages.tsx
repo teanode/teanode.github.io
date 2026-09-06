@@ -270,7 +270,7 @@ const Neighbours = ({ docs, current }: { docs: ReadableDoc[], current: ReadableD
     return null
   }
   return (
-    <Box component='nav' aria-label='neighbours' sx={{ position: 'relative', mt: 8, pt: 4 }}>
+    <Box component='nav' aria-label='neighbours' sx={{ position: 'relative', mt: 8, pt: 6 }}>
       <Steam bleed/>
       <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 1.5 }}>
         { previous ? (<Neighbour doc={previous} direction='previous'/>) : <span/> }

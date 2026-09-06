@@ -1,3 +1,4 @@
+import { useMemo, useState } from 'react'
 import Box from '@mui/material/Box'
 import { useTheme } from '@mui/material/styles'
 
@@ -85,21 +86,64 @@ export const Route = ({ short }: { short?: boolean }) => {
   )
 }
 
+// A wave across the box: a run of smooth curves whose lengths and heights are
+// drawn from the seed, so no two seams on a page rise and fall alike. The
+// curves join tangent to tangent, which is what keeps it a wave rather than a
+// scribble.
+const wave = (random: () => number, centre: number): string => {
+  let d = `M -20 ${centre}`
+  let x = -20
+  let up = random() < 0.5
+  let first = true
+  while (x < 1420) {
+    const length = 160 + random() * 240
+    const height = 8 + random() * 22
+    const y = centre + (up ? -height : height)
+    if (first) {
+      d += ` C ${(x + length * 0.4).toFixed(0)} ${centre.toFixed(0)}, ${(x + length * 0.6).toFixed(0)} ${y.toFixed(0)}, ${(x + length).toFixed(0)} ${y.toFixed(0)}`
+      first = false
+    } else {
+      d += ` S ${(x + length * 0.6).toFixed(0)} ${y.toFixed(0)}, ${(x + length).toFixed(0)} ${y.toFixed(0)}`
+    }
+    x += length
+    up = !up
+  }
+  return d
+}
+
+// A small seeded generator, so a seam drawn once is drawn the same way again
+// for as long as it is on the page.
+const seeded = (seed: number) => () => {
+  seed = (seed + 0x6d2b79f5) | 0
+  let t = Math.imul(seed ^ (seed >>> 15), 1 | seed)
+  t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+  return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+}
+
 // With `bleed`, the steam is drawn as wide as the window rather than as wide
 // as what it sits in, for a seam inside a column: whatever holds the column
 // clips the overhang.
-export const Steam = ({ bleed }: { bleed?: boolean }) => (
-  <Box
-    component='svg'
-    aria-hidden='true'
-    viewBox='0 0 1400 60'
-    preserveAspectRatio='none'
-    sx={{
-      position: 'absolute', top: -30, height: 60, pointerEvents: 'none', opacity: 0.45,
-      ...(bleed ? { left: '50%', width: '100vw', transform: 'translateX(-50%)' } : { left: 0, right: 0, width: '100%' }),
-    }}
-  >
-    <path d='M0 40 C 120 10, 200 70, 320 40 S 520 10, 640 40 S 840 70, 960 40 S 1160 10, 1280 40 S 1380 55, 1400 44' fill='none' stroke={brand.leaf} strokeWidth='1.5'/>
-    <path d='M0 52 C 140 22, 220 82, 360 52 S 560 22, 700 52 S 900 82, 1040 52 S 1240 22, 1400 52' fill='none' stroke={brand.leaf} strokeWidth='1.5' opacity='0.5'/>
-  </Box>
-)
+export const Steam = ({ bleed }: { bleed?: boolean }) => {
+  const [seed] = useState(() => Math.floor(Math.random() * 2 ** 31))
+  const paths = useMemo(() => {
+    const random = seeded(seed)
+    return [wave(random, 38), wave(random, 46)]
+  }, [seed])
+  return (
+    <Box
+      component='svg'
+      aria-hidden='true'
+      viewBox='0 0 1400 80'
+      preserveAspectRatio='none'
+      sx={{
+        // The box is taller than the waves so their crests and troughs are
+        // drawn whole; it straddles the seam, half above and half below.
+        position: 'absolute', top: -40, height: 80, pointerEvents: 'none', opacity: 0.45,
+        ...(bleed ? { left: '50%', width: '100vw', transform: 'translateX(-50%)' } : { left: 0, right: 0, width: '100%' }),
+      }}
+    >
+      <path d={paths[0]} fill='none' stroke={brand.leaf} strokeWidth='1.5'/>
+      <path d={paths[1]} fill='none' stroke={brand.leaf} strokeWidth='1.5' opacity='0.5'/>
+    </Box>
+  )
+}
