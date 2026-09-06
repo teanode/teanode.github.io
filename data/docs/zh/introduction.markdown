@@ -13,8 +13,7 @@ TeaNode 让每个副业项目、每家早期创业公司都有一个自己域名
 仪表盘编译在二进制文件里；没有别的东西需要部署。
 
 <figure>
-<img class="light" src="/media/mail-list-light.jpg" alt="邮件列表，筛选到一个域名" loading="lazy">
-<img class="dark" src="/media/mail-list.jpg" alt="邮件列表，筛选到一个域名" loading="lazy">
+<img src="screenshot:mail" alt="邮件列表，筛选到一个域名" width="1505" height="812" loading="lazy">
 <figcaption>邮件列表，筛选到一个域名。</figcaption>
 </figure>
 

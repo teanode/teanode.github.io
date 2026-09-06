@@ -26,8 +26,7 @@ built in rather than bolted on.
 The dashboard is compiled into the binary; there is nothing else to deploy.
 
 <figure>
-<img class="light" src="/media/mail-list-light.jpg" alt="The mail list, filtered to one domain" loading="lazy">
-<img class="dark" src="/media/mail-list.jpg" alt="The mail list, filtered to one domain" loading="lazy">
+<img src="screenshot:mail" alt="The mail list, filtered to one domain" width="1505" height="812" loading="lazy">
 <figcaption>The mail list, filtered to one domain.</figcaption>
 </figure>
 

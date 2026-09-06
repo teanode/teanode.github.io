@@ -1,7 +1,7 @@
 ---
 language: English
 title: TeaNode
-tagline: Email at your own domains, forwarded to the inbox you already have.
+tagline: Receive and send email at your own domains, from the inbox you already have.
 nav:
   docs: Documentation
   github: GitHub
@@ -24,35 +24,44 @@ docs:
   failed: That document could not be loaded.
 notFound:
   title: This page does not exist
-  body: The address may have been mistyped, or the link that led here may have expired. Nothing is broken.
+  body: The address may have been mistyped, or the link that led here may be out of date.
   toHome: Go to the front page
   toDocs: Read the documentation
 welcome:
   lead: >-
     Give every side project and every early startup a real address at its own
     domain, without running a mailbox for each one. TeaNode is a small
-    self-hosted mail server that receives mail for all of your domains,
-    checks that it is genuine, and forwards it to the inbox you already read,
-    or to a webhook. Reply and send from those addresses too, signed with the
-    domain's key so it arrives rather than landing in spam.
+    self-hosted mail server. It receives mail for all of your domains, checks
+    that it is genuine, and forwards it to the inbox you already read, or to a
+    webhook. You can reply and send from those addresses too, signed with the
+    domain's key so the mail arrives instead of landing in spam.
   notMailbox: >-
-    It is deliberately not a mailbox server. There is no IMAP and no inbox.
-    Keep reading mail wherever you read it now; TeaNode owns the domain, the
+    It is not a mailbox server. There is no IMAP and no inbox. You keep
+    reading mail wherever you read it now. TeaNode handles the domain, the
     authentication and the routing.
   getStarted: Get started
   readDocs: Read the documentation
   viewSource: View the source
-  screenshotCaption: >-
-    The mail list, filtered to one domain. Every message the server has
-    handled, what it decided about each one, and whether the recipient's mail
-    program fetched the pictures in it.
+  screenshotsHeading: What it looks like
+  previous: Previous page
+  next: Next page
+  screenshots:
+    mail: The mail list, filtered to one domain. Every message the server has handled and what it decided about each one.
+    message: One message. The authentication checks with their evidence, every delivery attempt, and the message itself with scripts removed.
+    aliases: A domain's aliases. Each pattern forwards to an address, a webhook, or another mail server. The catch-all takes the rest.
+    dns: A domain's DNS records. The dashboard checks each one and shows what is missing or different.
+    templates: A domain's message templates, each with its variables and translations.
+    template: Editing a template. The subject and body take variables, and a layout wraps the result.
+    layout: Editing a layout, the frame around every message a domain sends.
+    reports: DMARC aggregate reports received about your domains, which show who is sending as them.
+    report: One report. Which addresses sent mail as the domain, how much, and whether it passed.
   whyHeading: Why
   why: >-
     Running mail for a domain usually means either handing it to a provider,
     or assembling Postfix, Dovecot, OpenDKIM, OpenDMARC, SpamAssassin and a
-    policy daemon and keeping them in agreement. This is one executable and a
+    policy daemon and keeping them in agreement. TeaNode is one program and a
     PostgreSQL database, with the authentication that decides whether your
-    mail is trusted built in rather than bolted on.
+    mail is trusted built in.
   featuresHeading: What it does
   features:
     authenticates:
@@ -69,17 +78,17 @@ welcome:
         empty pattern is a catch-all, which receives whatever nothing else
         matched.
     relays:
-      title: Relays your outbound mail
+      title: Sends from your own addresses
       body: >-
-        Per-device SMTP credentials on the submission port, each optionally
-        restricted to one sender address.
+        Per-device SMTP credentials on the submission port, so your phone,
+        laptop and applications can send as any of your domains. Each
+        credential can be limited to one sender address.
     shows:
       title: Shows you the mail
       body: >-
-        The dashboard renders a message as a message: the authentication
-        verdicts, the delivery attempts and why any of them failed, and the
-        body itself with scripts stripped and remote images blocked until you
-        ask for them.
+        The dashboard shows each message with its authentication verdicts, the
+        delivery attempts and why any of them failed, and the body itself with
+        scripts removed and remote images blocked until you ask for them.
     sends:
       title: Sends mail you write
       body: >-
@@ -90,7 +99,7 @@ welcome:
       title: Reports on your domains
       body: >-
         Incoming DMARC aggregate reports are parsed and kept, which is how you
-        find out somebody is forging your domain.
+        find out that somebody is forging your domain.
     extras:
       title: Optional extras, all off by default
       body: >-
@@ -98,22 +107,21 @@ welcome:
         outbound SOCKS5 proxy for hosts whose address has a poor reputation,
         and DNS-01 certificates if you need a wildcard.
     dashboard:
-      title: One binary, dashboard included
+      title: One program, dashboard included
       body: >-
-        The dashboard is compiled into the server; there is nothing else to
+        The dashboard is built into the server, so there is nothing else to
         deploy. A command line client reaches the same API from anywhere.
   startHeading: Getting started
-  startLead: Download the two programs, describe the server, run it.
+  startLead: Four commands with docker compose, then open the dashboard.
   startAfter: >-
-    The first command prints the DNS record for your signing key. Publish it,
-    along with an MX record pointing at your server, and mail starts arriving.
-    The dashboard lists exactly which records are still missing.
-  startWalkthrough: The full walk-through
+    The first visitor to the dashboard creates the account. Add your domain
+    there, and it lists the DNS records to publish.
+  startWalkthrough: The quick start
   needHeading: What you need
   needs:
     domain: A domain, and the ability to edit its DNS.
     host: A host with a stable address, reachable on ports 25, 80, 443 and 587.
-    database: PostgreSQL, for the configuration and the mail it has handled.
+    docker: Docker with compose. The compose file starts PostgreSQL for you.
   needsAfter: >-
     Nothing else. No cloud account, no Redis. Certificates are obtained
     automatically over HTTP-01, so there is no DNS API to configure.

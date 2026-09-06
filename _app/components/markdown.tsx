@@ -2,6 +2,8 @@ import Box from '@mui/material/Box'
 import { useTheme } from '@mui/material/styles'
 import { marked, type Tokens } from 'marked'
 
+import { useLanguageCode } from '../i18n'
+import { screenshot } from '../screenshots'
 import { monospaceFamily, surfaces, syntax } from '../theme'
 import { highlight } from './highlight'
 
@@ -94,13 +96,23 @@ const slugOf = (value: string): string =>
 // the markup is not ours to put classes on.
 export const Markdown = ({ html, compact }: { html: string, compact?: boolean }) => {
   const theme = useTheme()
+  const language = useLanguageCode()
   const mode = theme.palette.mode === 'dark' ? 'dark' : 'light'
   const surface = surfaces(mode)
   const token = syntax(mode)
 
+  // A document names a picture of the dashboard as `screenshot:<page>`, and
+  // the picture shown is the one for the theme and language being read in.
+  // Done here, on each render, because the theme can change under a
+  // document that was rendered once.
+  const resolved = html.replace(/src="screenshot:([\w-]+)"/g, (whole, page: string) => {
+    const source = screenshot(page, mode, language)
+    return source ? `src="${source}"` : whole
+  })
+
   return (
     <Box
-      dangerouslySetInnerHTML={{ __html: html }}
+      dangerouslySetInnerHTML={{ __html: resolved }}
       sx={{
         color: 'text.primary',
         lineHeight: 1.7,
@@ -160,11 +172,6 @@ export const Markdown = ({ html, compact }: { html: string, compact?: boolean })
         // size rather than blown up to fit and blurred.
         '& img': { maxWidth: '100%', height: 'auto', borderRadius: '8px', verticalAlign: 'middle' },
         '& figure': { m: 0, my: 3, '& img': { display: 'block', border: 1, borderColor: 'divider' } },
-        // A screenshot of the dashboard is taken once per theme, and the one
-        // shown is the one matching the page: a dark picture on a light page
-        // is a hole in it.
-        '& img.light': { display: mode === 'dark' ? 'none !important' : 'block' },
-        '& img.dark': { display: mode === 'dark' ? 'block' : 'none !important' },
         '& figcaption': { mt: 1, fontSize: 13, color: 'text.secondary', lineHeight: 1.5 },
         '& blockquote': {
           borderLeft: 3, borderColor: 'divider', pl: 2, ml: 0, my: 2, color: 'text.secondary',

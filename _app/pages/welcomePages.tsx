@@ -1,13 +1,22 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, type ReactNode } from 'react'
 import { NavLink, generatePath } from 'react-router'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Link from '@mui/material/Link'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
-import { useTheme } from '@mui/material/styles'
+import type { SvgIconComponent } from '@mui/icons-material'
+import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined'
+import CallSplitIcon from '@mui/icons-material/CallSplit'
+import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined'
+import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined'
 import GitHubIcon from '@mui/icons-material/GitHub'
+import OutboxOutlinedIcon from '@mui/icons-material/OutboxOutlined'
+import TuneIcon from '@mui/icons-material/Tune'
+import VerifiedUserOutlinedIcon from '@mui/icons-material/VerifiedUserOutlined'
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined'
 
+import { Carousel } from '../components/carousel'
 import { Markdown, renderMarkdown } from '../components/markdown'
 import { Mark } from '../components/logo'
 import { pageWidth, PublicShell } from '../components/shell'
@@ -18,36 +27,36 @@ import routes, { links } from '../routes'
 // WelcomePage
 //
 // The front page: what TeaNode is, what it looks like, what it does, and how
-// to start. The words are the README's, so that the site and the repository
-// say the same thing.
+// to start.
 //
 
 // The width prose is allowed to get. One number, the dashboard's, because two
 // paragraphs on one page wrapping in different places looks like a bug.
 const measure = '74ch'
 
-const features = ['authenticates', 'forwards', 'relays', 'shows', 'sends', 'reports', 'extras', 'dashboard']
+const features: { key: string, Icon: SvgIconComponent }[] = [
+  { key: 'authenticates', Icon: VerifiedUserOutlinedIcon },
+  { key: 'forwards', Icon: CallSplitIcon },
+  { key: 'relays', Icon: OutboxOutlinedIcon },
+  { key: 'shows', Icon: VisibilityOutlinedIcon },
+  { key: 'sends', Icon: DescriptionOutlinedIcon },
+  { key: 'reports', Icon: AssessmentOutlinedIcon },
+  { key: 'extras', Icon: TuneIcon },
+  { key: 'dashboard', Icon: DashboardOutlinedIcon },
+]
 
-const install = `curl -L -o /usr/local/bin/teanode-server \\
-  https://github.com/ziyan/teanode/releases/latest/download/teanode-server-linux-amd64
-curl -L -o /usr/local/bin/teanode \\
-  https://github.com/ziyan/teanode/releases/latest/download/teanode-linux-amd64
-chmod +x /usr/local/bin/teanode-server /usr/local/bin/teanode
-
-mkdir -p /opt/teanode && cd /opt/teanode
-teanode-server config env --output .env \\
-  --hostname mail.example.com --domain example.com
-# edit .env: a PostgreSQL to reach, an address for certificate expiry warnings
-
-set -a; . ./.env; set +a
-teanode-server config init
-teanode dkim show example.com
-teanode-server run`
+// The whole installation, with docker compose. The same four commands are in
+// the quick start document; keep the two the same.
+const install = `mkdir -p /opt/teanode && cd /opt/teanode
+curl -LO https://raw.githubusercontent.com/ziyan/teanode/main/deploy/docker-compose.yml
+docker run --rm ghcr.io/ziyan/teanode:latest config env --output - \\
+  --hostname mail.example.com --domain example.com \\
+  --database-url 'postgres://teanode:teanode@127.0.0.1:5432/teanode?sslmode=disable' > .env
+docker compose up -d`
 
 export const WelcomePage = () => {
   const translate = useTranslate()
-  const dark = useTheme().palette.mode === 'dark'
-  const gettingStarted = generatePath(routes.docPath, { docId: 'getting-started' })
+  const quickStart = generatePath(routes.docPath, { docId: 'quick-start' })
   const snippet = useMemo(() => renderMarkdown('```bash\n' + install + '\n```'), [])
 
   useEffect(() => {
@@ -72,7 +81,7 @@ export const WelcomePage = () => {
               </Typography>
             </Box>
             <Stack direction='row' spacing={1.5} sx={{ flexWrap: 'wrap', gap: 1.5 }}>
-              <Button component={NavLink} to={gettingStarted} variant='contained' size='large'>
+              <Button component={NavLink} to={quickStart} variant='contained' size='large'>
                 <T id='welcome.getStarted'/>
               </Button>
               <Button href={links.repository} target='_blank' rel='noopener' variant='outlined' size='large' startIcon={<GitHubIcon/>}>
@@ -85,22 +94,10 @@ export const WelcomePage = () => {
           </Stack>
         </Section>
 
-        {/* What it looks like. The dashboard is compiled into the binary, so
-            this is the whole product, not a separate one. */}
+        {/* What it looks like: the dashboard, one page at a time. */}
         <Section sx={{ pb: { xs: 4, md: 8 } }}>
-          <Box
-            component='figure'
-            sx={{
-              m: 0, borderRadius: '12px', border: 1, borderColor: 'divider', overflow: 'hidden',
-              bgcolor: 'background.paper',
-            }}
-          >
-            <Box component='img' src={dark ? '/media/mail-list.jpg' : '/media/mail-list-light.jpg'} alt={translate('welcome.screenshotCaption')} width={1505} height={812}
-              sx={{ display: 'block', width: '100%', height: 'auto' }}/>
-            <Typography component='figcaption' variant='body2' color='text.secondary' sx={{ px: 2, py: 1.5, borderTop: 1, borderColor: 'divider' }}>
-              <T id='welcome.screenshotCaption'/>
-            </Typography>
-          </Box>
+          <Overline><T id='welcome.screenshotsHeading'/></Overline>
+          <Carousel/>
         </Section>
 
         <Section band>
@@ -108,19 +105,27 @@ export const WelcomePage = () => {
           <Typography sx={{ maxWidth: measure, fontSize: 16 }}><T id='welcome.why'/></Typography>
         </Section>
 
-        {/* Each thing it does, on a card of its own: a handful of things,
-            each with a name and a line about it, the way the dashboard's
-            settings hub lays out its destinations. */}
+        {/* Each thing it does on a card of its own, with an icon so the eye
+            can tell the cards apart before reading them. */}
         <Section>
           <Overline><T id='welcome.featuresHeading'/></Overline>
           <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' }, gap: 1.5 }}>
-            {features.map((feature) => (
-              <Box key={feature} sx={{ p: 2, border: 1, borderColor: 'divider', borderRadius: '12px', bgcolor: 'background.paper' }}>
+            {features.map(({ key, Icon }) => (
+              <Box key={key} sx={{ p: 2, border: 1, borderColor: 'divider', borderRadius: '12px', bgcolor: 'background.paper' }}>
+                <Box
+                  sx={{
+                    display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                    width: 34, height: 34, mb: 1.5, borderRadius: '8px',
+                    bgcolor: 'background.default', border: 1, borderColor: 'divider', color: 'text.primary',
+                  }}
+                >
+                  <Icon sx={{ fontSize: 20 }}/>
+                </Box>
                 <Typography sx={{ fontWeight: 600, fontSize: 14.5, mb: 0.5 }}>
-                  <T id={`welcome.features.${feature}.title`}/>
+                  <T id={`welcome.features.${key}.title`}/>
                 </Typography>
                 <Typography variant='body2' color='text.secondary' sx={{ lineHeight: 1.5 }}>
-                  <T id={`welcome.features.${feature}.body`}/>
+                  <T id={`welcome.features.${key}.body`}/>
                 </Typography>
               </Box>
             ))}
@@ -129,14 +134,14 @@ export const WelcomePage = () => {
 
         <Section band>
           <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: { xs: 4, md: 6 } }}>
-            <Box>
+            <Box sx={{ minWidth: 0 }}>
               <Overline><T id='welcome.startHeading'/></Overline>
               <Typography sx={{ mb: 2 }}><T id='welcome.startLead'/></Typography>
               <Markdown html={snippet.html} compact/>
               <Typography sx={{ mt: 2 }} variant='body2' color='text.secondary'>
                 <T id='welcome.startAfter'/>
                 {' '}
-                <Link component={NavLink} to={gettingStarted} color='text.primary'><T id='welcome.startWalkthrough'/></Link>.
+                <Link component={NavLink} to={quickStart} color='text.primary'><T id='welcome.startWalkthrough'/></Link>.
               </Typography>
             </Box>
             <Box>
@@ -144,7 +149,7 @@ export const WelcomePage = () => {
               <Stack component='ul' sx={{ m: 0, pl: 2.5, gap: 1, fontSize: 15 }}>
                 <li><T id='welcome.needs.domain'/></li>
                 <li><T id='welcome.needs.host'/></li>
-                <li><T id='welcome.needs.database'/></li>
+                <li><T id='welcome.needs.docker'/></li>
               </Stack>
               <Typography sx={{ mt: 2 }} variant='body2' color='text.secondary'>
                 <T id='welcome.needsAfter'/>
@@ -160,7 +165,7 @@ export const WelcomePage = () => {
 // One band of the page. A band with `band` set sits on the rail colour, one
 // step off the page, so the sections read as groups rather than as one long
 // column.
-const Section = ({ children, band, sx }: { children: React.ReactNode, band?: boolean, sx?: object }) => (
+const Section = ({ children, band, sx }: { children: ReactNode, band?: boolean, sx?: object }) => (
   <Box
     sx={{
       ...(band && { bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#0c0c0e' : '#f7f7f6'), borderTop: 1, borderBottom: 1, borderColor: 'divider' }),
@@ -173,7 +178,7 @@ const Section = ({ children, band, sx }: { children: React.ReactNode, band?: boo
 )
 
 // The small heading over a band, the way the dashboard labels a row of tiles.
-const Overline = ({ children }: { children: React.ReactNode }) => (
+const Overline = ({ children }: { children: ReactNode }) => (
   <Typography
     component='h2'
     sx={{ fontSize: 12.5, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'text.secondary', mb: 2 }}

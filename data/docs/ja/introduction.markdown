@@ -13,8 +13,7 @@ TeaNode は、サイドプロジェクトにも、立ち上げたばかりのス
 ダッシュボードはバイナリに組み込まれていて、他に配備するものはありません。
 
 <figure>
-<img class="light" src="/media/mail-list-light.jpg" alt="ひとつのドメインに絞り込んだメール一覧" loading="lazy">
-<img class="dark" src="/media/mail-list.jpg" alt="ひとつのドメインに絞り込んだメール一覧" loading="lazy">
+<img src="screenshot:mail" alt="ひとつのドメインに絞り込んだメール一覧" width="1505" height="812" loading="lazy">
 <figcaption>ひとつのドメインに絞り込んだメール一覧。</figcaption>
 </figure>
 

@@ -1,5 +1,6 @@
 https://teanode.com/
 https://teanode.com/doc/introduction
+https://teanode.com/doc/quick-start
 https://teanode.com/doc/getting-started
 https://teanode.com/doc/deploying
 https://teanode.com/doc/configuration

@@ -29,7 +29,7 @@ served site:
 | Path | Served |
 | --- | --- |
 | `index.html`, `404.html`, `favicon.*`, `robots.txt`, `sitemap.txt` | yes |
-| `static/`, `media/`, `data/` | yes, including every document |
+| `static/`, `data/` | yes, including every document |
 | `_app/`, `_bin/`, `.github/` | no |
 
 Anything added at the root is public. Anything the site fetches at runtime has
@@ -37,6 +37,29 @@ to be public, which is why `data/` is.
 
 A markdown file under `data/docs/` must not begin with `---`: Jekyll would
 read that as front matter and convert the file rather than copy it.
+
+## Pictures
+
+Every picture goes through the build, so it is served from `/static/` under
+a name carrying a content hash: cached for a year, and replaced by a new name
+when it changes. Nothing is served from an unhashed path that could go stale
+in a cache. Do not add a `media/` directory back.
+
+The dashboard screenshots are `assets/screenshots/<page>.<theme>.<language>.jpg`,
+one per page, theme and language, 1505 by 812 at twice that resolution.
+`screenshots.ts` finds them by name and falls back to English for a language
+that has not been photographed. The front page's carousel shows them, and a
+document names one as `<img src="screenshot:<page>">`, which the markdown
+component resolves to the picture for the theme and language being read in.
+
+They were taken from the development server in the server repository
+(`make dev`), signed in, with sample data for `example.com`: four aliases, a
+layout and two templates, a DMARC aggregate report, and the external address
+replaced by the documentation address 203.0.113.10 so the DNS page shows
+nothing real. Retake them when the dashboard changes. Headless Chrome over
+the DevTools protocol does it: set the `teanode_session` cookie and the
+`teanode.theme` and `teanode.language` storage keys, navigate, capture at
+1505x812 with a device scale factor of 2.
 
 ## No external resources
 
@@ -83,8 +106,9 @@ Most documents are copies from the server repository, made by
 
 which drops each file's H1 and rewrites links between documents to pages
 here. Do not edit those copies by hand; edit the repository and run the
-script. `introduction.markdown` and `deploying.markdown` are written here, in every
-language, and so is the translated `getting-started.markdown`.
+script. `introduction.markdown`, `quick-start.markdown` and `deploying.markdown` are
+written here, in every language, and so is the translated
+`getting-started.markdown`.
 
 Headings get ids from their text, so a link to a section is
 `/doc/<slug>#<heading-as-kebab-case>`.
@@ -107,14 +131,13 @@ Headings get ids from their text, so a link to a section is
       pages/           one file per page
     _bin/              build scripts; not served
     data/              the documents, fetched at runtime
-    media/             pictures
-    static/            build output, committed
+    static/            build output, committed, pictures included
 
 ## Serving
 
 teanode.com is a CloudFront distribution in the AWS account, with
 teanode.github.io as a custom origin over HTTPS. `/static/*` is cached for a
-year because every name there carries a content hash; `/media/*` for a day;
+year because every name there carries a content hash; `/data/*` and
 everything else for a minute. A 404 from the origin is answered with `/` as a
 200, which is what makes client side routing work through the CDN. The
 GitHub Pages site itself serves `404.html`, which is the same application.
