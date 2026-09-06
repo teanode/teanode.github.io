@@ -29,8 +29,8 @@ it:
     mkdir -p /opt/teanode && cd /opt/teanode
     curl -LO https://raw.githubusercontent.com/ziyan/teanode/main/deploy/docker-compose.yml
     docker run --rm ghcr.io/ziyan/teanode:latest config env --output - \
-      --hostname mail.example.com --domain example.com \
-      --database-url 'postgres://teanode:teanode@127.0.0.1:5432/teanode?sslmode=disable' > .env
+      --hostname mail.example.com --domain example.com > .env
+    chmod 600 .env
     docker compose up -d
 
 Set `TEANODE_TLS_ACME_EMAIL` in `.env` before the first start: it is the
@@ -39,9 +39,15 @@ certificate.
 
 The server uses the host's network rather than a Docker network. SPF checks
 the address a mail server connects from, and behind a Docker bridge every
-sender would appear to come from the Docker gateway. That is also why the
-database address is `127.0.0.1`: PostgreSQL is published on the host's
-loopback interface.
+sender would appear to come from the Docker gateway.
+
+The connection to PostgreSQL is encrypted and verified. The official
+PostgreSQL image serves no TLS, so the compose file generates a certificate
+and starts PostgreSQL with it, and the `TEANODE_DATABASE_URL` that
+`config env` writes asks for `sslmode=verify-full` against that certificate.
+Pointing at a PostgreSQL of your own means pointing `sslrootcert` at that
+server's authority instead, or dropping to `sslmode=require` to encrypt
+without checking who answered.
 
 ### What runs beside it
 

@@ -14,8 +14,8 @@ arrive, read [Getting started](/doc/getting-started) afterwards.
     mkdir -p /opt/teanode && cd /opt/teanode
     curl -LO https://raw.githubusercontent.com/ziyan/teanode/main/deploy/docker-compose.yml
     docker run --rm ghcr.io/ziyan/teanode:latest config env --output - \
-      --hostname mail.example.com --domain example.com \
-      --database-url 'postgres://teanode:teanode@127.0.0.1:5432/teanode?sslmode=disable' > .env
+      --hostname mail.example.com --domain example.com > .env
+    chmod 600 .env
     docker compose up -d
 
 Replace `mail.example.com` with the name of your server and `example.com`
@@ -24,7 +24,7 @@ point at, so it has to be a name you can add a DNS record for.
 
 Before starting, open `.env` and set `TEANODE_TLS_ACME_EMAIL` to an address
 where the certificate authority can reach you. Everything else has a working
-default. The server obtains its certificate over HTTP-01 on the first start,
+default. The file holds the database password, which is why it is `chmod 600`. The server obtains its certificate over HTTP-01 on the first start,
 which needs port 80 reachable from the internet.
 
 The compose file also starts ClamAV and SpamAssassin. Both are optional.

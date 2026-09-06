@@ -17,13 +17,15 @@ TeaNode の動かし方は二つあります。コンテナイメージか、ホ
     mkdir -p /opt/teanode && cd /opt/teanode
     curl -LO https://raw.githubusercontent.com/ziyan/teanode/main/deploy/docker-compose.yml
     docker run --rm ghcr.io/ziyan/teanode:latest config env --output - \
-      --hostname mail.example.com --domain example.com \
-      --database-url 'postgres://teanode:teanode@127.0.0.1:5432/teanode?sslmode=disable' > .env
+      --hostname mail.example.com --domain example.com > .env
+    chmod 600 .env
     docker compose up -d
 
 最初の起動の前に `.env` の `TEANODE_TLS_ACME_EMAIL` を設定してください。証明書の期限が近づいたときに認証局が知らせるアドレスです。
 
-サーバーは Docker のネットワークではなくホストのネットワークを使います。SPF はメールサーバーが接続してきたアドレスを検査するので、Docker のブリッジの後ろではすべての送信者が Docker のゲートウェイから来たように見えてしまいます。データベースのアドレスが `127.0.0.1` なのも同じ理由で、PostgreSQL はホストのループバックに公開されています。
+サーバーは Docker のネットワークではなくホストのネットワークを使います。SPF はメールサーバーが接続してきたアドレスを検査するので、Docker のブリッジの後ろではすべての送信者が Docker のゲートウェイから来たように見えてしまいます。
+
+PostgreSQL への接続は暗号化され、検証されます。公式の PostgreSQL イメージは TLS を提供しないので、compose ファイルが証明書を生成して PostgreSQL をそれで起動し、`config env` が書く `TEANODE_DATABASE_URL` はその証明書に対して `sslmode=verify-full` を求めます。自前の PostgreSQL を指すなら、`sslrootcert` をそのサーバーの認証局に向けるか、誰が応答したかを確かめずに暗号化だけする `sslmode=require` に下げてください。
 
 ### 並んで動くもの
 

@@ -50,8 +50,8 @@ const features: { key: string, Icon: SvgIconComponent }[] = [
 const install = `mkdir -p /opt/teanode && cd /opt/teanode
 curl -LO https://raw.githubusercontent.com/ziyan/teanode/main/deploy/docker-compose.yml
 docker run --rm ghcr.io/ziyan/teanode:latest config env --output - \\
-  --hostname mail.example.com --domain example.com \\
-  --database-url 'postgres://teanode:teanode@127.0.0.1:5432/teanode?sslmode=disable' > .env
+  --hostname mail.example.com --domain example.com > .env
+chmod 600 .env
 docker compose up -d`
 
 export const WelcomePage = () => {

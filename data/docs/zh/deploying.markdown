@@ -17,13 +17,15 @@
     mkdir -p /opt/teanode && cd /opt/teanode
     curl -LO https://raw.githubusercontent.com/ziyan/teanode/main/deploy/docker-compose.yml
     docker run --rm ghcr.io/ziyan/teanode:latest config env --output - \
-      --hostname mail.example.com --domain example.com \
-      --database-url 'postgres://teanode:teanode@127.0.0.1:5432/teanode?sslmode=disable' > .env
+      --hostname mail.example.com --domain example.com > .env
+    chmod 600 .env
     docker compose up -d
 
 第一次启动前在 `.env` 里设置 `TEANODE_TLS_ACME_EMAIL`：证书机构会用这个地址提醒你证书即将到期。
 
-服务器使用宿主机的网络，而不是 Docker 网络。SPF 检查的是邮件服务器连接进来时的地址，在 Docker 网桥后面，每个发件方看起来都来自 Docker 网关。这也是数据库地址是 `127.0.0.1` 的原因：PostgreSQL 发布在宿主机的回环接口上。
+服务器使用宿主机的网络，而不是 Docker 网络。SPF 检查的是邮件服务器连接进来时的地址，在 Docker 网桥后面，每个发件方看起来都来自 Docker 网关。
+
+到 PostgreSQL 的连接是加密并经过验证的。官方的 PostgreSQL 镜像不提供 TLS，所以 compose 文件会生成一张证书并用它启动 PostgreSQL，`config env` 写出的 `TEANODE_DATABASE_URL` 要求 `sslmode=verify-full`，对照这张证书检查。如果指向你自己的 PostgreSQL，就把 `sslrootcert` 指向那台服务器的证书机构，或者降到 `sslmode=require`，只加密而不检查是谁在应答。
 
 ### 与它一起运行的组件
 

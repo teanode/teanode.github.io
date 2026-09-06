@@ -11,13 +11,13 @@
     mkdir -p /opt/teanode && cd /opt/teanode
     curl -LO https://raw.githubusercontent.com/ziyan/teanode/main/deploy/docker-compose.yml
     docker run --rm ghcr.io/ziyan/teanode:latest config env --output - \
-      --hostname mail.example.com --domain example.com \
-      --database-url 'postgres://teanode:teanode@127.0.0.1:5432/teanode?sslmode=disable' > .env
+      --hostname mail.example.com --domain example.com > .env
+    chmod 600 .env
     docker compose up -d
 
 `mail.example.com` をサーバーの名前に、`example.com` をメールを受け取りたいドメインに置き換えます。ホスト名は MX レコードが指す名前なので、DNS レコードを追加できる名前でなければなりません。
 
-起動する前に `.env` を開き、`TEANODE_TLS_ACME_EMAIL` に認証局から連絡を受けられるアドレスを設定します。それ以外は既定値のままで動きます。サーバーは最初の起動で HTTP-01 により証明書を取得します。これにはインターネットからポート 80 に到達できることが必要です。
+起動する前に `.env` を開き、`TEANODE_TLS_ACME_EMAIL` に認証局から連絡を受けられるアドレスを設定します。それ以外は既定値のままで動きます。このファイルにはデータベースのパスワードが入っているので、`chmod 600` にしておきます。サーバーは最初の起動で HTTP-01 により証明書を取得します。これにはインターネットからポート 80 に到達できることが必要です。
 
 compose ファイルは ClamAV と SpamAssassin も起動します。どちらも任意です。要らなければファイルから削除してください。ClamAV だけで約 2GB のメモリを使います。
 
