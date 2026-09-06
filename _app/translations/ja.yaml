@@ -117,7 +117,7 @@ welcome:
     host: 固定アドレスを持ち、ポート 25、80、443、587 に到達できるホスト。
     docker: compose 付きの Docker。compose ファイルが PostgreSQL を起動します。
   needsAfter: >-
-    他には何もいりません。クラウドのアカウントも Redis も不要です。証明書は HTTP-01 で
+    他には何もいりません。クラウドのアカウントも不要です。証明書は HTTP-01 で
     自動取得されるので、設定する DNS API もありません。
 footer:
   licence: MIT ライセンスのオープンソースです。

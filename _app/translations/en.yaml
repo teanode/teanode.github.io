@@ -125,7 +125,7 @@ welcome:
     host: A host with a stable address, reachable on ports 25, 80, 443 and 587.
     docker: Docker with compose. The compose file starts PostgreSQL for you.
   needsAfter: >-
-    Nothing else. No cloud account, no Redis. Certificates are obtained
+    Nothing else. No cloud account. Certificates are obtained
     automatically over HTTP-01, so there is no DNS API to configure.
 footer:
   licence: Open source under the MIT licence.
