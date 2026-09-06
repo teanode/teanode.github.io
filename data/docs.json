@@ -126,7 +126,9 @@
       "ja": "二つのプログラム。サーバーとそのホストにしかできない少数のこと、そして API を通じてどこからでも管理するクライアント。"
     },
     "filename": {
-      "en": "en/command-line.markdown"
+      "en": "en/command-line.markdown",
+      "zh": "zh/command-line.markdown",
+      "ja": "ja/command-line.markdown"
     }
   },
   {
@@ -170,7 +172,9 @@
       "ja": "プログラム全体のレビュー。何を調べ、何が見つかり、何を直し、何がまだ残っているか。"
     },
     "filename": {
-      "en": "en/security-review.markdown"
+      "en": "en/security-review.markdown",
+      "zh": "zh/security-review.markdown",
+      "ja": "ja/security-review.markdown"
     }
   },
   {
