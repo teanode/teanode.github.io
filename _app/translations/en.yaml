@@ -32,7 +32,7 @@ notFound:
   toHome: Go to the front page
   toDocs: Read the documentation
 welcome:
-  headline: Your own domains. The inbox you already have.
+  headline: Send and receive emails at your own domains.
   lead: >-
     An open source mail server for every side project and early startup.
     It receives mail for your domains and forwards it to the inbox you
