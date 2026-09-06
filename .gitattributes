@@ -1,0 +1,13 @@
+# Written by `npm run build`, not edited: the bundler output under static/,
+# the two HTML files _bin/html.js generates from _app/index.html, and the
+# sitemap _bin/sitemap.js writes from data/docs.json. Marking them generated
+# collapses their diffs in pull requests and keeps them out of the repository
+# language statistics.
+#
+# Anchored to the root. Without the leading slash these match at any depth,
+# and `index.html` would claim _app/index.html, which is the source they are
+# generated from.
+/static/** linguist-generated=true
+/index.html linguist-generated=true
+/404.html linguist-generated=true
+/sitemap.txt linguist-generated=true

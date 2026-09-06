@@ -1,0 +1,105 @@
+---
+language: 简体中文
+title: TeaNode
+tagline: 用自己的域名收发邮件，转发到你已经在用的邮箱。
+nav:
+  docs: 文档
+  github: GitHub
+  releases: 发布版本
+  home: 首页
+  menu: 打开菜单
+locale:
+  label: 语言
+theme:
+  label: 外观
+  system: 跟随系统
+  light: 浅色
+  dark: 深色
+docs:
+  title: 文档
+  search: 搜索文档
+  noneMatch: 没有匹配的文档。
+  notFound: 这份文档不存在。
+  onThisPage: 本页内容
+  failed: 这份文档无法加载。
+notFound:
+  title: 这个页面不存在
+  body: 地址可能输错了，或者带你来这里的链接已经失效。没有什么出了问题。
+  toHome: 回到首页
+  toDocs: 阅读文档
+welcome:
+  lead: >-
+    让每个副业项目、每家早期创业公司都有一个自己域名下的真实邮件地址，而不用为每一个再维护一个邮箱。
+    TeaNode 是一个小巧的自托管邮件服务器：为你所有的域名接收邮件，验证邮件是否真实，
+    然后转发到你已经在读的邮箱，或者一个 webhook。你也可以用这些地址回复和发信，
+    邮件用域名的密钥签名，真正送达，而不是落进垃圾箱。
+  notMailbox: >-
+    它刻意不做邮箱服务器。没有 IMAP，也没有收件箱。你现在在哪里读邮件，就继续在哪里读；
+    TeaNode 负责的是域名、身份验证和路由。
+  getStarted: 开始使用
+  readDocs: 阅读文档
+  viewSource: 查看源码
+  screenshotCaption: >-
+    邮件列表，筛选到一个域名。这台服务器处理过的每一封邮件、它对每一封作出的判断，
+    以及收件人的邮件程序是否加载了其中的图片。
+  whyHeading: 为什么
+  why: >-
+    为一个域名运行邮件服务，通常要么交给服务商，要么把 Postfix、Dovecot、OpenDKIM、OpenDMARC、
+    SpamAssassin 和一个策略守护进程拼装起来，并让它们保持一致。这里只有一个可执行文件和一个
+    PostgreSQL 数据库，而决定你的邮件是否可信的身份验证是内建的，不是后加上去的。
+  featuresHeading: 它能做什么
+  features:
+    authenticates:
+      title: 验证每一封邮件
+      body: >-
+        进来的邮件经过 SPF、DKIM、DMARC 和 ARC 检查，结果按邮件逐一显示。你的外发邮件带 DKIM 签名，
+        转发的邮件保留 ARC 链，到了对方那里依然能通过验证。
+    forwards:
+      title: 灵活转发
+      body: >-
+        别名用正则表达式匹配地址，把邮件送到一个邮箱地址、一个 HTTP 端点，或另一台邮件服务器。
+        空的模式是兜底别名，接收其他别名都没有匹配到的邮件。
+    relays:
+      title: 中继你的外发邮件
+      body: >-
+        在提交端口上为每台设备配一份 SMTP 凭据，每份凭据都可以限制为只用一个发件地址。
+    shows:
+      title: 让你看到邮件
+      body: >-
+        仪表盘把一封邮件当作邮件来呈现：身份验证的判定、每次投递尝试以及失败的原因，
+        还有去掉脚本的正文本身，远程图片在你要求之前不会加载。
+    sends:
+      title: 发送你写的邮件
+      body: >-
+        带变量和翻译的模板、包在外面的版式、从你自己的域名提供的图片，
+        以及收件人的邮件程序是否加载了它们的记录。
+    reports:
+      title: 报告你的域名状况
+      body: >-
+        收到的 DMARC 汇总报告会被解析并保存，这就是你发现有人伪造你的域名的方式。
+    extras:
+      title: 可选的附加功能，默认全部关闭
+      body: >-
+        ClamAV、SpamAssassin、GeoIP、存储邮件的 S3 镜像、供地址信誉不佳的主机使用的外发 SOCKS5 代理，
+        以及需要通配符证书时的 DNS-01。
+    dashboard:
+      title: 一个二进制文件，仪表盘已包含在内
+      body: >-
+        仪表盘编译在服务器里，没有别的东西需要部署。一个命令行客户端可以从任何地方访问同一套 API。
+  startHeading: 开始使用
+  startLead: 下载两个程序，描述服务器，运行它。
+  startAfter: >-
+    第一条命令会打印你的签名密钥的 DNS 记录。把它和一条指向你服务器的 MX 记录一起发布，
+    邮件就开始到达。仪表盘会准确列出还缺哪些记录。
+  startWalkthrough: 完整的操作步骤
+  needHeading: 你需要什么
+  needs:
+    domain: 一个域名，以及编辑它的 DNS 的能力。
+    host: 一台地址稳定的主机，25、80、443 和 587 端口可以访问。
+    database: PostgreSQL，用来保存配置和处理过的邮件。
+  needsAfter: >-
+    别的什么都不需要。不需要云账号，不需要 Redis。证书通过 HTTP-01 自动获取，
+    所以没有 DNS API 需要配置。
+footer:
+  licence: 以 MIT 许可证开源。
+  security: 报告安全问题

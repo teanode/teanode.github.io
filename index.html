@@ -1,0 +1,18 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>TeaNode</title><meta name="description" content="Email at your own domains, forwarded to the inbox you already have. A small self-hosted mail server for every side project and early startup: SPF, DKIM, DMARC and ARC, forwarding, and sending from your own addresses."><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="color-scheme" content="light dark"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="alternate icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/media/logo.svg"><meta name="theme-color" content="#ffffff"><script>
+(function () {
+try {
+var stored = window.localStorage.getItem('teanode.theme');
+if (stored === 'light' || stored === 'dark') {
+document.documentElement.setAttribute('data-theme', stored);
+}
+var dark = stored === 'dark' || (stored !== 'light' &&
+window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+if (dark) {
+document.documentElement.style.background = '#141416';
+document.querySelector('meta[name="theme-color"]').setAttribute('content', '#141416');
+}
+} catch (error) {
+// Site data blocked. The default theme is correct either way.
+}
+})();
+</script><script type="module" crossorigin src="/static/teanode.Cw7aOsdA.js"></script></head><body><div id="teanode"></div></body></html>

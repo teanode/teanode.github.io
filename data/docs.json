@@ -1,0 +1,112 @@
+[
+  {
+    "slug": "introduction",
+    "group": { "en": "Getting started", "zh": "开始使用", "ja": "はじめに" },
+    "title": { "en": "What TeaNode is", "zh": "TeaNode 是什么", "ja": "TeaNode とは" },
+    "description": {
+      "en": "Email at your own domains, forwarded to the inbox you already have: what it does, what it deliberately does not do, and what you need to run it.",
+      "zh": "用自己的域名收发邮件，转发到你已经在用的邮箱：它做什么、刻意不做什么，以及运行它需要什么。",
+      "ja": "自分のドメインのメールを、いま使っている受信箱へ。何をするのか、意図して何をしないのか、動かすには何が要るのか。"
+    },
+    "filename": { "en": "en/introduction.markdown", "zh": "zh/introduction.markdown", "ja": "ja/introduction.markdown" }
+  },
+  {
+    "slug": "getting-started",
+    "group": { "en": "Getting started", "zh": "开始使用", "ja": "はじめに" },
+    "title": { "en": "Getting started", "zh": "开始使用", "ja": "はじめる" },
+    "description": {
+      "en": "Standing up a mail server for one domain, from nothing to mail arriving and being forwarded, including the DNS records and the port 25 problem.",
+      "zh": "为一个域名搭起邮件服务器，从零开始到邮件到达并被转发，包括 DNS 记录和 25 端口的问题。",
+      "ja": "ひとつのドメインのメールサーバーを、何もない状態からメールが届いて転送されるまで立ち上げる。DNS レコードとポート 25 の問題も含めて。"
+    },
+    "filename": { "en": "en/getting-started.markdown" }
+  },
+  {
+    "slug": "deploying",
+    "group": { "en": "Running it", "zh": "运行", "ja": "運用する" },
+    "title": { "en": "Deploying", "zh": "部署", "ja": "配備する" },
+    "description": {
+      "en": "The container image and the compose file, what runs beside the server, how it upgrades itself, and what to back up.",
+      "zh": "容器镜像和 compose 文件、与服务器一起运行的组件、它如何自我升级，以及需要备份什么。",
+      "ja": "コンテナイメージと compose ファイル、サーバーと並んで動くもの、自己アップグレードの仕組み、そして何をバックアップするか。"
+    },
+    "filename": { "en": "en/deploying.markdown" }
+  },
+  {
+    "slug": "configuration",
+    "group": { "en": "Running it", "zh": "运行", "ja": "運用する" },
+    "title": { "en": "Configuration", "zh": "配置", "ja": "設定" },
+    "description": {
+      "en": "Where the settings live, the environment variables that say how to reach them, and every field an operator can set.",
+      "zh": "设置存放在哪里、指明如何访问它们的环境变量，以及运维者可以设置的每一个字段。",
+      "ja": "設定がどこにあるか、そこへ辿り着くための環境変数、そして運用者が設定できるすべての項目。"
+    },
+    "filename": { "en": "en/configuration.markdown" }
+  },
+  {
+    "slug": "command-line",
+    "group": { "en": "Running it", "zh": "运行", "ja": "運用する" },
+    "title": { "en": "The command line", "zh": "命令行", "ja": "コマンドライン" },
+    "description": {
+      "en": "The two programs: the server and the few things only its host can do, and the client that administers it from anywhere through the API.",
+      "zh": "两个程序：服务器以及只有它所在主机才能做的几件事，和通过 API 从任何地方管理它的客户端。",
+      "ja": "二つのプログラム。サーバーとそのホストにしかできない少数のこと、そして API を通じてどこからでも管理するクライアント。"
+    },
+    "filename": { "en": "en/command-line.markdown" }
+  },
+  {
+    "slug": "security",
+    "group": { "en": "Security", "zh": "安全", "ja": "セキュリティ" },
+    "title": { "en": "Reporting a security problem", "zh": "报告安全问题", "ja": "セキュリティ問題の報告" },
+    "description": {
+      "en": "Where to report something exploitable, what is in scope, and what is not.",
+      "zh": "在哪里报告可被利用的问题、哪些在范围内、哪些不在。",
+      "ja": "悪用できる問題をどこへ報告するか、何が対象で、何が対象外か。"
+    },
+    "filename": { "en": "en/security.markdown" }
+  },
+  {
+    "slug": "security-review",
+    "group": { "en": "Security", "zh": "安全", "ja": "セキュリティ" },
+    "title": { "en": "Security review", "zh": "安全审查", "ja": "セキュリティレビュー" },
+    "description": {
+      "en": "A review of the whole program: what was examined, what was found, what was fixed, and what is still open.",
+      "zh": "对整个程序的一次审查：检查了什么、发现了什么、修复了什么，以及还有什么未解决。",
+      "ja": "プログラム全体のレビュー。何を調べ、何が見つかり、何を直し、何がまだ残っているか。"
+    },
+    "filename": { "en": "en/security-review.markdown" }
+  },
+  {
+    "slug": "contributing",
+    "group": { "en": "Contributing", "zh": "参与贡献", "ja": "貢献する" },
+    "title": { "en": "Contributing", "zh": "参与贡献", "ja": "貢献する" },
+    "description": {
+      "en": "Naming, comments, the invariants that bite, tests, commits and the changelog that cuts a release.",
+      "zh": "命名、注释、会咬人的不变量、测试、提交，以及用来发布版本的变更日志。",
+      "ja": "命名、コメント、破ると痛い不変条件、テスト、コミット、そしてリリースを切る変更履歴。"
+    },
+    "filename": { "en": "en/contributing.markdown" }
+  },
+  {
+    "slug": "local-development",
+    "group": { "en": "Contributing", "zh": "参与贡献", "ja": "貢献する" },
+    "title": { "en": "Local development", "zh": "本地开发", "ja": "ローカル開発" },
+    "description": {
+      "en": "Getting a working build and a database to point it at, a development server that cannot send mail, and the optional scanners.",
+      "zh": "得到一个可用的构建和一个指向它的数据库、一个不能发送邮件的开发服务器，以及可选的扫描器。",
+      "ja": "動くビルドと、それが向くデータベース、メールを送れない開発サーバー、そして任意のスキャナー。"
+    },
+    "filename": { "en": "en/local-development.markdown" }
+  },
+  {
+    "slug": "project-structure",
+    "group": { "en": "Contributing", "zh": "参与贡献", "ja": "貢献する" },
+    "title": { "en": "Project structure", "zh": "项目结构", "ja": "プロジェクトの構成" },
+    "description": {
+      "en": "What each package is for and which way the dependencies point.",
+      "zh": "每个包是做什么的，以及依赖指向哪个方向。",
+      "ja": "各パッケージが何のためにあり、依存がどちらを向いているか。"
+    },
+    "filename": { "en": "en/project-structure.markdown" }
+  }
+]

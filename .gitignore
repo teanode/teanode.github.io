@@ -1,0 +1,10 @@
+# vite writes the page here and _bin/html.js reads it, minifies it, and writes
+# index.html and 404.html at the root. It is left on disk so that script can be
+# run again without a rebuild, but nothing should serve or commit it: /static/
+# is published, and a second index.html there is nobody's address for this site.
+/static/index.html
+
+node_modules/
+.vite/
+*.swp
+.DS_Store
