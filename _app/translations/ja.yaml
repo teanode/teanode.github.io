@@ -32,11 +32,9 @@ notFound:
 welcome:
   headline: 自分のドメインで、いまの受信箱のまま。
   lead: >-
-    TeaNode はオープンソースのメールサーバーです。サイドプロジェクトにも立ち上げたばかりの
-    スタートアップにも、それぞれのドメインで本物のアドレスを持たせます。メールを受け取り、本物かどうかを
-    確かめ、いま読んでいる受信箱か webhook へ転送します。返信はドメインとして署名されて出ていくので、
-    迷惑メール扱いにならず相手に届きます。メールボックスも IMAP もありません。メールは今読んでいる場所で
-    そのまま読み続けてください。
+    サイドプロジェクトと立ち上げたばかりのスタートアップのための、オープンソースのメールサーバー。
+    ドメイン宛のメールを受け取っていま読んでいる受信箱へ転送し、返信はドメインとして署名して送ります。
+    メールボックスも IMAP もありません。
   getStarted: はじめる
   readDocs: ドキュメントを読む
   viewSource: ソースを見る
@@ -67,20 +65,18 @@ welcome:
     report: 一通のレポート。どのアドレスがそのドメインとしてどれだけ送り、検証を通ったかどうか。
   examplesHeading: たとえば
   examples:
-    hello: >-
-      ローンチページに載せるアドレス。創業者自身の受信箱へ転送され、同じアドレスから返信できます。
-    support: >-
-      チケットを起票する webhook へ転送。届く前に SPF、DKIM、DMARC の検査を済ませています。
-    noreply: >-
-      アプリケーションがサインインコードや領収書を TeaNode 経由で送ります。使う資格情報は
-      このアドレスとしてしか送れません。
+    hello: ローンチページに載せ、創業者自身の受信箱へ転送。
+    support: チケットを起票する webhook へ転送。
+    noreply: アプリがこのアドレスからだけ、署名付きでコードや領収書を送る。
   whyHeading: なぜ
-  why: >-
-    ドメインのメールを運用するには、たいていプロバイダーに預けるか、Postfix、Dovecot、OpenDKIM、
-    OpenDMARC、SpamAssassin とポリシーデーモンを組み合わせて、それらの足並みを揃え続けるかの
-    どちらかです。TeaNode はプログラムひとつと PostgreSQL データベースひとつで、メールを信頼できるか
-    どうかを決める認証は組み込みです。
+  stack:
+    usual: よくあるやり方
+    usualNote: 六つのプログラム、それぞれの設定、手作業で足並みを揃える。
+    versus: または
+    teanode: TeaNode なら
+    teanodeNote: プログラムひとつとデータベースひとつ。認証は組み込みです。
   comparison:
+    heading: 他の選択肢と比べると
     columns:
       teanode: TeaNode
       cloudflare: Cloudflare Email Routing
@@ -127,40 +123,35 @@ welcome:
     note: >-
       2026 年 9 月時点の各社のプランによります。プランは変わりますが、ライセンスは変わりません。
   featuresHeading: できること
+  extrasLead: 欲しいときには
+  extras:
+    dashboard: 組み込みダッシュボード
+    cli: コマンドラインクライアント
+    clamav: ClamAV
+    spamassassin: SpamAssassin
+    geoip: GeoIP
+    s3: S3 ミラー
+    socks5: SOCKS5 プロキシ
+    dns01: DNS-01 証明書
   features:
     authenticates:
       title: すべてを認証する
-      body: >-
-        受信時に SPF、DKIM、DMARC、ARC を検査し、メールごとに表示します。送信メールには DKIM 署名を
-        付け、転送するメールには ARC チェーンを残すので、転送先でも検証を通ります。
+      body: 受信時に SPF、DKIM、DMARC、ARC を検査し、送信時に署名します。
     forwards:
       title: 柔軟に転送する
-      body: >-
-        エイリアスはパターンでアドレスを照合し、メールアドレス、webhook、または別のメールサーバーへ
-        転送します。キャッチオールが、他のどれにも一致しなかったものを受け取ります。
+      body: パターンで各アドレスを受信箱、webhook、別のサーバーへ振り分けます。
     relays:
       title: 自分のアドレスから送る
-      body: >-
-        デバイスごとの SMTP 資格情報で、スマートフォン、ノート PC、アプリケーションがどのドメインと
-        してでも送信できます。資格情報は送信元アドレスひとつに制限できます。
+      body: デバイスごとの SMTP 資格情報。送信元ひとつに制限もできます。
     shows:
       title: メールを見せる
-      body: >-
-        各メールの判定、配送の試行、そしてスクリプトを取り除いた本文。リモート画像は求めるまで
-        読み込みません。
+      body: 各メールの判定と配送の試行、安全に描画した本文。
     sends:
       title: 書いたメールを送る
-      body: >-
-        変数と翻訳を持つテンプレート、それを包むレイアウト、自分のドメインから配信する画像。
+      body: 変数と翻訳を持つテンプレートと、それを包むレイアウト。
     reports:
       title: ドメインについて報告する
-      body: >-
-        受け取った DMARC 集計レポートは解析して保存されます。誰かが自分のドメインを偽っていることに
-        気づけるのは、これのおかげです。
-  featuresAlso: >-
-    ダッシュボードはサーバーに組み込まれ、コマンドラインクライアントは同じ API にどこからでも届きます。
-    ClamAV、SpamAssassin、GeoIP、保存メールの S3 ミラー、送信 SOCKS5 プロキシ、DNS-01 証明書は、
-    欲しいときにはそこにあり、それまではオフです。
+      body: DMARC レポートを解析して保存し、誰がドメインとして送っているかを示します。
   startHeading: はじめる
   startLead: docker compose で四つのコマンド、それからダッシュボードを開きます。
   startAfter: >-
@@ -169,12 +160,10 @@ welcome:
   startWalkthrough: クイックスタート
   needHeading: 必要なもの
   needs:
-    domain: ドメインと、その DNS を編集できること。
-    host: 固定アドレスを持ち、ポート 25、80、443、587 に到達できるホスト。
-    docker: compose 付きの Docker。compose ファイルが PostgreSQL を起動します。
-  needsAfter: >-
-    他には何もいりません。クラウドのアカウントも不要です。証明書は HTTP-01 で
-    自動取得されるので、設定する DNS API もありません。
+    domain: DNS を編集できるドメイン。
+    host: 固定アドレスを持ち、ポート 25、80、443、587 が開いたホスト。
+    docker: compose 付きの Docker。PostgreSQL は compose ファイルに含まれます。
+  needsAfter: 他には何もいりません。クラウドのアカウントも DNS API も不要で、証明書は自動です。
   questionsHeading: よくある質問
   questions:
     port25:

@@ -1,7 +1,11 @@
 import { useEffect, useMemo, type ReactNode } from 'react'
 import { NavLink, generatePath } from 'react-router'
+import Accordion from '@mui/material/Accordion'
+import AccordionDetails from '@mui/material/AccordionDetails'
+import AccordionSummary from '@mui/material/AccordionSummary'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
+import Chip from '@mui/material/Chip'
 import Link from '@mui/material/Link'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
@@ -9,12 +13,19 @@ import type { SvgIconComponent } from '@mui/icons-material'
 import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined'
 import CallSplitIcon from '@mui/icons-material/CallSplit'
 import CheckIcon from '@mui/icons-material/Check'
+import ConfirmationNumberOutlinedIcon from '@mui/icons-material/ConfirmationNumberOutlined'
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined'
+import DnsOutlinedIcon from '@mui/icons-material/DnsOutlined'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import GitHubIcon from '@mui/icons-material/GitHub'
+import LanguageOutlinedIcon from '@mui/icons-material/LanguageOutlined'
 import OutboxOutlinedIcon from '@mui/icons-material/OutboxOutlined'
 import RemoveIcon from '@mui/icons-material/Remove'
+import RocketLaunchOutlinedIcon from '@mui/icons-material/RocketLaunchOutlined'
+import SmartphoneOutlinedIcon from '@mui/icons-material/SmartphoneOutlined'
 import VerifiedUserOutlinedIcon from '@mui/icons-material/VerifiedUserOutlined'
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined'
+import WidgetsOutlinedIcon from '@mui/icons-material/WidgetsOutlined'
 
 import { Carousel } from '../components/carousel'
 import { Flow } from '../components/flow'
@@ -22,6 +33,7 @@ import { Markdown, renderMarkdown } from '../components/markdown'
 import { Mark } from '../components/logo'
 import { Release } from '../components/release'
 import { pageWidth, PublicShell } from '../components/shell'
+import { StackComparison } from '../components/stack'
 import { T, useTranslate } from '../i18n'
 import { brand, monospaceFamily } from '../theme'
 import routes, { links } from '../routes'
@@ -30,12 +42,10 @@ import routes, { links } from '../routes'
 // WelcomePage
 //
 // The front page: what TeaNode is, what it looks like, what it does, and how
-// to start.
+// to start. Pictures where a picture will do; the words are the documents'.
 //
 
-// The width prose is allowed to get. One number, the dashboard's, because two
-// paragraphs on one page wrapping in different places looks like a bug.
-const measure = '68ch'
+const measure = '60ch'
 
 const features: { key: string, Icon: SvgIconComponent }[] = [
   { key: 'authenticates', Icon: VerifiedUserOutlinedIcon },
@@ -46,9 +56,23 @@ const features: { key: string, Icon: SvgIconComponent }[] = [
   { key: 'reports', Icon: AssessmentOutlinedIcon },
 ]
 
+// What comes with it and is off until asked for: a row of names rather than
+// a paragraph about them.
+const extras = ['dashboard', 'cli', 'clamav', 'spamassassin', 'geoip', 's3', 'socks5', 'dns01']
+
 // Three addresses and where each one goes, which is the whole idea in the
 // form most people first meet it.
-const examples = ['hello', 'support', 'noreply']
+const examples: { key: string, Icon: SvgIconComponent }[] = [
+  { key: 'hello', Icon: RocketLaunchOutlinedIcon },
+  { key: 'support', Icon: ConfirmationNumberOutlinedIcon },
+  { key: 'noreply', Icon: SmartphoneOutlinedIcon },
+]
+
+const needs: { key: string, Icon: SvgIconComponent }[] = [
+  { key: 'domain', Icon: LanguageOutlinedIcon },
+  { key: 'host', Icon: DnsOutlinedIcon },
+  { key: 'docker', Icon: WidgetsOutlinedIcon },
+]
 
 // The comparison: what TeaNode does against the things somebody deciding is
 // likely weighing it against. The rows are keys into the translations, and
@@ -63,7 +87,7 @@ const questions = ['port25', 'reply', 'outbound', 'stored']
 // every line fits the block on a phone without scrolling sideways.
 const install = `mkdir -p /opt/teanode && cd /opt/teanode
 curl -LO \\
-  https://raw.githubusercontent.com/ziyan/teanode/main/deploy/docker-compose.yml
+https://raw.githubusercontent.com/ziyan/teanode/main/deploy/docker-compose.yml
 docker run --rm ghcr.io/ziyan/teanode:latest \\
   config env --output - \\
   --hostname mail.example.com \\
@@ -134,23 +158,28 @@ export const WelcomePage = () => {
         <Section band>
           <Overline><T id='welcome.examplesHeading'/></Overline>
           <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(3, 1fr)' }, gap: 1.5 }}>
-            {examples.map((key) => (
-              <Box key={key} sx={{ p: 2, border: 1, borderColor: 'divider', borderRadius: '12px', bgcolor: 'background.paper' }}>
-                <Typography sx={{ fontFamily: monospaceFamily, fontSize: 14, fontWeight: 600, mb: 0.75 }}>
+            {examples.map(({ key, Icon }) => (
+              <Card key={key}>
+                <Tile><Icon sx={{ fontSize: 22 }}/></Tile>
+                <Typography sx={{ fontFamily: monospaceFamily, fontSize: 14, fontWeight: 600, mb: 0.5 }}>
                   {key}@example.com
                 </Typography>
-                <Typography variant='body2' color='text.secondary' sx={{ lineHeight: 1.55 }}>
+                <Typography variant='body2' color='text.secondary' sx={{ lineHeight: 1.5 }}>
                   <T id={`welcome.examples.${key}`}/>
                 </Typography>
-              </Box>
+              </Card>
             ))}
           </Box>
         </Section>
 
-        {/* Why, and against what. */}
+        {/* Why: the usual pile against the one program, then the table. */}
         <Section>
           <Overline><T id='welcome.whyHeading'/></Overline>
-          <Typography sx={{ maxWidth: measure, fontSize: 16, mb: 4 }}><T id='welcome.why'/></Typography>
+          <StackComparison/>
+        </Section>
+
+        <Section sx={{ pt: 0 }}>
+          <Overline><T id='welcome.comparison.heading'/></Overline>
           <Box sx={{ overflowX: 'auto', border: 1, borderColor: 'divider', borderRadius: '12px' }}>
             <Box
               component='table'
@@ -193,34 +222,29 @@ export const WelcomePage = () => {
           </Typography>
         </Section>
 
-        {/* Each thing it does on a card of its own, with an icon so the eye
-            can tell the cards apart before reading them. */}
+        {/* Each thing it does on a card of its own, one line each, and the
+            extras as a row of names. */}
         <Section band>
           <Overline><T id='welcome.featuresHeading'/></Overline>
           <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)' }, gap: 1.5 }}>
             {features.map(({ key, Icon }) => (
-              <Box key={key} sx={{ p: 2, border: 1, borderColor: 'divider', borderRadius: '12px', bgcolor: 'background.paper' }}>
-                <Box
-                  sx={{
-                    display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                    width: 34, height: 34, mb: 1.5, borderRadius: '8px',
-                    bgcolor: 'background.default', border: 1, borderColor: 'divider', color: 'text.primary',
-                  }}
-                >
-                  <Icon sx={{ fontSize: 20 }}/>
-                </Box>
+              <Card key={key}>
+                <Tile><Icon sx={{ fontSize: 22 }}/></Tile>
                 <Typography sx={{ fontWeight: 600, fontSize: 14.5, mb: 0.5 }}>
                   <T id={`welcome.features.${key}.title`}/>
                 </Typography>
                 <Typography variant='body2' color='text.secondary' sx={{ lineHeight: 1.5 }}>
                   <T id={`welcome.features.${key}.body`}/>
                 </Typography>
-              </Box>
+              </Card>
             ))}
           </Box>
-          <Typography variant='body2' color='text.secondary' sx={{ mt: 2, maxWidth: measure }}>
-            <T id='welcome.featuresAlso'/>
-          </Typography>
+          <Stack direction='row' sx={{ mt: 2.5, flexWrap: 'wrap', gap: 1, alignItems: 'center' }}>
+            <Typography variant='body2' color='text.secondary' sx={{ mr: 0.5 }}><T id='welcome.extrasLead'/></Typography>
+            {extras.map((key) => (
+              <Chip key={key} variant='outlined' label={translate(`welcome.extras.${key}`)} sx={{ height: 26, fontSize: 12.5 }}/>
+            ))}
+          </Stack>
         </Section>
 
         <Section>
@@ -237,32 +261,45 @@ export const WelcomePage = () => {
             </Box>
             <Box>
               <Overline><T id='welcome.needHeading'/></Overline>
-              <Stack component='ul' sx={{ m: 0, pl: 2.5, gap: 1, fontSize: 15 }}>
-                <li><T id='welcome.needs.domain'/></li>
-                <li><T id='welcome.needs.host'/></li>
-                <li><T id='welcome.needs.docker'/></li>
+              <Stack sx={{ gap: 1.5 }}>
+                {needs.map(({ key, Icon }) => (
+                  <Stack key={key} direction='row' sx={{ gap: 1.5, alignItems: 'center' }}>
+                    <Tile sx={{ mb: 0, flex: 'none' }}><Icon sx={{ fontSize: 22 }}/></Tile>
+                    <Typography sx={{ fontSize: 15 }}><T id={`welcome.needs.${key}`}/></Typography>
+                  </Stack>
+                ))}
               </Stack>
-              <Typography sx={{ mt: 2 }} variant='body2' color='text.secondary'>
+              <Typography sx={{ mt: 2.5 }} variant='body2' color='text.secondary'>
                 <T id='welcome.needsAfter'/>
               </Typography>
             </Box>
           </Box>
         </Section>
 
-        {/* The questions that stop people, answered in a line or two each
-            with a link to the document that says the rest. */}
+        {/* The questions that stop people. Folded, so the page shows the
+            questions and the reader opens the one that is theirs. */}
         <Section band>
           <Overline><T id='welcome.questionsHeading'/></Overline>
-          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' }, gap: { xs: 2.5, md: 4 } }}>
+          <Box sx={{ maxWidth: 760 }}>
             {questions.map((key) => (
-              <Box key={key}>
-                <Typography component='h3' sx={{ fontWeight: 600, fontSize: 15, mb: 0.5 }}>
-                  <T id={`welcome.questions.${key}.question`}/>
-                </Typography>
-                <Box sx={{ fontSize: 14.5, color: 'text.secondary', '& p': { m: 0 } }}>
+              <Accordion
+                key={key}
+                disableGutters
+                elevation={0}
+                sx={{
+                  bgcolor: 'transparent', '&::before': { display: 'none' },
+                  borderBottom: 1, borderColor: 'divider',
+                }}
+              >
+                <AccordionSummary expandIcon={<ExpandMoreIcon/>} sx={{ px: 0, minHeight: 48 }}>
+                  <Typography component='h3' sx={{ fontWeight: 600, fontSize: 15 }}>
+                    <T id={`welcome.questions.${key}.question`}/>
+                  </Typography>
+                </AccordionSummary>
+                <AccordionDetails sx={{ px: 0, pt: 0, pb: 2, fontSize: 14.5, color: 'text.secondary', '& p': { m: 0 } }}>
                   <Markdown html={answers[key]} compact/>
-                </Box>
-              </Box>
+                </AccordionDetails>
+              </Accordion>
             ))}
           </Box>
         </Section>
@@ -270,6 +307,27 @@ export const WelcomePage = () => {
     </div>
   )
 }
+
+// One card in a grid.
+const Card = ({ children }: { children: ReactNode }) => (
+  <Box sx={{ p: 2, border: 1, borderColor: 'divider', borderRadius: '12px', bgcolor: 'background.paper' }}>
+    {children}
+  </Box>
+)
+
+// The small square an icon sits in, the way the dashboard's tiles draw theirs.
+const Tile = ({ children, sx }: { children: ReactNode, sx?: object }) => (
+  <Box
+    sx={{
+      display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+      width: 40, height: 40, mb: 1.5, borderRadius: '10px',
+      bgcolor: 'background.default', border: 1, borderColor: 'divider', color: 'text.primary',
+      ...sx,
+    }}
+  >
+    {children}
+  </Box>
+)
 
 // One cell of the comparison. "yes" and "no" are drawn as a tick and a dash
 // so the table can be read from across the room; anything else is a note.

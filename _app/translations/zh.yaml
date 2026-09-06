@@ -32,9 +32,8 @@ notFound:
 welcome:
   headline: 自己的域名，已经在用的邮箱。
   lead: >-
-    TeaNode 是一个开源邮件服务器，让每个副业项目和早期创业公司都有一个自己域名下的真实地址。
-    它接收邮件，验证邮件是否真实，然后转发到你已经在读的邮箱，或者一个 webhook。回复以域名的身份签名发出，
-    真正送达，而不是落进垃圾箱。没有邮箱，也没有 IMAP：你现在在哪里读邮件，就继续在哪里读。
+    给每个副业项目和早期创业公司的开源邮件服务器。它接收你域名的邮件，转发到你已经在读的邮箱；
+    回复以域名的身份签名发出。没有邮箱，也没有 IMAP。
   getStarted: 开始使用
   readDocs: 阅读文档
   viewSource: 查看源码
@@ -65,18 +64,18 @@ welcome:
     report: 一份报告。哪些地址以这个域名发了邮件、发了多少，以及是否通过验证。
   examplesHeading: 举个例子
   examples:
-    hello: >-
-      放在产品发布页上。转发到创始人自己的邮箱，并用同一个地址回复。
-    support: >-
-      转发到一个 webhook，由它开一张工单；邮件在到达之前已经通过 SPF、DKIM 和 DMARC 检查。
-    noreply: >-
-      应用程序通过 TeaNode 发送登录验证码和收据，用的凭据只能以这一个地址发信。
+    hello: 放在产品发布页上，转发到创始人自己的邮箱。
+    support: 转发到一个 webhook，由它开一张工单。
+    noreply: 应用程序只用这个地址发送签名过的登录验证码和收据。
   whyHeading: 为什么
-  why: >-
-    为一个域名运行邮件服务，通常要么交给服务商，要么把 Postfix、Dovecot、OpenDKIM、OpenDMARC、
-    SpamAssassin 和一个策略守护进程拼装起来，并让它们保持一致。TeaNode 是一个程序和一个
-    PostgreSQL 数据库，决定你的邮件是否可信的身份验证是内建的。
+  stack:
+    usual: 通常的做法
+    usualNote: 六个程序，各有各的配置，靠人手让它们保持一致。
+    versus: 或者
+    teanode: 用 TeaNode
+    teanodeNote: 一个程序，一个数据库。身份验证是内建的。
   comparison:
+    heading: 和其他选择相比
     columns:
       teanode: TeaNode
       cloudflare: Cloudflare Email Routing
@@ -123,37 +122,35 @@ welcome:
     note: >-
       以 2026 年 9 月各家方案为准。方案会变，许可不会。
   featuresHeading: 它能做什么
+  extrasLead: 还有，需要时可以打开
+  extras:
+    dashboard: 内建仪表盘
+    cli: 命令行客户端
+    clamav: ClamAV
+    spamassassin: SpamAssassin
+    geoip: GeoIP
+    s3: S3 镜像
+    socks5: SOCKS5 代理
+    dns01: DNS-01 证书
   features:
     authenticates:
       title: 验证每一封邮件
-      body: >-
-        进来的邮件经过 SPF、DKIM、DMARC 和 ARC 检查，按邮件逐一显示。外发邮件带 DKIM 签名，
-        转发的邮件带 ARC 链，到了对方那里依然能通过验证。
+      body: 进来时检查 SPF、DKIM、DMARC 和 ARC，出去时签名。
     forwards:
       title: 灵活转发
-      body: >-
-        别名用模式匹配地址，转发到一个邮箱地址、一个 webhook 或另一台邮件服务器。
-        兜底别名接收其他别名都没有匹配到的邮件。
+      body: 用模式把每个地址送到邮箱、webhook 或另一台服务器。
     relays:
       title: 用自己的地址发信
-      body: >-
-        为每台设备配一份 SMTP 凭据，你的手机、电脑和应用程序就能以你的任何域名发信。
-        凭据可以限制为只用一个发件地址。
+      body: 每台设备一份 SMTP 凭据，可以限制为只用一个发件地址。
     shows:
       title: 让你看到邮件
-      body: >-
-        每一封邮件的判定、投递尝试，以及去掉脚本的正文，远程图片在你要求之前不会加载。
+      body: 每一封邮件的判定和投递尝试，正文安全地渲染。
     sends:
       title: 发送你写的邮件
-      body: >-
-        带变量和翻译的模板、包在外面的版式，以及从你自己的域名提供的图片。
+      body: 带变量和翻译的模板，外面套一个版式。
     reports:
       title: 报告你的域名状况
-      body: >-
-        收到的 DMARC 汇总报告会被解析并保存，这就是你发现有人伪造你的域名的方式。
-  featuresAlso: >-
-    仪表盘内建在服务器里，命令行客户端可以从任何地方访问同一套 API。ClamAV、SpamAssassin、GeoIP、
-    存储邮件的 S3 镜像、外发 SOCKS5 代理和 DNS-01 证书在你需要时都在，不需要时全部关闭。
+      body: 解析并保存 DMARC 报告，让你看到谁在以你的域名发信。
   startHeading: 开始使用
   startLead: 用 docker compose 执行四条命令，然后打开仪表盘。
   startAfter: >-
@@ -161,12 +158,10 @@ welcome:
   startWalkthrough: 快速开始
   needHeading: 你需要什么
   needs:
-    domain: 一个域名，以及编辑它的 DNS 的能力。
-    host: 一台地址稳定的主机，25、80、443 和 587 端口可以访问。
-    docker: 带 compose 的 Docker。compose 文件会替你启动 PostgreSQL。
-  needsAfter: >-
-    别的什么都不需要。不需要云账号。证书通过 HTTP-01 自动获取，
-    所以没有 DNS API 需要配置。
+    domain: 一个你能编辑 DNS 的域名。
+    host: 一台地址稳定、开放 25、80、443 和 587 端口的主机。
+    docker: 带 compose 的 Docker。PostgreSQL 随 compose 文件一起。
+  needsAfter: 别的什么都不需要。不需要云账号，不需要 DNS API，证书自动获取。
   questionsHeading: 常见问题
   questions:
     port25:

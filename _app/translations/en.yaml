@@ -32,12 +32,9 @@ notFound:
 welcome:
   headline: Your own domains. The inbox you already have.
   lead: >-
-    TeaNode is an open source mail server that gives every side project and
-    early startup a real address at its own domain. It receives the mail,
-    checks that it is genuine, and forwards it to the inbox you already read
-    or to a webhook. Replies go out signed as the domain, so they arrive
-    instead of landing in spam. There is no mailbox and no IMAP: you keep
-    reading mail where you read it now.
+    An open source mail server for every side project and early startup.
+    It receives mail for your domains and forwards it to the inbox you
+    already read; replies go out signed as the domain. No mailbox, no IMAP.
   getStarted: Get started
   readDocs: Read the documentation
   viewSource: View the source
@@ -68,23 +65,18 @@ welcome:
     report: One report. Which addresses sent mail as the domain, how much, and whether it passed.
   examplesHeading: For example
   examples:
-    hello: >-
-      On the launch page. Forwarded to the founder's own inbox, where it gets
-      answered from the same address.
-    support: >-
-      Forwarded to a webhook that opens a ticket, with the message already
-      checked against SPF, DKIM and DMARC.
-    noreply: >-
-      The application sends sign-in codes and receipts through TeaNode with a
-      credential that can only send as this one address.
+    hello: On the launch page, forwarded to the founder's own inbox.
+    support: Forwarded to a webhook that opens a ticket.
+    noreply: The app sends sign-in codes and receipts, signed, from this address only.
   whyHeading: Why
-  why: >-
-    Running mail for a domain usually means either handing it to a provider,
-    or assembling Postfix, Dovecot, OpenDKIM, OpenDMARC, SpamAssassin and a
-    policy daemon and keeping them in agreement. TeaNode is one program and a
-    PostgreSQL database, with the authentication that decides whether your
-    mail is trusted built in.
+  stack:
+    usual: The usual way
+    usualNote: Six programs, each with its own configuration, kept in agreement by hand.
+    versus: or
+    teanode: With TeaNode
+    teanodeNote: One program and one database. Authentication is built in.
   comparison:
+    heading: Against the alternatives
     columns:
       teanode: TeaNode
       cloudflare: Cloudflare Email Routing
@@ -132,45 +124,35 @@ welcome:
       As their plans stood in September 2026. Plans change; the licence does
       not.
   featuresHeading: What it does
+  extrasLead: Also, when you want them
+  extras:
+    dashboard: Dashboard built in
+    cli: Command line client
+    clamav: ClamAV
+    spamassassin: SpamAssassin
+    geoip: GeoIP
+    s3: S3 mirror
+    socks5: SOCKS5 proxy
+    dns01: DNS-01 certificates
   features:
     authenticates:
       title: Authenticates everything
-      body: >-
-        SPF, DKIM, DMARC and ARC on the way in, shown per message. Outbound
-        mail is DKIM signed, and forwarded mail carries an ARC chain so it
-        still passes at the far end.
+      body: SPF, DKIM, DMARC and ARC checked on the way in, signed on the way out.
     forwards:
       title: Forwards flexibly
-      body: >-
-        Aliases match addresses with a pattern and forward to an address, a
-        webhook, or another mail server. A catch-all takes whatever nothing
-        else matched.
+      body: Patterns route each address to an inbox, a webhook or another server.
     relays:
       title: Sends from your own addresses
-      body: >-
-        Per-device SMTP credentials, so your phone, laptop and applications
-        send as any of your domains. A credential can be limited to one
-        sender address.
+      body: Per-device SMTP credentials, each limited to one sender if you like.
     shows:
       title: Shows you the mail
-      body: >-
-        Every message with its verdicts, its delivery attempts, and the body
-        with scripts removed and remote images blocked until you ask.
+      body: Every message, its verdicts and delivery attempts, safely rendered.
     sends:
       title: Sends mail you write
-      body: >-
-        Templates with variables and translations, a layout around them, and
-        pictures served from your own domain.
+      body: Templates with variables, translations and a layout around them.
     reports:
       title: Reports on your domains
-      body: >-
-        Incoming DMARC aggregate reports are parsed and kept, which is how
-        you find out that somebody is forging your domain.
-  featuresAlso: >-
-    The dashboard is built into the server and a command line client reaches
-    the same API from anywhere. ClamAV, SpamAssassin, GeoIP, an S3 mirror of
-    stored mail, an outbound SOCKS5 proxy and DNS-01 certificates are there
-    when you want them, and off until you do.
+      body: DMARC reports parsed and kept, so you see who sends as your domain.
   startHeading: Getting started
   startLead: Four commands with docker compose, then open the dashboard.
   startAfter: >-
@@ -179,12 +161,10 @@ welcome:
   startWalkthrough: The quick start
   needHeading: What you need
   needs:
-    domain: A domain, and the ability to edit its DNS.
-    host: A host with a stable address, reachable on ports 25, 80, 443 and 587.
-    docker: Docker with compose. The compose file starts PostgreSQL for you.
-  needsAfter: >-
-    Nothing else. No cloud account. Certificates are obtained
-    automatically over HTTP-01, so there is no DNS API to configure.
+    domain: A domain whose DNS you can edit.
+    host: A host with a stable address and ports 25, 80, 443 and 587 open.
+    docker: Docker with compose. PostgreSQL comes with the compose file.
+  needsAfter: Nothing else. No cloud account, no DNS API; certificates are automatic.
   questionsHeading: Questions
   questions:
     port25:
