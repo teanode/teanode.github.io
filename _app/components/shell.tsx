@@ -35,6 +35,11 @@ import { Logo } from './logo'
 const railWidth = 280
 const barHeight = 56
 
+// How wide the front page's content is allowed to get, and the gutter beside
+// it. One value, shared by the bar, the sections and the footer, so that they
+// line up down the page instead of each choosing its own edge.
+export const pageWidth = { maxWidth: 1120, mx: 'auto', px: { xs: 2, md: 4 } }
+
 const RailContext = createContext<() => void>(() => {})
 
 export const RailFrame = ({ search, navigation, children }: {
@@ -162,24 +167,29 @@ export const PublicShell = ({ children }: { children?: ReactNode }) => {
   const translate = useTranslate()
   return (
     <Stack sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
-      <Stack
-        component='header'
-        direction='row'
-        sx={{ height: barHeight, alignItems: 'center', px: { xs: 2, md: 4 }, gap: 1, borderBottom: 1, borderColor: 'divider' }}
-      >
-        <Box component={NavLink} to={routes.welcomePath} sx={{ display: 'flex', textDecoration: 'none', '&:hover': { opacity: 0.75 } }} aria-label={translate('title')}>
-          <Logo size={22}/>
-        </Box>
-        <Box sx={{ flex: 1 }}/>
-        <Button component={NavLink} to={routes.docsPath} variant='text' size='small'>
-          <T id='nav.docs'/>
-        </Button>
-        <Button variant='text' size='small' href={links.repository} target='_blank' rel='noopener' startIcon={<GitHubIcon sx={{ fontSize: 18 }}/>}>
-          <T id='nav.github'/>
-        </Button>
-        <LanguageMenu/>
-        <AppearanceMenu/>
-      </Stack>
+      {/* The bar runs the full width, so the rule under it does; what is on
+          it sits within the same measure as the page below, so the mark and
+          the links line up with the content rather than hugging the window's
+          edges on a wide monitor. */}
+      <Box component='header' sx={{ borderBottom: 1, borderColor: 'divider' }}>
+        <Stack
+          direction='row'
+          sx={{ ...pageWidth, height: barHeight, alignItems: 'center', gap: 1 }}
+        >
+          <Box component={NavLink} to={routes.welcomePath} sx={{ display: 'flex', textDecoration: 'none', '&:hover': { opacity: 0.75 } }} aria-label={translate('title')}>
+            <Logo size={22}/>
+          </Box>
+          <Box sx={{ flex: 1 }}/>
+          <Button component={NavLink} to={routes.docsPath} variant='text' size='small'>
+            <T id='nav.docs'/>
+          </Button>
+          <Button variant='text' size='small' href={links.repository} target='_blank' rel='noopener' startIcon={<GitHubIcon sx={{ fontSize: 18 }}/>}>
+            <T id='nav.github'/>
+          </Button>
+          <LanguageMenu/>
+          <AppearanceMenu/>
+        </Stack>
+      </Box>
       <Box component='main' sx={{ flex: 1 }}>{children}</Box>
       <Footer/>
     </Stack>
@@ -187,21 +197,21 @@ export const PublicShell = ({ children }: { children?: ReactNode }) => {
 }
 
 export const Footer = () => (
-  <Stack
-    component='footer'
-    direction={{ xs: 'column', sm: 'row' }}
-    sx={{
-      px: { xs: 2, md: 4 }, py: 3, gap: { xs: 1, sm: 3 },
-      borderTop: 1, borderColor: 'divider',
-      alignItems: { sm: 'center' }, fontSize: 13, color: 'text.secondary',
-    }}
-  >
-    <Typography variant='body2' color='text.secondary' sx={{ flex: 1 }}>
-      <T id='footer.licence'/>
-    </Typography>
-    <Link component={NavLink} to={routes.docsPath} variant='body2' color='text.secondary'><T id='nav.docs'/></Link>
-    <Link href={links.releases} variant='body2' color='text.secondary' target='_blank' rel='noopener'><T id='nav.releases'/></Link>
-    <Link href={links.security} variant='body2' color='text.secondary' target='_blank' rel='noopener'><T id='footer.security'/></Link>
-    <Link href={links.repository} variant='body2' color='text.secondary' target='_blank' rel='noopener'><T id='nav.github'/></Link>
-  </Stack>
+  <Box component='footer' sx={{ borderTop: 1, borderColor: 'divider' }}>
+    <Stack
+      direction={{ xs: 'column', sm: 'row' }}
+      sx={{
+        ...pageWidth, py: 3, gap: { xs: 1, sm: 3 },
+        alignItems: { sm: 'center' }, fontSize: 13, color: 'text.secondary',
+      }}
+    >
+      <Typography variant='body2' color='text.secondary' sx={{ flex: 1 }}>
+        <T id='footer.licence'/>
+      </Typography>
+      <Link component={NavLink} to={routes.docsPath} variant='body2' color='text.secondary'><T id='nav.docs'/></Link>
+      <Link href={links.releases} variant='body2' color='text.secondary' target='_blank' rel='noopener'><T id='nav.releases'/></Link>
+      <Link href={links.security} variant='body2' color='text.secondary' target='_blank' rel='noopener'><T id='footer.security'/></Link>
+      <Link href={links.repository} variant='body2' color='text.secondary' target='_blank' rel='noopener'><T id='nav.github'/></Link>
+    </Stack>
+  </Box>
 )

@@ -10,7 +10,7 @@ import GitHubIcon from '@mui/icons-material/GitHub'
 
 import { Markdown, renderMarkdown } from '../components/markdown'
 import { Mark } from '../components/logo'
-import { PublicShell } from '../components/shell'
+import { pageWidth, PublicShell } from '../components/shell'
 import { T, useTranslate } from '../i18n'
 import routes, { links } from '../routes'
 
@@ -166,7 +166,7 @@ const Section = ({ children, band, sx }: { children: React.ReactNode, band?: boo
       ...(band && { bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#0c0c0e' : '#f7f7f6'), borderTop: 1, borderBottom: 1, borderColor: 'divider' }),
     }}
   >
-    <Box sx={{ maxWidth: 1120, mx: 'auto', px: { xs: 2, md: 4 }, py: { xs: 4, md: 6 }, ...sx }}>
+    <Box sx={{ ...pageWidth, py: { xs: 4, md: 6 }, ...sx }}>
       {children}
     </Box>
   </Box>
