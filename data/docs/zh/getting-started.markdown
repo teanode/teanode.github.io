@@ -6,7 +6,7 @@
 
 - **一个域名**，以及编辑它的 DNS 记录的权限。
 - **一台地址稳定的主机**，从互联网可以访问它的 25、80、443 和 587 端口。
-- **PostgreSQL**，用来保存服务器处理过的邮件和配置。
+- **PostgreSQL**。它保存一切：配置、签名密钥，以及服务器处理过的邮件。它是唯一需要备份的东西。
 
 ### 25 端口的问题
 
@@ -28,7 +28,9 @@
       https://github.com/ziyan/teanode/releases/latest/download/teanode-linux-amd64
     chmod +x /usr/local/bin/teanode-server /usr/local/bin/teanode
 
-`teanode-server` 是服务器，仪表盘就在它里面，所以没有别的东西需要安装或提供服务。`teanode` 是管理它的客户端，服务器上和你自己的电脑上都应该有一份；它有 macOS 构建。也有一个容器镜像，两者都在里面，`deploy/` 目录里有 compose 文件。
+`teanode-server` 是服务器，仪表盘就在它里面，所以没有别的东西需要安装或提供服务。`teanode` 是管理它的客户端，服务器上和你自己的电脑上都应该有一份；它有 macOS 构建。
+
+也有一个容器镜像，两个程序都在里面，而那是运行它的更好方式：见 **[reference/deployment.md](https://github.com/ziyan/teanode/blob/main/docs/reference/deployment.md)**，它替代这里的第 1 步和第 2 步。本页其余部分——DNS、认领仪表盘——两种方式都适用。
 
 ## 2. 描述服务器
 
@@ -107,6 +109,23 @@
 
 仪表盘会按域名准确列出哪些 DNS 记录还缺失或有误，让你看到还剩什么，而不是靠猜。它会定期检查，不需要刷新页面。
 
+### 如果你被锁在外面
+
+没有通过邮件重置密码这回事；服务器自己所在的主机是回去的路。在它上面，把服务器的环境变量放进 shell——容器里本来就有——客户端就以控制台的身份连接服务器，可以添加账户或设置密码：
+
+    teanode user create you
+    teanode user password you
+
+    docker compose exec teanode teanode user create you      # 在容器里
+
+当服务器没有运行，或者在运行但没有人能登录、控制台也连不上时，`teanode-server user` 直接编辑存储的配置，只需要数据库：
+
+    teanode-server user list
+    teanode-server user add you
+    teanode-server user password you
+
+`teanode-server user reset` 删除所有账户，之后下一个访问仪表盘的人会创建一个，就像第一天那样。在有人认领之前，任何能访问仪表盘的人都可以认领它，所以不要让它停在那个状态。
+
 ## 6. 给自己发一封
 
 从别处的账户给 `hello@example.com` 发一封邮件。几秒钟内它应该出现在仪表盘的邮件列表里，显示发件方的 SPF、DKIM 和 DMARC 判定，以及一次投递到你用 `--forward-to` 设置的地址的尝试。
@@ -122,5 +141,6 @@
 - **更多地址。** 别名用正则表达式匹配，所以 `^(sales|support)$` 是一个别名。空的模式是兜底别名，接收其他别名都没有匹配到的邮件。
 - **从你自己的设备发信。** 在域名的设置页为每台设备添加一份凭据；每份都可以限制为一个发件地址。它们在 587 端口上认证。
 - **更多域名。** 每个域名默认有自己的签名密钥。如果你希望它们共用一个，用 CNAME 把 `<selector>._domainkey` 指向主域名，仪表盘会显示要发布的记录。
+- **[reference/deployment.md](https://github.com/ziyan/teanode/blob/main/docs/reference/deployment.md)** 是同一台服务器用 compose 文件运行的方式，包括升级、备份，以及它启动不了时该怎么办。
 - **[配置](/doc/configuration)** 记录了每一个字段。
 - **[命令行](/doc/command-line)** 介绍 CLI，它可以访问整个 API，做重复性的事情时是更好的工具。

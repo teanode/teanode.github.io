@@ -7,7 +7,7 @@
       "ja": "はじめに"
     },
     "title": {
-      "en": "What TeaNode is",
+      "en": "What is TeaNode",
       "zh": "TeaNode 是什么",
       "ja": "TeaNode とは"
     },
@@ -147,7 +147,9 @@
       "ja": "悪用できる問題をどこへ報告するか、何が対象で、何が対象外か。"
     },
     "filename": {
-      "en": "en/security.markdown"
+      "en": "en/security.markdown",
+      "zh": "zh/security.markdown",
+      "ja": "ja/security.markdown"
     }
   },
   {
@@ -189,7 +191,9 @@
       "ja": "命名、コメント、破ると痛い不変条件、テスト、コミット、そしてリリースを切る変更履歴。"
     },
     "filename": {
-      "en": "en/contributing.markdown"
+      "en": "en/contributing.markdown",
+      "zh": "zh/contributing.markdown",
+      "ja": "ja/contributing.markdown"
     }
   },
   {
@@ -210,7 +214,9 @@
       "ja": "動くビルドと、それが向くデータベース、メールを送れない開発サーバー、そして任意のスキャナー。"
     },
     "filename": {
-      "en": "en/local-development.markdown"
+      "en": "en/local-development.markdown",
+      "zh": "zh/local-development.markdown",
+      "ja": "ja/local-development.markdown"
     }
   },
   {
@@ -231,7 +237,9 @@
       "ja": "各パッケージが何のためにあり、依存がどちらを向いているか。"
     },
     "filename": {
-      "en": "en/project-structure.markdown"
+      "en": "en/project-structure.markdown",
+      "zh": "zh/project-structure.markdown",
+      "ja": "ja/project-structure.markdown"
     }
   }
 ]
