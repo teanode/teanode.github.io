@@ -18,19 +18,43 @@ import { brand } from '../theme'
 const reducedMotion = () =>
   typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-// The dashed lines. Each is drawn at one pixel per unit in a box 2800 wide,
-// centred on the section and pinned to its top or bottom edge, so it stays
-// in the margin however tall the section turns out and stays the same size
-// however wide the window is: an envelope is an envelope, not a billboard.
-// The middle 1400 units are what a laptop sees; wider windows see more of
-// the line, narrower ones less. One line runs above the diagram on the
-// right, one along the foot, and neither crosses a word or a box.
-const width = 2800
+// The dashed lines. Each is drawn at one pixel per unit in a box far wider
+// than any window, centred on the section and pinned to its top or bottom
+// edge, so it stays in the margin however tall the section turns out and
+// stays the same size however wide the window is: an envelope is an
+// envelope, not a billboard. One line runs above the diagram on the right,
+// from the middle out, and one along the foot the whole way across; neither
+// crosses a word or a box.
+const width = 6000
+const centre = width / 2
+
+// A gentle meander from one x to another between two heights: a run of
+// curves joined tangent to tangent.
+const meander = (from: number, to: number, low: number, high: number, step: number): string => {
+  let d = `M ${from} ${(low + high) / 2}`
+  let x = from
+  let up = true
+  let first = true
+  while (x < to) {
+    const next = Math.min(x + step, to)
+    const y = up ? low : high
+    if (first) {
+      d += ` C ${x + step * 0.4} ${(low + high) / 2}, ${x + step * 0.6} ${y}, ${next} ${y}`
+      first = false
+    } else {
+      d += ` S ${x + step * 0.6} ${y}, ${next} ${y}`
+    }
+    x = next
+    up = !up
+  }
+  return d
+}
+
 type Line = { d: string, height: number, edge: 'top' | 'bottom', opacity: number, envelopes: { duration: number, begin: number }[], rest: [number, number] }
 
 const routes: Line[] = [
-  { d: 'M 1420 30 C 1650 150, 1760 50, 2140 150 S 2520 60, 2840 120', height: 200, edge: 'top', opacity: 0.4, envelopes: [{ duration: 30, begin: -6 }], rest: [1700, 96] },
-  { d: 'M -40 60 C 300 20, 500 90, 700 40 C 1000 90, 1400 0, 1700 45 S 2000 90, 2140 20 S 2500 70, 2840 40', height: 100, edge: 'bottom', opacity: 0.55, envelopes: [{ duration: 44, begin: 0 }, { duration: 44, begin: -22 }], rest: [1120, 40] },
+  { d: meander(centre + 20, width + 40, 40, 150, 720), height: 200, edge: 'top', opacity: 0.4, envelopes: [{ duration: 70, begin: -8 }, { duration: 70, begin: -43 }], rest: [centre + 300, 96] },
+  { d: meander(-40, width + 40, 20, 80, 600), height: 100, edge: 'bottom', opacity: 0.55, envelopes: [0, 1, 2, 3, 4, 5].map((at) => ({ duration: 140, begin: -at * 23 })), rest: [centre - 280, 50] },
 ]
 
 // A shorter route for the head of a document: one line above the title, one
