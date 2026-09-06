@@ -105,7 +105,9 @@
       "ja": "設定がどこにあるか、そこへ辿り着くための環境変数、そして運用者が設定できるすべての項目。"
     },
     "filename": {
-      "en": "en/configuration.markdown"
+      "en": "en/configuration.markdown",
+      "zh": "zh/configuration.markdown",
+      "ja": "ja/configuration.markdown"
     }
   },
   {

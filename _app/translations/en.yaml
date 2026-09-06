@@ -1,7 +1,7 @@
 ---
 language: English
 title: TeaNode
-tagline: Receive and send email at your own domains, from the inbox you already have.
+tagline: Open source mail server to receive and send email at your own domains, from the inbox you already have.
 nav:
   docs: Documentation
   github: GitHub
