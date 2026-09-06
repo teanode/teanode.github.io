@@ -45,6 +45,8 @@ welcome:
   screenshotsHeading: What it looks like
   previous: Previous page
   next: Next page
+  openPicture: Open the picture full screen
+  closePicture: Close
   screenshots:
     mail: The mail list, filtered to one domain. Every message the server has handled and what it decided about each one.
     message: One message. The authentication checks with their evidence, every delivery attempt, and the message itself with scripts removed.

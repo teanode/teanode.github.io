@@ -43,6 +43,8 @@ welcome:
   screenshotsHeading: どんな見た目か
   previous: 前のページ
   next: 次のページ
+  openPicture: 画像を全画面で開く
+  closePicture: 閉じる
   screenshots:
     mail: ひとつのドメインに絞り込んだメール一覧。サーバーが扱ったすべてのメールと、それぞれについて下した判断。
     message: 一通のメール。認証の検査とその根拠、すべての配送の試行、そしてスクリプトを取り除いたメール本体。
