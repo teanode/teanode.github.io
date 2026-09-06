@@ -7,7 +7,7 @@ message moves through the system, see [`AGENTS.md`](https://github.com/ziyan/tea
     cmd/teanode/            the client's entry point
     internal/               all real code, including both programs' subcommands
     web/                    dashboard source, built into internal/frontend/static
-    deploy/                 docker compose files and the image's Dockerfile
+    deploy/                 systemd unit, docker compose, example configuration
     docs/                   see docs/decisions/20260818-documentation-layout.md
     vendor/                 vendored dependencies, committed
 

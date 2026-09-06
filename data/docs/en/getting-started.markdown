@@ -9,8 +9,8 @@ You need three things:
 - **A domain**, and access to edit its DNS records.
 - **A host with a stable address**, reachable from the internet on ports 25,
   80, 443 and 587.
-- **PostgreSQL**. It holds everything: the configuration, the signing keys,
-  and the mail the server has handled. It is the one thing to back up.
+- **PostgreSQL**, which stores the mail the server has handled. The
+  configuration and the keys are in a file; the database holds the history.
 
 ### The port 25 problem
 
@@ -155,6 +155,31 @@ anybody else to find it. If you would rather not race:
 The dashboard lists exactly which DNS records are still missing or wrong, per
 domain, so you can see what is left rather than guessing. It checks
 periodically; there is no need to reload it.
+
+### If you are locked out
+
+There is no password reset by mail; the server's own host is the way back
+in. On it, with the server's environment in the shell — which a container
+already has — the client reaches the server as the console and can add an
+account or set a password:
+
+    teanode user create you
+    teanode user password you
+
+    docker compose exec teanode teanode user create you      # in a container
+
+When the server is not running, or is running but nobody can sign in and the
+console cannot reach it either, `teanode-server user` edits the stored
+configuration directly and needs only the database:
+
+    teanode-server user list
+    teanode-server user add you
+    teanode-server user password you
+
+`teanode-server user reset` removes every account, after which the next
+visitor to the dashboard creates one, as on the first day. Anyone who can
+reach the dashboard can claim it until somebody does, so do not leave it in
+that state.
 
 ## 6. Send yourself something
 
