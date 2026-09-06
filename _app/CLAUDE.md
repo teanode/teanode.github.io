@@ -29,6 +29,7 @@ served site:
 | Path | Served |
 | --- | --- |
 | `index.html`, `404.html`, `favicon.*`, `robots.txt`, `sitemap.txt` | yes |
+| `doc.html`, `doc/` | yes: the application again, one page per document |
 | `static/`, `data/` | yes, including every document |
 | `_app/`, `_bin/`, `.github/` | no |
 
@@ -75,10 +76,16 @@ font `<link>`, a CDN script, or a remote stylesheet.
     npm run lint      # eslint and tsc; vite strips types and never checks them
     npm run build     # vite, then _bin/html.js, then _bin/sitemap.js
 
-The build output is committed. `static/` holds the hashed bundle and
-stylesheet; `index.html` and `404.html` at the root are written from the page
-vite emits, the same bytes in both so a deep link opens the application. CI
-rebuilds and refuses a commit whose committed output does not match.
+The build output is committed. `static/` holds the hashed bundle,
+stylesheet and pictures; `index.html` and `404.html` at the root are written
+from the page vite emits, the same bytes in both so a deep link opens the
+application. `doc.html` and `doc/<slug>.html` are that page once more per
+document, with the document's English title, description and address in the
+head, so that a link to a document unfurls as that document: an unfurler does
+not run the application. The preview picture is `assets/og.png`, 1200×630,
+shared by every page; its address in the head is rewritten to the hashed name
+under `/static/` by vite and made absolute by `_bin/html.js`. CI rebuilds and
+refuses a commit whose committed output does not match.
 
 ## Languages
 
@@ -131,6 +138,7 @@ Headings get ids from their text, so a link to a section is
       pages/           one file per page
     _bin/              build scripts; not served
     data/              the documents, fetched at runtime
+    doc.html, doc/     the application, one page per document, committed
     static/            build output, committed, pictures included
 
 ## Serving

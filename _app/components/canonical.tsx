@@ -25,6 +25,14 @@ export const Canonical = () => {
     // The path only. Nothing here reads a query string, so one appended by
     // whatever carried the link is not part of the address of the page.
     link.setAttribute('href', site + location.pathname)
+    // The address in the link preview says the same. It is the only preview
+    // tag rewritten here: the served page for a document already carries that
+    // document's title and description, written by _bin/html.js, and the
+    // front page's own are in index.html.
+    const preview = document.querySelector('meta[property="og:url"]')
+    if (preview) {
+      preview.setAttribute('content', site + location.pathname)
+    }
   }, [location.pathname])
 
   return null

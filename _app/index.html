@@ -5,6 +5,35 @@
     <title>TeaNode</title>
     <meta name="description" content="Open source mail server to receive and send email at your own domains, from the inbox you already have. Small enough to run yourself, for every side project and early startup: SPF, DKIM, DMARC and ARC, forwarding, and sending from your own addresses.">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <link rel="canonical" href="https://teanode.com/">
+
+    <!-- What a link to the site unfurls into, on Slack, iMessage, Mastodon,
+         LinkedIn and the rest. The image is one card for every page: a
+         per-page picture would need a renderer, and the title and description
+         already say which page it is. X reads these too, and its own
+         twitter:card tag is what asks it for the large picture rather than the
+         thumbnail. _bin/html.js writes a copy of this page per document with
+         the title, description and address swapped in, since a crawler does
+         not run the application and would otherwise see the front page's
+         words on every link. -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="TeaNode">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:locale:alternate" content="zh_CN">
+    <meta property="og:locale:alternate" content="ja_JP">
+    <meta property="og:url" content="https://teanode.com/">
+    <meta property="og:title" content="TeaNode">
+    <meta property="og:description" content="Open source mail server to receive and send email at your own domains, from the inbox you already have. Small enough to run yourself, for every side project and early startup: SPF, DKIM, DMARC and ARC, forwarding, and sending from your own addresses.">
+    <meta property="og:image" content="./assets/og.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="TeaNode: open source mail server to receive and send email at your own domains, from the inbox you already have.">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="TeaNode">
+    <meta name="twitter:description" content="Open source mail server to receive and send email at your own domains, from the inbox you already have. Small enough to run yourself, for every side project and early startup: SPF, DKIM, DMARC and ARC, forwarding, and sending from your own addresses.">
+    <meta name="twitter:image" content="./assets/og.png">
+    <meta name="twitter:image:alt" content="TeaNode: open source mail server to receive and send email at your own domains, from the inbox you already have.">
     <meta name="color-scheme" content="light dark">
     <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
     <link rel="alternate icon" href="/favicon.ico">

@@ -10,15 +10,27 @@
 // repository root.
 //
 // 404.html gets the same bytes. Routing is done in the browser by the history
-// API, so every path other than / is a file GitHub Pages does not have, and
-// what it serves for those is 404.html. Handing it the application means a
-// deep link opens the page rather than GitHub's own not-found notice. It is
-// written from the same string as index.html rather than copied afterwards, so
-// the two cannot come to point at different bundles.
+// API, so a path this script has not written a file for is one GitHub Pages
+// does not have, and what it serves for those is 404.html. Handing it the
+// application means a deep link opens the page rather than GitHub's own
+// not-found notice. It is written from the same string as index.html rather
+// than copied afterwards, so the two cannot come to point at different
+// bundles.
 //
 // This is only how teanode.github.io behaves. teanode.com is fronted by a
 // CloudFront distribution that answers any 404 from the origin with / as a
 // 200, so there the file is never reached.
+//
+// The documents get a page each: doc.html for /doc, and doc/<slug>.html for
+// /doc/<slug>, which GitHub Pages serves at the address without the extension.
+// Each is the same page again with the title, description and address of that
+// document in the head, in English. The application ignores the head and
+// renders the document as before; the difference is what a crawler sees. One
+// that does not run the application, which is every link unfurler, would
+// otherwise show the front page's title and words for a link to any document.
+// The files are named with an extension rather than as doc/<slug>/index.html
+// because GitHub Pages answers a directory without a trailing slash with a
+// redirect to one, and the canonical address has no slash.
 
 const fs = require('fs')
 const path = require('path')
@@ -26,6 +38,42 @@ const path = require('path')
 const ROOT = path.join(__dirname, '..')
 const SOURCE = path.join(ROOT, 'static', 'index.html')
 const OUTPUTS = [path.join(ROOT, 'index.html'), path.join(ROOT, '404.html')]
+const DOCS = path.join(ROOT, 'data', 'docs.json')
+// The canonical host, as components/canonical.tsx and sitemap.js have it. A
+// preview image has to be an absolute address: the unfurler fetching it is
+// not on this site.
+const SITE = 'https://teanode.com'
+
+const escape = (text) => text
+  .replace(/&/g, '&amp;')
+  .replace(/"/g, '&quot;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;')
+
+// Rewrites one head tag's value. The tag has to be there already: index.html
+// is where the set of tags is decided, and a page that silently lacked one
+// would be a page whose preview quietly fell back to the front page's.
+const replaceTag = (html, pattern, value) => {
+  if (!pattern.test(html)) {
+    throw new Error(`static/index.html has no ${pattern}; the head in _app/index.html changed`)
+  }
+  return html.replace(pattern, (match, before, _old, after) => `${before}${value}${after}`)
+}
+
+// The head, with a document's own words in place of the front page's.
+const headed = (html, { title, description, url, type }) => {
+  let page = html
+  page = replaceTag(page, /(<title>)([^<]*)(<\/title>)/, escape(title))
+  page = replaceTag(page, /(<meta name="description" content=")([^"]*)(")/, escape(description))
+  page = replaceTag(page, /(<link rel="canonical" href=")([^"]*)(")/, url)
+  page = replaceTag(page, /(<meta property="og:type" content=")([^"]*)(")/, type)
+  page = replaceTag(page, /(<meta property="og:url" content=")([^"]*)(")/, url)
+  page = replaceTag(page, /(<meta property="og:title" content=")([^"]*)(")/, escape(title))
+  page = replaceTag(page, /(<meta property="og:description" content=")([^"]*)(")/, escape(description))
+  page = replaceTag(page, /(<meta name="twitter:title" content=")([^"]*)(")/, escape(title))
+  page = replaceTag(page, /(<meta name="twitter:description" content=")([^"]*)(")/, escape(description))
+  return page
+}
 
 const minify = (html) => html
   // HTML comments explain the markup to whoever edits it, and the browser has
@@ -77,12 +125,50 @@ if (missing.length) {
   )
 }
 
+// vite rewrote the preview image to its hashed name under /static/, as a
+// path. Only now, after the check above has seen it as one, does it become
+// the absolute address an unfurler needs.
+const absolute = html.replace(
+  /(<meta (?:property="og:image"|name="twitter:image") content=")(\/static\/[^"]+)(")/g,
+  (match, before, href, after) => `${before}${SITE}${href}${after}`,
+)
+if (absolute === html) {
+  throw new Error('static/index.html names no preview image under /static/; _app/index.html should have og:image and twitter:image')
+}
+
 for (const output of OUTPUTS) {
-  fs.writeFileSync(output, html)
+  fs.writeFileSync(output, absolute)
+}
+
+const docs = JSON.parse(fs.readFileSync(DOCS, 'utf8'))
+const pages = [
+  {
+    output: path.join(ROOT, 'doc.html'),
+    title: 'Documentation - TeaNode',
+    description: 'How to install, configure and run TeaNode, and what is inside it.',
+    url: `${SITE}/doc`,
+    type: 'website',
+  },
+  ...docs.map((doc) => ({
+    output: path.join(ROOT, 'doc', `${doc.slug}.html`),
+    // The same title the application sets once it has rendered the document.
+    title: `${doc.title.en} - TeaNode`,
+    description: doc.description.en,
+    url: `${SITE}/doc/${doc.slug}`,
+    type: 'article',
+  })),
+]
+
+// A document taken out of the index takes its page with it, so that the
+// address does not go on answering with a head for something that is gone.
+fs.rmSync(path.join(ROOT, 'doc'), { recursive: true, force: true })
+fs.mkdirSync(path.join(ROOT, 'doc'))
+for (const page of pages) {
+  fs.writeFileSync(page.output, headed(absolute, page))
 }
 
 // Deliberately left where vite wrote it, so this can be run again without a
 // rebuild. .gitignore keeps it uncommitted, so nothing serves it.
 
 const names = OUTPUTS.map(output => path.basename(output)).join(' and ')
-console.log(`wrote ${names} for ${bundle} (${html.length} bytes)`)
+console.log(`wrote ${names} and ${pages.length} document pages for ${bundle} (${absolute.length} bytes)`)

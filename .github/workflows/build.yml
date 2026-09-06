@@ -50,7 +50,7 @@ jobs:
         # deletion of the old name plus a new file, and a diff-based check
         # would go green on a commit whose index.html names a bundle nobody
         # committed.
-        changed=$(git status --porcelain -- static index.html 404.html sitemap.txt)
+        changed=$(git status --porcelain -- static index.html 404.html doc.html doc sitemap.txt)
         if [ -n "$changed" ]; then
           echo "$changed"
           echo
