@@ -290,7 +290,7 @@ SES 需要从 IAM 用户派生的 SMTP 凭据，而不是访问密钥本身，�
 
 ### `dkim`
 
-**`selector`**——给新创建域名的密钥的选择器。它在 DNS 中表现为 <selector>._domainkey.<domain>，所以只需在域名内唯一，在这里改变它不影响已创建的域名。
+**`selector`**——给新创建域名的密钥的选择器。它在 DNS 中表现为 `<selector>._domainkey.<domain>`，所以只需在域名内唯一，在这里改变它不影响已创建的域名。
 
 ### `domains[]`
 
