@@ -21,6 +21,8 @@ docs:
   noneMatch: Nothing matches that.
   notFound: That document does not exist.
   onThisPage: On this page
+  previous: Previous
+  next: Next
   failed: That document could not be loaded.
   copy: Copy
   copied: Copied

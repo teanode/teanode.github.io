@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type MouseEvent } from 'react'
-import { generatePath, Navigate, useParams } from 'react-router'
+import { generatePath, Navigate, NavLink, useParams } from 'react-router'
 import Box from '@mui/material/Box'
 import InputAdornment from '@mui/material/InputAdornment'
 import List from '@mui/material/List'
@@ -9,8 +9,11 @@ import Typography from '@mui/material/Typography'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { useTheme } from '@mui/material/styles'
 import SearchIcon from '@mui/icons-material/Search'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 
 import { type Doc, fetchDoc, inLanguage, listDocs } from '../docs'
+import { Route, Steam } from '../components/decoration'
 import { headingOffset, Markdown, renderMarkdown, type Heading } from '../components/markdown'
 import { GroupLabel, RailFrame, RailLink } from '../components/shell'
 import { Spinner } from '../components/loading'
@@ -180,7 +183,10 @@ export const DocPage = () => {
           </>
         }
       >
-        <Stack direction='row' sx={{ flex: 1, minWidth: 0 }}>
+        {/* Clipped sideways, not hidden: the steam at the foot of a document
+            is drawn wider than the column and the overhang must go, but a
+            scroll container here would stop the contents list sticking. */}
+        <Stack direction='row' sx={{ flex: 1, minWidth: 0, position: 'relative', overflowX: 'clip' }}>
           <Box
             component='main'
             sx={{ flex: 1, minWidth: 0, px: { xs: 2.5, md: 6 }, py: { xs: 3, md: 5 }, maxWidth: 820 }}
@@ -191,11 +197,21 @@ export const DocPage = () => {
             ) }
             { current && (
               <>
-                <Typography variant='h1'>{current.title}</Typography>
-                <Typography color='text.secondary' sx={{ mt: 1.5, mb: 4 }}>{current.description}</Typography>
+                {/* A letter on its way across the head of the document, behind
+                    the title, and nothing more than that. */}
+                <Box sx={{ position: 'relative' }}>
+                  <Box aria-hidden='true' sx={{ position: 'absolute', left: -48, right: -48, top: -36, bottom: 0, overflow: 'hidden', opacity: 0.7 }}>
+                    <Route short/>
+                  </Box>
+                  <Box sx={{ position: 'relative' }}>
+                    <Typography variant='h1'>{current.title}</Typography>
+                    <Typography color='text.secondary' sx={{ mt: 1.5, mb: 4 }}>{current.description}</Typography>
+                  </Box>
+                </Box>
                 { content === null && (<Spinner/>) }
                 { content === '' && (<Typography color='text.secondary'><T id='docs.failed'/></Typography>) }
                 { content && (<Markdown html={html}/>) }
+                { content && (<Neighbours docs={available} current={current}/>) }
               </>
             ) }
           </Box>
@@ -242,6 +258,47 @@ export const DocPage = () => {
     </div>
   )
 }
+
+// The documents either side of this one, in the order the index lists them,
+// as two cards at the foot of the page. The steam crosses above them, the way
+// it crosses the seams of the front page.
+const Neighbours = ({ docs, current }: { docs: ReadableDoc[], current: ReadableDoc }) => {
+  const at = docs.findIndex((doc) => doc.slug === current.slug)
+  const previous = at > 0 ? docs[at - 1] : undefined
+  const next = at >= 0 && at < docs.length - 1 ? docs[at + 1] : undefined
+  if (!previous && !next) {
+    return null
+  }
+  return (
+    <Box component='nav' aria-label='neighbours' sx={{ position: 'relative', mt: 8, pt: 4 }}>
+      <Steam bleed/>
+      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 1.5 }}>
+        { previous ? (<Neighbour doc={previous} direction='previous'/>) : <span/> }
+        { next && (<Neighbour doc={next} direction='next'/>) }
+      </Box>
+    </Box>
+  )
+}
+
+const Neighbour = ({ doc, direction }: { doc: ReadableDoc, direction: 'previous' | 'next' }) => (
+  <Box
+    component={NavLink}
+    to={generatePath(routes.docPath, { docId: doc.slug })}
+    sx={{
+      display: 'flex', flexDirection: 'column', gap: 0.5, p: 2, borderRadius: '12px', border: 1, borderColor: 'divider',
+      bgcolor: 'background.paper', textDecoration: 'none', color: 'text.primary',
+      alignItems: direction === 'next' ? 'flex-end' : 'flex-start', textAlign: direction === 'next' ? 'right' : 'left',
+      '&:hover': { borderColor: 'text.secondary' },
+    }}
+  >
+    <Stack direction='row' sx={{ alignItems: 'center', gap: 0.5, color: 'text.secondary', fontSize: 12.5, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+      { direction === 'previous' && <ArrowBackIcon sx={{ fontSize: 15 }}/> }
+      <T id={`docs.${direction}`}/>
+      { direction === 'next' && <ArrowForwardIcon sx={{ fontSize: 15 }}/> }
+    </Stack>
+    <Typography sx={{ fontWeight: 600, fontSize: 15 }}>{doc.title}</Typography>
+  </Box>
+)
 
 // Which section is being read, from where the page is scrolled to: the
 // heading passed last, which is a comparison against one line and reads the

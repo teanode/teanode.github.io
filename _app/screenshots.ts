@@ -29,6 +29,19 @@ export const screenshot = (page: string, theme: ScreenshotTheme, language: strin
 export const screenshotPages = ['dns', 'aliases', 'message', 'mail', 'report', 'reports', 'templates', 'template', 'layout'] as const
 export type ScreenshotPage = typeof screenshotPages[number]
 
+// Where each picture was taken, for the address bar drawn over it.
+export const screenshotPaths: Record<ScreenshotPage, string> = {
+  dns: '/domains/example.com/settings',
+  aliases: '/domains/example.com/aliases',
+  message: '/mail/01m1m6e821vyp24yhdfk6p0ctt',
+  mail: '/mail?domain=example.com',
+  report: '/reports/01m1t2jh707k02dgeaejszkd2m',
+  reports: '/reports',
+  templates: '/domains/example.com/templates',
+  template: '/domains/example.com/templates/login',
+  layout: '/domains/example.com/layouts/base',
+}
+
 // Every dashboard screenshot is this shape, so a slot the size of one can be
 // laid out before it loads.
 export const screenshotWidth = 1505

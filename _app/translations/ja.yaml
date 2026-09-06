@@ -21,6 +21,8 @@ docs:
   noneMatch: 一致するものはありません。
   notFound: そのドキュメントは存在しません。
   onThisPage: このページの内容
+  previous: 前の項目
+  next: 次の項目
   failed: このドキュメントを読み込めませんでした。
   copy: コピー
   copied: コピーしました

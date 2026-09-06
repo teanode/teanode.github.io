@@ -28,6 +28,7 @@ import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined'
 import WidgetsOutlinedIcon from '@mui/icons-material/WidgetsOutlined'
 
 import { Carousel } from '../components/carousel'
+import { Route, Steam } from '../components/decoration'
 import { Flow } from '../components/flow'
 import { Markdown, renderMarkdown } from '../components/markdown'
 import { Mark } from '../components/logo'
@@ -115,9 +116,10 @@ export const WelcomePage = () => {
         {/* The name, the one line that says what it is, and the two things
             worth doing next, with the picture of what happens to a message
             beside them. The mark is large here and nowhere else. */}
-        <Section sx={{ pt: { xs: 6, md: 9 }, pb: { xs: 4, md: 6 } }}>
+        <Section decoration={<Route/>} sx={{ pt: { xs: 6, md: 9 }, pb: { xs: 4, md: 12 } }}>
           <Box
             sx={{
+              position: 'relative',
               display: 'grid',
               gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 1fr) minmax(0, 1fr)' },
               gap: { xs: 4, md: 6 },
@@ -344,13 +346,20 @@ const Cell = ({ value }: { value: string }) => {
 // One band of the page. A band with `band` set sits on the rail colour, one
 // step off the page, so the sections read as groups rather than as one long
 // column.
-const Section = ({ children, band, sx }: { children: ReactNode, band?: boolean, sx?: object }) => (
+// A band carries the steam across its top seam; any section can carry a
+// decoration of its own behind its content.
+const Section = ({ children, band, decoration, sx }: { children: ReactNode, band?: boolean, decoration?: ReactNode, sx?: object }) => (
   <Box
     sx={{
-      ...(band && { bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#0c0c0e' : '#f7f7f6'), borderTop: 1, borderBottom: 1, borderColor: 'divider' }),
+      // Not clipped: the steam straddles the seam, half above it, and the
+      // route lines are sized to fit inside.
+      position: 'relative',
+      ...(band && { bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#0c0c0e' : '#f7f7f6'), borderBottom: 1, borderColor: 'divider' }),
     }}
   >
-    <Box sx={{ ...pageWidth, py: { xs: 4, md: 6 }, ...sx }}>
+    {band && <Steam/>}
+    {decoration}
+    <Box sx={{ ...pageWidth, position: 'relative', py: { xs: 4, md: 6 }, ...sx }}>
       {children}
     </Box>
   </Box>

@@ -10,7 +10,8 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import CloseIcon from '@mui/icons-material/Close'
 
 import { useLanguageCode, useTranslate } from '../i18n'
-import { screenshot, screenshotHeight, screenshotPages, screenshotWidth, type ScreenshotPage } from '../screenshots'
+import { screenshot, screenshotHeight, screenshotPages, screenshotPaths, screenshotWidth, type ScreenshotPage } from '../screenshots'
+import { brand } from '../theme'
 
 // The dashboard, one page at a time.
 //
@@ -171,15 +172,49 @@ export const Carousel = () => {
         onKeyDown={onKeyDown}
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
-        sx={{ outline: 'none', borderRadius: '12px', '&:focus-visible': { boxShadow: `0 0 0 2px ${theme.palette.text.primary}` } }}
+        sx={{
+          outline: 'none', borderRadius: '12px', position: 'relative',
+          // Seen from slightly above, the way a product is photographed, on
+          // a wash of the leaf green. Flat on a phone, where there is no
+          // room to lose to a tilt.
+          perspective: '1800px',
+          '&:focus-visible figure': { boxShadow: `0 0 0 2px ${theme.palette.text.primary}` },
+        }}
       >
+        <Box
+          aria-hidden='true'
+          sx={{
+            position: 'absolute', left: '50%', top: '50%', width: '110%', height: '120%',
+            transform: 'translate(-50%, -50%)', pointerEvents: 'none',
+            background: `radial-gradient(ellipse at center, ${brand.leaf}${mode === 'dark' ? '2e' : '33'} 0%, ${brand.leaf}00 62%)`,
+          }}
+        />
         <Box
           component='figure'
           sx={{
             m: 0, borderRadius: '12px', border: 1, borderColor: 'divider', overflow: 'hidden',
-            bgcolor: 'background.paper',
+            bgcolor: 'background.paper', position: 'relative',
+            transform: { md: 'rotateX(3deg)' }, transformOrigin: '50% 0',
+            boxShadow: mode === 'dark' ? '0 40px 80px -40px rgb(0 0 0 / 80%)' : '0 40px 80px -40px rgb(0 0 0 / 25%)',
           }}
         >
+          {/* The window's own top: three dots and the address, so the picture
+              reads as the dashboard open in a browser. */}
+          <Stack
+            direction='row'
+            aria-hidden='true'
+            sx={{ alignItems: 'center', gap: 0.75, px: 1.5, height: 36, borderBottom: 1, borderColor: 'divider', bgcolor: mode === 'dark' ? '#0c0c0e' : '#f7f7f6' }}
+          >
+            {[0, 1, 2].map((dot) => <Box key={dot} sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: 'divider' }}/>)}
+            <Box
+              sx={{
+                ml: 1.5, px: 1.25, py: 0.4, borderRadius: '6px', border: 1, borderColor: 'divider', bgcolor: 'background.paper',
+                fontSize: 12, color: 'text.secondary', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '70%',
+              }}
+            >
+              mail.example.com{screenshotPaths[page]}
+            </Box>
+          </Stack>
           <Box
             role='button'
             aria-label={translate('welcome.openPicture')}
