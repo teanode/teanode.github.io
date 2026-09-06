@@ -24,7 +24,9 @@ export const screenshot = (page: string, theme: ScreenshotTheme, language: strin
   byKey.get(`${page}.${theme}.${language}`) ?? byKey.get(`${page}.${theme}.en`)
 
 // The pages there are pictures of, in the order the front page shows them.
-export const screenshotPages = ['mail', 'message', 'aliases', 'dns', 'templates', 'template', 'layout', 'reports', 'report'] as const
+// It opens on the DNS page, which is the one that looks like something, and
+// keeps the plain mail list for later.
+export const screenshotPages = ['dns', 'aliases', 'message', 'mail', 'report', 'reports', 'templates', 'template', 'layout'] as const
 export type ScreenshotPage = typeof screenshotPages[number]
 
 // Every dashboard screenshot is this shape, so a slot the size of one can be

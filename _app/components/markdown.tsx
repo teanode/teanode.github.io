@@ -169,6 +169,8 @@ export const Markdown = ({ html, compact }: { html: string, compact?: boolean })
         '& h3': { fontSize: '1.08rem', fontWeight: 650, mt: 3.5, mb: 1, scrollMarginTop: `${headingOffset}px` },
         '& h4': { fontSize: '1rem', fontWeight: 650, mt: 3, mb: 1 },
         '& p': { my: compact ? 1.5 : 2 },
+        // A compact block sits in a column, so it wraps rather than scrolls:
+        // the copy button takes the whole text either way.
         '& ul, & ol': { pl: 3, my: 2 },
         '& li': { my: 0.75 },
         '& li > p': { my: 0.5 },
@@ -207,6 +209,10 @@ export const Markdown = ({ html, compact }: { html: string, compact?: boolean })
           '&.copied': { opacity: 1, color: theme.palette.success.main, '& .copy-icon': { display: 'none' }, '& .copied-icon': { display: 'block' } },
         },
         '& .code:hover button.copy': { opacity: 1 },
+        // A compact block sits in a column, so it wraps rather than scrolls:
+        // the copy button takes the whole text either way. After the rule
+        // above, which is the one that scrolls.
+        ...(compact && { '& .code pre': { whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' } }),
         '& .hljs-comment, & .hljs-quote': { color: token.comment, fontStyle: 'italic' },
         '& .hljs-keyword, & .hljs-selector-tag, & .hljs-literal, & .hljs-doctag, & .hljs-name':
           { color: token.keyword },

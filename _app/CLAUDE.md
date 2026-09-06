@@ -54,7 +54,8 @@ document names one as `<img src="screenshot:<page>">`, which the markdown
 component resolves to the picture for the theme and language being read in.
 
 They were taken from the development server in the server repository
-(`make dev`), signed in, with sample data for `example.com`: four aliases, a
+(`make dev`), signed in as an account named `ada`, with sample data for
+`example.com`: four aliases, a
 layout and two templates, a DMARC aggregate report, and the external address
 replaced by the documentation address 203.0.113.10 so the DNS page shows
 nothing real. Retake them when the dashboard changes. Headless Chrome over
@@ -67,6 +68,11 @@ the DevTools protocol does it: set the `teanode_session` cookie and the
 Nothing on the critical path comes from a third party host. The typeface is
 the system's, the icons are bundled, there is no analytics tag. Do not add a
 font `<link>`, a CDN script, or a remote stylesheet.
+
+The one request the site makes elsewhere is `components/release.tsx` asking
+GitHub's API for the latest release tag, to show it as a pill on the front
+page. It runs after the page has painted, is cached in session storage for an
+hour, and its failure shows nothing rather than an error.
 
 ## Build
 
