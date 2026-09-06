@@ -36,7 +36,7 @@ welcome:
   lead: >-
     An open source mail server for every side project and early startup.
     It receives mail for your domains and forwards it to the inbox you
-    already read; replies go out signed as the domain. No mailbox, no IMAP.
+    already read; replies go out signed as the domain.
   getStarted: Get started
   readDocs: Read the documentation
   viewSource: View the source
