@@ -30,11 +30,13 @@ const centre = width / 2
 
 // A gentle meander from one x to another between two heights: a run of
 // curves joined tangent to tangent.
-const meander = (from: number, to: number, low: number, high: number, step: number): string => {
-  let d = `M ${from} ${(low + high) / 2}`
+// With a `lead`, the path begins with that (which must end at `from`, at the
+// middle height) and the meander carries on from it.
+const meander = (from: number, to: number, low: number, high: number, step: number, lead?: string): string => {
+  let d = lead ?? `M ${from} ${(low + high) / 2}`
   let x = from
   let up = true
-  let first = true
+  let first = lead === undefined
   while (x < to) {
     const next = Math.min(x + step, to)
     const y = up ? low : high
@@ -50,10 +52,16 @@ const meander = (from: number, to: number, low: number, high: number, step: numb
   return d
 }
 
-type Line = { d: string, height: number, edge: 'top' | 'bottom', opacity: number, envelopes: { duration: number, begin: number }[], rest: [number, number] }
+// `overhang` is how far the box reaches past its edge, for a line that
+// arrives from beyond the section rather than starting in the middle of it.
+type Line = { d: string, height: number, edge: 'top' | 'bottom', overhang?: number, opacity: number, envelopes: { duration: number, begin: number }[], rest: [number, number] }
+
+// The top line comes down from above the section, from under the bar across
+// the top of the page, and only then sets off to the right.
+const arrival = `M ${centre - 220} 0 C ${centre - 100} 70, ${centre - 20} 130, ${centre + 140} 155`
 
 const routes: Line[] = [
-  { d: meander(centre + 20, width + 40, 40, 150, 720), height: 200, edge: 'top', opacity: 0.4, envelopes: [{ duration: 70, begin: -8 }, { duration: 70, begin: -43 }], rest: [centre + 300, 96] },
+  { d: meander(centre + 140, width + 40, 100, 210, 720, arrival), height: 260, edge: 'top', overhang: 60, opacity: 0.4, envelopes: [{ duration: 70, begin: -8 }, { duration: 70, begin: -43 }], rest: [centre + 500, 156] },
   { d: meander(-40, width + 40, 20, 80, 600), height: 100, edge: 'bottom', opacity: 0.55, envelopes: [0, 1, 2, 3, 4, 5].map((at) => ({ duration: 140, begin: -at * 23 })), rest: [centre - 280, 50] },
 ]
 
@@ -99,7 +107,7 @@ export const Route = ({ short }: { short?: boolean }) => {
           viewBox={`0 0 ${box} ${line.height}`}
           preserveAspectRatio='xMidYMin meet'
           sx={{
-            position: 'absolute', [line.edge]: 0, height: line.height,
+            position: 'absolute', [line.edge]: -(line.overhang ?? 0), height: line.height,
             pointerEvents: 'none', display: { xs: 'none', md: 'block' },
             ...(short
               ? { left: 0, width: '100%', height: 'auto', aspectRatio: `${box} / ${line.height}` }

@@ -171,7 +171,9 @@ export const PublicShell = ({ children }: { children?: ReactNode }) => {
           it sits within the same measure as the page below, so the mark and
           the links line up with the content rather than hugging the window's
           edges on a wide monitor. */}
-      <Box component='header' sx={{ borderBottom: 1, borderColor: 'divider' }}>
+      {/* Painted, and above what follows: the front page's decoration reaches
+          up under the bar, and the bar has to cover it. */}
+      <Box component='header' sx={{ borderBottom: 1, borderColor: 'divider', bgcolor: 'background.default', position: 'relative', zIndex: 2 }}>
         <Stack
           direction='row'
           sx={{ ...pageWidth, height: barHeight, alignItems: 'center', gap: 1 }}
