@@ -221,7 +221,16 @@ export const DocPage = () => {
               past before reaching the thing it points into. */}
           { wide && current && headings.length > 0 && (
             <Box component='nav' sx={{ width: tableOfContentsWidth, flexShrink: 0, pt: 14, pb: 5, pr: 4 }}>
-              <Box sx={{ position: 'sticky', top: 40, maxHeight: 'calc(100vh - 80px)', overflowY: 'auto' }}>
+              {/* Scrolls when the list is taller than the window, without
+                  showing a bar for it: the bar would be the widest thing in
+                  the column, and a long entry wraps rather than pushing one
+                  out sideways. */}
+              <Box
+                sx={{
+                  position: 'sticky', top: 40, maxHeight: 'calc(100vh - 80px)', overflowY: 'auto', overflowX: 'hidden',
+                  scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none' },
+                }}
+              >
                 <Typography variant='h2' color='text.secondary' sx={{ mb: 1.5 }}>
                   <T id='docs.onThisPage'/>
                 </Typography>
@@ -236,7 +245,7 @@ export const DocPage = () => {
                       onClick={(event: MouseEvent) => goToHeading(event, heading.id)}
                       variant='body2'
                       sx={{
-                        display: 'block', textDecoration: 'none', lineHeight: 1.4,
+                        display: 'block', textDecoration: 'none', lineHeight: 1.4, overflowWrap: 'anywhere',
                         py: 0.75, ml: '-2px', borderLeft: 2,
                         pl: heading.depth > 2 ? 3 : 2,
                         fontSize: heading.depth > 2 ? 13 : 14,
