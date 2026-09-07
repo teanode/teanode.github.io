@@ -67,10 +67,11 @@ const routes: Line[] = [
 
 // A shorter route for the head of a document: one line above the title, one
 // envelope. The title sits in a column of fixed width, so this one is sized
-// to the column.
+// to the column, and rather than stop at the column's edge the line climbs
+// out of the top of the page before it gets there.
 const shortWidth = 1260
 const shortRoutes: Line[] = [
-  { d: 'M -20 40 C 200 0, 380 70, 640 30 S 1000 0, 1240 40', height: 80, edge: 'top', opacity: 0.45, envelopes: [{ duration: 20, begin: -4 }], rest: [700, 22] },
+  { d: 'M -20 40 C 200 0, 380 70, 640 30 S 860 60, 980 24 C 1060 0, 1090 -30, 1110 -80', height: 80, edge: 'top', opacity: 0.45, envelopes: [{ duration: 20, begin: -4 }], rest: [700, 22] },
 ]
 
 const Envelope = ({ paper, still, duration, begin, path }: {
@@ -132,12 +133,12 @@ export const Route = ({ short }: { short?: boolean }) => {
 // drawn from the seed, so no two seams on a page rise and fall alike. The
 // curves join tangent to tangent, which is what keeps it a wave rather than a
 // scribble.
-const wave = (random: () => number, centre: number): string => {
+const wave = (random: () => number, centre: number, to: number): string => {
   let d = `M -20 ${centre}`
   let x = -20
   let up = random() < 0.5
   let first = true
-  while (x < 1420) {
+  while (x < to) {
     const length = 160 + random() * 240
     const height = 8 + random() * 22
     const y = centre + (up ? -height : height)
@@ -162,26 +163,27 @@ const seeded = (seed: number) => () => {
   return ((t ^ (t >>> 14)) >>> 0) / 4294967296
 }
 
-// With `bleed`, the steam is drawn as wide as the window rather than as wide
-// as what it sits in, for a seam inside a column: whatever holds the column
-// clips the overhang.
+// With `bleed`, the steam is drawn twice as wide as the window rather than
+// as wide as what it sits in, for a seam inside a column that is nowhere near
+// the middle of the window: whatever holds the column clips the overhang.
 export const Steam = ({ bleed }: { bleed?: boolean }) => {
   const [seed] = useState(() => Math.floor(Math.random() * 2 ** 31))
+  const span = bleed ? 2800 : 1400
   const paths = useMemo(() => {
     const random = seeded(seed)
-    return [wave(random, 38), wave(random, 46)]
-  }, [seed])
+    return [wave(random, 38, span + 20), wave(random, 46, span + 20)]
+  }, [seed, span])
   return (
     <Box
       component='svg'
       aria-hidden='true'
-      viewBox='0 0 1400 80'
+      viewBox={`0 0 ${span} 80`}
       preserveAspectRatio='none'
       sx={{
         // The box is taller than the waves so their crests and troughs are
         // drawn whole; it straddles the seam, half above and half below.
         position: 'absolute', top: -40, height: 80, pointerEvents: 'none', opacity: 0.45,
-        ...(bleed ? { left: '50%', width: '100vw', transform: 'translateX(-50%)' } : { left: 0, right: 0, width: '100%' }),
+        ...(bleed ? { left: '50%', width: '200vw', transform: 'translateX(-50%)' } : { left: 0, right: 0, width: '100%' }),
       }}
     >
       <path d={paths[0]} fill='none' stroke={brand.leaf} strokeWidth='1.5'/>
