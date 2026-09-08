@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title>TeaNode</title>
-    <meta name="description" content="Open source mail server to receive and send email at your own domains, from the inbox you already have. Small enough to run yourself, for every side project and early startup: SPF, DKIM, DMARC and ARC, forwarding, and sending from your own addresses.">
+    <meta name="description" content="Open source mail server for your own domains, small enough to run yourself. Mailboxes read in the dashboard or any mail program over IMAP, forwarding to an inbox or a webhook, SPF, DKIM, DMARC and ARC, and a spam filter that needs no second program.">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <link rel="canonical" href="https://teanode.com/">
 
@@ -23,17 +23,17 @@
     <meta property="og:locale:alternate" content="ja_JP">
     <meta property="og:url" content="https://teanode.com/">
     <meta property="og:title" content="TeaNode">
-    <meta property="og:description" content="Open source mail server to receive and send email at your own domains, from the inbox you already have. Small enough to run yourself, for every side project and early startup: SPF, DKIM, DMARC and ARC, forwarding, and sending from your own addresses.">
+    <meta property="og:description" content="Open source mail server for your own domains, small enough to run yourself. Mailboxes read in the dashboard or any mail program over IMAP, forwarding to an inbox or a webhook, SPF, DKIM, DMARC and ARC, and a spam filter that needs no second program.">
     <meta property="og:image" content="./assets/og.png">
     <meta property="og:image:type" content="image/png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-    <meta property="og:image:alt" content="TeaNode: open source mail server to receive and send email at your own domains, from the inbox you already have.">
+    <meta property="og:image:alt" content="TeaNode: send and receive emails at your own domains.">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="TeaNode">
-    <meta name="twitter:description" content="Open source mail server to receive and send email at your own domains, from the inbox you already have. Small enough to run yourself, for every side project and early startup: SPF, DKIM, DMARC and ARC, forwarding, and sending from your own addresses.">
+    <meta name="twitter:description" content="Open source mail server for your own domains, small enough to run yourself. Mailboxes read in the dashboard or any mail program over IMAP, forwarding to an inbox or a webhook, SPF, DKIM, DMARC and ARC, and a spam filter that needs no second program.">
     <meta name="twitter:image" content="./assets/og.png">
-    <meta name="twitter:image:alt" content="TeaNode: open source mail server to receive and send email at your own domains, from the inbox you already have.">
+    <meta name="twitter:image:alt" content="TeaNode: send and receive emails at your own domains.">
     <meta name="color-scheme" content="light dark">
     <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
     <link rel="alternate icon" href="/favicon.ico">
@@ -71,6 +71,18 @@
           // Site data blocked. The default theme is correct either way.
         }
       })();
+    </script>
+
+    <!-- Google Analytics 4. Loaded async, so a blocked or slow request delays
+         nothing; send_page_view is off because this is a single page app,
+         and components/analytics.tsx reports every route change, including
+         the first, so client side navigation is counted too. -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XD5JSLP4RH"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-XD5JSLP4RH', {send_page_view: false});
     </script>
   </head>
   <body>

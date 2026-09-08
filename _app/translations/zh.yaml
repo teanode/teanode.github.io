@@ -1,7 +1,7 @@
 ---
 language: 简体中文
 title: TeaNode
-tagline: 开源邮件服务器，用自己的域名收发邮件，就在你已经在用的邮箱里。
+tagline: 开源邮件服务器，用自己的域名收发邮件，邮箱在哪里都能读。
 nav:
   docs: 文档
   github: GitHub

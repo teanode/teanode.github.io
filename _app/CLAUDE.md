@@ -81,8 +81,16 @@ storage keys, navigate, capture at 1505x812 with a device scale factor of 2.
 ## No external resources
 
 Nothing on the critical path comes from a third party host. The typeface is
-the system's, the icons are bundled, there is no analytics tag. Do not add a
-font `<link>`, a CDN script, or a remote stylesheet.
+the system's and the icons are bundled. Do not add a font `<link>`, a CDN
+script, or a remote stylesheet.
+
+Two requests go elsewhere, both off the critical path. `components/release.tsx`
+asks GitHub's API for the latest release tag, after the page has painted and
+cached for an hour, and shows nothing when it fails. The Google Analytics tag
+in `index.html` is `async` with `send_page_view` off, so a blocked or slow
+request delays nothing and a route change is what gets counted;
+`components/analytics.tsx` reports those and does nothing at all when an ad
+blocker has removed `gtag`.
 
 The one request the site makes elsewhere is `components/release.tsx` asking
 GitHub's API for the latest release tag, to show it as a pill on the front

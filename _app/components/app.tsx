@@ -4,6 +4,7 @@ import { ThemeProvider } from '@mui/material/styles'
 
 import { LanguageProvider } from '../i18n'
 import { themeFor } from '../theme'
+import { Analytics } from './analytics'
 import { Canonical } from './canonical'
 import { useLanguage } from './language'
 import { useResolvedTheme } from './theme'
@@ -19,6 +20,7 @@ export const App = ({ children }: { children?: ReactNode }) => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline/>
+      <Analytics/>
       <Canonical/>
       <LanguageProvider code={language}>{children}</LanguageProvider>
     </ThemeProvider>
