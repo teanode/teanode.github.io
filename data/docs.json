@@ -12,9 +12,9 @@
       "ja": "TeaNode とは"
     },
     "description": {
-      "en": "Receive and send email at your own domains, from the inbox you already have: what it does, what it deliberately does not do, and what you need to run it.",
-      "zh": "用自己的域名收发邮件，就在你已经在用的邮箱里：它做什么、刻意不做什么，以及运行它需要什么。",
-      "ja": "自分のドメインでメールを受け取り、送る。いま使っている受信箱のままで。何をするのか、意図して何をしないのか、動かすには何が要るのか。"
+      "en": "Send and receive mail at your own domains: mailboxes read here or over IMAP, forwarding, what it does, and what you need to run it.",
+      "zh": "用自己的域名收发邮件：可以在这里或通过 IMAP 读取的邮箱、转发、它能做什么，以及运行它需要什么。",
+      "ja": "自分のドメインでメールを送受信する。ここでも IMAP でも読めるメールボックス、転送、できること、そして動かすのに必要なもの。"
     },
     "filename": {
       "en": "en/introduction.markdown",
@@ -35,9 +35,9 @@
       "ja": "クイックスタート"
     },
     "description": {
-      "en": "A mail server running with docker compose in a few minutes: start it, claim the dashboard, publish the DNS records, forward an address.",
-      "zh": "用 docker compose 在几分钟内跑起邮件服务器：启动、认领仪表盘、发布 DNS 记录、转发一个地址。",
-      "ja": "docker compose で数分のうちにメールサーバーを動かす。起動し、ダッシュボードを取得し、DNS レコードを公開し、アドレスを転送する。"
+      "en": "A mail server running with docker compose in a few minutes: start it, claim the dashboard, publish the DNS records, and read your mail.",
+      "zh": "用 docker compose 在几分钟内跑起一台邮件服务器：启动它、认领仪表盘、发布 DNS 记录，然后读你的邮件。",
+      "ja": "docker compose で数分でメールサーバーを動かす。起動し、ダッシュボードを取得し、DNS レコードを公開し、メールを読むまで。"
     },
     "filename": {
       "en": "en/quick-start.markdown",
@@ -58,9 +58,9 @@
       "ja": "はじめる"
     },
     "description": {
-      "en": "Standing up a mail server for one domain, from nothing to mail arriving and being forwarded, including the DNS records and the port 25 problem.",
-      "zh": "为一个域名搭起邮件服务器，从零开始到邮件到达并被转发，包括 DNS 记录和 25 端口的问题。",
-      "ja": "ひとつのドメインのメールサーバーを、何もない状態からメールが届いて転送されるまで立ち上げる。DNS レコードとポート 25 の問題も含めて。"
+      "en": "Standing up a mail server for one domain, from nothing to mail arriving in a mailbox you can read in a mail program, including the DNS records and the port 25 problem.",
+      "zh": "为一个域名从零搭起一台邮件服务器，直到邮件到达你可以用邮件程序读取的邮箱，包括 DNS 记录和 25 端口的问题。",
+      "ja": "ひとつのドメインのためにメールサーバーを立ち上げ、メールプログラムで読めるメールボックスにメールが届くまで。DNS レコードとポート 25 の問題を含みます。"
     },
     "filename": {
       "en": "en/getting-started.markdown"

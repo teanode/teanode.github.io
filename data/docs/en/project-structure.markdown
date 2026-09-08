@@ -20,16 +20,57 @@ Everything an operator can set lives here. Depends on nothing but utilities,
 so any package may import it — which is why the store that persists to
 PostgreSQL is not in here.
 
-**`internal/configdb`** — `config.Store` backed by PostgreSQL. Maps the
-configuration onto tables and back, resolves concurrent writes with a version
-row, and polls it so an instance notices a change made by another one. Its own
-package because it imports both `config` and `db`, and `db` imports `config`.
+**`internal/db`** — PostgreSQL, through GORM: one interface per model —
+domains with their aliases and credentials, users, roles, groups, mailboxes
+with their folders and items, identities, mail, deliveries, reports,
+templates — each change to an administrative object audited in the same
+transaction, and the `configuration` table, which holds settings only. The
+domain table's secrets are sealed with the server secret. Migrations live in
+`internal/db/migrations`, forward and reverse.
+
+**`internal/access`** — who may do what. Seeds the roles and groups a new
+server starts with, resolves a user's effective permissions from their
+groups, keeps every account's mailbox, signs a mail program in with an app
+password, binds an identity-provider subject to an account and reconciles
+the groups the provider claims, and is the rescue path when nobody can sign
+in.
+
+**`internal/imap`** — mailboxes to mail programs, over `go-imap/v2`. A
+folder's UIDs and modseqs are its own, flags are the item's, the message is
+read from storage when asked for, and an idling session is woken by the
+database's `folder_changed` notification. Nothing is held in memory that
+another instance would need.
+
+**`internal/sso`** — signing in through an OpenID Connect provider: the
+authorization-code flow with PKCE, a signed and expiring state, and a client
+that will not talk to a private address. `internal/api/v1api/apisso` is the
+two HTTP paths the browser passes through.
 
 **`internal/bootstrap`** — what the environment says: how to reach the
 database, which instance this process is, and — on a first run against an
 empty database — what kind of server to create. Small on purpose. Anything
 here is per-process and needs a restart to change, where anything in the
 database is shared and does not.
+
+**`internal/spamfilter`** — the seam between the mail path and whatever
+scores a message. Two things satisfy it: an adapter for an external
+SpamAssassin daemon, and the filter below. `Message` carries what the server
+already established — the authentication results, the confirmed reverse DNS
+name, the parsed message — so that a filter reads them rather than working
+them out again.
+
+**`internal/strainer`** — the built-in spam filter. Named for the thing that
+holds the leaves back when you pour; it is not SpamAssassin and does not
+claim to be. Four sources, each switchable: the signals the server already
+has, public block lists over ordinary DNS, a classifier trained on this
+server's own mail, and the published pattern rules.
+
+    strainer.go             the checks that read what the server already knows
+    dns.go                  block list lookups, cached, and their refusal codes
+    bayes.go                the classifier, and teaching it
+    rules.go                the published rule format, parsed and evaluated
+    meta.go                 the expression language rules combine each other in
+    ruleload.go             keeping the parsed rules in step with the database
 
 **`internal/mx`** — the mail path, and the only package that decides what
 happens to a message.
@@ -55,7 +96,8 @@ versioned packages and `internal/web` can all import it.
 **`internal/api/v1api`** — version 1, mounted at `/api/v1`. A composition of
 three parts:
 
-    apigraph/   the GraphQL endpoint, which is the whole management API.
+    apigraph/   the GraphQL endpoint, which is the whole management API,
+                and the two multipart routes that put files on a draft.
                 Generated from Go types by reflection in internal/util/graphapi.
                 Queries read the database; mutations that change configuration
                 go through config.Store and end up in the configuration
@@ -95,7 +137,7 @@ endpoint. `Render` chooses a translation by locale and fills a template in;
 `mx` as outgoing mail from the domain.
 
 **`internal/models`** — plain structs shared between `db`, `api` and `mx`. No
-behaviour beyond enum helpers.
+behavior beyond enum helpers.
 
 **`internal/util`** — protocol implementations, each independently testable and
 free of project-specific assumptions:
@@ -122,11 +164,7 @@ free of project-specific assumptions:
 
 ## Dependency direction
 
-`internal/cmd/server` depends on everything. `configdb` depends on `config`
-and `db`; nothing depends on `configdb` except `internal/cmd`, which is what
-keeps the choice of where configuration is stored out of everything that
-reads it. `api`, `mx`, `dns`
-and `mailer` depend on `config`, `db`, `models` and `util`. `util` packages depend only on each other and the
-standard library. Nothing in `util` may import `config`, `db` or `models`: they
-are meant to be liftable into a separate library, and several of them are the
-reason this project is worth publishing.
+`internal/cmd/server` depends on everything. `config` depends on `db`, for
+the settings store, and `db` on `models`; `access`, `mx`, `imap`, `sso` and
+the API depend on `db` and `config` and not on each other, except that `mx`
+and the API both use `access` for the checks they share.

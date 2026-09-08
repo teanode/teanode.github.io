@@ -40,6 +40,8 @@
 | `TEANODE_SERVER_MAIL_SERVERS` | `server.mailServers`，逗号分隔 |
 | `TEANODE_LISTEN_SMTP_INCOMING` | `listen.smtpIncoming` |
 | `TEANODE_LISTEN_SMTP_OUTGOING` | `listen.smtpOutgoing` |
+| `TEANODE_LISTEN_IMAP` | `listen.imap` |
+| `TEANODE_LISTEN_IMAPS` | `listen.imaps` |
 | `TEANODE_LISTEN_HTTP` | `listen.http` |
 | `TEANODE_LISTEN_HTTPS` | `listen.https` |
 | `TEANODE_TLS_HOSTS` | `tls.hosts`，逗号分隔；默认为服务器名 |
@@ -137,11 +139,37 @@ API 从不返回其中任何一个。携带密钥的字段在输出时被脱敏�
 
 **`mailServers`**——MailServers 是要发布在每个域名 MX 记录中的主机，按优先顺序排列。可选；为空时 MX 记录指向这台服务器，这对大多数人运行的单主机部署是对的。当这些域名的邮件到达多个名字时设置它——一对指向同一台主机的 mx1 和 mx2 很常见，它提供了一个可以迁移的目标，不必让每个域名都改 DNS。仪表盘随后会要求每个域名为每个名字发布一条 MX 记录，按给定顺序分别使用优先级 10、20 等等。这些是邮件到达的名字。它们与 tls.hosts 无关，后者是这台服务器持有证书的名字。
 
+### `sso`
+
+在密码和通行密钥之外，通过身份提供商登录。只支持 OpenID Connect；值得一提的提供商都说这个协议。每个提供商在登录页面上是一个按钮。要在提供商那里登记的回调地址是 `https://<web 主机>/api/v1/sso/<id>/callback`。
+
+**`providers`**——提供的身份提供商，每个一个按钮。空列表表示没有单点登录。
+
+### `sso.providers[]`
+
+**`id`**——在登录路径和每个人的身份记录里标识这个提供商：小写字母、数字和短横线，最多 32 个，而且要稳定。重命名一个提供商会让它下面的每一个身份变成孤儿。
+
+**`name`**——登录按钮上写什么。
+
+**`issuer`**——OpenID Connect 的 issuer URL，只允许 `https`。提供商的配置从 `<issuer>/.well-known/openid-configuration` 读取，并且必须写着同一个 issuer。私有地址会被拒绝。
+
+**`clientId`**——提供商为这台服务器签发的 client id。
+
+**`clientSecret`**——与之配套的 client secret。这是密钥；输出时被脱敏，更新设置时留空则保留原值。
+
+**`groupsClaim`**——携带此人群组名字的 claim，与这里每个群组的 `idpGroup` 匹配。留空时为 `groups`。一个人会被放进每一个名字被 claim 到的群组，并被移出每一个名字不再被 claim 的群组；没有 `idpGroup` 的群组永远不受影响。
+
+**`createUsers`**——在这里还没有账户的人登录时，是否为他创建一个：没有密码，一个绑定到该提供商的身份，一个 Personal 邮箱，以及他的 claim 所指的那些群组。关闭时，只有账户上已经有该提供商身份的人才能通过它登录。
+
 ### `listen`
 
 **`smtpIncoming`**——SMTPIncoming 从互联网接收邮件。生产环境为 25 端口。
 
 **`smtpOutgoing`**——SMTPOutgoing 从你自己的设备接收经过认证的邮件用于中继。生产环境为 587 端口。
+
+**`imap`**——IMAP 把邮箱提供给邮件程序，登录之前必须先 STARTTLS。生产环境为 143 端口。留空则关闭。
+
+**`imaps`**——IMAPS 从第一个字节起就通过 TLS 提供同样的服务。生产环境为 993 端口，也是大多数邮件程序最先尝试的端口。留空则关闭。
 
 **`http`**——HTTP 提供仪表盘并回答 ACME http-01 挑战。当 tls.acme.challenge 为 http-01 时，80 端口必须能从互联网访问。
 
@@ -322,7 +350,7 @@ SES 需要从 IAM 用户派生的 SMTP 凭据，而不是访问密钥本身，�
 
 **`id`**——ID 生成一次后永不改变；存储的投递记录引用它。
 
-**`pattern`**——Pattern 是一个 Go 正则表达式，对收件地址的本地部分——"@" 前面的部分——不区分大小写地匹配。要加锚：“^hello$” 只匹配 hello@，而 "hello" 也匹配 say-hello-now@。空模式使它成为兜底别名。兜底别名是后备：它们只接收没有任何模式匹配的地址的邮件，所以添加一个不会让已经有去处的邮件重复。
+**`pattern`**——Pattern 是一个 Go 正则表达式，对收件地址的本地部分——"@" 前面的部分——不区分大小写地匹配。要加锚：“^hello$” 只匹配 hello@，而 "hello" 也匹配 say-hello-now@。投递进邮箱的别名，在通过网页界面或 API 创建时会替你加上锚：“hello”变成“^hello$”，因为一个邮箱的地址是从它的模式反读出来的；用 `config import` 导入的文件则按写的原样处理。空模式使它成为兜底别名。兜底别名是后备：它们只接收没有任何模式匹配的地址的邮件，所以添加一个不会让已经有去处的邮件重复。
 
 **`comment`**——Comment 是给运维者的备注。
 
@@ -392,11 +420,56 @@ SES 需要从 IAM 用户派生的 SMTP 凭据，而不是访问密钥本身，�
 
 ### `antispam`
 
-**`enabled`**——见上一个字段；两者一起设置。
+垃圾邮件打分。用来比较的阈值是域名的 `spamFilterScoreThreshold`，不是这里的设置。
 
-**`host`**——见上一个字段；两者一起设置。
+**`enabled`**——是否给邮件打分。
 
-**`port`**——见上一个字段；两者一起设置。
+**`engine`**——由谁来打分：`builtin` 是这台服务器内部的过滤器，`spamd` 是外部的 SpamAssassin 守护进程。留空不是取默认值，而是解析出来的，这样已有的部署不用改动也能继续工作：留空且配置了 host 表示 `spamd`，留空且没有 host 表示 `builtin`。
+
+**`spamd`**——外部守护进程监听在哪里，`engine` 为 `spamd` 时使用。它的两个字段是 `host` 和 `port`。
+
+**`host`**、**`port`**——已弃用：请改用 `spamd`。保留是因为现场的部署里存的就是它们，而且仍然有效。
+
+**`builtin`**——这台服务器内部的过滤器。它根据服务器已经知道的东西、公共黑名单、用你自己的邮件训练出来的分类器，以及可选的公共模式规则来打分。下面四组可以各自独立开关。
+
+**`signals`**——根据服务器已经就一封邮件确定下来的东西打分：它的身份验证结果、发送主机被确认的反向 DNS 名字，以及它在 HELO 里报的名字。不产生任何查询，因为这些在打分开始之前就都算好了。它只有一个字段 `enabled`。
+
+**`dns`**——在公共黑名单里查询信誉。查询黑名单就是一次普通的 DNS 查询，所以这不需要自己的服务。
+
+**`timeout`**——限定一封邮件的整组黑名单查询。
+
+**`addressLists`**——就连接地址查询的名单。每一项有一个 `zone` 和一个 `weight`。
+
+**`domainLists`**——就邮件里出现的域名查询的名单。每一项有一个 `zone` 和一个 `weight`。
+
+**`zone`**——构造查询用的后缀，例如 `zen.spamhaus.org`。
+
+**`weight`**——被列入时贡献的分数。
+
+**`maximumDomains`**——限制一封邮件里最多查询多少个域名，这样一封满是链接的邮件不会变成一串 DNS 查询。
+
+**`bayes`**——用这台服务器自己的邮件训练出来的分类器，训练材料是你在仪表盘里标记为垃圾或非垃圾的邮件。它通常是垃圾邮件过滤里最准的一部分，因为它学的是你真正收到的邮件。
+
+**`minimumMessages`**——在允许分类器贡献任何分数之前，必须先学过多少封邮件。用四封邮件训练出来的分类器只会自信地出错。
+
+**`rules`**——公共模式规则，下载进数据库并在这个进程里求值。默认关闭：一次升级不应该开始下载并运行没人要求过的规则文件。
+
+**`channels`**——要获取的更新频道，按名字。
+
+**`updateInterval`**——多久查看一次规则的新版本。
+
+**`maximumEvaluationTime`**——限定一封邮件整轮规则求值的时间。成千上万条模式要在攻击者选定的文本上跑，所以这是一个上限，不是一个目标。
+
+规则是有意加载的，而不是无人值守下载的：
+
+    teanode-server config rules import --file ruleset.cf --channel updates.spamassassin.org
+    teanode-server config rules show
+
+它们存在数据库里，而不是某个目录里，因为一台服务器可以以多个实例运行，而它们必须求值同一批规则；每个实例会在一分钟内注意到新版本。`show` 会报告加载了多少条规则、跳过了多少条——一份发布的规则集里有靠插件实现的规则，而这台服务器没有那些插件，也有它的正则引擎编译不了的模式，两者都会被留下而不是猜着来。
+
+没有自动下载。规则是这台服务器要对收到的每一封邮件运行的模式，所以无人值守地获取它们意味着要验证发布者的签名，而能做这件事的 OpenPGP 包在上游已经废弃。给一台邮件服务器加上一个冻结的密码学依赖，是一个值得慎重作出的决定。
+
+`updates.spamassassin.org` 上发布的规则数据由 Apache SpamAssassin 项目制作，以 Apache License 2.0 授权。内建的过滤器是另一个程序，不是 SpamAssassin；只有在你启用并加载之后，它才会读取那份发布的规则数据。
 
 ### `geoip`
 

@@ -49,7 +49,7 @@ binary has to be found again by a start from any working directory.
 
 It is a variable rather than a setting for one reason: a staged binary has to
 be found and run before anything opens the database, because this program
-reverts migrations it does not recognise and an old binary that reached the
+reverts migrations it does not recognize and an old binary that reached the
 database first would undo the new one's schema. The settings are in the
 database. This cannot be.
 
@@ -62,7 +62,7 @@ start rather than run.
 
 **`TEANODE_ALLOW_MIGRATION_REVERT`** — permits an older binary to undo
 migrations a newer one applied. Off by default, and the default is the
-interesting half: a start that finds migrations it does not recognise refuses
+interesting half: a start that finds migrations it does not recognize refuses
 to run rather than reverting them, because reverting drops the columns they
 added and everything in those columns, and the three ordinary ways to arrive
 there are all accidents. See [`docs/coding/database-migrations.md`](https://github.com/ziyan/teanode/blob/main/docs/coding/database-migrations.md). Set it to
@@ -83,6 +83,8 @@ server says so in its log when it finds them set.
 | `TEANODE_SERVER_MAIL_SERVERS` | `server.mailServers`, comma separated |
 | `TEANODE_LISTEN_SMTP_INCOMING` | `listen.smtpIncoming` |
 | `TEANODE_LISTEN_SMTP_OUTGOING` | `listen.smtpOutgoing` |
+| `TEANODE_LISTEN_IMAP` | `listen.imap` |
+| `TEANODE_LISTEN_IMAPS` | `listen.imaps` |
 | `TEANODE_LISTEN_HTTP` | `listen.http` |
 | `TEANODE_LISTEN_HTTPS` | `listen.https` |
 | `TEANODE_TLS_HOSTS` | `tls.hosts`, comma separated; defaults to the server name |
@@ -248,6 +250,44 @@ domain for one MX record per name, at preference 10, 20 and so on in the order
 given.  These are names mail arrives at. They are unrelated to tls.hosts,
 which is the names this server holds a certificate for.
 
+
+### `sso`
+
+Signing in through an identity provider, beside the password and passkey
+forms. OpenID Connect only; every provider that matters speaks it. Each
+provider is a button on the sign-in page. The redirect URL to register at
+the provider is `https://<web host>/api/v1/sso/<id>/callback`.
+
+**`providers`** — The identity providers offered, one button each. An empty
+list means no single sign-on.
+
+### `sso.providers[]`
+
+**`id`** — Names the provider in the sign-in path and in each person's
+identity row: lower-case letters, digits and dashes, up to 32, and stable.
+Renaming a provider orphans every identity under it.
+
+**`name`** — What the sign-in button says.
+
+**`issuer`** — The OpenID Connect issuer URL, `https` only. The provider's
+configuration is read from `<issuer>/.well-known/openid-configuration`, and
+must name the same issuer. A private address is refused.
+
+**`clientId`** — The client id the provider issued for this server.
+
+**`clientSecret`** — The client secret that goes with it. A secret; shown
+redacted, kept when a settings update leaves it blank.
+
+**`groupsClaim`** — The claim carrying the person's group names, matched
+against each group's `idpGroup` here. `groups` when empty. A person is put
+in every group naming a claimed name and taken out of every group naming one
+that is no longer claimed; groups without an `idpGroup` are never touched.
+
+**`createUsers`** — Whether somebody with no account here gets one made when
+they sign in: no password, an identity bound to the provider, a Personal
+mailbox, and the groups their claims name. Off, only people whose account
+already has an identity at this provider may sign in through it.
+
 ### `listen`
 
 **`smtpIncoming`** — SMTPIncoming receives mail from the internet. Port 25 in
@@ -255,6 +295,12 @@ production.
 
 **`smtpOutgoing`** — SMTPOutgoing receives authenticated mail from your own
 devices for relaying. Port 587 in production.
+
+**`imap`** — IMAP serves mailboxes to mail programs, with STARTTLS required
+before signing in. Port 143 in production. Empty disables it.
+
+**`imaps`** — IMAPS serves the same over TLS from the first byte. Port 993 in
+production, which is what most mail programs try first. Empty disables it.
 
 **`http`** — HTTP serves the dashboard and answers ACME http-01 challenges.
 Port 80 must be reachable from the internet when tls.acme.challenge is
@@ -498,7 +544,7 @@ whoever answered. `none` does not insist — STARTTLS is still used when it is
 offered — and is refused outright when a password is set.
 
 **`username`** and **`password`** — What it authenticates as. Leave both empty
-for a relay that authorises by address.
+for a relay that authorizes by address.
 
 ### `dkim`
 
@@ -567,7 +613,10 @@ it.
 **`pattern`** — Pattern is a Go regular expression matched against the local
 part of the recipient address, the part before the "@", without regard to
 case. Anchor it: "^hello$" matches only hello@, while "hello" also matches
-say-hello-now@.  An empty pattern makes this a catch-all. Catch-alls are a
+say-hello-now@. An alias that delivers into a mailbox is anchored for you
+when made through the web UI or the API, "hello" becoming "^hello$", because
+a mailbox's addresses are read back from its patterns; a file imported with
+`config import` is taken as written. An empty pattern makes this a catch-all. Catch-alls are a
 fallback: they receive mail only for addresses that no pattern matched, so
 adding one does not duplicate mail that already has somewhere to go.
 
@@ -660,11 +709,94 @@ the dashboard then asks the operator for the address instead.
 
 ### `antispam`
 
-**`enabled`** — See the field above; the two are set together.
+Spam scoring. The score a message is compared against is the domain's
+`spamFilterScoreThreshold`, not a setting here.
 
-**`host`** — See the field above; the two are set together.
+**`enabled`** — Whether messages are scored at all.
 
-**`port`** — See the field above; the two are set together.
+**`engine`** — What does the scoring: `builtin` for the filter inside this
+server, or `spamd` for an external SpamAssassin daemon. Leaving it empty is
+resolved rather than defaulted, so that an existing deployment keeps working
+without being edited: empty with a host configured means `spamd`, and empty
+with no host means `builtin`.
+
+**`spamd`** — Where the external daemon listens, used when `engine` is
+`spamd`. Its `host` and `port` are the two fields.
+
+**`host`**, **`port`** — Deprecated: use `spamd`. Kept because it is what
+deployments in the field have stored, and it still works.
+
+**`builtin`** — The filter inside this server. It scores from what the server
+already knows, from public block lists, from a classifier trained on your own
+mail, and optionally from public pattern rules. The four groups below can be
+turned on and off independently.
+
+**`signals`** — Scoring from what the server already established about a
+message: its authentication results, the sending host's confirmed reverse DNS
+name, and the name it gave in HELO. Costs no lookups, because all of it is
+computed before scoring begins. Its one field is `enabled`.
+
+**`dns`** — Reputation lookups in public block lists. A block list is queried
+with an ordinary DNS lookup, so this needs no service of its own.
+
+**`timeout`** — Bounds the whole set of block list lookups for one message.
+
+**`addressLists`** — The lists consulted about the connecting address. Each
+entry has a `zone` and a `weight`.
+
+**`domainLists`** — The lists consulted about domains found in the message.
+Each entry has a `zone` and a `weight`.
+
+**`zone`** — The suffix queries are built with, for example
+`zen.spamhaus.org`.
+
+**`weight`** — The points a listing contributes.
+
+**`maximumDomains`** — Caps how many domains from one message are looked up,
+so that a message full of links is not a burst of DNS queries.
+
+**`bayes`** — A classifier trained on this server's own mail, from messages
+marked as spam or not spam in the dashboard. It is usually the most accurate
+part of a spam filter, because it learns the mail you actually get.
+
+**`minimumMessages`** — How many messages must have been learned before the
+classifier is allowed to contribute anything. A classifier trained on four
+messages is confidently wrong.
+
+**`rules`** — Public pattern rules, downloaded into the database and evaluated
+in this process. Off by default: an upgrade should not begin downloading and
+running rule files nobody asked for.
+
+**`channels`** — The update channels to fetch, by name.
+
+**`updateInterval`** — How often to look for a new version of the rules.
+
+**`maximumEvaluationTime`** — Bounds one message's whole rule pass. Thousands
+of patterns run over text an attacker chose, so this is a limit rather than a
+target.
+
+Rules are loaded deliberately rather than downloaded unattended:
+
+    teanode-server config rules import --file ruleset.cf --channel updates.spamassassin.org
+    teanode-server config rules show
+
+They are stored in the database, not in a directory, because a server can run
+as several instances and they have to evaluate the same rules; each one
+notices a new version within a minute. `show` reports how many rules loaded
+and how many were skipped — a published set contains rules implemented by
+plugins this server does not have, and patterns its regular expression engine
+will not compile, and both are left out rather than guessed at.
+
+There is no automatic download. Rules are patterns this server runs against
+every message it receives, so fetching them unattended means verifying the
+publisher's signature, and the OpenPGP package that would do that is
+deprecated upstream. Adding a frozen cryptography dependency to a mail server
+is a decision worth taking deliberately.
+
+The rule data published on `updates.spamassassin.org` is produced by the
+Apache SpamAssassin project and licensed under the Apache License 2.0. The
+built-in filter is a different program and is not SpamAssassin; it only reads
+that published rule data when you enable it and load it.
 
 ### `geoip`
 

@@ -148,13 +148,29 @@ SMTP `AUTH` 和仪表盘登录都没有节流、锁定或退避，所以两者�
 
 认证在路由之前运行。在任何账户存在之前，路径会落到仪表盘并返回带 HTML 的 200，这正是让部署测试的失败无法阅读的原因。
 
+### SEC-11——邮箱、应用专用密码、IMAP 和单点登录（信息）
+
+随邮箱这一系列工作加入（[`docs/planning/active/20260906-mailboxes.md`](https://github.com/ziyan/teanode/blob/main/docs/planning/active/20260906-mailboxes.md)），并且是边做边审查，而不是事后：
+
+- API 里每一个邮箱、文件夹和条目操作都会解析出对应的行，并在调用者不是邮箱所有者时拒绝（`internal/api/v1api/apigraph` 中的 `requireMailbox`、`requireFolder`、`requireItems`）；一封邮件的内容只有它所在邮箱的所有者，或者对它的域名持有 `mail:audit` 的人才能读（`access.CanReadMail`）。拒绝一律回答"不存在"。
+- 应用专用密码是 32 个字母表里的二十个字符，用 bcrypt 哈希，只显示一次，可以单独吊销，而且永远不是账户密码。IMAP 和提交端口的登录走的是与凭据相同的按地址速率限制，而各种出错方式只有同一个答复。
+- 在连接加密之前，IMAP 会通告 `LOGINDISABLED`；993 端口从第一个字节起就是 TLS。用应用专用密码登录的提交，如果发件人不是这个邮箱自己的地址之一，会被拒绝。
+- 现在只有在 `reject` 策略下 DMARC 失败才会被拒绝；`none` 和 `quarantine` 会被记录，被隔离的邮件落进垃圾邮件文件夹，垃圾邮件过滤器给这次失败打分。这比以前宽松，也正是策略所要求的。
+- 单点登录使用带 PKCE 和 nonce 的授权码流程，state 用服务器密钥签名并在十分钟后过期，issuer 必须是 `https` 且其发现文档必须写着它自己，HTTP 客户端拒绝连接私有、回环或链路本地地址，无论什么名字解析到它。client secret 在 API 里只写不读。身份提供商的群组只会影响那些写明了它的群组。
+- 交给提供商的回调地址由 `Host` 和 `X-Forwarded-Proto` 构造，所以 SEC-7 对它同样适用。
+- 草稿的文件以 multipart 主体上传到 `PUT /api/v1/mailbox/drafts/{itemId}/attachments` 或 `POST /api/v1/mailbox/{mailboxId}/drafts/attachments`，需要认证（一个会话或一个 bearer 令牌），邮箱的归属按 GraphQL 草稿解析器同样的方式检查。这个检查在读取请求体*之前*、在一个短事务里进行，所以陌生人的请求不会带来任何缓冲开销，写入草稿时再检查一次。请求体由 `http.MaxBytesReader` 按邮件大小上限截断，并逐个文件再计一次（超过则 413）；这些文件随后加入草稿已有的部分，总量超限则作为无效拒绝（400）。没有配置邮件大小上限时，上传不设上限，和 SMTP 一样。过期的草稿 id 会被拒绝。回复是存储后的草稿，所以页面永远不用猜某一部分的序号。
+- `ApplyMailboxRules` 把一个邮箱已存的规则跑在已经归档的文件夹上，就像到达时对新邮件那样。它通过带 `mail:write` 的 `requireMailbox` 解析邮箱，通过 `requireFolder` 解析文件夹，并把属于另一个邮箱的文件夹当作不存在来拒绝。一页上限 500 封；移动到已经消失或属于别处的文件夹不做任何事；`delete` 是移到回收站而不是抹掉；`forward` 会被计数并跳过，所以这个变更不可能把旧邮件重新发到规则指定的地址。`mail:send` 被刻意不去查，因为没有任何东西离开服务器。
+- `ListMailboxItems` 的搜索筛选（`from`、`to`、`subject`）作为参数到达 `ILIKE`，调用者输入里的 `%`、`_` 和 `\` 会先被转义；`since`/`before` 是带类型的，分页也有上限。`SaveMailboxContact`、`DeleteMailboxContact` 和 `SetMailboxFolderPinned` 走与邮箱 API 其余部分相同的归属检查，最后一个还会拒绝收件箱，因为它一直在最上面。
+
+未解决：IMAP 服务器还没有通告 CONDSTORE 或 QRESYNC，所以客户端同步一个大文件夹时走的是慢路径。
+
 ## 5. 已验证的控制
 
 这些经过检查并被认为可靠。存在测试的地方，写明了测试的名字。
 
 ### 5.1 它不是开放中继
 
-替第三方送信要求设置 `envelope.CredentialID` 或 `envelope.DomainID`（`internal/mx/exchange.go:126`）。SMTP 服务器只会设置 `CredentialID`，而且只在完成 `AUTH` 之后（`internal/util/smtpd/smtpd.go:482`）。`DomainID` 只能从内部发送路径到达。
+替第三方送信要求设置 `envelope.CredentialID`、`envelope.DomainID` 或 `envelope.MailboxID`（`internal/mx/exchange.go`）。SMTP 服务器设置 `CredentialID` 或 `MailboxID`，而且只在完成 `AUTH` 之后；`DomainID` 只能从内部发送路径到达。带 `MailboxID` 的提交还会被进一步拒绝，除非发件人是那个邮箱的地址之一，并且它的所有者持有 `mail:send`。
 
 因此未认证的邮件走 `handleIncoming`，它要求收件域名是配置服务的域名之一，否则回答"mailbox unavailable"（`internal/mx/exchange_incoming.go:39`）。
 

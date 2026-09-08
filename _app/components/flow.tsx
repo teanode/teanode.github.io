@@ -4,6 +4,7 @@ import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
+import ForwardToInboxOutlinedIcon from '@mui/icons-material/ForwardToInboxOutlined'
 import InboxOutlinedIcon from '@mui/icons-material/InboxOutlined'
 import MailOutlineIcon from '@mui/icons-material/EmailOutlined'
 import ReplyOutlinedIcon from '@mui/icons-material/ReplyOutlined'
@@ -14,9 +15,10 @@ import { Mark } from './logo'
 import { brand, monospaceFamily } from '../theme'
 
 // What happens to a message, drawn: it arrives at your domain, TeaNode checks
-// it and forwards it to the inbox you already have or to a webhook, and a
-// reply goes back out signed as the domain. The picture says in a glance what
-// the lead paragraph says in four sentences, which is why it sits beside it.
+// it, and it lands in a mailbox here, in an inbox somebody already has, or at
+// a webhook; a reply goes back out signed as the domain. The picture says in
+// a glance what the lead paragraph says in three sentences, which is why it
+// sits beside it.
 //
 // Boxes and arrows in markup rather than an SVG, so the words in it are
 // translated like any others and wrap the way the rest of the page does. It
@@ -75,7 +77,8 @@ export const Flow = () => (
       </Node>
       <Arrow/>
       <Stack sx={{ gap: 1 }}>
-        <Node icon={<InboxOutlinedIcon sx={{ fontSize: 20 }}/>} title={<T id='welcome.flow.inbox'/>}/>
+        <Node accent icon={<InboxOutlinedIcon sx={{ fontSize: 20 }}/>} title={<T id='welcome.flow.mailbox'/>}/>
+        <Node icon={<ForwardToInboxOutlinedIcon sx={{ fontSize: 20 }}/>} title={<T id='welcome.flow.inbox'/>}/>
         <Node icon={<WebhookOutlinedIcon sx={{ fontSize: 20 }}/>} title={<T id='welcome.flow.webhook'/>}/>
       </Stack>
     </Box>

@@ -71,7 +71,11 @@
 
 用 `swaks` 给它发一封邮件：
 
-    swaks --to hello@example.com --from someone@example.net --server 127.0.0.1:10025
+    swaks --to hello@example.com --from someone@webmail.example --server 127.0.0.1:10025
+
+发件人必须在一个真实存在、发布了邮件服务器、并且没有要求拒绝失败邮件的域名下：现在每一个保留的示例域名都发布了 `reject` 的 DMARC 策略，所以一封"来自" `someone@example.net` 的邮件会在门口就被挡回去——这是正确的，也帮不上忙——上面的 `webmail.example` 代表一个你自己选的域名。策略是 `none` 的域名（大多数大型网页邮箱都是）会被打分并接受。服务器同样会拒绝域名完全没有 MX 记录的发件人。
+
+要投递进一个邮箱而不是转发，就在域名的别名标签页上把一个种类为"邮箱"的别名指向你的邮箱，然后发到那个地址。想看一封邮件同时落在两处，最简单的办法是再开一个本地账户的邮箱：用 **新邮件** 从一个发给另一个。
 
 ## 可选服务
 

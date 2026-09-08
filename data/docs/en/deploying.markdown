@@ -14,7 +14,7 @@ covers the binaries.
 The image contains the server, the client and the dashboard, and nothing
 else: no shell and no package manager. It runs as user 65532 rather than
 root, with only the `CAP_NET_BIND_SERVICE` capability so that it can bind
-ports 25, 80, 443 and 587.
+ports 25, 80, 443 and 587, and 993 and 143 for IMAP.
 
 Pin a version rather than following `latest` on a server people depend on.
 Upgrading should be something you decide to do.
@@ -41,6 +41,16 @@ The server uses the host's network rather than a Docker network. SPF checks
 the address a mail server connects from, and behind a Docker bridge every
 sender would appear to come from the Docker gateway.
 
+### Mail programs
+
+IMAP is served on 993 with TLS, and on 143 with STARTTLS, when
+`TEANODE_LISTEN_IMAPS` and `TEANODE_LISTEN_IMAP` are set; `config env` writes
+them as `:993` and `:143`. Since the container shares the host's network,
+those two ports need opening in the firewall or security group beside 25,
+587, 80 and 443. A server set up before they existed turns them on under
+**Server → Listeners** and restarts, because the environment only describes a
+first run.
+
 The connection to PostgreSQL is encrypted and verified. The official
 PostgreSQL image serves no TLS, so the compose file generates a certificate
 and starts PostgreSQL with it, and the `TEANODE_DATABASE_URL` that
@@ -52,12 +62,15 @@ without checking who answered.
 ### What runs beside it
 
 - **PostgreSQL** holds the configuration and everything the server has
-  handled: mail, deliveries, DMARC reports, usage counters, templates. It is
-  what you back up.
-- **ClamAV** and **SpamAssassin** scan mail for viruses and spam. The compose
-  file starts them, but the server does not use them until they are switched
-  on in the settings. Remove the services from the file if you do not want
-  them; ClamAV needs about 2GB of memory.
+  handled: mailboxes and what is in them, mail, deliveries, DMARC reports,
+  usage counters, templates, and who may do what. It is what you back up.
+- **ClamAV** scans mail for viruses. The compose file starts it, but the
+  server does not use it until it is switched on in the settings. Remove the
+  service if you do not want it; it needs about 2GB of memory.
+- **Spam** is scored by a filter inside the server, which needs no second
+  program. An external SpamAssassin daemon is still supported and is behind
+  the `spamd` profile: `docker compose --profile spamd up -d`, with
+  `antispam.engine` set to `spamd`.
 - **MinIO** and **Redis** are only for running more than one instance, and
   are behind the `cluster` profile. MinIO holds the raw messages so that every
   instance can read what any of them received. Redis holds passkey sign-ins

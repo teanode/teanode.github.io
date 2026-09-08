@@ -53,15 +53,30 @@ that has not been photographed. The front page's carousel shows them, and a
 document names one as `<img src="screenshot:<page>">`, which the markdown
 component resolves to the picture for the theme and language being read in.
 
-They were taken from the development server in the server repository
-(`make dev`), signed in as an account named `ada`, with sample data for
-`example.com`: four aliases, a
-layout and two templates, a DMARC aggregate report, and the external address
-replaced by the documentation address 203.0.113.10 so the DNS page shows
-nothing real. Retake them when the dashboard changes. Headless Chrome over
-the DevTools protocol does it: set the `teanode_session` cookie and the
-`teanode.theme` and `teanode.language` storage keys, navigate, capture at
-1505x812 with a device scale factor of 2.
+The five pages are the mailbox with a message open, mailbox settings' mail
+programs tab, people and access, a domain's aliases, and a domain's DNS
+records.
+
+Take them from a server of your own, never from one somebody is working in:
+a released binary against a throwaway database, on ports of its own. The
+fixture is one domain, `example.com`; an account with a mailbox named "Ada at
+example.com"; aliases of every kind, so the routing story is visible; a
+second and third account in a group with the Operator role tied to that
+domain; and a mailbox filled over IMAP, because a message cannot be delivered
+from a reserved example domain — every one of them publishes a null MX and a
+DMARC policy of `reject`, and the server is right to refuse them. An app
+password signs the IMAP session in.
+
+Two things are set so the pictures show what a real deployment shows rather
+than a development one. Point `resolver.externalAddressServices` at something
+that answers with the documentation address 203.0.113.10, so no real address
+appears, and restart. Then store the standard ports in `listen` — 993, 143,
+587 — after the server has bound its own high ones: the mail programs page
+reads the stored configuration, and the running listeners are not disturbed.
+
+Headless Chrome over the DevTools protocol takes them: set the
+`teanode_session` cookie and the `teanode.theme` and `teanode.language`
+storage keys, navigate, capture at 1505x812 with a device scale factor of 2.
 
 ## No external resources
 

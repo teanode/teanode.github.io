@@ -34,8 +34,9 @@ notFound:
 welcome:
   headline: 自分のドメインでメールを送り、受け取る。
   lead: >-
-    サイドプロジェクトと立ち上げたばかりのスタートアップのための、オープンソースのメールサーバー。
-    ドメイン宛のメールを受け取っていま読んでいる受信箱へ転送し、返信はドメインとして署名して送ります。
+    サイドプロジェクトと立ち上げたばかりのスタートアップのための、オープンソースの
+    メールサーバー。アドレスにメールボックスを与えれば、ここでも好きなメールプログラムでも
+    読めます。使っている受信箱へ転送することもできます。返信はドメインとして署名されて出ていきます。
   getStarted: はじめる
   readDocs: ドキュメントを読む
   viewSource: ソースを見る
@@ -45,7 +46,8 @@ welcome:
     language: Go で書かれています
   flow:
     arrives: メールがドメインに届く
-    checks: SPF、DKIM、DMARC を検査し、ARC の封をして転送する
+    checks: SPF、DKIM、DMARC を検査し、振り分けるか転送する
+    mailbox: ここのメールボックスと、あなたのメールプログラム
     inbox: いま使っている受信箱
     webhook: webhook
     reply: 返信も送信するメールも、自分のドメインとして署名されて出ていきます。
@@ -55,10 +57,13 @@ welcome:
   openPicture: 画像を全画面で開く
   closePicture: 閉じる
   screenshots:
+    mailbox: メールボックス。入れ子にできるフォルダー、全体を対象にした検索、そしてメールプログラムのように表示されるメール。
+    programs: デバイスごとのアプリパスワード。これでメールプログラムが IMAP でサインインし、サブミッションポートから送信します。
+    access: 人、グループ、ロール。グループをひとつのドメインに結び付ければ、その権限はそこまでしか届きません。
+    aliases: ドメインのエイリアス。それぞれのパターンがメールボックスへ配送するか、アドレス、webhook、別のメールサーバーへ転送します。
+    dns: ドメインの DNS レコード。ダッシュボードがひとつずつ確認し、足りないものや違うものを示します。
     mail: ひとつのドメインに絞り込んだメール一覧。サーバーが扱ったすべてのメールと、それぞれについて下した判断。
     message: 一通のメール。認証の検査とその根拠、すべての配送の試行、そしてスクリプトを取り除いたメール本体。
-    aliases: ドメインのエイリアス。それぞれのパターンがアドレス、webhook、または別のメールサーバーへ転送し、キャッチオールが残りを受け取ります。
-    dns: ドメインの DNS レコード。ダッシュボードがひとつずつ確認し、足りないものや違うものを示します。
     templates: ドメインのメールテンプレート。それぞれに変数と翻訳があります。
     template: テンプレートの編集。件名と本文は変数を使え、レイアウトが結果を包みます。
     layout: レイアウトの編集。ドメインが送るすべてのメールを囲む枠です。
@@ -66,6 +71,7 @@ welcome:
     report: 一通のレポート。どのアドレスがそのドメインとしてどれだけ送り、検証を通ったかどうか。
   examplesHeading: たとえば
   examples:
+    you: 自分のメールボックス。ここでも、好きなメールプログラムでも読めます。
     hello: ローンチページに載せ、創業者自身の受信箱へ転送。
     support: チケットを起票する webhook へ転送。
     noreply: アプリがこのアドレスからだけ、署名付きでコードや領収書を送る。
@@ -85,6 +91,7 @@ welcome:
       provider: メールボックスのプロバイダー
     rows:
       receive: 自分のドメインで受け取る
+      mailbox: メールボックスと IMAP
       send: 自分のドメインとして送る
       domains: ドメイン数
       webhook: webhook へ配送
@@ -96,6 +103,11 @@ welcome:
         cloudflare: 'yes'
         improvmx: 'yes'
         provider: メールボックスへ
+      mailbox:
+        teanode: 'yes'
+        cloudflare: 'no'
+        improvmx: 'no'
+        provider: 'yes'
       send:
         teanode: 自分の鍵で署名
         cloudflare: 'no'
@@ -124,35 +136,36 @@ welcome:
     note: >-
       2026 年 9 月時点の各社のプランによります。プランは変わりますが、ライセンスは変わりません。
   featuresHeading: できること
+  features:
+    mailbox:
+      title: すべてのアカウントにメールボックス
+      body: 入れ子にできるフォルダー、全体の検索、ルール、下書き、署名、そして不在時の自動返信。
+    imap:
+      title: どのメールプログラムでも使える IMAP
+      body: 同じメールボックスをどこからでも。デバイスごとのアプリパスワードは送信にも使えます。
+    authenticates:
+      title: 認証し、採点する
+      body: 受信時に SPF、DKIM、DMARC、ARC を検査し、送信時に署名し、迷惑メールは内蔵のフィルターが採点します。
+    forwards:
+      title: 柔軟に転送する
+      body: パターンで各アドレスをメールボックス、別の受信箱、webhook、別のサーバーへ振り分けます。
+    access:
+      title: 人、グループ、ロール
+      body: 権限が各自に見えるものを決め、シングルサインオンはディレクトリに従い、変更はすべて記録されます。
+    shows:
+      title: すべてのメールを見せる
+      body: 判定、配送の試行、そしてドメインについての DMARC レポート。
   extrasLead: 欲しいときには
   extras:
-    dashboard: 組み込みダッシュボード
+    templates: テンプレートとレイアウト
+    contacts: 連絡先
     cli: コマンドラインクライアント
     clamav: ClamAV
-    spamassassin: SpamAssassin
+    spamd: 外部の SpamAssassin
     geoip: GeoIP
     s3: S3 ミラー
     socks5: SOCKS5 プロキシ
     dns01: DNS-01 証明書
-  features:
-    authenticates:
-      title: すべてを認証する
-      body: 受信時に SPF、DKIM、DMARC、ARC を検査し、送信時に署名します。
-    forwards:
-      title: 柔軟に転送する
-      body: パターンで各アドレスを受信箱、webhook、別のサーバーへ振り分けます。
-    relays:
-      title: 自分のアドレスから送る
-      body: デバイスごとの SMTP 資格情報。送信元ひとつに制限もできます。
-    shows:
-      title: メールを見せる
-      body: 各メールの判定と配送の試行、安全に描画した本文。
-    sends:
-      title: 書いたメールを送る
-      body: 変数と翻訳を持つテンプレートと、それを包むレイアウト。
-    reports:
-      title: ドメインについて報告する
-      body: DMARC レポートを解析して保存し、誰がドメインとして送っているかを示します。
   startHeading: はじめる
   startLead: docker compose で四つのコマンド、それからダッシュボードを開きます。
   startAfter: >-
@@ -162,7 +175,7 @@ welcome:
   needHeading: 必要なもの
   needs:
     domain: DNS を編集できるドメイン。
-    host: 固定アドレスを持ち、ポート 25、80、443、587 が開いたホスト。
+    host: 固定アドレスを持ち、ポート 25、80、443、587、993 が開いたホスト。
     docker: compose 付きの Docker。PostgreSQL は compose ファイルに含まれます。
   needsAfter: 他には何もいりません。クラウドのアカウントも DNS API も不要で、証明書は自動です。
   questionsHeading: よくある質問
@@ -173,22 +186,35 @@ welcome:
         受信にはあります。他のメールサーバーはポート 25 に配送し、他の入口はありません。家庭用回線の
         多くは塞いでいて、小さなサーバーの多くは塞いでいません。[ポート 25 の問題](/doc/getting-started#ポート-25-の問題)
         を参照してください。
-    reply:
-      question: Gmail から返信できますか？
+    mailprogram:
+      question: 自分のメールプログラムで読めますか？
       answer: >-
-        できます。ダッシュボードで SMTP 資格情報を作り、Gmail の「他のメールアドレスを追加」に
-        そのアドレスを、送信サーバーに TeaNode を登録します。返信はドメインの鍵で署名されて出ていきます。
+        読めます。サーバーはポート 993 で IMAP を、143 で STARTTLS を話します。メールボックス設定で
+        そのデバイス用のアプリパスワードを作れば、Apple Mail や Thunderbird、スマートフォンが
+        アドレスとそのパスワードでサインインします。同じパスワードでポート 587 から送信できます。
+    forwarding:
+      question: メールボックスを使わなければいけませんか？
+      answer: >-
+        いいえ。エイリアスはメールボックスへ配送することも、いま読んでいるアドレスへ転送することも、
+        webhook へ送ることも、別のメールサーバーへ渡すこともでき、ひとつのドメインで四つとも使えます。
     outbound:
       question: ホストが送信ポート 25 を塞いでいます。送れますか？
       answer: >-
         送れます。リレーの設定をプロバイダーのサブミッションポートに向けてください。Amazon SES、
         Postmark、Resend、Gmail アカウントのどれでも動き、メールは TeaNode が付けた署名を保ちます。
         [リレー](/doc/configuration#smtprelay)を参照してください。
-    stored:
-      question: メールは保存されますか？
+    team:
+      question: チームは会社の ID プロバイダーでサインインできますか？
       answer: >-
-        メールは指定した期間ディスクに残り、ダッシュボードが表示でき、失敗した配送を再試行できます。
-        その後は削除されます。保持期間をゼロにするとすべて残ります。
+        できます。OpenID Connect を使います。グループはディレクトリのグループに従わせられ、
+        ロールがそのメンバーに見えるもの、できることを決めます。ドメインに結び付けたグループは
+        そこまでしか届きません。
+    stored:
+      question: メールはどこにありますか？
+      answer: >-
+        あなたのホストの、あなたの PostgreSQL データベースの中に。生のメールはディスクか、
+        選んだオブジェクトストアにあります。いくつのフォルダーが持っていてもメールはひとつだけ保存され、
+        ひとつでも持っている限り残ります。
 footer:
   licence: MIT ライセンスのオープンソースです。
   security: セキュリティ問題の報告

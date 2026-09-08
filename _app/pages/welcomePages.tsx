@@ -10,16 +10,17 @@ import Link from '@mui/material/Link'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import type { SvgIconComponent } from '@mui/icons-material'
-import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined'
 import CallSplitIcon from '@mui/icons-material/CallSplit'
 import CheckIcon from '@mui/icons-material/Check'
 import ConfirmationNumberOutlinedIcon from '@mui/icons-material/ConfirmationNumberOutlined'
-import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined'
+import DevicesOutlinedIcon from '@mui/icons-material/DevicesOutlined'
 import DnsOutlinedIcon from '@mui/icons-material/DnsOutlined'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import GitHubIcon from '@mui/icons-material/GitHub'
+import GroupsOutlinedIcon from '@mui/icons-material/GroupsOutlined'
+import InboxOutlinedIcon from '@mui/icons-material/InboxOutlined'
+import MailOutlineIcon from '@mui/icons-material/EmailOutlined'
 import LanguageOutlinedIcon from '@mui/icons-material/LanguageOutlined'
-import OutboxOutlinedIcon from '@mui/icons-material/OutboxOutlined'
 import RemoveIcon from '@mui/icons-material/Remove'
 import RocketLaunchOutlinedIcon from '@mui/icons-material/RocketLaunchOutlined'
 import SmartphoneOutlinedIcon from '@mui/icons-material/SmartphoneOutlined'
@@ -49,21 +50,22 @@ import routes, { links } from '../routes'
 const measure = '60ch'
 
 const features: { key: string, Icon: SvgIconComponent }[] = [
+  { key: 'mailbox', Icon: InboxOutlinedIcon },
+  { key: 'imap', Icon: DevicesOutlinedIcon },
   { key: 'authenticates', Icon: VerifiedUserOutlinedIcon },
   { key: 'forwards', Icon: CallSplitIcon },
-  { key: 'relays', Icon: OutboxOutlinedIcon },
+  { key: 'access', Icon: GroupsOutlinedIcon },
   { key: 'shows', Icon: VisibilityOutlinedIcon },
-  { key: 'sends', Icon: DescriptionOutlinedIcon },
-  { key: 'reports', Icon: AssessmentOutlinedIcon },
 ]
 
 // What comes with it and is off until asked for: a row of names rather than
 // a paragraph about them.
-const extras = ['dashboard', 'cli', 'clamav', 'spamassassin', 'geoip', 's3', 'socks5', 'dns01']
+const extras = ['templates', 'contacts', 'cli', 'clamav', 'spamd', 'geoip', 's3', 'socks5', 'dns01']
 
 // Three addresses and where each one goes, which is the whole idea in the
 // form most people first meet it.
 const examples: { key: string, Icon: SvgIconComponent }[] = [
+  { key: 'you', Icon: MailOutlineIcon },
   { key: 'hello', Icon: RocketLaunchOutlinedIcon },
   { key: 'support', Icon: ConfirmationNumberOutlinedIcon },
   { key: 'noreply', Icon: SmartphoneOutlinedIcon },
@@ -79,9 +81,9 @@ const needs: { key: string, Icon: SvgIconComponent }[] = [
 // likely weighing it against. The rows are keys into the translations, and
 // each cell is one of yes, no, or a short note in the reader's language.
 const comparisonColumns = ['teanode', 'cloudflare', 'improvmx', 'provider']
-const comparisonRows = ['receive', 'send', 'domains', 'webhook', 'yours', 'price']
+const comparisonRows = ['receive', 'mailbox', 'send', 'domains', 'webhook', 'yours', 'price']
 
-const questions = ['port25', 'reply', 'outbound', 'stored']
+const questions = ['port25', 'mailprogram', 'forwarding', 'outbound', 'team', 'stored']
 
 // The whole installation, with docker compose. The same commands are in the
 // quick start document; keep the two the same. Broken across lines so that
@@ -159,7 +161,7 @@ export const WelcomePage = () => {
         {/* Three addresses, and where each one goes. */}
         <Section band>
           <Overline><T id='welcome.examplesHeading'/></Overline>
-          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(3, 1fr)' }, gap: 1.5 }}>
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' }, gap: 1.5 }}>
             {examples.map(({ key, Icon }) => (
               <Card key={key}>
                 <Tile><Icon sx={{ fontSize: 22 }}/></Tile>

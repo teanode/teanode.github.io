@@ -34,8 +34,8 @@ notFound:
 welcome:
   headline: 用自己的域名收发邮件。
   lead: >-
-    给每个副业项目和早期创业公司的开源邮件服务器。它接收你域名的邮件，转发到你已经在读的邮箱；
-    回复以域名的身份签名发出。
+    给每个副业项目和早期创业公司的开源邮件服务器。给一个地址配一个邮箱，在这里读，
+    也能用任何邮件程序读；或者把它转发到你已经在用的邮箱。回复以域名的身份签名发出。
   getStarted: 开始使用
   readDocs: 阅读文档
   viewSource: 查看源码
@@ -45,7 +45,8 @@ welcome:
     language: 用 Go 编写
   flow:
     arrives: 邮件到达你的域名
-    checks: 检查 SPF、DKIM 和 DMARC，然后带着 ARC 印章转发
+    checks: 检查 SPF、DKIM 和 DMARC，然后归档或转发
+    mailbox: 这里的邮箱，以及你的邮件程序
     inbox: 你已经在用的邮箱
     webhook: 一个 webhook
     reply: 回复和你发出的邮件都以你的域名签名发出。
@@ -55,10 +56,13 @@ welcome:
   openPicture: 全屏查看图片
   closePicture: 关闭
   screenshots:
+    mailbox: 邮箱。可以嵌套的文件夹、覆盖全部邮件的搜索，以及像邮件程序那样呈现的邮件。
+    programs: 每台设备一份应用专用密码，用它让邮件程序通过 IMAP 登录，并通过提交端口发信。
+    access: 人员、群组和角色。一个群组可以绑定到一个域名，它的权限就只到那里为止。
+    aliases: 一个域名的别名。每个模式或者投递进一个邮箱，或者转发到一个地址、一个 webhook、另一台邮件服务器。
+    dns: 一个域名的 DNS 记录。仪表盘逐条检查，并显示哪些缺失或不一致。
     mail: 邮件列表，筛选到一个域名。服务器处理过的每一封邮件，以及它对每一封作出的判断。
     message: 一封邮件。身份验证的检查及其证据、每一次投递尝试，以及去掉脚本的邮件本身。
-    aliases: 一个域名的别名。每个模式转发到一个地址、一个 webhook 或另一台邮件服务器，兜底别名接收其余的。
-    dns: 一个域名的 DNS 记录。仪表盘逐条检查，并显示哪些缺失或不一致。
     templates: 一个域名的邮件模板，各自带有变量和翻译。
     template: 编辑模板。主题和正文可以使用变量，版式包在结果外面。
     layout: 编辑版式，也就是一个域名发出的每一封邮件外面的框架。
@@ -66,6 +70,7 @@ welcome:
     report: 一份报告。哪些地址以这个域名发了邮件、发了多少，以及是否通过验证。
   examplesHeading: 举个例子
   examples:
+    you: 你自己的邮箱，在这里读，也能用任何邮件程序读。
     hello: 放在产品发布页上，转发到创始人自己的邮箱。
     support: 转发到一个 webhook，由它开一张工单。
     noreply: 应用程序只用这个地址发送签名过的登录验证码和收据。
@@ -85,6 +90,7 @@ welcome:
       provider: 邮箱服务商
     rows:
       receive: 用你的域名收信
+      mailbox: 邮箱和 IMAP
       send: 用你的域名发信
       domains: 域名数量
       webhook: 投递到 webhook
@@ -96,6 +102,11 @@ welcome:
         cloudflare: 'yes'
         improvmx: 'yes'
         provider: 收进邮箱
+      mailbox:
+        teanode: 'yes'
+        cloudflare: 'no'
+        improvmx: 'no'
+        provider: 'yes'
       send:
         teanode: 用你的密钥签名
         cloudflare: 'no'
@@ -124,35 +135,36 @@ welcome:
     note: >-
       以 2026 年 9 月各家方案为准。方案会变，许可不会。
   featuresHeading: 它能做什么
+  features:
+    mailbox:
+      title: 每个账户都有一个邮箱
+      body: 可以嵌套的文件夹、覆盖全部邮件的搜索、规则、草稿、签名，以及外出自动回复。
+    imap:
+      title: 任何邮件程序都能用的 IMAP
+      body: 在任何地方读同一个邮箱。每台设备一份应用专用密码，也能用它在提交端口发信。
+    authenticates:
+      title: 验证并打分
+      body: 进来时检查 SPF、DKIM、DMARC 和 ARC，出去时签名，垃圾邮件由内建的过滤器打分。
+    forwards:
+      title: 灵活转发
+      body: 用模式把每个地址送到邮箱、别处的收件箱、webhook 或另一台服务器。
+    access:
+      title: 人员、群组和角色
+      body: 权限决定每个人能看到什么，单点登录跟随你的目录，每一次改动都有记录。
+    shows:
+      title: 让你看到每一封邮件
+      body: 判定、投递尝试，以及关于你的域名的 DMARC 报告。
   extrasLead: 还有，需要时可以打开
   extras:
-    dashboard: 内建仪表盘
+    templates: 模板和版式
+    contacts: 联系人
     cli: 命令行客户端
     clamav: ClamAV
-    spamassassin: SpamAssassin
+    spamd: 外部 SpamAssassin
     geoip: GeoIP
     s3: S3 镜像
     socks5: SOCKS5 代理
     dns01: DNS-01 证书
-  features:
-    authenticates:
-      title: 验证每一封邮件
-      body: 进来时检查 SPF、DKIM、DMARC 和 ARC，出去时签名。
-    forwards:
-      title: 灵活转发
-      body: 用模式把每个地址送到邮箱、webhook 或另一台服务器。
-    relays:
-      title: 用自己的地址发信
-      body: 每台设备一份 SMTP 凭据，可以限制为只用一个发件地址。
-    shows:
-      title: 让你看到邮件
-      body: 每一封邮件的判定和投递尝试，正文安全地渲染。
-    sends:
-      title: 发送你写的邮件
-      body: 带变量和翻译的模板，外面套一个版式。
-    reports:
-      title: 报告你的域名状况
-      body: 解析并保存 DMARC 报告，让你看到谁在以你的域名发信。
   startHeading: 开始使用
   startLead: 用 docker compose 执行四条命令，然后打开仪表盘。
   startAfter: >-
@@ -161,7 +173,7 @@ welcome:
   needHeading: 你需要什么
   needs:
     domain: 一个你能编辑 DNS 的域名。
-    host: 一台地址稳定、开放 25、80、443 和 587 端口的主机。
+    host: 一台地址稳定、开放 25、80、443、587 和 993 端口的主机。
     docker: 带 compose 的 Docker。PostgreSQL 随 compose 文件一起。
   needsAfter: 别的什么都不需要。不需要云账号，不需要 DNS API，证书自动获取。
   questionsHeading: 常见问题
@@ -171,21 +183,32 @@ welcome:
       answer: >-
         接收邮件需要：其他邮件服务器通过 25 端口投递，没有别的入口。大多数家庭宽带会封锁它，
         大多数小型服务器不会。见[25 端口的问题](/doc/getting-started#25-端口的问题)。
-    reply:
-      question: 我能在 Gmail 里回复吗？
+    mailprogram:
+      question: 我能用自己的邮件程序读吗？
       answer: >-
-        可以。在仪表盘里创建一份 SMTP 凭据，然后在 Gmail 的“用这个地址发送邮件”里添加该地址，
-        发件服务器填 TeaNode。回复会带着你域名的密钥签名发出。
+        可以。服务器在 993 端口提供 IMAP，在 143 端口提供 STARTTLS。在邮箱设置里为这台设备
+        创建一份应用专用密码，Apple Mail、Thunderbird 或你的手机就能用你的地址和这份密码登录。
+        同一份密码也能在 587 端口发信。
+    forwarding:
+      question: 我一定要用邮箱吗？
+      answer: >-
+        不一定。一个别名可以投递进邮箱、转发到你已经在读的地址、发到一个 webhook，
+        或者交给另一台邮件服务器，同一个域名四种都能同时用。
     outbound:
       question: 我的主机封锁了外发 25 端口，还能发信吗？
       answer: >-
         可以。把中继设置指向某个服务商的提交端口：Amazon SES、Postmark、Resend 或一个 Gmail 账号都可以，
         邮件保留 TeaNode 加上的签名。见[中继](/doc/configuration#smtprelay)。
-    stored:
-      question: 它会保留我的邮件吗？
+    team:
+      question: 我的团队能用公司的身份提供商登录吗？
       answer: >-
-        邮件会在磁盘上保留你设定的时长，这样仪表盘能展示它们，失败的投递也能重试，之后被删除。
-        把保留时长设为零则永久保留。
+        可以，通过 OpenID Connect。一个群组可以跟随你目录里的一个群组，角色决定它的成员能看什么、做什么；
+        绑定到一个域名的群组，权限就只到那里为止。
+    stored:
+      question: 我的邮件存放在哪里？
+      answer: >-
+        在你的主机上，在你的 PostgreSQL 数据库里，原始邮件放在磁盘上或你选择的对象存储里。
+        一封邮件只存一份，无论有多少个文件夹放着它，只要还有一个放着就一直保留。
 footer:
   licence: 以 MIT 许可证开源。
   security: 报告安全问题

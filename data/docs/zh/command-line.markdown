@@ -38,6 +38,16 @@ TeaNode 是两个程序。`teanode-server` 是邮件服务器，加上只有它�
     teanode auth switch staging
     teanode auth status
 
+一份配置档案可以是*只读*的：在这台机器上，任何改动在发出之前就被拒绝，而读取照常进行。要交给一个只能看不能动的脚本或代理，用的就是这种档案。令牌本身没有变——服务器会接受这个改动，只是这份档案不去请求它。
+
+    teanode auth login --url https://mail.example.com --read-only
+    teanode auth set-read-only mail.example.com true
+    teanode auth set-read-only mail.example.com false
+
+任何命令上的 `--read-only`，或者环境里的 `TEANODE_READ_ONLY=1`，对一条命令或一个 shell 起同样的作用，不管档案怎么说。没有反方向的开关：被交给这个变量的东西没法给自己解套。被拒绝的改动以退出码 3 结束，并说明要撤销三个开关中的哪一个。`auth logout` 仍然会吊销档案的令牌，因为忘掉一份档案却让它的令牌继续有效是更糟的结果。
+
+重新登录一份已保存的档案——不带 `--url` 的 `auth login`，意思是 `--profile` 指定的那份或者当前那份，或者带上某份的 `--url` 或 `--name`——会替换它的令牌并在服务器上吊销旧的，并且会说出来。除非另行指定，它保留这份档案的只读设置和证书设置。在只读档案上，旧令牌会被留着并报出名字，供手工吊销。
+
 不想要文件的脚本可以设置 `TEANODE_URL` 和 `TEANODE_TOKEN`，它们绕过配置档案。给了 `--url` 而没给令牌时，该服务器已保存的档案会借出它的令牌。
 
 **在服务器本身上**，什么都不用设置。把服务器的环境变量放进 shell——容器里本来就有——客户端会从存储的配置读取服务器密钥，用它铸造一个令牌，并通过回环接口连接：
@@ -62,7 +72,11 @@ TeaNode 是两个程序。`teanode-server` 是邮件服务器，加上只有它�
 | `alias` | 一个域名的邮件去哪里；`alias match` 说明一个地址会命中什么 |
 | `credential` | 通过这台服务器发信的 SMTP 凭据 |
 | `dkim` | 为外发邮件签名的密钥，以及要发布的记录 |
-| `user` | 管理这台服务器的账户 |
+| `user` | 这台服务器上的账户；`teanode-server` 上的 `user rescue` 可以把某个账户设为管理员 |
+| `group` | 谁可以做什么，以及在哪些域名上：成员、角色、域名 |
+| `role` | 一个群组持有的、有名字的权限集合；`role permissions` 列出可以授予什么 |
+| `audit` | 管理性改动的日志，带筛选 |
+| `mailbox` | 一个邮箱及其中的一切：`folder`、`rule`、`contact`、`device`、`autoreply`、`programs` |
 | `token` | API 令牌；控制台上的 `token create --user` 签发某人的第一个 |
 | `session` | 登录仪表盘的浏览器 |
 | `passkey` | 注册到你账户的通行密钥；注册需要仪表盘 |
@@ -80,6 +94,7 @@ TeaNode 是两个程序。`teanode-server` 是邮件服务器，加上只有它�
 
     teanode domain create example.com
     teanode alias create example.com --pattern '^hello$' --kind email --email me@example.org
+    teanode alias create example.com --pattern '^you$' --kind mailbox --mailbox <邮箱 id>
     teanode alias match example.com hello
     teanode settings set antispam enabled=true host=127.0.0.1 port=783
     teanode server status
@@ -92,6 +107,49 @@ TeaNode 是两个程序。`teanode-server` 是邮件服务器，加上只有它�
 事物按人的叫法命名：域名按它的名字，模板按域名和名字，别名或凭据按它的列表打印的标识符。任何不可撤销的操作都会先问一下；`--force` 跳过询问。
 
 `settings set` 是通用的：键和类型来自服务器自己的 schema，`settings describe <section>` 列出它们。值为 `-` 表示从终端不回显地读取，用于密钥。
+
+### 从脚本或代理调用
+
+同样的命令也服务脚本，只是有三处差别在没人盯着的时候要紧。
+
+只有能回答的人才会被问问题。当标准输入不是终端时，本来要确认的命令会立刻拒绝并提示 `--force`，而不是打印一个没人看得见的提问。`TEANODE_FORCE=1` 替一个已经拿定主意的 shell 回答所有这类问题。
+
+`--json` 对失败和成功一样有效：错误以 `{"error": "...", "exitCode": N}` 的形式写到标准错误，这样调用方可以用同一种方式解析两者。`teanode api` 总是打印 JSON，它的错误也是。
+
+退出码说明出了哪一类问题：
+
+| 码 | 含义 |
+| --- | --- |
+| `0` | 成功 |
+| `1` | 出了别的问题；消息会说明是什么 |
+| `2` | 命令用错了：缺少参数、不存在的标志、没有人可问的确认，或者一个不在选项之内的值 |
+| `3` | 一个被只读档案、`--read-only` 或 `TEANODE_READ_ONLY` 拒绝的改动；什么都没有发出去 |
+| `4` | 服务器上没有这个东西 |
+| `5` | 服务器拒绝了令牌；请重新登录 |
+| `6` | 完全联系不上服务器 |
+
+Shell 补全由二进制文件自己提供：
+
+    source <(teanode completion bash)
+    source <(teanode completion zsh)
+
+### 从 shell 使用邮箱
+
+`teanode mailbox` 就是仪表盘里的邮箱，只是没有仪表盘。大多数人只有一个邮箱，所以只有在有多个时才需要 `--mailbox`，而文件夹是按名字而不是按标识符指定的：
+
+    teanode mailbox folder create GitHub
+    teanode mailbox rule add GitHub --when from:contains:@github.com --move GitHub --stop
+    teanode mailbox rule apply
+
+一个条件写作 `字段:操作符:值`，可以重复，而且每一条都必须匹配。字段有 `from`、`to`、`subject`、`header`、`score`、`sender-known` 和 `any`；操作符有 `contains`、`equals`、`matches`（正则表达式）、`above` 和 `below`。header 条件要写出头的名字：`--when header:List-Id:contains:golang`。其中两个字段不需要值，单独写就行：`--when sender-known` 和 `--when any`。动作是一些标志：`--move`、`--mark-read`、`--flag`、`--forward`、`--delete`，而 `--stop` 让这一条规则之后不再继续。
+
+一条规则归档的是它写下之后到达的邮件。`rule apply` 把已存的规则跑在某个文件夹里已经有的邮件上，像到达时那样移动、标记、加旗和删除；转发不会重复，因为旧邮件不会再发一次。`rule test` 说明会发生什么，但什么也不改。
+
+这一组里其余的就是邮箱的其余部分。`mailbox list` 列出你能打开的邮箱，`--all` 列出服务器上每一个邮箱及其所有者；`show` 和 `update` 读取和修改一个邮箱的名字和签名。`folder list|create|rename|move|pin|unpin|delete` 是左栏里的那棵树。`rule list|add|remove|enable|disable|test|apply` 是归档。`contact list|add|remove` 是它学到的地址，`device list|add|remove` 是邮件程序用来登录的应用专用密码，`autoreply show|set|off` 是外出自动回复，`programs` 是要填进邮件程序的主机和端口。
+
+### 有一样东西不在 schema 里
+
+因为它是字节而不是 JSON：草稿的文件以 `multipart/form-data` 上传，每个文件一个 `file` 部分，发到 `PUT /api/v1/mailbox/drafts/{itemId}/attachments`（或者对还不存在的草稿用 `POST /api/v1/mailbox/{mailboxId}/drafts/attachments`），带同一个 bearer 令牌。`curl -F file=@report.pdf` 就能做到；回复是存储后的草稿，带每一部分的序号。
 
 ### 访问整个 API
 

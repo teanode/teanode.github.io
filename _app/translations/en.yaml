@@ -34,9 +34,9 @@ notFound:
 welcome:
   headline: Send and receive emails at your own domains.
   lead: >-
-    An open source mail server for every side project and early startup.
-    It receives mail for your domains and forwards it to the inbox you
-    already read; replies go out signed as the domain.
+    An open source mail server for every side project and early startup. Give
+    an address a mailbox you read here or in any mail program, or forward it
+    to an inbox you already have. Replies go out signed as the domain.
   getStarted: Get started
   readDocs: Read the documentation
   viewSource: View the source
@@ -46,8 +46,9 @@ welcome:
     language: Written in Go
   flow:
     arrives: Mail arrives at your domain
-    checks: Checks SPF, DKIM and DMARC, then forwards it with an ARC seal
-    inbox: The inbox you already have
+    checks: Checks SPF, DKIM and DMARC, then files or forwards it
+    mailbox: A mailbox here, and in your mail program
+    inbox: An inbox you already have
     webhook: A webhook
     reply: Replies and mail you send go out signed as your domain.
   screenshotsHeading: What it looks like
@@ -56,9 +57,12 @@ welcome:
   openPicture: Open the picture full screen
   closePicture: Close
   screenshots:
+    mailbox: The mailbox. Folders that nest, search across all of it, and the message shown as a mail program would show it.
+    programs: An app password for each device, which signs a mail program in over IMAP and sends through the submission port.
+    access: People, groups and roles. A group can be tied to one domain, so its permissions reach only that far.
     mail: The mail list, filtered to one domain. Every message the server has handled and what it decided about each one.
     message: One message. The authentication checks with their evidence, every delivery attempt, and the message itself with scripts removed.
-    aliases: A domain's aliases. Each pattern forwards to an address, a webhook, or another mail server. The catch-all takes the rest.
+    aliases: A domain's aliases. Each pattern delivers into a mailbox, or forwards to an address, a webhook, or another mail server.
     dns: A domain's DNS records. The dashboard checks each one and shows what is missing or different.
     templates: A domain's message templates, each with its variables and translations.
     template: Editing a template. The subject and body take variables, and a layout wraps the result.
@@ -67,6 +71,7 @@ welcome:
     report: One report. Which addresses sent mail as the domain, how much, and whether it passed.
   examplesHeading: For example
   examples:
+    you: Your own mailbox, read here or in any mail program.
     hello: On the launch page, forwarded to the founder's own inbox.
     support: Forwarded to a webhook that opens a ticket.
     noreply: The app sends sign-in codes and receipts, signed, from this address only.
@@ -86,6 +91,7 @@ welcome:
       provider: A mailbox provider
     rows:
       receive: Receives at your domain
+      mailbox: Mailboxes and IMAP
       send: Sends as your domain
       domains: Domains
       webhook: Delivers to a webhook
@@ -97,6 +103,11 @@ welcome:
         cloudflare: 'yes'
         improvmx: 'yes'
         provider: Into a mailbox
+      mailbox:
+        teanode: 'yes'
+        cloudflare: 'no'
+        improvmx: 'no'
+        provider: 'yes'
       send:
         teanode: Signed with your key
         cloudflare: 'no'
@@ -126,35 +137,36 @@ welcome:
       As their plans stood in September 2026. Plans change; the licence does
       not.
   featuresHeading: What it does
+  features:
+    mailbox:
+      title: A mailbox for every account
+      body: Folders that nest, search across all of it, rules, drafts, a signature and an out-of-office reply.
+    imap:
+      title: IMAP for any mail program
+      body: Read the same mailbox anywhere. One app password per device, which sends on the submission port too.
+    authenticates:
+      title: Authenticates and scores
+      body: SPF, DKIM, DMARC and ARC on the way in, signed on the way out, and spam scored by a filter built in.
+    forwards:
+      title: Forwards flexibly
+      body: Patterns route each address to a mailbox, an inbox elsewhere, a webhook or another server.
+    access:
+      title: People, groups and roles
+      body: Permissions decide what each person sees, single sign-on follows your directory, and every change is logged.
+    shows:
+      title: Shows you every message
+      body: The verdicts, the delivery attempts, and the DMARC reports about your domains.
   extrasLead: Also, when you want them
   extras:
-    dashboard: Dashboard built in
+    templates: Templates and layouts
+    contacts: Contacts
     cli: Command line client
     clamav: ClamAV
-    spamassassin: SpamAssassin
+    spamd: External SpamAssassin
     geoip: GeoIP
     s3: S3 mirror
     socks5: SOCKS5 proxy
     dns01: DNS-01 certificates
-  features:
-    authenticates:
-      title: Authenticates everything
-      body: SPF, DKIM, DMARC and ARC checked on the way in, signed on the way out.
-    forwards:
-      title: Forwards flexibly
-      body: Patterns route each address to an inbox, a webhook or another server.
-    relays:
-      title: Sends from your own addresses
-      body: Per-device SMTP credentials, each limited to one sender if you like.
-    shows:
-      title: Shows you the mail
-      body: Every message, its verdicts and delivery attempts, safely rendered.
-    sends:
-      title: Sends mail you write
-      body: Templates with variables, translations and a layout around them.
-    reports:
-      title: Reports on your domains
-      body: DMARC reports parsed and kept, so you see who sends as your domain.
   startHeading: Getting started
   startLead: Four commands with docker compose, then open the dashboard.
   startAfter: >-
@@ -164,7 +176,7 @@ welcome:
   needHeading: What you need
   needs:
     domain: A domain whose DNS you can edit.
-    host: A host with a stable address and ports 25, 80, 443 and 587 open.
+    host: A host with a stable address and ports 25, 80, 443, 587 and 993 open.
     docker: Docker with compose. PostgreSQL comes with the compose file.
   needsAfter: Nothing else. No cloud account, no DNS API; certificates are automatic.
   questionsHeading: Questions
@@ -175,24 +187,37 @@ welcome:
         For receiving, yes: other mail servers deliver on port 25 and there is
         no other way in. Most home connections block it and most small
         servers do not. See [the port 25 problem](/doc/getting-started#the-port-25-problem).
-    reply:
-      question: Can I reply from Gmail?
+    mailprogram:
+      question: Can I read it in my own mail program?
       answer: >-
-        Yes. Create an SMTP credential in the dashboard and add the address
-        to Gmail under "Send mail as", with TeaNode as the outgoing server.
-        The reply leaves signed with your domain's key.
+        Yes. The server speaks IMAP on port 993, and STARTTLS on 143. Make an
+        app password for the device under Mailbox settings, and Apple Mail,
+        Thunderbird or your phone signs in with your address and that password.
+        The same password sends on port 587.
+    forwarding:
+      question: Do I have to use the mailbox?
+      answer: >-
+        No. An alias can deliver into a mailbox, forward to an address you
+        already read, post to a webhook, or hand the message to another mail
+        server, and one domain can do all four at once.
     outbound:
       question: My host blocks outbound port 25. Can I still send?
       answer: >-
         Yes. Point the relay setting at a provider's submission port: Amazon
         SES, Postmark, Resend or a Gmail account all work, and the mail keeps
         the signature TeaNode added. See [relaying](/doc/configuration#smtprelay).
-    stored:
-      question: Does it keep my mail?
+    team:
+      question: Can my team sign in with our identity provider?
       answer: >-
-        Messages stay on disk for as long as you say, so the dashboard can
-        show them and a failed delivery can be retried, then they are
-        removed. Set the retention to zero to keep everything.
+        Yes, through OpenID Connect. A group can follow a group in your
+        directory, and roles decide what its members may see and do; a group
+        tied to one domain reaches only that far.
+    stored:
+      question: Where does my mail live?
+      answer: >-
+        On your host, in your PostgreSQL database, with the raw message on
+        disk or in an object store you choose. A message is stored once
+        however many folders hold it, and kept for as long as one does.
 footer:
   licence: Open source under the MIT licence.
   security: Reporting a security problem

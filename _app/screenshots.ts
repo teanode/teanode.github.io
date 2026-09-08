@@ -24,22 +24,18 @@ export const screenshot = (page: string, theme: ScreenshotTheme, language: strin
   byKey.get(`${page}.${theme}.${language}`) ?? byKey.get(`${page}.${theme}.en`)
 
 // The pages there are pictures of, in the order the front page shows them.
-// It opens on the DNS page, which is the one that looks like something, and
-// keeps the plain mail list for later.
-export const screenshotPages = ['dns', 'aliases', 'message', 'mail', 'report', 'reports', 'templates', 'template', 'layout'] as const
+// It opens on the mailbox, which is what the dashboard opens on and the thing
+// most people are deciding about, and works outwards from there.
+export const screenshotPages = ['mailbox', 'programs', 'access', 'aliases', 'dns'] as const
 export type ScreenshotPage = typeof screenshotPages[number]
 
 // Where each picture was taken, for the address bar drawn over it.
 export const screenshotPaths: Record<ScreenshotPage, string> = {
-  dns: '/domains/example.com/settings',
+  mailbox: '/mailbox/inbox',
+  programs: '/mailbox/settings/devices',
+  access: '/access',
   aliases: '/domains/example.com/aliases',
-  message: '/mail/01m1m6e821vyp24yhdfk6p0ctt',
-  mail: '/mail?domain=example.com',
-  report: '/reports/01m1t2jh707k02dgeaejszkd2m',
-  reports: '/reports',
-  templates: '/domains/example.com/templates',
-  template: '/domains/example.com/templates/login',
-  layout: '/domains/example.com/layouts/base',
+  dns: '/domains/example.com/settings',
 }
 
 // Every dashboard screenshot is this shape, so a slot the size of one can be
