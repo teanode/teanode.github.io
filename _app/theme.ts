@@ -1,3 +1,4 @@
+import { touchRippleClasses } from '@mui/material/ButtonBase'
 import { createTheme, type Theme } from '@mui/material/styles'
 
 // The look: quiet chrome, colour only where it means something.
@@ -144,6 +145,52 @@ export const themeFor = (mode: Mode): Theme => {
             backgroundColor: surface.border,
             borderRadius: 8,
             border: `3px solid ${surface.page}`,
+          },
+        },
+      },
+
+      // The ripple that says a press landed, and where it landed. MUI already
+      // draws one on every ButtonBase — the buttons, the icon buttons, the
+      // menu items, the rail rows — and it already starts at the point under
+      // the finger. The default is only too quiet to notice here: this page is
+      // near-monochrome, so a ripple in the current text colour at under a
+      // quarter opacity is grey on grey and reads as nothing happening.
+      //
+      // Raised and slowed until the travel is legible. The colour stays
+      // currentColor, which is what makes it work on every surface without a
+      // per-variant rule: near-white text on the near-black button gives a
+      // pale ripple, grey text in the bar gives a grey one, and the inversion
+      // for dark comes free with the palette.
+      //
+      // Reached through ButtonBase because the ripple is internal to it and
+      // MUI keeps no MuiTouchRipple key in the themeable map. The class names
+      // come from the package rather than being written out here, so a rename
+      // upstream is a build error instead of a rule that quietly stops
+      // matching.
+      MuiButtonBase: {
+        styleOverrides: {
+          root: {
+            // Our own keyframes, because the opacity is animated rather than
+            // set: MUI's enter frames end at 0.3, so overriding the static
+            // opacity changes only what is left after the ripple has stopped
+            // moving, which is not the part anybody sees.
+            '@keyframes rippleEnter': {
+              '0%': { transform: 'scale(0)', opacity: 0.12 },
+              '100%': { transform: 'scale(1)', opacity: 0.42 },
+            },
+            // Doubled, for specificity. MUI writes its own rule at the same
+            // weight as a single "&" and emotion injects it after ours, so a
+            // tie goes to MUI and nothing here would apply.
+            [`&& .${touchRippleClasses.rippleVisible}`]: {
+              opacity: 0.42,
+              animationName: 'rippleEnter',
+              animationDuration: '620ms',
+              // Quick off the mark and easing out long, so the eye follows
+              // the edge travelling outwards rather than seeing the whole
+              // target flash at once.
+              animationTimingFunction: 'cubic-bezier(0.2, 0.6, 0.3, 1)',
+            },
+            [`&& .${touchRippleClasses.childLeaving}`]: { animationDuration: '620ms' },
           },
         },
       },
