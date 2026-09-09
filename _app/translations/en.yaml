@@ -58,6 +58,7 @@ welcome:
   closePicture: Close
   screenshots:
     mailbox: The mailbox. Folders that nest, search across all of it, and the message shown as a mail program would show it.
+    subscriptions: Every mailing list this mailbox receives, with what each has sent, and the two ways out — leave it, or mute it and let it file itself.
     programs: An app password for each device, which signs a mail program in over IMAP and sends through the submission port.
     access: People, groups and roles. A group can be tied to one domain, so its permissions reach only that far.
     mail: The mail list, filtered to one domain. Every message the server has handled and what it decided about each one.
@@ -140,7 +141,7 @@ welcome:
   features:
     mailbox:
       title: A mailbox for every account
-      body: Folders that nest, search across all of it, rules, drafts, a signature and an out-of-office reply.
+      body: Folders that nest, search across all of it, rules, drafts, a signature, an out-of-office reply and keyboard shortcuts.
     imap:
       title: IMAP for any mail program
       body: Read the same mailbox anywhere. One app password per device, which sends on the submission port too.
@@ -150,6 +151,12 @@ welcome:
     forwards:
       title: Forwards flexibly
       body: Patterns route each address to a mailbox, an inbox elsewhere, a webhook or another server.
+    subscriptions:
+      title: Every mailing list, and the way out
+      body: Newsletters on a page of their own. Leave one the way its sender says to, or mute it and let it file itself.
+    marks:
+      title: The mark beside the sender
+      body: Shows the logo a domain publishes, and only for mail that passed DMARC. Helps you publish your own.
     access:
       title: People, groups and roles
       body: Permissions decide what each person sees, single sign-on follows your directory, and every change is logged.

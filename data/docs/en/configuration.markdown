@@ -261,6 +261,17 @@ here makes them count as correct. Names as well as addresses are accepted,
 and a name is resolved when the advice is worked out, so a forwarder whose
 address moves stays right.
 
+**`trustedProxies`** — TrustedProxies are the addresses this server is
+reached through, when it is behind a CDN, a load balancer or a reverse proxy:
+an address, or a range in CIDR form. A connection through a proxy comes from
+the proxy, so without this every audit row and every "last used from" records
+the proxy's address rather than the person's. The client's address is in
+`X-Forwarded-For`, which the proxy adds — and which anybody who can reach
+this server directly can also forge, so it is read only when the connection
+came from one of these. Empty is the safe default and the right one for a
+server that faces the internet, where the connection's own address is the
+truth.
+
 
 ### `sso`
 
@@ -791,9 +802,13 @@ so that a message full of links is not a burst of DNS queries.
 marked as spam or not spam in the dashboard. It is usually the most accurate
 part of a spam filter, because it learns the mail you actually get.
 
-**`minimumMessages`** — How many messages must have been learned before the
-classifier is allowed to contribute anything. A classifier trained on four
-messages is confidently wrong.
+**`minimumMessages`** — How many messages of each kind, spam and not spam,
+must have been learned before the classifier is allowed to contribute
+anything. A classifier trained on four messages is confidently wrong, and one
+trained on two hundred of one kind and forty of the other is confidently
+wrong about everything unlike those forty. Until both counts are reached the
+classifier is silent, and the dashboard's spam breakdown shows no `BAYES`
+line.
 
 **`rules`** — Public pattern rules, downloaded into the database and evaluated
 in this process. Off by default: an upgrade should not begin downloading and

@@ -65,6 +65,22 @@ mailbox. Each device gets an app password of its own, which signs in to IMAP
 and sends through the submission port on 587 as any of the mailbox's
 addresses.
 
+**Subscriptions.** Every mailing list a mailbox receives, on a page of its own,
+with the way out of each read from the headers the sender wrote. Leaving is
+requested by this server rather than by the browser, so it does not tell the
+sender which address opened which message at what moment. Muting is the other
+answer, and often the better one: the list keeps arriving, filed in the Archive
+and already read. A newsletter whose unsubscribe was stripped in transit is
+still grouped as a list, and the page says why it cannot offer a way out rather
+than leaving it looking like the sender withheld one.
+
+**Marks.** The logo a sending domain publishes for its mail, shown beside the
+subscription it sends, and only for mail that passed DMARC — a mark is a claim
+about who sent something, and one on unproven mail helps whoever is pretending
+to be them. A domain's own mark can be published from here too: upload the
+file, and the DNS tab says what to publish and what would stop it working,
+most often a DMARC policy of none.
+
 **Authenticates everything.** SPF, DKIM, DMARC and ARC on the way in, with the
 results shown per message. Your outbound mail is DKIM signed, and forwarded
 mail keeps an ARC chain so it still passes at the far end.

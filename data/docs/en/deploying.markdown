@@ -37,6 +37,12 @@ Set `TEANODE_TLS_ACME_EMAIL` in `.env` before the first start: it is the
 address the certificate authority uses to warn you about an expiring
 certificate.
 
+Port 80 has to be reachable from the internet, because that is where the
+certificate authority puts its challenge. It answers those challenges and
+sends everything else to HTTPS: the dashboard is never served in the clear,
+and the answer carries `Strict-Transport-Security`, so a browser that has
+been here once will not try plain HTTP again.
+
 The server uses the host's network rather than a Docker network. SPF checks
 the address a mail server connects from, and behind a Docker bridge every
 sender would appear to come from the Docker gateway.

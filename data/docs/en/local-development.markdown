@@ -1,6 +1,7 @@
 How to get a working TeaNode build and a database to point it at. For what the
 pieces are and how they fit together, see [`AGENTS.md`](https://github.com/ziyan/teanode/blob/main/AGENTS.md) in the repository root. For
-the conventions your change has to follow, see [`docs/coding/coding-standards.md`](https://github.com/ziyan/teanode/blob/main/docs/coding/coding-standards.md).
+the conventions your change has to follow, see [`docs/coding/coding-standards.md`](https://github.com/ziyan/teanode/blob/main/docs/coding/coding-standards.md),
+and for the dashboard [`docs/coding/frontend-design.md`](https://github.com/ziyan/teanode/blob/main/docs/coding/frontend-design.md).
 
 ## Prerequisites
 

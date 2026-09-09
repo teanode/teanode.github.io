@@ -68,7 +68,7 @@ TeaNode は二つのプログラムです。`teanode-server` はメールサー�
 | グループ | 扱うもの |
 | --- | --- |
 | `auth` | サインインと、保存されたプロファイル |
-| `domain` | このサーバーがメールを受け取るドメインと、その DNS レコード |
+| `domain` | このサーバーがメールを受け取るドメイン、その DNS レコード、そして公開する `logo` |
 | `alias` | ドメインのメールがどこへ行くか。`alias match` はあるアドレスが何に当たるかを言う |
 | `credential` | このサーバーを通して送るための SMTP 資格情報 |
 | `dkim` | 送信メールに署名する鍵と、公開するレコード |
@@ -76,7 +76,7 @@ TeaNode は二つのプログラムです。`teanode-server` はメールサー�
 | `group` | 誰が何をしてよいか、どのドメインの上でか。メンバー、ロール、ドメイン |
 | `role` | グループが持つ、名前の付いた権限の集まり。`role permissions` が与えられるものを列挙する |
 | `audit` | 管理上の変更の記録。絞り込みつき |
-| `mailbox` | メールボックスとその中のすべて。`folder`、`rule`、`contact`、`device`、`autoreply`、`programs` |
+| `mailbox` | メールボックスとその中のすべて。`folder`、`rule`、`contact`、`subscription`、`device`、`autoreply`、`programs` |
 | `token` | API トークン。コンソールでの `token create --user` が誰かの最初のトークンを発行する |
 | `session` | ダッシュボードにサインインしているブラウザー |
 | `passkey` | あなたのアカウントに登録されたパスキー。登録にはダッシュボードが要る |
@@ -145,11 +145,50 @@ TeaNode は二つのプログラムです。`teanode-server` はメールサー�
 
 ルールが振り分けるのは、それが書かれた後に届いたメールです。`rule apply` は、保存されたルールをフォルダーにすでにあるものの上に走らせ、到着時と同じように移動、マーク、フラグ、削除を行います。転送は繰り返しません。古いメールをもう一度送ることはしないからです。`rule test` は何が起きるかを告げるだけで、何も変えません。
 
-このグループの残りは、メールボックスの残りです。`mailbox list` は開けるメールボックスを、`--all` はサーバー上のすべてのメールボックスを所有者とともに並べます。`show` と `update` はメールボックスの名前と署名を読み書きします。`folder list|create|rename|move|pin|unpin|delete` は左欄のツリー、`rule list|add|remove|enable|disable|test|apply` は振り分け、`contact list|add|remove` は覚えたアドレス、`device list|add|remove` はメールプログラムがサインインに使うアプリパスワード、`autoreply show|set|off` は不在時の自動返信、`programs` はメールプログラムに入力するホストとポートです。
+このグループの残りは、メールボックスの残りです。`mailbox list` は開けるメールボックスを、`--all` はサーバー上のすべてのメールボックスを所有者とともに並べます。`show` と `update` はメールボックスの名前と署名を読み書きします。`folder list|create|rename|move|pin|unpin|delete` は左欄のツリー、`rule list|add|remove|enable|disable|test|apply` は振り分け、`subscription list|show|mail|unsubscribe` は受け取っているメーリングリスト、`contact list|add|remove` は覚えたアドレス、`device list|add|remove` はメールプログラムがサインインに使うアプリパスワード、`autoreply show|set|off` は不在時の自動返信、`programs` はメールプログラムに入力するホストとポートです。
 
-### スキーマに載っていないものがひとつ
+### メーリングリストと、そこから抜けること
 
-JSON ではなくバイト列だからです。下書きのファイルは `multipart/form-data` で、ファイルごとに `file` パートひとつとして `PUT /api/v1/mailbox/drafts/{itemId}/attachments` へ（まだ存在しない下書きなら `POST /api/v1/mailbox/{mailboxId}/drafts/attachments` へ）、同じ bearer トークンを添えて送ります。`curl -F file=@report.pdf` でできます。返ってくるのは保存された下書きで、各パートの番号が入っています。
+サブスクリプションは保存されたひとつのものではなく、保存されたものの集まりです。同じ
+リストを名指したメールすべてを、リストが自分のために公開している識別子か、送ってくる
+アドレスでまとめたものです。ですから作るものは何もなく、鍵は `subscription list` が
+印字するものです。
+
+    teanode mailbox subscription list
+    teanode mailbox subscription mail <key>
+    teanode mailbox subscription unsubscribe <key>
+
+抜けることは誰か他人への依頼で、三つのやり方のうちコマンドラインで終わるのはひとつだけ
+です。ワンクリックの依頼は送られ、メールは送信者が指定したアドレスへ送られ、ページしか
+用意していない送信者については、人が開くためにそのページが印字されます。どちらにしても
+すでにメールボックスにあるメールは残ります。止まるのは、まだ送られていないほうです。
+
+### ドメインが公開する印
+
+`teanode domain logo show|publish|remove` は、このサーバーが自分のドメインのために
+ホストする BIMI のロゴです。
+
+    teanode domain logo publish example.com mark.svg
+    teanode domain check example.com          # 公開すべきレコードを印字する
+    teanode domain logo remove example.com
+
+ファイルは保存される前に、印が満たさなければならない制限付きのプロファイルに対して検査
+されます。スクリプトなし、アニメーションなし、他所から取ってくるものなし、正方形。拒否は
+どの規則が拒否したかを名指します。受信側は同じファイルを黙って拒否し、送信者は理由を
+知ることがないからです。指し示すロゴができれば `domain check` が公開すべきレコードを
+印字し、公開されたレコードを無効にしてしまうものがあればその下に書きます。多くの場合は
+DMARC のポリシーが none であることです。
+
+取り除くと、そのファイルの提供が止まります。レコードも下ろしてください。さもないと受信側
+は何も答えないアドレスを取りに行き続けます。
+
+### スキーマに載っていないものがふたつ
+
+JSON ではなくバイト列だからです。ひとつめ、下書きのファイルは `multipart/form-data` で、ファイルごとに `file` パートひとつとして `PUT /api/v1/mailbox/drafts/{itemId}/attachments` へ（まだ存在しない下書きなら `POST /api/v1/mailbox/{mailboxId}/drafts/attachments` へ）、同じ bearer トークンを添えて送ります。`curl -F file=@report.pdf` でできます。返ってくるのは保存された下書きで、各パートの番号が入っています。
+
+ふたつめはドメインのロゴです。`POST /api/v1/domains/{domainId}/logo` に `file` パートを
+ひとつ添えて送るもので、`domain logo publish` が送っているのがこれです。読むことと取り除く
+ことはスキーマの中の普通の操作で、送ることだけがそうではありません。
 
 ### API 全体に届く
 

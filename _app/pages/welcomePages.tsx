@@ -19,8 +19,10 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import GitHubIcon from '@mui/icons-material/GitHub'
 import GroupsOutlinedIcon from '@mui/icons-material/GroupsOutlined'
 import InboxOutlinedIcon from '@mui/icons-material/InboxOutlined'
+import LabelOutlinedIcon from '@mui/icons-material/LabelOutlined'
 import MailOutlineIcon from '@mui/icons-material/EmailOutlined'
 import LanguageOutlinedIcon from '@mui/icons-material/LanguageOutlined'
+import NewspaperOutlinedIcon from '@mui/icons-material/NewspaperOutlined'
 import RemoveIcon from '@mui/icons-material/Remove'
 import RocketLaunchOutlinedIcon from '@mui/icons-material/RocketLaunchOutlined'
 import SmartphoneOutlinedIcon from '@mui/icons-material/SmartphoneOutlined'
@@ -54,6 +56,8 @@ const features: { key: string, Icon: SvgIconComponent }[] = [
   { key: 'imap', Icon: DevicesOutlinedIcon },
   { key: 'authenticates', Icon: VerifiedUserOutlinedIcon },
   { key: 'forwards', Icon: CallSplitIcon },
+  { key: 'subscriptions', Icon: NewspaperOutlinedIcon },
+  { key: 'marks', Icon: LabelOutlinedIcon },
   { key: 'access', Icon: GroupsOutlinedIcon },
   { key: 'shows', Icon: VisibilityOutlinedIcon },
 ]

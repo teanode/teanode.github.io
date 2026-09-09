@@ -68,7 +68,7 @@ TeaNode 是两个程序。`teanode-server` 是邮件服务器，加上只有它�
 | 组 | 覆盖内容 |
 | --- | --- |
 | `auth` | 登录，以及保存的配置档案 |
-| `domain` | 这台服务器接收邮件的域名，以及它们的 DNS 记录 |
+| `domain` | 这台服务器接收邮件的域名、它们的 DNS 记录，以及它们发布的 `logo` |
 | `alias` | 一个域名的邮件去哪里；`alias match` 说明一个地址会命中什么 |
 | `credential` | 通过这台服务器发信的 SMTP 凭据 |
 | `dkim` | 为外发邮件签名的密钥，以及要发布的记录 |
@@ -76,7 +76,7 @@ TeaNode 是两个程序。`teanode-server` 是邮件服务器，加上只有它�
 | `group` | 谁可以做什么，以及在哪些域名上：成员、角色、域名 |
 | `role` | 一个群组持有的、有名字的权限集合；`role permissions` 列出可以授予什么 |
 | `audit` | 管理性改动的日志，带筛选 |
-| `mailbox` | 一个邮箱及其中的一切：`folder`、`rule`、`contact`、`device`、`autoreply`、`programs` |
+| `mailbox` | 一个邮箱及其中的一切：`folder`、`rule`、`contact`、`subscription`、`device`、`autoreply`、`programs` |
 | `token` | API 令牌；控制台上的 `token create --user` 签发某人的第一个 |
 | `session` | 登录仪表盘的浏览器 |
 | `passkey` | 注册到你账户的通行密钥；注册需要仪表盘 |
@@ -145,11 +145,43 @@ Shell 补全由二进制文件自己提供：
 
 一条规则归档的是它写下之后到达的邮件。`rule apply` 把已存的规则跑在某个文件夹里已经有的邮件上，像到达时那样移动、标记、加旗和删除；转发不会重复，因为旧邮件不会再发一次。`rule test` 说明会发生什么，但什么也不改。
 
-这一组里其余的就是邮箱的其余部分。`mailbox list` 列出你能打开的邮箱，`--all` 列出服务器上每一个邮箱及其所有者；`show` 和 `update` 读取和修改一个邮箱的名字和签名。`folder list|create|rename|move|pin|unpin|delete` 是左栏里的那棵树。`rule list|add|remove|enable|disable|test|apply` 是归档。`contact list|add|remove` 是它学到的地址，`device list|add|remove` 是邮件程序用来登录的应用专用密码，`autoreply show|set|off` 是外出自动回复，`programs` 是要填进邮件程序的主机和端口。
+这一组里其余的就是邮箱的其余部分。`mailbox list` 列出你能打开的邮箱，`--all` 列出服务器上每一个邮箱及其所有者；`show` 和 `update` 读取和修改一个邮箱的名字和签名。`folder list|create|rename|move|pin|unpin|delete` 是左栏里的那棵树。`rule list|add|remove|enable|disable|test|apply` 是归档。`subscription list|show|mail|unsubscribe` 是它收到的邮件列表，`contact list|add|remove` 是它学到的地址，`device list|add|remove` 是邮件程序用来登录的应用专用密码，`autoreply show|set|off` 是外出自动回复，`programs` 是要填进邮件程序的主机和端口。
 
-### 有一样东西不在 schema 里
+### 邮件列表，以及离开它们
 
-因为它是字节而不是 JSON：草稿的文件以 `multipart/form-data` 上传，每个文件一个 `file` 部分，发到 `PUT /api/v1/mailbox/drafts/{itemId}/attachments`（或者对还不存在的草稿用 `POST /api/v1/mailbox/{mailboxId}/drafts/attachments`），带同一个 bearer 令牌。`curl -F file=@report.pdf` 就能做到；回复是存储后的草稿，带每一部分的序号。
+订阅不是一个存起来的东西，而是一组存起来的东西：所有指名同一个列表的邮件，按列表为自己
+公布的标识符、或者它发信的地址来归拢。所以没有什么可以创建，键就是 `subscription list`
+打印出来的东西：
+
+    teanode mailbox subscription list
+    teanode mailbox subscription mail <key>
+    teanode mailbox subscription unsubscribe <key>
+
+离开是一个向别人提出的请求，三种方式里只有一种在命令行上就结束：一次性请求会被送出，
+一封邮件会送到发信人指定的地址，而只给出一个页面的发信人，页面会被打印出来让人去打开。
+无论哪一种，已经在邮箱里的邮件都留着；停下来的是还没有寄出的那些。
+
+### 一个域名发布的标志
+
+`teanode domain logo show|publish|remove` 是这台服务器为自己的域名托管的 BIMI 标志：
+
+    teanode domain logo publish example.com mark.svg
+    teanode domain check example.com          # 打印要发布的记录
+    teanode domain logo remove example.com
+
+文件在存下之前会先对照标志必须满足的受限规格检查——不能有脚本，不能有动画，不能从别处
+取任何东西，必须是正方形——而拒绝会指出是哪一条规则拒绝了它，因为接收方拒绝同一个文件
+时是不作声的，发信人永远不会知道为什么。一旦有了可以指向的标志，`domain check` 就会打印
+要发布的记录，并在下面说明什么会让已发布的记录不起作用，最常见的是 DMARC 策略为 none。
+
+移除会停止提供这个文件。记得把记录也撤下来，否则接收方会一直去取一个什么都不回答的地址。
+
+### 有两样东西不在 schema 里
+
+因为它们是字节而不是 JSON。草稿的文件以 `multipart/form-data` 上传，每个文件一个 `file` 部分，发到 `PUT /api/v1/mailbox/drafts/{itemId}/attachments`（或者对还不存在的草稿用 `POST /api/v1/mailbox/{mailboxId}/drafts/attachments`），带同一个 bearer 令牌。`curl -F file=@report.pdf` 就能做到；回复是存储后的草稿，带每一部分的序号。
+
+域名的标志是另一样：`POST /api/v1/domains/{domainId}/logo` 带一个 `file` 部分，这正是
+`domain logo publish` 发送的东西。读取和移除标志都是 schema 里的普通操作；只有发送不是。
 
 ### 访问整个 API
 

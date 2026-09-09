@@ -23,6 +23,8 @@
 
 第一次启动前在 `.env` 里设置 `TEANODE_TLS_ACME_EMAIL`：证书机构会用这个地址提醒你证书即将到期。
 
+80 端口必须能从互联网访问，因为证书机构把它的质询放在那里。它回答这些质询，并把其他一切都送到 HTTPS：仪表盘绝不会以明文提供，而且回答里带着 `Strict-Transport-Security`，所以来过一次的浏览器不会再尝试明文 HTTP。
+
 服务器使用宿主机的网络，而不是 Docker 网络。SPF 检查的是邮件服务器连接进来时的地址，在 Docker 网桥后面，每个发件方看起来都来自 Docker 网关。
 
 到 PostgreSQL 的连接是加密并经过验证的。官方的 PostgreSQL 镜像不提供 TLS，所以 compose 文件会生成一张证书并用它启动 PostgreSQL，`config env` 写出的 `TEANODE_DATABASE_URL` 要求 `sslmode=verify-full`，对照这张证书检查。如果指向你自己的 PostgreSQL，就把 `sslrootcert` 指向那台服务器的证书机构，或者降到 `sslmode=require`，只加密而不检查是谁在应答。
