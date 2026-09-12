@@ -220,3 +220,62 @@ JSON ではなくバイト列だからです。ひとつめ、下書きのファ
 コンソールでは、サーバーが動いていないとき読み取りは保存された設定に戻ります。読み取りは誰の変更も失わず、保存された設定はどのみち最新だからです。初回起動が動くのはこのおかげです。`teanode dkim show example.com` は、サーバーが一度も起動する前に公開すべき DNS レコードを出力します。
 
 書き込みは戻りません。サーバーが止まっているとコマンドは失敗してそう告げます。ダッシュボードから次に保存したときにサーバーが上書きしてしまう変更をするよりは。例外はサーバー自身のプログラムにあります。アカウントの `teanode-server user` と、設定全体の `teanode-server config import` です。
+
+### teanode agent
+
+あなた自身のエージェント、そして運用者にとっては全員のもの。どのコマンドも API を通る
+ので、ここでの変更はエージェントのページがしたはずの変更と同じです。
+
+| コマンド | 何をするか |
+| --- | --- |
+| `teanode agent ask <message \| ->` | エージェントに何か言い、答えを印字します。`--new` は名前のある会話を始め、`--conversation` はひとつを続け、`--attach FILE`（繰り返せます）はファイルを渡します――画像は見せられ、テキストファイルは読まれ、それ以外は名前だけ告げられます。`--json` はすべての出来事を流し、`--quiet` は答えだけを印字します。あなたの承諾が要るツールは端末で y か n を尋ねます。フラグにはしません |
+| `teanode agent chat` | 同じことを、空行が来るまで一往復ずつ |
+| `teanode agent conversation list\|show\|new\|rename\|main\|delete` | 主な会話と、名前のある会話。`list --query` は題名や話された言葉から探します。`main` は名前のある会話を主にするか、新しい主な会話を始めて古いほうを名前つきで残します。`delete` は先に尋ね、その会話に付いてきたファイルも持っていきます |
+| `teanode agent run list\|show` | エージェントが自分でしたこと。仕分け、要約、返信の記録 |
+| `teanode agent tools` | あなたのエージェントが持つツール。あなたが使える形で、リスク区分と、先に尋ねるかどうかとともに |
+| `teanode agent memory list\|add\|remove` | エージェントがあなたについて憶えていること。`add "会計" "帳簿は Maria" --applies-to triage,reply` は、その記憶を読む実行を指定します |
+| `teanode agent schedule list\|add\|remove\|run` | 決まった時刻に自分ですること。`add Morning "0 8 * * 1-5" "今日わたしを待っているものは？" --deliver mail`。あなたの時間帯の cron 行です。あるいは単一の時刻 `"@at 2026-09-12 09:00"`、あるいは今からの隔たり `"@in 20m"`。後者はそれが指す時刻として保存され、一度だけ走ります |
+| `teanode agent feedback` | あなたのしたことから記録された訂正。エージェントは例として見せられます |
+| `teanode agent channel list\|set\|unlink\|remove` | エージェントと話すチャットアプリ。あなた自身の Telegram か Discord のボットです。`set telegram --token -` はボットのトークンを標準入力から読みます。`list` は、あるチャットが `/link CODE` としてボットに送ることで結び付くコードと、ボットが動いているかどうかを示します。`unlink` は新しいコードを引きます |
+| `teanode agent skill list\|search\|install\|update\|remove\|enable\|disable\|scope\|secret` | スキルレジストリからインストールしたツール。このサーバーの全員のためのものです。`search` は何があるかを言い、`install weather` は何かを保つ前に署名とハッシュを確かめ、`update` は名前なしなら新しいものをすべて入れます。`scope <name> operator\|person\|skill` は、そのスキルの秘密をここで誰が埋めるかを決めます――サーバー全体でひと組の値か、各人のものか、スキルが宣言したとおりか。インストールと scope には `server:manage` が要ります。コマンドを走らせるスキルは、あなたが接続したコンピューターで走らせ、先に尋ね、誰も見ていない実行からは決して使われません。`secret list\|set\|clear` は、スキルがサーバーではなく *あなた* に求める値のためのものです。`secret set news NEWSAPI_KEY` は端末からエコーなしで読み、端末がなければ標準入力から読みます |
+| `teanode agent mcp list\|connect\|disconnect` | 運用者が宣言した接続先のサーバーと、あなたのそこへの接続。`connect tracker --credential -` はあなたの資格情報を標準入力から読み、認可するサーバーは開くべきアドレスを印字します。`--loopback` は認可をこの端末に返します。ループバックアドレスにしか答えないサービスのためです |
+| `teanode agent settings show\|set` | あなたのエージェント。`set enabled=true name=Bertie instructions=-` は長い値を標準入力から読みます。キーは `set --help` が並べます |
+| `teanode agent settings categories add\|remove` | 決まったものの隣に置く、あなた自身の分類 |
+| `teanode agent settings forget` | エージェントと、それが学んだすべてを削除します。先に尋ねます |
+| `teanode agent source list\|grant\|revoke\|set` | エージェントが届いてよいメールボックスと、それぞれで何をするか。`set --mailbox work triage=true auto-reply=true auto-reply.scope=known` |
+| `teanode agent usage [--since] [--by day\|kind\|mailbox\|model]` | あなたのトークン |
+| `teanode agent draft <item-id> [--say "…"]` | メールへの返信をエージェントに書かせ、あなたが使えるように印字します。何も保存されず、送られません |
+| `teanode agent replies [--status held\|sent\|cancelled\|refused\|failed] [--mailbox]` | エージェントがあなたのために書いた返信と、それぞれがどうなったか。メールをそのままにした場合はその理由も |
+| `teanode agent replies cancel <reply-id>` | 留め置かれた返信を取り消します。下書きは消え、何も送られません |
+| `teanode agent admin usage\|list\|limit\|disable\|enable\|dead-letters\|retry` | 全員のエージェント。`agent:audit` が要ります。日、種類、メールボックス、モデル、エージェントごとのトークン。各人のソースと今日の支出。一人だけの上限を、トークンで、あるいは `--cost` で金額で。停止のスイッチ。ワーカーが諦めた仕事 |
+
+どのコマンドもシェルの時間帯と言語をリクエストとともに送ります。ダッシュボードがブラウザー
+のものを送るのと同じで、端末に住む人も、ブラウザーに住む人と同じように位置づけられます。
+
+### teanode computer
+
+あなた自身のコンピューターを、あなたのエージェントに接続します。このプログラムが走って
+いるあいだ、エージェントにはツールが二つ増えます。`shell` はここでコマンドを走らせ、
+`filesystem` はあなたのファイルを読み、編集し、書き、複製し、並べ、検索し、grep します。
+あなたとして、このマシンのどこででも、あなたの端末がするのと同じように。使えるのはあなたが
+居合わせている会話だけです。定時の実行、仕分けの実行、誰も見ていないものは、決してあなたの
+コンピューターを見ません。マシンを変えるコマンド、あるいはマシンの外へ届くコマンド（削除、
+移動、インストール、sudo、push、ssh、そしてより重い形のもの）は先にあなたに尋ねます。
+引き出しのカードの上か、端末の上で。移動または削除されるファイル、そしてマシンが自分で
+走らせるもの（シェルの起動ファイル、鍵、自動起動）への書き込みも同じです。あなたに代わって
+拒まれるものは何もありません。最後の言葉はあなたの「はい」です。カードはサーバーのもの
+です。プログラムはサーバーが送るものを走らせるので、端末が前に座る人を信頼するのと同じ
+ようにサーバーを信頼します。プログラムはあなたとしてサインインし、使うのは有効なプロ
+ファイルのトークンで、サーバーとしてではありません。コンピューターは同時に何台も接続でき、
+名前で見分けられます。コマンドは `/bin/sh -c`（Windows では `cmd /C`）の下で走り、ログイン
+シェルではないので、あなたのエイリアスは効きません。プログラムは四つの要求に同時に答え、
+五つめは待たせずに断ります。
+
+| コマンド | 何をするか |
+| --- | --- |
+| `teanode computer start [--name NAME]` | プログラムをバックグラウンドで走らせます。`--name` はこのコンピューターの呼び名（既定はホスト名）。ログは `~/.config/teanode/computer.log` |
+| `teanode computer status` | プログラムがここで走っているか、そしてサーバーがあなたのどのコンピューターを見ているか |
+| `teanode computer stop` | プログラムを終えます |
+| `teanode computer daemon [--name NAME]` | 同じプログラムを前面で。接続が切れれば繋ぎ直し、中断されるまで走ります。端末のため、あるいはサービスマネージャーのため |
+
+運用者は `agent.features.computer` で、サーバー全体についてコンピューターを止められます。

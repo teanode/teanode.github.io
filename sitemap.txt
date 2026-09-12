@@ -4,6 +4,7 @@ https://teanode.com/doc/quick-start
 https://teanode.com/doc/getting-started
 https://teanode.com/doc/deploying
 https://teanode.com/doc/configuration
+https://teanode.com/doc/agents
 https://teanode.com/doc/command-line
 https://teanode.com/doc/security
 https://teanode.com/doc/security-review

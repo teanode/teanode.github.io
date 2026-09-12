@@ -213,3 +213,57 @@ Shell 补全由二进制文件自己提供：
 在控制台上，服务器没有运行时读取会退回到存储的配置，因为读取不会丢掉任何人的改动，而存储的配置无论如何都是当前的。这就是第一次运行能工作的原因：`teanode dkim show example.com` 在服务器从未启动过之前就打印出要发布的 DNS 记录。
 
 写入不会退回。服务器停着的时候，命令会失败并说明原因，而不是做出一个下次从仪表盘保存时会被覆盖的改动。例外在服务器自己的程序里：`teanode-server user` 管账户，`teanode-server config import` 管整份配置。
+
+### teanode agent
+
+你自己的代理，而对运维者来说，还有所有人的。每一条命令都走 API，所以在这里做的改动，就是
+代理页面本会做的那个改动。
+
+| 命令 | 它做什么 |
+| --- | --- |
+| `teanode agent ask <message \| ->` | 对你的代理说点什么，并打印它的回答；`--new` 开一个具名对话，`--conversation` 接着某一个，`--attach FILE`（可重复）递给它一个文件——图片给它看，文本文件念给它听，其他的报个名字——`--json` 流式输出每一个事件，`--quiet` 只打印答案。需要你点头的工具会在终端上问，y 或者 n——绝不做成一个开关 |
+| `teanode agent chat` | 同样的事，一轮一轮来，直到一个空行 |
+| `teanode agent conversation list\|show\|new\|rename\|main\|delete` | 主对话和那些具名的；`list --query` 按标题里或者说过的话里的词找一个；`main` 把一个具名对话变成主对话，或者开一个新的主对话并把旧的留成具名的；`delete` 会先问，并且带走随它而来的文件 |
+| `teanode agent run list\|show` | 代理自己做过什么：它分类、摘要和回信的记录 |
+| `teanode agent tools` | 你的代理有哪些工具，按你可以使用的样子，带上风险等级以及它是否会先问 |
+| `teanode agent memory list\|add\|remove` | 你的代理记着关于你的什么；`add "会计" "Maria 管账" --applies-to triage,reply` 把一条记忆指给会读它的那些运行 |
+| `teanode agent schedule list\|add\|remove\|run` | 它在设定的时间自己做的事：`add Morning "0 8 * * 1-5" "今天有什么需要我？" --deliver mail`，一行你所在时区的 cron；或者一个单独的时刻，`"@at 2026-09-12 09:00"`，或者从现在起的一段距离，`"@in 20m"`，那会被存成它所指的那个时刻并只运行一次 |
+| `teanode agent feedback` | 从你的所作所为记录下来的更正，代理会把它们当例子看 |
+| `teanode agent channel list\|set\|unlink\|remove` | 你用来和代理说话的聊天应用：你自己的 Telegram 或者 Discord 机器人。`set telegram --token -` 从标准输入读机器人的令牌；`list` 显示某个聊天要发给机器人的 `/link CODE` 里的那个码，以及机器人是否在跑；`unlink` 会画一个新码 |
+| `teanode agent skill list\|search\|install\|update\|remove\|enable\|disable\|scope\|secret` | 从技能注册表安装的工具，给这台服务器上的所有人：`search` 说有些什么，`install weather` 在保留任何东西之前先检查签名和哈希，`update` 不带名字就把有更新的都装上。`scope <name> operator\|person\|skill` 决定这里由谁来填这个技能的秘密——整台服务器一套值、每个人自己的，或者技能自己声明的那样。安装和划定范围需要 `server:manage`。会运行命令的技能，命令跑在你接上的电脑上，会先问，而且无人看着的运行永远用不到它。`secret list\|set\|clear` 是给技能向 *你* 而不是向服务器索要的那些值用的：`secret set news NEWSAPI_KEY` 从终端读取而不回显，没有终端时从标准输入读 |
+| `teanode agent mcp list\|connect\|disconnect` | 运维者声明的那些连接的服务器，以及你到它们的连接；`connect tracker --credential -` 从标准输入读你的凭据，需要授权的服务器会打印要打开的地址；`--loopback` 则把授权带回这个终端，给只应答环回地址的服务用 |
+| `teanode agent settings show\|set` | 你的代理：`set enabled=true name=Bertie instructions=-` 从标准输入读那个长值；键由 `set --help` 列出 |
+| `teanode agent settings categories add\|remove` | 固定的那些之外，你自己的类别 |
+| `teanode agent settings forget` | 删掉这个代理和它学到的一切；会先问 |
+| `teanode agent source list\|grant\|revoke\|set` | 代理可以够到的邮箱，以及它在每一个里做什么：`set --mailbox work triage=true auto-reply=true auto-reply.scope=known` |
+| `teanode agent usage [--since] [--by day\|kind\|mailbox\|model]` | 你的 token |
+| `teanode agent draft <item-id> [--say "…"]` | 让代理给一封邮件写一封回信，打印出来给你用；什么都不保存也不寄出 |
+| `teanode agent replies [--status held\|sent\|cancelled\|refused\|failed] [--mailbox]` | 代理替你写的那些回信，以及每一封后来怎么样了，还有它放过某封邮件时的原因 |
+| `teanode agent replies cancel <reply-id>` | 取消一封扣住的回信；草稿会消失，什么也不会寄出 |
+| `teanode agent admin usage\|list\|limit\|disable\|enable\|dead-letters\|retry` | 所有人的代理，需要 `agent:audit`：按天、种类、邮箱、模型或者代理算的 token；每个人的来源和今天的花费；给某一个人的限额，用 token 或者带 `--cost` 用钱；关掉的开关；worker 放弃了的那些任务 |
+
+每一条命令都会把 shell 的时区和语言随请求一起送出，就像仪表盘送浏览器的那样，所以活在
+终端里的人和活在浏览器里的人一样被安放好。
+
+### teanode computer
+
+你自己的电脑，接到你的代理上。这个程序跑着的时候，代理就多了两个工具——`shell`，在这里
+运行一条命令；`filesystem`，读、改、写、复制、列出、搜索和 grep 你的文件——以你的身份，在
+这台机器的任何地方，就像你自己的一个终端那样。只有你在场的对话可以使用它们：定时的运行、
+分类的运行，任何没有人看着的东西，永远看不见你的电脑。会改变这台机器或者伸到它外面去的
+命令（删除、移动、安装、sudo、push、ssh，以及更重的那些形状）会先问你，在抽屉里的卡片上
+或者在终端上；一个被移动或者删除的文件，以及往这台机器自己会运行的东西里写入（shell 的
+启动文件、密钥、开机自启），也一样。没有什么是替你拒绝的——你的点头是最后一句话。那张卡片
+是服务器的：程序运行服务器送来的东西，所以它信任服务器，就像一个终端信任坐在它前面的人。
+程序以你的身份登录，用的是活动配置档案的令牌，绝不是服务器的身份。可以同时接上好几台电脑，
+按名字分辨。命令在 `/bin/sh -c`（Windows 上是 `cmd /C`）下运行，不是你的登录 shell，所以
+你的别名不在作用域里。程序同时应答四个请求，第五个会被拒绝而不是排队。
+
+| 命令 | 它做什么 |
+| --- | --- |
+| `teanode computer start [--name NAME]` | 在后台运行这个程序；`--name` 是这台电脑叫什么（默认是主机名）。它的日志在 `~/.config/teanode/computer.log` |
+| `teanode computer status` | 这个程序是否在这里跑着，以及服务器看得见你的哪几台电脑 |
+| `teanode computer stop` | 结束这个程序 |
+| `teanode computer daemon [--name NAME]` | 同一个程序，但在前台，连接断了会重连，直到被中断——给终端用，或者给一个服务管理器用 |
+
+运维者可以用 `agent.features.computer` 为整台服务器关掉电脑这件事。

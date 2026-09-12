@@ -567,6 +567,290 @@ SES 需要从 IAM 用户派生的 SMTP 凭据，而不是访问密钥本身，�
 
 明白地说清验证在这里意味着什么：二进制文件和发布版本的 `SHA256SUMS` 通过 HTTPS 从这台服务器构建自的仓库获取，哈希必须匹配。这证明这些字节是 GitHub 为那个版本提供的字节，并且下载没有损坏。它不证明有人有意发布了它们：任何能向那个仓库发布版本的人都能发布一个二进制文件，而这会安装它。仓库是编译进去的而不是配置的，所以被盗的仪表盘会话不能把服务器指向别人的构建。
 
+### `agent`
+
+这一节里的秘密——提供方的密钥、搜索的密钥、连接一台服务器所用的凭据——在存下之前会用
+`server.secret` 封起来，读的时候再打开，就像域名表里的密钥那样。数据库导出里是密文；用
+另一个密钥启动的服务器读不出来，并且会这么说。
+
+私人代理：这台服务器可以调用哪些模型服务、哪个模型做哪种活、一个部署到底向人们提供什么，
+以及运维者对它设的限额。默认关闭，而且在这里打开它并不会让任何人拥有代理——是每个人自己
+打开自己的代理，并把自己的邮箱授予它
+（[`docs/decisions/20260910-agents-belong-to-people.md`](https://github.com/ziyan/teanode/blob/main/docs/decisions/20260910-agents-belong-to-people.md)）。
+
+**`enabled`**——人们到底能不能拥有代理。关着就意味着永远不会联系任何模型服务，下面的一切
+也都不会被构造出来。
+
+**`instructions`**——本服务器的通用指示：给这台服务器上每一个代理的常驻话语，在固定的行为
+准则之后、在每个人自己的话语之前被读到——「这是一所学校；永远不要自动回复家长」。
+
+**`providers`**——这台服务器可以调用的模型服务，一个服务一条。
+
+**`models`**——哪个模型做哪种活。
+
+**`features`**——人们到底可以打开什么。
+
+**`limits`**——一次运行可以花多少。
+
+**`currency`**——这台服务器显示或者封顶的每一个金额，用哪个三字母代码来写。下面有它自己的
+一节。
+
+**`skillSecrets`**——已安装的技能需要的值。下面有它自己的一节。
+
+**`retention`**——代理的记录保留多久。
+
+**`search`**——`web_search` 工具背后的网页搜索提供方。
+
+**`tools`**——运维者对工具目录的策略。
+
+**`browser`**——运维者在服务器旁边跑的一个无头浏览器。
+
+**`mcp`**——说 Model Context Protocol 的服务器，它们的工具会加入目录。
+
+### `agent.providers[]`
+
+**`name`**——`provider:model` 里那个 provider。任何标签都行，而且要稳定：models 一节和每
+一条用量记录都引用它。
+
+**`kind`**——这个服务说的是哪种 API：`openai`（也包括每一个兼容的服务器——Ollama、vLLM、
+llama.cpp、OpenRouter、xAI、Mistral）、`anthropic`，或者 `gemini`。
+
+**`baseUrl`**——它在哪里监听。留空表示这个服务的公开端点；本地服务器是
+`http://ollama:11434/v1`。
+
+**`apiKey`**——把这台服务器认证给那个服务。这是一个秘密；显示时会遮掉，设置更新时留空就
+保持原值。
+
+**`enabled`**——在关掉一个提供方的同时保住它的密钥。不设就是开着。分配给一个已关闭的提供方
+的活会通不过校验，所以不会有人不小心把 models 一节脚下的提供方给关掉。
+
+**`models`**——对这个服务提供的东西的一层过滤，有 `allow` 和 `deny` 两份模式列表，按 shell
+匹配文件名的方式去匹配模型名（`qwen*`）。allow 为空表示全部；deny 在 allow 之后应用。只有
+被放行的模型才能被分配活。
+
+**`allow`**、**`deny`**——这层过滤的两份列表。
+
+**`pricing`**——这个服务的收费，按每百万 token 计，有 `input`、`output`、`cacheRead` 和
+`cacheWrite`。可选；有了它，用量视图就能在 token 旁边显示钱，而那才是运维者做预算时看的数。
+
+**`input`**、**`output`**、**`cacheRead`**、**`cacheWrite`**——这四个价格。`cacheWrite`
+是把一段提示写进缓存的花费，有些服务按高于输入的价格收它，并且和输入分开报告；不设的话它
+就是零花费，这对不收这笔钱的服务是对的，对收的服务是错的。
+
+**`modelPricing`**——这个提供方某些具体模型的价格，因为一个服务的各个模型很少一样贵：同一
+把密钥后面的小模型和大模型是分开计价的。每一条都有一个 `model` 和同样的四个价格。`model`
+是提供方名字之后的那一段，按 `allow` 和 `deny` 的方式匹配，所以 `gpt-5*` 会给一整个家族
+定价；第一条匹配上的就是被采用的那条，所以确切的名字要放在也会命中它们的模式之上。没有任何
+一条匹配上的模型，按上面的 `pricing` 计价。
+
+    providers:
+      - name: openai
+        pricing: { input: 0.15, output: 0.6, cacheRead: 0.075 }
+        modelPricing:
+          - { model: gpt-5.6-terra, input: 2, output: 12, cacheRead: 0.2 }
+          - { model: gpt-5.6-luna, input: 0.2, output: 1.2, cacheRead: 0.02 }
+
+### `agent.models`
+
+每一个值都写成 `provider:model`，而且这个提供方必须已声明、已启用，并且放行这个模型。
+
+**`default`**——下面没有点名的一切所用的模型。代理启用时必填。
+
+**`fast`**——便宜的那几类活所用的模型——分类、摘要、压缩——除非其中某一项被单独覆盖。留空
+表示用 `default`。
+
+**`embedding`**——把文本变成向量的模型，有了它才能按意义搜索。留空表示没有按意义搜索。改动
+它会把已有的向量标记为陈旧，而两种向量的追赶方式不同：一个人的记忆是每轮对话重做几条，而
+邮件只有靠一次回填才会重做，那次回填在一个邮箱带着分类被授予、并且它自己的回填开着的时候
+运行。旧模型产生的邮件向量就留在原地；它们什么都匹配不上，所以那个邮箱会退回到按词搜索。
+
+**`triage`**、**`research`**、**`summarize`**、**`reply`**、**`ask`**、**`schedule`**、
+**`compact`**——按活的种类分别覆盖。解析顺序是：覆盖值，否则 triage、summarize 和 compact
+用 `fast`，否则用 `default`。
+
+**`choices`**——一个人可以为自己的对话挑选的模型。留空表示没得挑：所有人都用 `ask` 那个
+模型。后台处理永远不采用某个人的选择。
+
+### `agent.features`
+
+每一项除非设为 `false`，否则都是开着的。关掉的功能会从每个人的页面上隐藏，被 API 以「运维者
+没有启用它」为由拒绝，而且——如果它曾经对某人是开着的——会停下来但不删除任何东西，所以再打开
+就是接着来。
+
+**`triage`**——到达时给出类别、优先级，以及是否需要回复。
+
+**`summaries`**——会话摘要。
+
+**`draftReplies`**——按请求起草一封回信。
+
+**`search`**——按意义搜索。需要一个 embedding 模型。
+
+**`research`**——为一封邮件去查东西：网页、邮箱、连接的服务器。
+
+**`autoReply`**——代替一个人回信。
+
+**`ask`**——和代理说话。
+
+**`schedules`**——提醒和定时运行。
+
+**`browser`**——浏览器。需要配置一个。
+
+**`connectedServers`**——说 Model Context Protocol 的服务器。需要声明一个。
+
+**`computer`**——一个人自己的电脑，用 `teanode computer` 接上，在他们在场时由 `shell` 和
+`filesystem` 工具够到。
+
+**`chatApps`**——一个人自己的 Telegram 或 Discord 机器人，通过它和自己代理的主对话说话。
+
+**`skills`**——从技能注册表安装的工具。这里关掉，已安装的东西一个都不提供，也什么都装不上。
+
+### `agent.skillSecrets`
+
+已安装的技能需要而自己不带的值。一个技能会声明它想要的键；运维者在这里填进去，一个值一条，
+带上是哪个 `skill` 要的、它是用哪个 `key` 要的，以及 `value`，而这是一个秘密。
+`teanode agent skill list` 会说每个已安装的技能还在等哪些键。
+
+这里只放技能划归运维者的那些键，而那是默认。技能划归个人的键是每个人自己的：他们在自己的
+代理页面上填，或者用 `teanode agent skill secret set` 填，值封存在属于他们自己的一行里而
+不是这里，而在这里给这种键写下的值会被忽略。
+
+### `agent.currency`
+
+提供方的价格，以及这台服务器显示或者封顶的每一个金额，用什么来写：一个三字母代码，比如
+`USD` 或者 `EUR`，不设时是 `USD`。它只负责标注和格式；什么都不换算，所以价格是欧元的运维者
+就按欧元填，并在这里写 `EUR`。
+
+### `agent.limits`
+
+**`maxBodyCharacters`**——一封邮件有多少内容会交给模型；其余的会被截断并留下一个标记。
+
+**`maxAttachmentBytes`**——一次上传到对话里的东西最多能带多少，把它的文件加在一起算；默认
+`25MB`。图片会给模型看，文本文件会念给它听，其他的只报个名字。
+
+**`dailyTokensPerAgent`**——每人每天的默认预算，运维者可以为某一个人单独覆盖。到了上限，那个
+人的后台处理会推迟到第二天，并把原因写在那次运行上，而对话会回答说预算用完了。在这个人所在
+时区的午夜重置。零表示不限。
+
+**`monthlyTokensPerServer`**——整台服务器的上限。在下个月一号之前，对所有人都是同样的行为；
+到 80% 时会记一条警告。零表示不封顶。
+
+**`dailyCostPerAgent`**——同一个预算，用钱而不是 token 来说：一个人一天的调用可以花多少，按
+他们的提供方所配置的价格算，用 `agent.currency` 的币种。运维者可以为某一个人单独覆盖。这一项
+和 `dailyTokensPerAgent` 都设了的时候，先用完的那个结束这一天。零表示没有这一种限制。
+
+**`monthlyCostPerServer`**——所有人的代理一个月可以让这个部署花多少，和
+`monthlyTokensPerServer` 并列，同样在 80% 时警告。零表示不封顶。
+
+**`maxRoundsPerAsk`**——一轮对话最多可以回到模型那里几次。
+
+**`maxRoundsPerResearch`**——一次研究运行的同一件事。
+
+**`maxRoundsPerReply`**——设置了、校验了，但没有任何地方读它：一封回信是对模型的一次调用，
+没有轮次。留着它，是为了让已经存下的配置不至于加载失败。
+
+**`maxToolCallsPerRun`**——设置了、校验了，但没有任何地方读它。真正给一次运行划界的是
+`maxRoundsPerAsk`，加上「同一个调用失败三次就结束这一轮」这条规则。留着它，是为了让已经存下
+的配置不至于加载失败。
+
+**`requestTimeout`**——对一个提供方的一次调用最多可以花多久。
+
+**`concurrency`**——一个 worker 同时执行几次运行，按实例算。在 worker 被构造时读取，所以改动
+需要重启那个实例。
+
+### `agent.retention`
+
+**`runs`**——没有人看着的那些活的记录保留多久：运行的记录、完成的和进了死信的任务、代理
+扣住或者寄出的回信，以及一次运行产生的文件。token 和金额的用量不受它清扫，也不受任何东西清扫：
+那些行会一直留到代理被删除为止，因为一年花了多少就是从它们加起来的。
+
+**`corrections`**——一个人的更正保留多久。
+
+### `agent.search`
+
+**`kind`**——搜索提供方：`brave`，或者留空表示不做网页搜索，那种情况下 `web_search` 工具
+根本不会被提供。
+
+**`apiKey`**——这个提供方的密钥。一个秘密。
+
+### `agent.tools`
+
+风险等级是下限；这里只能让代理更谨慎。两份列表都接受家族名——`mailbox`、`domains`、`audit`、
+`people`、`server`、`account`、`general`、`servers`、`browser`、`computer`、`skills`——
+或者具体的工具名。`servers` 是连接的服务器那些工具的家族，`people` 是够到账户和访问权限的
+那些工具的家族。
+
+**`disabled`**——永远不向任何人提供的家族或工具。
+
+**`confirm`**——被抬高到运行前需要确认的写入类工具。
+
+### `agent.browser`
+
+**`enabled`**——是否使用这个无头浏览器。关着就没有任何东西去连它。
+
+**`cdpEndpoint`**——DevTools 调试器的 `host:port`，比如 `chrome:9222`，那正是 compose 文件
+的 `browser` profile 把它放的位置。
+
+**`attachTabs`**——一个人是否可以通过扩展接上自己的浏览器标签页。不设表示可以。
+
+**`allowPrivateAddresses`**——允许无头浏览器在网络内部够到的主机，否则地址守卫会拒绝它们。
+
+**`idleTimeout`**——一次运行的浏览器上下文在最后一次使用之后还活多久。
+
+**`maxContexts`**——同时最多可以开着几个上下文。
+
+### `agent.mcp`
+
+**`servers`**——已声明的服务器，一台一条。
+
+### `agent.mcp.servers[]`
+
+带 `command` 的服务器是这台服务器的一个子进程，跑在它的宿主机上，这也正是为什么只有配置才能
+声明一台
+（[`docs/decisions/20260910-stdio-servers-are-the-operators.md`](https://github.com/ziyan/teanode/blob/main/docs/decisions/20260910-stdio-servers-are-the-operators.md)）。
+
+**`name`**——把这台服务器的工具命名为 `mcp__<name>__<tool>`。唯一。
+
+**`transport`**——`http`（一个 URL）或者 `stdio`（一条命令）。留空会推断：设了命令且没有 URL
+就是 `stdio`，否则是 `http`。
+
+**`url`**——可流式的 HTTP 端点，给 `http` 传输用。
+
+**`command`**、**`args`**——可执行文件和它的参数，给 `stdio` 传输用。
+
+**`env`**——在这台服务器自己的环境之上，交给子进程的变量，每一条有 `name` 和 `value`；一台
+stdio 服务器就是这样拿到它的秘密的。这些值是秘密。
+
+**`value`**——一个变量的值。
+
+**`workingDir`**——子进程的工作目录。留空就用服务器的。
+
+**`auth`**——`none`；`static`，运维者持有的一个 Authorization 值，所有人共用；`user`，每个
+人在代理页面上提供自己的凭据；或者 `oauth`，每个人通过带 PKCE 的 OAuth 2.1 自己授权。留空会
+推断：设了 authorization 就是 `static`，否则是 `none`。
+
+**`authorization`**——`static` 模式下逐字的 Authorization 头的值。一个秘密。
+
+**`oauth`**——这台服务器在一台受 OAuth 保护的服务器上作为客户端的身份：`clientId`、
+`clientSecret`（一个秘密；公开客户端可以不要）、`scopes`，以及 `authorizationUrl` 和
+`tokenUrl`，设了就跳过发现。把 `clientId` 留空，第一次有人授权时就会去那台服务器注册一个
+客户端，这也正是够到一台自己不公布 client id 的服务器的办法；这个客户端会和那个人的授权一起
+保存，所以之后刷新用的还是同一个。把这两个端点手工设上就跳过发现，那时就需要一个 `clientId`。
+
+**`clientId`**、**`clientSecret`**、**`scopes`**、**`authorizationUrl`**、**`tokenUrl`**
+——这个 OAuth 客户端的各个字段。
+
+**`headless`**——没有人在场的后台处理运行，是否可以使用这台服务器的只读工具。
+
+**`readOnly`**——那些只读的工具，它们不需要确认，也是无人看着的运行唯一能调用的。这台服务器
+其他的每一个工具都需要确认。
+
+**`disabled`**——永远不提供的工具。
+
+**`timeout`**——给一次调用划界。留空表示 30 秒。
+
+**`enabled`**——这台服务器到底算不算声明了。不设是开着；关掉会把声明留在原地，但它的工具一个
+都不提供。
+
 ### `users[].tokens[]`
 
 **`id`**——ID 标识令牌，是令牌字符串中不保密的那一半。它出现在日志里，所以令牌可以追溯到这里的一个条目并被吊销。

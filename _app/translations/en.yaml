@@ -58,6 +58,13 @@ welcome:
   closePicture: Close
   screenshots:
     mailbox: The mailbox. Folders that nest, search across all of it, and the message shown as a mail program would show it.
+    priority: >-
+      Priority: what the agent thinks is waiting on you, beside Starred. The
+      chips on a row are its category, its priority, and whether somebody needs
+      an answer.
+    agent: >-
+      Your agent's own page: what to call it, how it should write, which
+      mailboxes it may reach, and what it has spent today.
     subscriptions: Every mailing list this mailbox receives, with what each has sent, and the two ways out — leave it, or mute it and let it file itself.
     programs: An app password for each device, which signs a mail program in over IMAP and sends through the submission port.
     access: People, groups and roles. A group can be tied to one domain, so its permissions reach only that far.
@@ -65,6 +72,9 @@ welcome:
     message: One message. The authentication checks with their evidence, every delivery attempt, and the message itself with scripts removed.
     aliases: A domain's aliases. Each pattern delivers into a mailbox, or forwards to an address, a webhook, or another mail server.
     dns: A domain's DNS records. The dashboard checks each one and shows what is missing or different.
+    agents: >-
+      The operator's side: which model services this server may call, which model
+      does which work, what people may turn on at all, and the limits.
     templates: A domain's message templates, each with its variables and translations.
     template: Editing a template. The subject and body take variables, and a layout wraps the result.
     layout: Editing a layout, the frame around every message a domain sends.
@@ -137,6 +147,32 @@ welcome:
     note: >-
       As their plans stood in September 2026. Plans change; the licence does
       not.
+  agent:
+    heading: A personal agent, if you want one
+    lead: >-
+      Point the server at a language model — OpenAI, Anthropic, Gemini, or an
+      Ollama on the same machine — and each person can turn on an agent of
+      their own. It sorts what arrives, writes drafts in your own voice, and
+      answers questions about your mail with exactly your permissions and
+      nobody else's.
+    privacy: >-
+      Off until you turn it on, and blind to every mailbox until you grant it
+      one. Nothing reaches a model while mail is being delivered; the work is
+      queued afterwards. Point it at an Ollama and nothing leaves the machine
+      at all. Operators cap what it may spend, in tokens or in money.
+    points:
+      sorts:
+        title: Sorts what arrives
+        body: A category, a priority, whether somebody is waiting on an answer, and a line of summary — as chips on the row, and a Priority view beside Starred.
+      drafts:
+        title: Drafts in your voice
+        body: A summary folded above a long conversation, and a reply written for you to read, change and send. Sending stays with you.
+      answers:
+        title: Answers, if you let it
+        body: Under a policy you write — who, which kinds, when, how many a day. Every reply waits in Drafts with a banner to cancel it or take it over.
+      asks:
+        title: Answers your questions
+        body: A drawer on every page, and teanode agent ask in a terminal. It searches, files and drafts as you, and stops for your word before anything it cannot undo.
   featuresHeading: What it does
   features:
     mailbox:

@@ -65,6 +65,15 @@ mailbox. Each device gets an app password of its own, which signs in to IMAP
 and sends through the submission port on 587 as any of the mailbox's
 addresses.
 
+**A personal agent, if the operator offers one.** Point the server at a model
+service — OpenAI, Anthropic, Gemini, or an Ollama on the same machine — and
+each person may turn on an agent of their own. It sorts what arrives, writes
+drafts in your voice, answers questions about your mail with exactly your
+permissions, and, under a policy you write, can answer for you. Off until
+somebody turns it on and blind to every mailbox until granted one; nothing
+reaches a model while mail is being delivered. [Agents](/doc/agents) says what
+it needs and what to weigh first.
+
 **Subscriptions.** Every mailing list a mailbox receives, on a page of its own,
 with the way out of each read from the headers the sender wrote. Leaving is
 requested by this server rather than by the browser, so it does not tell the

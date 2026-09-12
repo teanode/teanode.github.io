@@ -111,6 +111,29 @@
     }
   },
   {
+    "slug": "agents",
+    "group": {
+      "en": "Running it",
+      "zh": "运行它",
+      "ja": "動かす"
+    },
+    "title": {
+      "en": "Agents",
+      "zh": "代理",
+      "ja": "エージェント"
+    },
+    "description": {
+      "en": "The personal agent: what it needs, what it does with a mailbox, and what to weigh before turning it on.",
+      "zh": "私人代理：它需要什么、拿到一个邮箱后会做什么，以及打开它之前要权衡什么。",
+      "ja": "パーソナルエージェント。何が要るか、メールボックスを渡すと何をするか、有効にする前に何を量るか。"
+    },
+    "filename": {
+      "en": "en/agents.markdown",
+      "zh": "zh/agents.markdown",
+      "ja": "ja/agents.markdown"
+    }
+  },
+  {
     "slug": "command-line",
     "group": {
       "en": "Running it",

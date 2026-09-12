@@ -10,6 +10,7 @@ import Link from '@mui/material/Link'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import type { SvgIconComponent } from '@mui/icons-material'
+import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined'
 import CallSplitIcon from '@mui/icons-material/CallSplit'
 import CheckIcon from '@mui/icons-material/Check'
 import ConfirmationNumberOutlinedIcon from '@mui/icons-material/ConfirmationNumberOutlined'
@@ -23,10 +24,13 @@ import LabelOutlinedIcon from '@mui/icons-material/LabelOutlined'
 import MailOutlineIcon from '@mui/icons-material/EmailOutlined'
 import LanguageOutlinedIcon from '@mui/icons-material/LanguageOutlined'
 import NewspaperOutlinedIcon from '@mui/icons-material/NewspaperOutlined'
+import ReplyOutlinedIcon from '@mui/icons-material/ReplyOutlined'
 import RemoveIcon from '@mui/icons-material/Remove'
 import RocketLaunchOutlinedIcon from '@mui/icons-material/RocketLaunchOutlined'
 import SmartphoneOutlinedIcon from '@mui/icons-material/SmartphoneOutlined'
+import SortOutlinedIcon from '@mui/icons-material/SortOutlined'
 import VerifiedUserOutlinedIcon from '@mui/icons-material/VerifiedUserOutlined'
+import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutlineOutlined'
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined'
 import WidgetsOutlinedIcon from '@mui/icons-material/WidgetsOutlined'
 
@@ -65,6 +69,15 @@ const features: { key: string, Icon: SvgIconComponent }[] = [
 // What comes with it and is off until asked for: a row of names rather than
 // a paragraph about them.
 const extras = ['templates', 'contacts', 'cli', 'clamav', 'spamd', 'geoip', 's3', 'socks5', 'dns01']
+
+// What a personal agent does, once somebody turns theirs on. Four things
+// rather than the whole list, because the whole list is the documentation.
+const agentPoints: { key: string, Icon: SvgIconComponent }[] = [
+  { key: 'sorts', Icon: SortOutlinedIcon },
+  { key: 'drafts', Icon: ReplyOutlinedIcon },
+  { key: 'answers', Icon: AutoAwesomeOutlinedIcon },
+  { key: 'asks', Icon: ChatBubbleOutlineOutlinedIcon },
+]
 
 // Three addresses and where each one goes, which is the whole idea in the
 // form most people first meet it.
@@ -253,6 +266,38 @@ export const WelcomePage = () => {
               <Chip key={key} variant='outlined' label={translate(`welcome.extras.${key}`)} sx={{ height: 26, fontSize: 12.5 }}/>
             ))}
           </Stack>
+        </Section>
+
+        {/* The agent. Its own section rather than a ninth card: it is the
+            largest thing here since mailboxes, and the sentence that has to
+            land is the one about it being off until somebody turns it on. */}
+        <Section>
+          <Overline><T id='welcome.agent.heading'/></Overline>
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '5fr 6fr' }, gap: { xs: 3, md: 6 } }}>
+            <Box sx={{ minWidth: 0 }}>
+              <Typography sx={{ mb: 2 }}><T id='welcome.agent.lead'/></Typography>
+              <Typography variant='body2' color='text.secondary' sx={{ lineHeight: 1.6 }}>
+                <T id='welcome.agent.privacy'/>
+              </Typography>
+            </Box>
+            <Stack sx={{ minWidth: 0, gap: 1.5 }}>
+              {agentPoints.map(({ key, Icon }) => (
+                <Stack key={key} direction='row' sx={{ gap: 1.5, alignItems: 'flex-start' }}>
+                  <Tile sx={{ mb: 0, flexShrink: 0, width: 34, height: 34, borderRadius: '9px' }}>
+                    <Icon sx={{ fontSize: 18 }}/>
+                  </Tile>
+                  <Box sx={{ minWidth: 0, pt: 0.25 }}>
+                    <Typography sx={{ fontWeight: 600, fontSize: 14.5 }}>
+                      <T id={`welcome.agent.points.${key}.title`}/>
+                    </Typography>
+                    <Typography variant='body2' color='text.secondary' sx={{ lineHeight: 1.5 }}>
+                      <T id={`welcome.agent.points.${key}.body`}/>
+                    </Typography>
+                  </Box>
+                </Stack>
+              ))}
+            </Stack>
+          </Box>
         </Section>
 
         <Section>
