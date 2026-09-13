@@ -32,10 +32,10 @@ notFound:
   toHome: Go to the front page
   toDocs: Read the documentation
 welcome:
-  headline: A mailbox of your own, with an assistant that never leaves it.
+  headline: Send and receive emails at your own domains.
   lead: >-
-    Send and receive at your own domains, read the mail here or in any mail
-    program, and give each person a private assistant that reaches their mail,
+    Read the mail here or in any mail program, forward what belongs somewhere
+    else, and give each person a private assistant that reaches their mail,
     their contacts, their computer and their browser. One binary, one
     PostgreSQL, your hardware. Point the assistant at an Ollama or a vLLM of
     your own and nothing leaves the machine.
