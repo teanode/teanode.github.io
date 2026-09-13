@@ -86,6 +86,7 @@ TeaNode 是两个程序。`teanode-server` 是邮件服务器，加上只有它�
 | `mail` | 处理过的邮件：带筛选的 `list`、`get`、`content`、`download`、`opens`、`count`、`send` |
 | `delivery` | 外发时发生了什么，以及 `delivery pending`，即队列 |
 | `report` | 收到的关于你的域名的 DMARC 汇总报告 |
+| `contact` | 你的通讯录：你保存的人，你的手机和电脑通过 CardDAV 同步它。`add --name "Ada Lovelace" --email ada@example.com` 保存一个；`edit <id> --name "Ada King"` 只改你给出的部分，卡片的其余部分原样留着，所以改一个名字不会扔掉手机放上去的照片；`--card -` 从标准输入读一整张 vCard。这和 `mailbox contact` 不是一回事，后者是一个邮箱通信过的那些地址 |
 | `template` | 一个域名的邮件模板，含 `render` |
 | `layout` | 模板渲染时外面套的框架 |
 | `api` | 其余一切，直接来自 schema |

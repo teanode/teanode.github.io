@@ -1,7 +1,7 @@
 ---
 language: English
 title: TeaNode
-tagline: Open source mail server for your own domains, with mailboxes you can read anywhere.
+tagline: A self-hosted agentic mailbox. Your own domains, your own server, and an assistant that never leaves it.
 nav:
   docs: Documentation
   github: GitHub
@@ -32,11 +32,13 @@ notFound:
   toHome: Go to the front page
   toDocs: Read the documentation
 welcome:
-  headline: Send and receive emails at your own domains.
+  headline: A mailbox of your own, with an assistant that never leaves it.
   lead: >-
-    An open source mail server for every side project and early startup. Give
-    an address a mailbox you read here or in any mail program, or forward it
-    to an inbox you already have. Replies go out signed as the domain.
+    Send and receive at your own domains, read the mail here or in any mail
+    program, and give each person a private assistant that reaches their mail,
+    their contacts, their computer and their browser. One binary, one
+    PostgreSQL, your hardware. Point the assistant at an Ollama or a vLLM of
+    your own and nothing leaves the machine.
   getStarted: Get started
   readDocs: Read the documentation
   viewSource: View the source
@@ -51,6 +53,7 @@ welcome:
     inbox: An inbox you already have
     webhook: A webhook
     reply: Replies and mail you send go out signed as your domain.
+    agent: Your assistant sorts what lands in the mailbox, and drafts what you answer.
   screenshotsHeading: What it looks like
   previous: Previous page
   next: Next page
@@ -106,6 +109,7 @@ welcome:
       send: Sends as your domain
       domains: Domains
       webhook: Delivers to a webhook
+      assistant: A private assistant
       yours: Where the mail lives
       price: Price
     cells:
@@ -134,6 +138,11 @@ welcome:
         cloudflare: Through a Worker
         improvmx: 'no'
         provider: 'no'
+      assistant:
+        teanode: Yours, on your hardware
+        cloudflare: 'no'
+        improvmx: 'no'
+        provider: Theirs, on their hardware
       yours:
         teanode: Your host, your database
         cloudflare: Their servers
@@ -151,15 +160,15 @@ welcome:
     heading: A personal agent, if you want one
     lead: >-
       Point the server at a language model — OpenAI, Anthropic, Gemini, or an
-      Ollama on the same machine — and each person can turn on an agent of
+      Ollama or vLLM on the same machine — and each person can turn on an agent of
       their own. It sorts what arrives, writes drafts in your own voice, and
       answers questions about your mail with exactly your permissions and
       nobody else's.
     privacy: >-
       Off until you turn it on, and blind to every mailbox until you grant it
       one. Nothing reaches a model while mail is being delivered; the work is
-      queued afterwards. Point it at an Ollama and nothing leaves the machine
-      at all. Operators cap what it may spend, in tokens or in money.
+      queued afterwards. Point it at an Ollama or a vLLM of your own and nothing
+      leaves the machine at all. Operators cap what it may spend, in tokens or in money.
     points:
       sorts:
         title: Sorts what arrives
@@ -173,6 +182,14 @@ welcome:
       asks:
         title: Answers your questions
         body: A drawer on every page, and teanode agent ask in a terminal. It searches, files and drafts as you, and stops for your word before anything it cannot undo.
+    reachLead: What it reaches, once you grant it
+    reach:
+      mail: Your mail
+      contacts: Your contacts
+      computer: Your computer
+      browser: Your browser
+      web: The web
+      calendar: Your calendar — soon
   featuresHeading: What it does
   features:
     mailbox:

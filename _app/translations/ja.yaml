@@ -1,7 +1,7 @@
 ---
 language: 日本語
 title: TeaNode
-tagline: オープンソースのメールサーバー。自分のドメインのメールを、どこからでも読めるメールボックスで。
+tagline: 自分で持つ、エージェントつきのメールボックス。自分のドメイン、自分のサーバー、そしてそこから出ていかない助手。
 nav:
   docs: ドキュメント
   github: GitHub
@@ -32,11 +32,12 @@ notFound:
   toHome: トップページへ
   toDocs: ドキュメントを読む
 welcome:
-  headline: 自分のドメインでメールを送り、受け取る。
+  headline: 自分のメールボックスと、そこから出ていかない助手。
   lead: >-
-    サイドプロジェクトと立ち上げたばかりのスタートアップのための、オープンソースの
-    メールサーバー。アドレスにメールボックスを与えれば、ここでも好きなメールプログラムでも
-    読めます。使っている受信箱へ転送することもできます。返信はドメインとして署名されて出ていきます。
+    自分のドメインで送受信し、ここでも好きなメールプログラムでも読み、そして各自に自分だけの
+    助手を持たせます。助手は自分のメール、連絡先、コンピューター、ブラウザーに届きます。実行
+    ファイルひとつ、PostgreSQL ひとつ、あなたのハードウェア。助手を自分の Ollama か vLLM に
+    向ければ、何ひとつこのマシンから出ません。
   getStarted: はじめる
   readDocs: ドキュメントを読む
   viewSource: ソースを見る
@@ -51,6 +52,7 @@ welcome:
     inbox: いま使っている受信箱
     webhook: webhook
     reply: 返信も送信するメールも、自分のドメインとして署名されて出ていきます。
+    agent: 助手はメールボックスに入ったものを仕分け、あなたが返すものを下書きします。
   screenshotsHeading: どんな見た目か
   previous: 前のページ
   next: 次のページ
@@ -99,6 +101,7 @@ welcome:
       send: 自分のドメインとして送る
       domains: ドメイン数
       webhook: webhook へ配送
+      assistant: 自分だけの助手
       yours: メールの置き場所
       price: 料金
     cells:
@@ -127,6 +130,11 @@ welcome:
         cloudflare: Worker 経由
         improvmx: 'no'
         provider: 'no'
+      assistant:
+        teanode: あなたのもの、あなたのハードウェアで
+        cloudflare: 'no'
+        improvmx: 'no'
+        provider: 相手のもの、相手のハードウェアで
       yours:
         teanode: 自分のホスト、自分のデータベース
         cloudflare: 相手のサーバー
@@ -143,13 +151,13 @@ welcome:
     heading: 望むなら、あなただけのエージェント
     lead: >-
       サーバーを言語モデルに向けるだけです。OpenAI、Anthropic、Gemini、あるいは
-      同じマシンの Ollama。そうすれば各自が自分のエージェントを持てます。届いた
+      同じマシンの Ollama や vLLM。そうすれば各自が自分のエージェントを持てます。届いた
       メールを仕分け、あなた自身の声で下書きを書き、あなたのメールについての問いに
       答えます。使う権限はちょうどあなたのものだけで、他の誰のものでもありません。
     privacy: >-
       あなたが有効にするまで動かず、あなたが許すまでどのメールボックスも見えません。
       配送の途中でモデルへ送られるものは何もなく、仕事はそのあと待ち行列に入ります。
-      Ollama に向ければ、何ひとつこのマシンから出ません。運用者はトークンでも
+      自分の Ollama か vLLM に向ければ、何ひとつこのマシンから出ません。運用者はトークンでも
       金額でも、使える量に上限を置けます。
     points:
       sorts:
@@ -164,6 +172,14 @@ welcome:
       asks:
         title: あなたの問いに答える
         body: すべてのページにある引き出しと、端末の teanode agent ask。あなたとして検索し、振り分け、下書きし、取り消せないことの前には必ず立ち止まります。
+    reachLead: あなたが渡せば、届く先
+    reach:
+      mail: あなたのメール
+      contacts: あなたの連絡先
+      computer: あなたのコンピューター
+      browser: あなたのブラウザー
+      web: ウェブ
+      calendar: あなたのカレンダー――近く
   featuresHeading: できること
   features:
     mailbox:

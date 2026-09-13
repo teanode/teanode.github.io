@@ -1,7 +1,7 @@
-TeaNode gives every side project and every early startup a real address at
-its own domain.
+TeaNode is a self-hosted agentic mailbox: real addresses at your own domains,
+and a personal assistant for each person that never leaves your server.
 
-It is a small self-hosted mail server. It receives mail for all of your
+The mail half is a small mail server. It receives mail for all of your
 domains over SMTP, checks that it is genuine (SPF, DKIM, DMARC, ARC),
 optionally scans it for viruses and spam, and then either files it in a
 mailbox here or hands it on — to an inbox you already read, to a webhook, or
@@ -11,6 +11,13 @@ signed with the domain's key so the mail arrives rather than landing in spam.
 A mailbox is read in the dashboard or in any mail program over IMAP. An
 address that should not have a mailbox forwards instead, and one domain can
 do both.
+
+The assistant is the other half, and it is off until somebody turns it on.
+Given a mailbox, it sorts what arrives, drafts in your voice and answers
+questions about your mail with exactly your permissions; given more, it
+reaches your contacts, your own computer, your own browser tab and the web.
+Point it at an Ollama or a vLLM on the same machine and nothing about any of
+it leaves your hardware. [Agents](/doc/agents) is the whole story.
 
 ## Why
 

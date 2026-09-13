@@ -72,6 +72,11 @@ const extras = ['templates', 'contacts', 'cli', 'clamav', 'spamd', 'geoip', 's3'
 
 // What a personal agent does, once somebody turns theirs on. Four things
 // rather than the whole list, because the whole list is the documentation.
+// What the assistant can be given, in the order somebody would grant it.
+// Calendar is not shipped; the catalogue's label says so rather than the code,
+// so taking the caveat off later is one word in three files.
+const agentReach = ['mail', 'contacts', 'computer', 'browser', 'web', 'calendar']
+
 const agentPoints: { key: string, Icon: SvgIconComponent }[] = [
   { key: 'sorts', Icon: SortOutlinedIcon },
   { key: 'drafts', Icon: ReplyOutlinedIcon },
@@ -98,7 +103,7 @@ const needs: { key: string, Icon: SvgIconComponent }[] = [
 // likely weighing it against. The rows are keys into the translations, and
 // each cell is one of yes, no, or a short note in the reader's language.
 const comparisonColumns = ['teanode', 'cloudflare', 'improvmx', 'provider']
-const comparisonRows = ['receive', 'mailbox', 'send', 'domains', 'webhook', 'yours', 'price']
+const comparisonRows = ['receive', 'mailbox', 'send', 'domains', 'webhook', 'assistant', 'yours', 'price']
 
 const questions = ['port25', 'mailprogram', 'forwarding', 'outbound', 'team', 'stored']
 
@@ -176,6 +181,46 @@ export const WelcomePage = () => {
         </Section>
 
         {/* Three addresses, and where each one goes. */}
+        {/* The agent. Its own section rather than a ninth card: it is the
+            largest thing here since mailboxes, and the sentence that has to
+            land is the one about it being off until somebody turns it on. */}
+        <Section>
+          <Overline><T id='welcome.agent.heading'/></Overline>
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '5fr 6fr' }, gap: { xs: 3, md: 6 } }}>
+            <Box sx={{ minWidth: 0 }}>
+              <Typography sx={{ mb: 2 }}><T id='welcome.agent.lead'/></Typography>
+              <Typography variant='body2' color='text.secondary' sx={{ lineHeight: 1.6, mb: 2.5 }}>
+                <T id='welcome.agent.privacy'/>
+              </Typography>
+              <Typography variant='body2' color='text.secondary' sx={{ mb: 1 }}>
+                <T id='welcome.agent.reachLead'/>
+              </Typography>
+              <Stack direction='row' sx={{ flexWrap: 'wrap', gap: 0.75 }}>
+                {agentReach.map((key) => (
+                  <Chip key={key} variant='outlined' label={translate(`welcome.agent.reach.${key}`)} sx={{ height: 26, fontSize: 12.5 }}/>
+                ))}
+              </Stack>
+            </Box>
+            <Stack sx={{ minWidth: 0, gap: 1.5 }}>
+              {agentPoints.map(({ key, Icon }) => (
+                <Stack key={key} direction='row' sx={{ gap: 1.5, alignItems: 'flex-start' }}>
+                  <Tile sx={{ mb: 0, flexShrink: 0, width: 34, height: 34, borderRadius: '9px' }}>
+                    <Icon sx={{ fontSize: 18 }}/>
+                  </Tile>
+                  <Box sx={{ minWidth: 0, pt: 0.25 }}>
+                    <Typography sx={{ fontWeight: 600, fontSize: 14.5 }}>
+                      <T id={`welcome.agent.points.${key}.title`}/>
+                    </Typography>
+                    <Typography variant='body2' color='text.secondary' sx={{ lineHeight: 1.5 }}>
+                      <T id={`welcome.agent.points.${key}.body`}/>
+                    </Typography>
+                  </Box>
+                </Stack>
+              ))}
+            </Stack>
+          </Box>
+        </Section>
+
         <Section band>
           <Overline><T id='welcome.examplesHeading'/></Overline>
           <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' }, gap: 1.5 }}>
@@ -266,38 +311,6 @@ export const WelcomePage = () => {
               <Chip key={key} variant='outlined' label={translate(`welcome.extras.${key}`)} sx={{ height: 26, fontSize: 12.5 }}/>
             ))}
           </Stack>
-        </Section>
-
-        {/* The agent. Its own section rather than a ninth card: it is the
-            largest thing here since mailboxes, and the sentence that has to
-            land is the one about it being off until somebody turns it on. */}
-        <Section>
-          <Overline><T id='welcome.agent.heading'/></Overline>
-          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '5fr 6fr' }, gap: { xs: 3, md: 6 } }}>
-            <Box sx={{ minWidth: 0 }}>
-              <Typography sx={{ mb: 2 }}><T id='welcome.agent.lead'/></Typography>
-              <Typography variant='body2' color='text.secondary' sx={{ lineHeight: 1.6 }}>
-                <T id='welcome.agent.privacy'/>
-              </Typography>
-            </Box>
-            <Stack sx={{ minWidth: 0, gap: 1.5 }}>
-              {agentPoints.map(({ key, Icon }) => (
-                <Stack key={key} direction='row' sx={{ gap: 1.5, alignItems: 'flex-start' }}>
-                  <Tile sx={{ mb: 0, flexShrink: 0, width: 34, height: 34, borderRadius: '9px' }}>
-                    <Icon sx={{ fontSize: 18 }}/>
-                  </Tile>
-                  <Box sx={{ minWidth: 0, pt: 0.25 }}>
-                    <Typography sx={{ fontWeight: 600, fontSize: 14.5 }}>
-                      <T id={`welcome.agent.points.${key}.title`}/>
-                    </Typography>
-                    <Typography variant='body2' color='text.secondary' sx={{ lineHeight: 1.5 }}>
-                      <T id={`welcome.agent.points.${key}.body`}/>
-                    </Typography>
-                  </Box>
-                </Stack>
-              ))}
-            </Stack>
-          </Box>
         </Section>
 
         <Section>

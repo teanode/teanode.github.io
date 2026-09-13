@@ -1,7 +1,7 @@
 ---
 language: 简体中文
 title: TeaNode
-tagline: 开源邮件服务器，用自己的域名收发邮件，邮箱在哪里都能读。
+tagline: 一个自托管的、带代理的邮箱。你自己的域名、你自己的服务器，以及一个从不离开它的助手。
 nav:
   docs: 文档
   github: GitHub
@@ -32,10 +32,11 @@ notFound:
   toHome: 回到首页
   toDocs: 阅读文档
 welcome:
-  headline: 用自己的域名收发邮件。
+  headline: 属于你自己的邮箱，带一个从不离开它的助手。
   lead: >-
-    给每个副业项目和早期创业公司的开源邮件服务器。给一个地址配一个邮箱，在这里读，
-    也能用任何邮件程序读；或者把它转发到你已经在用的邮箱。回复以域名的身份签名发出。
+    用自己的域名收发邮件，在这里读，也可以在任何邮件程序里读，并且给每个人一个私人助手，
+    它够得到自己的邮件、联系人、电脑和浏览器。一个可执行文件、一个 PostgreSQL，跑在你的
+    硬件上。把这个助手指向你自己的 Ollama 或者 vLLM，就没有任何东西离开这台机器。
   getStarted: 开始使用
   readDocs: 阅读文档
   viewSource: 查看源码
@@ -50,6 +51,7 @@ welcome:
     inbox: 你已经在用的邮箱
     webhook: 一个 webhook
     reply: 回复和你发出的邮件都以你的域名签名发出。
+    agent: 你的助手给落进邮箱的邮件分类，并替你起草要回的信。
   screenshotsHeading: 它长什么样
   previous: 上一页
   next: 下一页
@@ -98,6 +100,7 @@ welcome:
       send: 用你的域名发信
       domains: 域名数量
       webhook: 投递到 webhook
+      assistant: 一个私人助手
       yours: 邮件存放在哪里
       price: 价格
     cells:
@@ -126,6 +129,11 @@ welcome:
         cloudflare: 通过 Worker
         improvmx: 'no'
         provider: 'no'
+      assistant:
+        teanode: 你的，跑在你的硬件上
+        cloudflare: 'no'
+        improvmx: 'no'
+        provider: 他们的，跑在他们的硬件上
       yours:
         teanode: 你的主机，你的数据库
         cloudflare: 他们的服务器
@@ -142,12 +150,11 @@ welcome:
     heading: 一个私人代理，如果你想要的话
     lead: >-
       把服务器指向一个语言模型——OpenAI、Anthropic、Gemini，或者同一台机器上的
-      Ollama——每个人就都可以打开属于自己的代理。它给到达的邮件分类，用你自己的
+      Ollama 或 vLLM——每个人就都可以打开属于自己的代理。它给到达的邮件分类，用你自己的
       口吻写草稿，并回答关于你邮件的问题，用的正好是你的权限，不多也不少。
     privacy: >-
       默认关闭，直到你打开它；在你授予某个邮箱之前，它看不到任何邮箱。邮件在投递的
-      过程中不会有任何东西送到模型那里，这些工作是之后排队做的。把它指向一个
-      Ollama，就没有任何东西离开这台机器。运维者可以限制它能花多少，按 token
+      过程中不会有任何东西送到模型那里，这些工作是之后排队做的。把它指向你自己的 Ollama 或者 vLLM，就没有任何东西离开这台机器。运维者可以限制它能花多少，按 token
       或者按钱。
     points:
       sorts:
@@ -162,6 +169,14 @@ welcome:
       asks:
         title: 回答你的问题
         body: 每一页上的一个抽屉，以及终端里的 teanode agent ask。它以你的身份搜索、归档和起草，任何撤不回来的事情都会先停下来等你点头。
+    reachLead: 你授予之后，它能够到什么
+    reach:
+      mail: 你的邮件
+      contacts: 你的联系人
+      computer: 你的电脑
+      browser: 你的浏览器
+      web: 网页
+      calendar: 你的日历——快了
   featuresHeading: 它能做什么
   features:
     mailbox:

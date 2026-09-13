@@ -7,6 +7,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import ForwardToInboxOutlinedIcon from '@mui/icons-material/ForwardToInboxOutlined'
 import InboxOutlinedIcon from '@mui/icons-material/InboxOutlined'
 import MailOutlineIcon from '@mui/icons-material/EmailOutlined'
+import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined'
 import ReplyOutlinedIcon from '@mui/icons-material/ReplyOutlined'
 import WebhookOutlinedIcon from '@mui/icons-material/WebhookOutlined'
 
@@ -88,6 +89,16 @@ export const Flow = () => (
     >
       <ReplyOutlinedIcon sx={{ fontSize: 18 }}/>
       <Typography variant='body2' color='text.secondary'><T id='welcome.flow.reply'/></Typography>
+    </Stack>
+    {/* The assistant is not a fourth destination — it works on what landed in
+        the mailbox — so it is a line under the picture rather than a box in
+        it. Without it the diagram argues only the routing half. */}
+    <Stack
+      direction='row'
+      sx={{ mt: 0.75, alignItems: 'center', gap: 1, color: 'text.secondary', justifyContent: { md: 'center' } }}
+    >
+      <AutoAwesomeOutlinedIcon sx={{ fontSize: 18 }}/>
+      <Typography variant='body2' color='text.secondary'><T id='welcome.flow.agent'/></Typography>
     </Stack>
   </Box>
 )
