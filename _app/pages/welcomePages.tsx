@@ -73,8 +73,6 @@ const extras = ['templates', 'contacts', 'cli', 'clamav', 'spamd', 'geoip', 's3'
 // What a personal agent does, once somebody turns theirs on. Four things
 // rather than the whole list, because the whole list is the documentation.
 // What the assistant can be given, in the order somebody would grant it.
-// Calendar is not shipped; the catalogue's label says so rather than the code,
-// so taking the caveat off later is one word in three files.
 const agentReach = ['mail', 'contacts', 'computer', 'browser', 'web', 'calendar']
 
 const agentPoints: { key: string, Icon: SvgIconComponent }[] = [

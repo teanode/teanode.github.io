@@ -15,7 +15,8 @@ do both.
 The assistant is the other half, and it is off until somebody turns it on.
 Given a mailbox, it sorts what arrives, drafts in your voice and answers
 questions about your mail with exactly your permissions; given more, it
-reaches your contacts, your own computer, your own browser tab and the web.
+reaches your contacts, your calendar, your own computer, your own browser
+tab and the web.
 Point it at an Ollama or a vLLM on the same machine and nothing about any of
 it leaves your hardware. [Agents](/doc/agents) is the whole story.
 

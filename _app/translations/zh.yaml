@@ -35,7 +35,7 @@ welcome:
   headline: 用自己的域名收发邮件。
   lead: >-
     在这里读邮件，也可以在任何邮件程序里读，该去别处的就转发出去，并且给每个人一个私人
-    助手，它够得到自己的邮件、联系人、电脑和浏览器。一个可执行文件、一个 PostgreSQL，
+    助手，它够得到自己的邮件、联系人、日历、电脑和浏览器。一个可执行文件、一个 PostgreSQL，
     跑在你的硬件上。把这个助手指向你自己的 Ollama 或者 vLLM，就没有任何东西离开这台机器。
   getStarted: 开始使用
   readDocs: 阅读文档
@@ -176,7 +176,7 @@ welcome:
       computer: 你的电脑
       browser: 你的浏览器
       web: 网页
-      calendar: 你的日历——快了
+      calendar: 你的日历
   featuresHeading: 它能做什么
   features:
     mailbox:

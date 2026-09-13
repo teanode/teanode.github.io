@@ -36,7 +36,7 @@ welcome:
   lead: >-
     Read the mail here or in any mail program, forward what belongs somewhere
     else, and give each person a private assistant that reaches their mail,
-    their contacts, their computer and their browser. One binary, one
+    their contacts, their calendar, their computer and their browser. One binary, one
     PostgreSQL, your hardware. Point the assistant at an Ollama or a vLLM of
     your own and nothing leaves the machine.
   getStarted: Get started
@@ -189,7 +189,7 @@ welcome:
       computer: Your computer
       browser: Your browser
       web: The web
-      calendar: Your calendar — soon
+      calendar: Your calendar
   featuresHeading: What it does
   features:
     mailbox:
