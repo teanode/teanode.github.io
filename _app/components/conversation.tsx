@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography'
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 
 import { useTranslate } from '../i18n'
 import { surfaces } from '../theme'
@@ -175,22 +176,36 @@ export const Conversation = () => {
         overflow: 'hidden',
       }}
     >
-      {/* The head, as the drawer draws it: the mark, the conversation's name,
-          and the day's spend as a ring. */}
+      {/* The head, as the drawer draws it: a button carrying the spark, the
+          conversation's name and a chevron; the day's budget as a ring, which
+          is what the product shows rather than a count; and the close. The
+          measurements are its own — 8px by 10px of padding, 14px icons, a
+          16px ring of radius 6 stroked 2.5. */}
       <Stack
         direction='row'
         sx={{
-          alignItems: 'center', gap: 1, px: 1.25, py: 1,
+          alignItems: 'center', gap: 1, px: '10px', py: 1,
           borderBottom: 1, borderColor: surface.border, flexShrink: 0,
         }}
       >
-        <AutoAwesomeIcon sx={{ fontSize: 17, color: surface.muted }}/>
-        <Typography sx={{ fontWeight: 600, fontSize: 13.5, flex: 1, minWidth: 0 }} noWrap>
-          {translate('welcome.agent.conversation.title')}
-        </Typography>
-        <Typography variant='caption' sx={{ color: surface.muted, fontSize: 11.5 }}>
-          {translate('welcome.agent.conversation.budget')}
-        </Typography>
+        <Stack
+          direction='row'
+          sx={{ alignItems: 'center', gap: '6px', flex: 1, minWidth: 0, px: '6px', py: '4px' }}
+        >
+          <AutoAwesomeIcon sx={{ fontSize: 14, flexShrink: 0 }}/>
+          <Typography sx={{ fontWeight: 600, fontSize: 13.5, minWidth: 0 }} noWrap>
+            {translate('welcome.agent.conversation.title')}
+          </Typography>
+          <ExpandMoreIcon sx={{ fontSize: 14, flexShrink: 0, color: surface.muted }}/>
+        </Stack>
+        <BudgetRing surface={surface} colour={theme.palette.success.main}/>
+        <Box
+          component='span'
+          aria-hidden
+          sx={{ px: 0.5, color: surface.muted, fontSize: 16, lineHeight: 1 }}
+        >
+          ×
+        </Box>
       </Stack>
 
       <Stack
@@ -279,6 +294,31 @@ export const Conversation = () => {
           {typed && <Caret colour={surface.text}/>}
         </Box>
       </Box>
+    </Box>
+  )
+}
+
+// The day's budget: a track and a fill, the fill as much of the circle as has
+// gone, green while there is room. A little under a fifth here, which is what
+// the recording's own usage would come to.
+const BudgetRing = ({ surface, colour }: {
+  surface: ReturnType<typeof surfaces>
+  colour: string
+}) => {
+  const radius = 6
+  const round = 2 * Math.PI * radius
+  const fraction = 0.18
+  return (
+    <Box sx={{ display: 'inline-flex', alignItems: 'center', p: '4px', color: surface.muted }}>
+      <svg width='16' height='16' viewBox='0 0 16 16' aria-hidden='true' focusable='false'>
+        <circle cx='8' cy='8' r={radius} fill='none' stroke={surface.border} strokeWidth={2.5}/>
+        <circle
+          cx='8' cy='8' r={radius} fill='none' stroke={colour} strokeWidth={2.5}
+          strokeLinecap='round'
+          strokeDasharray={`${round * fraction} ${round}`}
+          transform='rotate(-90 8 8)'
+        />
+      </svg>
     </Box>
   )
 }

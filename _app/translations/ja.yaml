@@ -172,7 +172,6 @@ welcome:
     conversation:
       label: エージェントとの会話の再生
       title: Bertie
-      budget: 今日 11k / 200k
       placeholder: エージェントに聞く
       yes: 送る
       no: いまはやめる

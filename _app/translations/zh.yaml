@@ -172,7 +172,6 @@ welcome:
     conversation:
       label: 一段和代理的对话，回放
       title: Bertie
-      budget: 今天 11k / 200k
       placeholder: 问问你的代理
       yes: 发出去
       no: 先不要

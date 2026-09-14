@@ -195,7 +195,6 @@ welcome:
     conversation:
       label: A conversation with the agent, played back
       title: Bertie
-      budget: 11k of 200k today
       placeholder: Ask your agent
       yes: Send it
       no: Not now
