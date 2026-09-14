@@ -321,13 +321,7 @@ export const Conversation = () => {
           />
         </Stack>
         <BudgetRing surface={surface} colour={theme.palette.success.main}/>
-        <Box
-          component='span'
-          aria-hidden
-          sx={{ px: 0.5, color: surface.muted, fontSize: 16, lineHeight: 1 }}
-        >
-          ×
-        </Box>
+        <CloseMark surface={surface}/>
       </Stack>
 
       {picking && (
@@ -513,6 +507,20 @@ const BudgetRing = ({ surface, colour }: {
     </Box>
   )
 }
+
+// The close, drawn rather than set as a × from the font. Where the glyph sits
+// inside its line box is the font's business, and it is not the same font on
+// every machine; two circles and two lines are centred wherever they land.
+const CloseMark = ({ surface }: { surface: ReturnType<typeof surfaces> }) => (
+  <Box sx={{ display: 'inline-flex', alignItems: 'center', px: '1px', color: surface.muted }}>
+    <svg width='16' height='16' viewBox='0 0 16 16' aria-hidden='true' focusable='false'>
+      <path
+        d='M4.8 4.8 L11.2 11.2 M11.2 4.8 L4.8 11.2'
+        stroke='currentColor' strokeWidth={1.7} strokeLinecap='round' fill='none'
+      />
+    </svg>
+  </Box>
+)
 
 const Pill = ({ children, filled, surface }: {
   children: string
