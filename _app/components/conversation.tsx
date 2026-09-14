@@ -92,6 +92,10 @@ const pause: Record<Step['kind'], number> = {
 
 const typingSpeed = 26 // milliseconds a character, for the reader's own lines
 
+// How long the dots hold before the answer arrives. The same before a reply
+// and before a confirmation card, because a card is an answer too.
+const thinkingFor = 900
+
 // A conversation opens on its first exchange rather than on nothing. An empty
 // box is what a reader sees first otherwise, for as long as it takes to type a
 // question and answer it, and an empty box looks like something that failed to
@@ -130,6 +134,9 @@ export const Conversation = () => {
       return
     }
     let timer: ReturnType<typeof setTimeout>
+    // The card answers itself on a timer of its own, which would otherwise
+    // take the handle that clears the next step.
+    let answering: ReturnType<typeof setTimeout>
     let cancelled = false
 
     const advance = (index: number) => {
@@ -152,15 +159,23 @@ export const Conversation = () => {
       }
       const step = script[index]
       if (step.kind === 'card') {
-        // The card is answered a moment after it appears, because the point
-        // of the card is that somebody says yes to it.
-        setShown(index + 1)
+        // A card is the answer to the turn, so it is thought about first, the
+        // same as a reply. Then it is answered a moment later, because the
+        // point of a card is that somebody says yes to it.
+        setThinking(true)
         timer = setTimeout(() => {
-          if (!cancelled) {
-            setAnswered(true)
+          if (cancelled) {
+            return
           }
-        }, 1500)
-        timer = setTimeout(() => advance(index + 1), pause.card)
+          setThinking(false)
+          setShown(index + 1)
+          answering = setTimeout(() => {
+            if (!cancelled) {
+              setAnswered(true)
+            }
+          }, 1500)
+          timer = setTimeout(() => advance(index + 1), pause.card)
+        }, thinkingFor)
         return
       }
       if (step.kind === 'tool') {
@@ -186,7 +201,7 @@ export const Conversation = () => {
           setThinking(false)
           setShown(index + 1)
           timer = setTimeout(() => advance(index + 1), pause.reply)
-        }, 900)
+        }, thinkingFor)
         return
       }
       // The reader's own line is typed, the way it would be.
@@ -214,6 +229,7 @@ export const Conversation = () => {
     return () => {
       cancelled = true
       clearTimeout(timer)
+      clearTimeout(answering)
     }
   }, [still, translate, current, script, opensAt])
 
