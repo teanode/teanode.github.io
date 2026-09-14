@@ -204,9 +204,9 @@ welcome:
         thursday: Am I free Thursday afternoon?
         reply: Tell Grace Thursday at four works.
       tool:
-        searched: Searched your mail · read 4 messages
-        calendar: Read your calendar · 14–18 September
-        drafted: Drafted a reply to Grace Hopper
+        searched: read 4 messages
+        calendar: 14–18 September
+        drafted: a reply to Grace Hopper
       reply:
         today: >-
           Three things. Grace needs an answer on the contract before your call —

@@ -8,7 +8,7 @@ import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 
 import { useTranslate } from '../i18n'
-import { surfaces } from '../theme'
+import { monospaceFamily, surfaces } from '../theme'
 
 // The agent's drawer, playing a conversation that already happened.
 //
@@ -28,18 +28,21 @@ import { surfaces } from '../theme'
 // a `tool` is the grey line that says what it reached for, and a `card` is
 // the confirmation that stops it before it does something it cannot undo.
 type Step =
-  | { kind: 'say' | 'reply' | 'tool', id: string }
-  | { kind: 'card', id: string, answered?: boolean }
+  | { kind: 'say' | 'reply', id: string }
+  // A tool names itself: the drawer writes the tool's own name, not a
+  // sentence about it, with whatever it found after a middle dot.
+  | { kind: 'tool', id: string, tool: string }
+  | { kind: 'card', id: string }
 
 const script: Step[] = [
   { kind: 'say', id: 'today' },
-  { kind: 'tool', id: 'searched' },
+  { kind: 'tool', id: 'searched', tool: 'mail_search' },
   { kind: 'reply', id: 'today' },
   { kind: 'say', id: 'thursday' },
-  { kind: 'tool', id: 'calendar' },
+  { kind: 'tool', id: 'calendar', tool: 'calendar' },
   { kind: 'reply', id: 'thursday' },
   { kind: 'say', id: 'reply' },
-  { kind: 'tool', id: 'drafted' },
+  { kind: 'tool', id: 'drafted', tool: 'mail_draft' },
   { kind: 'card', id: 'send' },
 ]
 
@@ -71,6 +74,10 @@ export const Conversation = () => {
   const [shown, setShown] = useState(still ? script.length : opensAt)
   const [typed, setTyped] = useState('')
   const [answered, setAnswered] = useState(still)
+  // Which step is still working, and whether the agent is thinking between
+  // a question and the tool it reaches for.
+  const [working, setWorking] = useState(-1)
+  const [thinking, setThinking] = useState(false)
   const body = useRef<HTMLDivElement>(null)
 
   // The recording, as one effect: a timer chain that advances the script and
@@ -95,6 +102,8 @@ export const Conversation = () => {
           setShown(opensAt)
           setAnswered(false)
           setTyped('')
+          setThinking(false)
+          setWorking(-1)
           advance(opensAt)
         }, 5200)
         return
@@ -112,9 +121,30 @@ export const Conversation = () => {
         timer = setTimeout(() => advance(index + 1), pause.card)
         return
       }
-      if (step.kind !== 'say') {
+      if (step.kind === 'tool') {
+        // It runs, and then it is done: the tick arrives part way through.
+        setThinking(false)
         setShown(index + 1)
-        timer = setTimeout(() => advance(index + 1), pause[step.kind])
+        setWorking(index)
+        timer = setTimeout(() => {
+          if (!cancelled) {
+            setWorking(-1)
+          }
+        }, pause.tool * 0.55)
+        timer = setTimeout(() => advance(index + 1), pause.tool)
+        return
+      }
+      if (step.kind === 'reply') {
+        // Thinking, and then the words.
+        setThinking(true)
+        timer = setTimeout(() => {
+          if (cancelled) {
+            return
+          }
+          setThinking(false)
+          setShown(index + 1)
+          timer = setTimeout(() => advance(index + 1), pause.reply)
+        }, 900)
         return
       }
       // The reader's own line is typed, the way it would be.
@@ -132,6 +162,7 @@ export const Conversation = () => {
         }
         setTyped('')
         setShown(index + 1)
+        setThinking(true)
         timer = setTimeout(() => advance(index + 1), pause.say)
       }
       type()
@@ -224,12 +255,18 @@ export const Conversation = () => {
         <Box sx={{ flexGrow: 1, flexShrink: 1, minHeight: 0 }}/>
         {script.slice(0, shown).map((step, index) => {
           if (step.kind === 'tool') {
+            // "✓ mail_search · read 4 messages", which is the drawer's own
+            // shape: the mark, the tool's name, then what it found, muted.
+            const running = working === index
             return (
               <Typography
                 key={`${step.kind}-${step.id}-${index}`}
                 sx={{ px: 0.5, fontSize: 12, color: surface.muted }}
               >
-                {translate(`welcome.agent.conversation.tool.${step.id}`)}
+                <Box component='span' sx={{ fontFamily: monospaceFamily }}>
+                  {running ? '…' : '✓'} {step.tool}
+                </Box>
+                <Box component='span'> · {translate(`welcome.agent.conversation.tool.${step.id}`)}</Box>
               </Typography>
             )
           }
@@ -277,6 +314,11 @@ export const Conversation = () => {
             </Box>
           )
         })}
+        {thinking && (
+          <Box sx={{ ...line, alignSelf: 'stretch', bgcolor: surface.field, py: '10px' }}>
+            <Dots colour={surface.muted}/>
+          </Box>
+        )}
       </Stack>
 
       {/* The box you type in. It carries whatever is being typed, so the
@@ -339,6 +381,29 @@ const Pill = ({ children, filled, surface }: {
     }}
   >
     {children}
+  </Box>
+)
+
+// Three dots that rise in turn, at the dashboard's own timing: 1.2s, each a
+// fifth of a second behind the one before, and still for a reader who asked
+// for less movement.
+const Dots = ({ colour }: { colour: string }) => (
+  <Box sx={{ display: 'inline-flex', gap: '4px' }}>
+    {[0, 1, 2].map((index) => (
+      <Box
+        key={index}
+        sx={{
+          width: 6, height: 6, borderRadius: '50%', bgcolor: colour,
+          animation: 'conversationDot 1.2s ease-in-out infinite',
+          animationDelay: `${index * 0.2}s`,
+          '@keyframes conversationDot': {
+            '0%, 80%, 100%': { opacity: 0.3, transform: 'translateY(0)' },
+            '40%': { opacity: 1, transform: 'translateY(-3px)' },
+          },
+          '@media (prefers-reduced-motion: reduce)': { animation: 'none', opacity: 0.6 },
+        }}
+      />
+    ))}
   </Box>
 )
 

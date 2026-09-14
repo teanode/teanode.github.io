@@ -181,9 +181,9 @@ welcome:
         thursday: 木曜の午後は空いていますか？
         reply: Grace に木曜の四時で大丈夫と伝えて。
       tool:
-        searched: メールを検索 · 4 通を読みました
-        calendar: カレンダーを参照 · 9 月 14 日〜18 日
-        drafted: Grace Hopper への返信を下書きしました
+        searched: 4 通を読みました
+        calendar: 9 月 14 日〜18 日
+        drafted: Grace Hopper への返信
       reply:
         today: 三つあります。Grace が契約の返事を待っていて、電話の前に必要です。第 7 条が六十日から九十日に変わりました。Katherine の取締役会の数字は、継続率の確認が要ります。Radia は草稿を読んでほしいと言っていますが、これは今夜で構いません。
         thursday: 二時以降なら空いています。九時半にスタンドアップ、あとは四時の契約レビューまで何もありません。
