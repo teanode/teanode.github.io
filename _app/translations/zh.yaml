@@ -33,10 +33,7 @@ notFound:
   toDocs: 阅读文档
 welcome:
   headline: 用自己的域名收发邮件。
-  lead: >-
-    在这里读邮件，也可以在任何邮件程序里读，该去别处的就转发出去，并且给每个人一个私人
-    助手，它够得到自己的邮件、联系人、日历、电脑和浏览器。一个可执行文件、一个 PostgreSQL，
-    跑在你的硬件上。把这个助手指向你自己的 Ollama 或者 vLLM，就没有任何东西离开这台机器。
+  lead: 在这里读邮件，也可以在任何邮件程序里读，该去别处的就转发出去，并且给每个人一个私人助手，它够得到自己的邮件、联系人、日历、电脑和浏览器。一个可执行文件、一个 PostgreSQL，跑在你的硬件上。把这个助手指向你自己的 Ollama 或者 vLLM，就没有任何东西离开这台机器。
   getStarted: 开始使用
   readDocs: 阅读文档
   viewSource: 查看源码
@@ -146,18 +143,11 @@ welcome:
         cloudflare: 免费
         improvmx: 有免费档，之后按月付费
         provider: 按月按用户付费
-    note: >-
-      以 2026 年 9 月各家方案为准。方案会变，许可不会。
+    note: 以 2026 年 9 月各家方案为准。方案会变，许可不会。
   agent:
     heading: 一个私人代理，如果你想要的话
-    lead: >-
-      把服务器指向一个语言模型——OpenAI、Anthropic、Gemini，或者同一台机器上的
-      Ollama 或 vLLM——每个人就都可以打开属于自己的代理。它给到达的邮件分类，用你自己的
-      口吻写草稿，并回答关于你邮件的问题，用的正好是你的权限，不多也不少。
-    privacy: >-
-      默认关闭，直到你打开它；在你授予某个邮箱之前，它看不到任何邮箱。邮件在投递的
-      过程中不会有任何东西送到模型那里，这些工作是之后排队做的。把它指向你自己的 Ollama 或者 vLLM，就没有任何东西离开这台机器。运维者可以限制它能花多少，按 token
-      或者按钱。
+    lead: 把服务器指向一个语言模型——OpenAI、Anthropic、Gemini，或者同一台机器上的 Ollama 或 vLLM——每个人就都可以打开属于自己的代理。它给到达的邮件分类，用你自己的口吻写草稿，并回答关于你邮件的问题，用的正好是你的权限，不多也不少。
+    privacy: 默认关闭，直到你打开它；在你授予某个邮箱之前，它看不到任何邮箱。邮件在投递的过程中不会有任何东西送到模型那里，这些工作是之后排队做的。把它指向你自己的 Ollama 或者 vLLM，就没有任何东西离开这台机器。运维者可以限制它能花多少，按 token 或者按钱。
     points:
       sorts:
         title: 给到达的邮件分类
@@ -196,12 +186,8 @@ welcome:
         calendar: 读了你的日历 · 9 月 14 日至 18 日
         drafted: 给 Grace Hopper 起草了一封回信
       reply:
-        today: >-
-          三件事。Grace 在等合同的答复，要赶在你那个电话之前——第 7 条从六十天改成了
-          九十天。Katherine 的董事会数字需要核对留存率。Radia 请你读一份草稿，那个
-          可以等到今天晚上。
-        thursday: >-
-          两点以后有空。九点半站会，之后一直到四点的合同评审之前都没别的。
+        today: 三件事。Grace 在等合同的答复，要赶在你那个电话之前——第 7 条从六十天改成了九十天。Katherine 的董事会数字需要核对留存率。Radia 请你读一份草稿，那个可以等到今天晚上。
+        thursday: 两点以后有空。九点半站会，之后一直到四点的合同评审之前都没别的。
       card:
         send: 给 Grace Hopper 发出「周四四点可以」？
   featuresHeading: 它能做什么
@@ -245,8 +231,7 @@ welcome:
     dns01: DNS-01 证书
   startHeading: 开始使用
   startLead: 用 docker compose 执行四条命令，然后打开仪表盘。
-  startAfter: >-
-    第一个访问仪表盘的人创建账户。在那里添加你的域名，它会列出要发布的 DNS 记录。
+  startAfter: 第一个访问仪表盘的人创建账户。在那里添加你的域名，它会列出要发布的 DNS 记录。
   startWalkthrough: 快速开始
   needHeading: 你需要什么
   needs:
@@ -258,35 +243,22 @@ welcome:
   questions:
     port25:
       question: 我需要开放 25 端口吗？
-      answer: >-
-        接收邮件需要：其他邮件服务器通过 25 端口投递，没有别的入口。大多数家庭宽带会封锁它，
-        大多数小型服务器不会。见[25 端口的问题](/doc/getting-started#25-端口的问题)。
+      answer: 接收邮件需要：其他邮件服务器通过 25 端口投递，没有别的入口。大多数家庭宽带会封锁它，大多数小型服务器不会。见[25 端口的问题](/doc/getting-started#25-端口的问题)。
     mailprogram:
       question: 我能用自己的邮件程序读吗？
-      answer: >-
-        可以。服务器在 993 端口提供 IMAP，在 143 端口提供 STARTTLS。在邮箱设置里为这台设备
-        创建一份应用专用密码，Apple Mail、Thunderbird 或你的手机就能用你的地址和这份密码登录。
-        同一份密码也能在 587 端口发信。
+      answer: 可以。服务器在 993 端口提供 IMAP，在 143 端口提供 STARTTLS。在邮箱设置里为这台设备创建一份应用专用密码，Apple Mail、Thunderbird 或你的手机就能用你的地址和这份密码登录。同一份密码也能在 587 端口发信。
     forwarding:
       question: 我一定要用邮箱吗？
-      answer: >-
-        不一定。一个别名可以投递进邮箱、转发到你已经在读的地址、发到一个 webhook，
-        或者交给另一台邮件服务器，同一个域名四种都能同时用。
+      answer: 不一定。一个别名可以投递进邮箱、转发到你已经在读的地址、发到一个 webhook，或者交给另一台邮件服务器，同一个域名四种都能同时用。
     outbound:
       question: 我的主机封锁了外发 25 端口，还能发信吗？
-      answer: >-
-        可以。把中继设置指向某个服务商的提交端口：Amazon SES、Postmark、Resend 或一个 Gmail 账号都可以，
-        邮件保留 TeaNode 加上的签名。见[中继](/doc/configuration#smtprelay)。
+      answer: 可以。把中继设置指向某个服务商的提交端口：Amazon SES、Postmark、Resend 或一个 Gmail 账号都可以，邮件保留 TeaNode 加上的签名。见[中继](/doc/configuration#smtprelay)。
     team:
       question: 我的团队能用公司的身份提供商登录吗？
-      answer: >-
-        可以，通过 OpenID Connect。一个群组可以跟随你目录里的一个群组，角色决定它的成员能看什么、做什么；
-        绑定到一个域名的群组，权限就只到那里为止。
+      answer: 可以，通过 OpenID Connect。一个群组可以跟随你目录里的一个群组，角色决定它的成员能看什么、做什么；绑定到一个域名的群组，权限就只到那里为止。
     stored:
       question: 我的邮件存放在哪里？
-      answer: >-
-        在你的主机上，在你的 PostgreSQL 数据库里，原始邮件放在磁盘上或你选择的对象存储里。
-        一封邮件只存一份，无论有多少个文件夹放着它，只要还有一个放着就一直保留。
+      answer: 在你的主机上，在你的 PostgreSQL 数据库里，原始邮件放在磁盘上或你选择的对象存储里。一封邮件只存一份，无论有多少个文件夹放着它，只要还有一个放着就一直保留。
 footer:
   licence: 以 MIT 许可证开源。
   security: 报告安全问题

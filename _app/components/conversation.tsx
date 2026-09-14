@@ -53,6 +53,12 @@ const pause: Record<Step['kind'], number> = {
 
 const typingSpeed = 26 // milliseconds a character, for the reader's own lines
 
+// Where the recording opens, and where it returns to: the first exchange is
+// already on screen. An empty box is what a reader sees first otherwise, for
+// as long as it takes to type a question and answer it, and an empty box
+// looks like something that failed to load.
+const opensAt = 3
+
 export const Conversation = () => {
   const translate = useTranslate()
   const theme = useTheme()
@@ -61,7 +67,7 @@ export const Conversation = () => {
   // which is the same information without anything moving.
   const still = useMediaQuery('(prefers-reduced-motion: reduce)')
 
-  const [shown, setShown] = useState(still ? script.length : 0)
+  const [shown, setShown] = useState(still ? script.length : opensAt)
   const [typed, setTyped] = useState('')
   const [answered, setAnswered] = useState(still)
   const body = useRef<HTMLDivElement>(null)
@@ -85,10 +91,10 @@ export const Conversation = () => {
           if (cancelled) {
             return
           }
-          setShown(0)
+          setShown(opensAt)
           setAnswered(false)
           setTyped('')
-          advance(0)
+          advance(opensAt)
         }, 5200)
         return
       }
@@ -130,7 +136,7 @@ export const Conversation = () => {
       type()
     }
 
-    timer = setTimeout(() => advance(0), 600)
+    timer = setTimeout(() => advance(opensAt), 1400)
     return () => {
       cancelled = true
       clearTimeout(timer)
@@ -158,7 +164,7 @@ export const Conversation = () => {
       sx={{
         width: '100%',
         maxWidth: 440,
-        height: 470,
+        height: { xs: 400, md: 470 },
         display: 'flex',
         flexDirection: 'column',
         border: 1,
