@@ -170,6 +170,15 @@ welcome:
       web: ウェブ
       calendar: あなたのカレンダー
     conversation:
+      pick: 会話を選ぶ
+      names:
+        today: Bertie
+        invoices: 未払いの請求書
+        trip: あの荷物
+      summaries:
+        today: 今日わたしを待っているもの、そして Grace への返信
+        invoices: 二件が未決、そして下書きした督促
+        trip: 配送の追跡と、綴じた領収書
       label: エージェントとの会話の再生
       title: Bertie
       placeholder: エージェントに聞く
@@ -180,15 +189,28 @@ welcome:
         today: 今日わたしを待っているものは？
         thursday: 木曜の午後は空いていますか？
         reply: Grace に木曜の四時で大丈夫と伝えて。
+        unpaid: どの請求書がまだ未払いですか？
+        chase: 古いほうに督促を下書きして。
+        parcel: 火曜の荷物はどこですか？
+        file: 領収書をノートパソコンに置いて。
       tool:
         searched: 4 通を読みました
         calendar: 9 月 14 日〜18 日
         drafted: Grace Hopper への返信
+        invoices: 7 件中 2 件が未決
+        contact: Osborne & Sons
+        tracking: 運送会社の通知
+        saved: ~/Documents/receipt.pdf
       reply:
         today: 三つあります。Grace が契約の返事を待っていて、電話の前に必要です。第 7 条が六十日から九十日に変わりました。Katherine の取締役会の数字は、継続率の確認が要ります。Radia は草稿を読んでほしいと言っていますが、これは今夜で構いません。
         thursday: 二時以降なら空いています。九時半にスタンドアップ、あとは四時の契約レビューまで何もありません。
+        unpaid: 二件です。Osborne & Sons、4,200 ポンド、三十一日の超過。Halliday、980 ポンド、八日の超過——こちらは取り決めた支払期限の内側です。
+        chase: 書いて下書きに置きました。丁寧で、請求書の番号と日付を書いてあり、もう一件には触れていません。
+        parcel: 配達に出ていて、六時前の予定です。運送会社が今朝の七時半に書いてきました。そのメールはアーカイブにあり、通知として仕分けられています。
+        file: 保存しました。PDF なので、読み上げるのではなくあなたに残してあります。開いて教えてくれれば、そこから進められます。
       card:
         send: 「木曜の四時で大丈夫」を Grace Hopper に送りますか？
+        remind: 督促を Osborne & Sons に送りますか？
   featuresHeading: できること
   features:
     mailbox:

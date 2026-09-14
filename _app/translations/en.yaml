@@ -193,6 +193,15 @@ welcome:
       web: The web
       calendar: Your calendar
     conversation:
+      pick: Choose a conversation
+      names:
+        today: Bertie
+        invoices: Unpaid invoices
+        trip: The parcel
+      summaries:
+        today: What needs me today, and a reply to Grace
+        invoices: Two outstanding, and a reminder drafted
+        trip: Tracking the delivery, and a receipt filed
       label: A conversation with the agent, played back
       title: Bertie
       placeholder: Ask your agent
@@ -203,10 +212,18 @@ welcome:
         today: What needs me today?
         thursday: Am I free Thursday afternoon?
         reply: Tell Grace Thursday at four works.
+        unpaid: Which invoices are still unpaid?
+        chase: Draft a reminder to the older one.
+        parcel: Where is the parcel from Tuesday?
+        file: Put the receipt on my laptop.
       tool:
         searched: read 4 messages
         calendar: 14–18 September
         drafted: a reply to Grace Hopper
+        invoices: 2 of 7 outstanding
+        contact: Osborne & Sons
+        tracking: the carrier's notice
+        saved: ~/Documents/receipt.pdf
       reply:
         today: >-
           Three things. Grace needs an answer on the contract before your call —
@@ -216,8 +233,13 @@ welcome:
         thursday: >-
           After two, yes. Standup at half nine, and nothing else until the
           contract review at four.
+        unpaid: Two. Osborne & Sons, £4,200, thirty-one days over. Halliday, £980, eight days over — that one is within the terms you agreed.
+        chase: Written and waiting in Drafts. It is polite, it names the invoice and the date, and it does not mention the second one.
+        parcel: Out for delivery, due before six. The carrier wrote at half seven this morning; the message is in Archive, sorted as a notification.
+        file: Saved. It is a PDF, so I have left it for you rather than reading it out — open it and I can work from what you tell me.
       card:
         send: Send "Thursday at four works" to Grace Hopper?
+        remind: Send the reminder to Osborne & Sons?
   featuresHeading: What it does
   features:
     mailbox:

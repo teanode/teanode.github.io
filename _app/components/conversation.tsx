@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography'
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome'
+import CheckIcon from '@mui/icons-material/Check'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 
 import { useTranslate } from '../i18n'
@@ -34,16 +35,50 @@ type Step =
   | { kind: 'tool', id: string, tool: string }
   | { kind: 'card', id: string }
 
-const script: Step[] = [
-  { kind: 'say', id: 'today' },
-  { kind: 'tool', id: 'searched', tool: 'mail_search' },
-  { kind: 'reply', id: 'today' },
-  { kind: 'say', id: 'thursday' },
-  { kind: 'tool', id: 'calendar', tool: 'calendar' },
-  { kind: 'reply', id: 'thursday' },
-  { kind: 'say', id: 'reply' },
-  { kind: 'tool', id: 'drafted', tool: 'mail_draft' },
-  { kind: 'card', id: 'send' },
+// Three conversations, the way somebody would actually have them: the main
+// one, and two named ones kept apart. Each is a recording; pressing the title
+// opens the picker and moves between them, which is what the drawer does.
+const conversations: { id: string, opensAt: number, script: Step[] }[] = [
+  {
+    id: 'today',
+    opensAt: 3,
+    script: [
+      { kind: 'say', id: 'today' },
+      { kind: 'tool', id: 'searched', tool: 'mail_search' },
+      { kind: 'reply', id: 'today' },
+      { kind: 'say', id: 'thursday' },
+      { kind: 'tool', id: 'calendar', tool: 'calendar' },
+      { kind: 'reply', id: 'thursday' },
+      { kind: 'say', id: 'reply' },
+      { kind: 'tool', id: 'drafted', tool: 'mail_draft' },
+      { kind: 'card', id: 'send' },
+    ],
+  },
+  {
+    id: 'invoices',
+    opensAt: 3,
+    script: [
+      { kind: 'say', id: 'unpaid' },
+      { kind: 'tool', id: 'invoices', tool: 'mail_search' },
+      { kind: 'reply', id: 'unpaid' },
+      { kind: 'say', id: 'chase' },
+      { kind: 'tool', id: 'contact', tool: 'contact_book' },
+      { kind: 'reply', id: 'chase' },
+      { kind: 'card', id: 'remind' },
+    ],
+  },
+  {
+    id: 'trip',
+    opensAt: 3,
+    script: [
+      { kind: 'say', id: 'parcel' },
+      { kind: 'tool', id: 'tracking', tool: 'mail_read' },
+      { kind: 'reply', id: 'parcel' },
+      { kind: 'say', id: 'file' },
+      { kind: 'tool', id: 'saved', tool: 'filesystem' },
+      { kind: 'reply', id: 'file' },
+    ],
+  },
 ]
 
 // How long each kind of step holds the screen before the next arrives. A
@@ -57,11 +92,10 @@ const pause: Record<Step['kind'], number> = {
 
 const typingSpeed = 26 // milliseconds a character, for the reader's own lines
 
-// Where the recording opens, and where it returns to: the first exchange is
-// already on screen. An empty box is what a reader sees first otherwise, for
-// as long as it takes to type a question and answer it, and an empty box
-// looks like something that failed to load.
-const opensAt = 3
+// A conversation opens on its first exchange rather than on nothing. An empty
+// box is what a reader sees first otherwise, for as long as it takes to type a
+// question and answer it, and an empty box looks like something that failed to
+// load.
 
 export const Conversation = () => {
   const translate = useTranslate()
@@ -70,6 +104,14 @@ export const Conversation = () => {
   // Somebody who asked for less movement gets the whole conversation at once,
   // which is the same information without anything moving.
   const still = useMediaQuery('(prefers-reduced-motion: reduce)')
+
+  // Which conversation is open, whether the picker is, and how far its
+  // recording has got.
+  const [current, setCurrent] = useState(0)
+  const [picking, setPicking] = useState(false)
+  const conversation = conversations[current]
+  const script = conversation.script
+  const opensAt = conversation.opensAt
 
   const [shown, setShown] = useState(still ? script.length : opensAt)
   const [typed, setTyped] = useState('')
@@ -173,7 +215,17 @@ export const Conversation = () => {
       cancelled = true
       clearTimeout(timer)
     }
-  }, [still, translate])
+  }, [still, translate, current, script, opensAt])
+
+  // Opening another conversation starts its recording from the beginning.
+  const choose = (index: number) => {
+    setCurrent(index)
+    setShown(conversations[index].opensAt)
+    setAnswered(false)
+    setTyped('')
+    setThinking(false)
+    setWorking(-1)
+  }
 
   // Follow the end, the way the drawer does while something is arriving.
   useEffect(() => {
@@ -205,6 +257,7 @@ export const Conversation = () => {
         bgcolor: surface.page,
         boxShadow: '0 12px 40px rgba(0, 0, 0, 0.22)',
         overflow: 'hidden',
+        position: 'relative',
       }}
     >
       {/* The head, as the drawer draws it: a button carrying the spark, the
@@ -220,14 +273,29 @@ export const Conversation = () => {
         }}
       >
         <Stack
+          component='button'
+          type='button'
           direction='row'
-          sx={{ alignItems: 'center', gap: '6px', flex: 1, minWidth: 0, px: '6px', py: '4px' }}
+          aria-expanded={picking}
+          aria-label={translate('welcome.agent.conversation.pick')}
+          onClick={() => setPicking((open) => !open)}
+          sx={{
+            alignItems: 'center', gap: '6px', flex: 1, minWidth: 0,
+            px: '6px', py: '4px', border: 0, background: 'none',
+            font: 'inherit', color: 'inherit', textAlign: 'left', cursor: 'pointer',
+          }}
         >
           <AutoAwesomeIcon sx={{ fontSize: 14, flexShrink: 0 }}/>
           <Typography sx={{ fontWeight: 600, fontSize: 13.5, minWidth: 0 }} noWrap>
-            {translate('welcome.agent.conversation.title')}
+            {translate(`welcome.agent.conversation.names.${conversation.id}`)}
           </Typography>
-          <ExpandMoreIcon sx={{ fontSize: 14, flexShrink: 0, color: surface.muted }}/>
+          <ExpandMoreIcon
+            sx={{
+              fontSize: 14, flexShrink: 0, color: surface.muted,
+              transform: picking ? 'rotate(180deg)' : 'none',
+              transition: 'transform 120ms ease',
+            }}
+          />
         </Stack>
         <BudgetRing surface={surface} colour={theme.palette.success.main}/>
         <Box
@@ -238,6 +306,59 @@ export const Conversation = () => {
           ×
         </Box>
       </Stack>
+
+      {picking && (
+        <>
+          <Box
+            onClick={() => setPicking(false)}
+            sx={{ position: 'absolute', inset: 0, zIndex: 4 }}
+          />
+          <Stack
+            role='menu'
+            sx={{
+              position: 'absolute', top: 44, left: 8, right: 8, zIndex: 5,
+              p: '6px', gap: '2px', fontSize: 13,
+              border: 1, borderColor: surface.border, borderRadius: '10px',
+              bgcolor: surface.page, boxShadow: '0 8px 24px rgb(0 0 0 / 18%)',
+            }}
+          >
+            {conversations.map((entry, index) => (
+              <Stack
+                key={entry.id}
+                component='button'
+                type='button'
+                role='menuitem'
+                direction='row'
+                onClick={() => { choose(index); setPicking(false) }}
+                sx={{
+                  alignItems: 'center', gap: '6px', minHeight: 32, flexShrink: 0,
+                  pl: '8px', pr: '4px', borderRadius: '6px',
+                  border: 0, background: 'none', font: 'inherit', cursor: 'pointer',
+                  color: surface.text, textAlign: 'left',
+                  fontWeight: index === current ? 600 : 400,
+                  '&:hover': { bgcolor: surface.hover },
+                }}
+              >
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: '1px', flex: 1, minWidth: 0 }}>
+                  <Box component='span' sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {translate(`welcome.agent.conversation.names.${entry.id}`)}
+                  </Box>
+                  <Box
+                    component='span'
+                    sx={{
+                      fontSize: 11, fontWeight: 400, color: surface.muted,
+                      overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {translate(`welcome.agent.conversation.summaries.${entry.id}`)}
+                  </Box>
+                </Box>
+                {index === current && <CheckIcon sx={{ fontSize: 14, flexShrink: 0, color: surface.muted }}/>}
+              </Stack>
+            ))}
+          </Stack>
+        </>
+      )}
 
       <Stack
         ref={body}
@@ -315,7 +436,12 @@ export const Conversation = () => {
           )
         })}
         {thinking && (
-          <Box sx={{ ...line, alignSelf: 'stretch', bgcolor: surface.field, py: '10px' }}>
+          <Box
+            sx={{
+              alignSelf: 'flex-start', px: '14px', py: '10px',
+              borderRadius: '10px', bgcolor: surface.field,
+            }}
+          >
             <Dots colour={surface.muted}/>
           </Box>
         )}

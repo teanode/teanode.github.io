@@ -170,6 +170,15 @@ welcome:
       web: 网页
       calendar: 你的日历
     conversation:
+      pick: 选择一个对话
+      names:
+        today: Bertie
+        invoices: 未付的发票
+        trip: 那个包裹
+      summaries:
+        today: 今天有什么需要我，以及一封给 Grace 的回信
+        invoices: 两笔未结，以及一封起草好的催款
+        trip: 追踪这次投递，以及归档一张收据
       label: 一段和代理的对话，回放
       title: Bertie
       placeholder: 问问你的代理
@@ -180,15 +189,28 @@ welcome:
         today: 今天有什么需要我？
         thursday: 我周四下午有空吗？
         reply: 告诉 Grace 周四四点可以。
+        unpaid: 哪些发票还没付？
+        chase: 给较早的那一笔起草一封催款。
+        parcel: 周二那个包裹到哪儿了？
+        file: 把收据放到我的笔记本电脑上。
       tool:
         searched: 读了 4 封
         calendar: 9 月 14 日至 18 日
         drafted: 一封给 Grace Hopper 的回信
+        invoices: 7 笔里有 2 笔未结
+        contact: Osborne & Sons
+        tracking: 承运商的通知
+        saved: ~/Documents/receipt.pdf
       reply:
         today: 三件事。Grace 在等合同的答复，要赶在你那个电话之前——第 7 条从六十天改成了九十天。Katherine 的董事会数字需要核对留存率。Radia 请你读一份草稿，那个可以等到今天晚上。
         thursday: 两点以后有空。九点半站会，之后一直到四点的合同评审之前都没别的。
+        unpaid: 两笔。Osborne & Sons，4,200 英镑，逾期三十一天。Halliday，980 英镑，逾期八天——那一笔还在你们约定的账期之内。
+        chase: 写好了，在草稿里等着。语气客气，写明了发票号和日期，也没有提到第二笔。
+        parcel: 已经在派送途中，预计六点前到。承运商今天早上七点半写来的；那封邮件在归档里，被分类为通知。
+        file: 存好了。它是一个 PDF，所以我把它留给你，而不是念给你听——你打开它，然后告诉我，我就能接着做。
       card:
         send: 给 Grace Hopper 发出「周四四点可以」？
+        remind: 把催款寄给 Osborne & Sons？
   featuresHeading: 它能做什么
   features:
     mailbox:
