@@ -76,7 +76,7 @@ TeaNode 是两个程序。`teanode-server` 是邮件服务器，加上只有它�
 | `group` | 谁可以做什么，以及在哪些域名上：成员、角色、域名 |
 | `role` | 一个群组持有的、有名字的权限集合；`role permissions` 列出可以授予什么 |
 | `audit` | 管理性改动的日志，带筛选 |
-| `mailbox` | 一个邮箱及其中的一切：`folder`、`rule`、`contact`、`subscription`、`device`、`autoreply`、`programs` |
+| `mailbox` | 一个邮箱及其中的一切：`folder`、`rule`、`subscription`、`device`、`autoreply`、`programs` |
 | `token` | API 令牌；控制台上的 `token create --user` 签发某人的第一个 |
 | `session` | 登录仪表盘的浏览器 |
 | `passkey` | 注册到你账户的通行密钥；注册需要仪表盘 |
@@ -87,6 +87,7 @@ TeaNode 是两个程序。`teanode-server` 是邮件服务器，加上只有它�
 | `delivery` | 外发时发生了什么，以及 `delivery pending`，即队列 |
 | `report` | 收到的关于你的域名的 DMARC 汇总报告 |
 | `contact` | 你的通讯录：你保存的人，你的手机和电脑通过 CardDAV 同步它。`add --name "Ada Lovelace" --email ada@example.com` 保存一个；`edit <id> --name "Ada King"` 只改你给出的部分，卡片的其余部分原样留着，所以改一个名字不会扔掉手机放上去的照片；`--card -` 从标准输入读一整张 vCard。这和 `mailbox contact` 不是一回事，后者是一个邮箱通信过的那些地址 |
+| `calendar` | 你的日历，你的手机和电脑通过 CalDAV 同步它 |
 | `template` | 一个域名的邮件模板，含 `render` |
 | `layout` | 模板渲染时外面套的框架 |
 | `api` | 其余一切，直接来自 schema |
@@ -224,6 +225,7 @@ Shell 补全由二进制文件自己提供：
 | --- | --- |
 | `teanode agent ask <message \| ->` | 对你的代理说点什么，并打印它的回答；`--new` 开一个具名对话，`--conversation` 接着某一个，`--attach FILE`（可重复）递给它一个文件——图片给它看，文本文件念给它听，其他的报个名字——`--json` 流式输出每一个事件，`--quiet` 只打印答案。需要你点头的工具会在终端上问，y 或者 n——绝不做成一个开关 |
 | `teanode agent chat` | 同样的事，一轮一轮来，直到一个空行 |
+| `teanode agent brief on\|off\|now` | 每天早上一封简报，以邮件寄来：这一天有什么、什么在等回复、什么被扣着。`on --at 07:30 --days 1-5` 说什么时候；`now` 立刻寄一封。它会写一个名叫「Daily brief」的普通日程，所以 `agent schedule list` 看得到它，任何人都可以改写它问的是什么 |
 | `teanode agent conversation list\|show\|new\|rename\|main\|delete` | 主对话和那些具名的；`list --query` 按标题里或者说过的话里的词找一个；`main` 把一个具名对话变成主对话，或者开一个新的主对话并把旧的留成具名的；`delete` 会先问，并且带走随它而来的文件 |
 | `teanode agent run list\|show` | 代理自己做过什么：它分类、摘要和回信的记录 |
 | `teanode agent tools` | 你的代理有哪些工具，按你可以使用的样子，带上风险等级以及它是否会先问 |
@@ -236,12 +238,13 @@ Shell 补全由二进制文件自己提供：
 | `teanode agent settings show\|set` | 你的代理：`set enabled=true name=Bertie instructions=-` 从标准输入读那个长值；键由 `set --help` 列出 |
 | `teanode agent settings categories add\|remove` | 固定的那些之外，你自己的类别 |
 | `teanode agent settings forget` | 删掉这个代理和它学到的一切；会先问 |
-| `teanode agent source list\|grant\|revoke\|set` | 代理可以够到的邮箱，以及它在每一个里做什么：`set --mailbox work triage=true auto-reply=true auto-reply.scope=known` |
+| `teanode agent source list\|grant\|revoke\|set\|allow\|deny` | 代理可以够到什么，以及它在每一个里做什么：对邮箱用 `set --mailbox work triage=true auto-reply=true auto-reply.scope=known`；对另外两种来源用 `allow calendar` 和 `deny addressbook`，它们只有一个开关而没有策略。你没有授予的来源，任何东西都不会被送到模型那里 |
 | `teanode agent usage [--since] [--by day\|kind\|mailbox\|model]` | 你的 token |
 | `teanode agent draft <item-id> [--say "…"]` | 让代理给一封邮件写一封回信，打印出来给你用；什么都不保存也不寄出 |
 | `teanode agent replies [--status held\|sent\|cancelled\|refused\|failed] [--mailbox]` | 代理替你写的那些回信，以及每一封后来怎么样了，还有它放过某封邮件时的原因 |
 | `teanode agent replies cancel <reply-id>` | 取消一封扣住的回信；草稿会消失，什么也不会寄出 |
 | `teanode agent admin usage\|list\|limit\|disable\|enable\|dead-letters\|retry` | 所有人的代理，需要 `agent:audit`：按天、种类、邮箱、模型或者代理算的 token；每个人的来源和今天的花费；给某一个人的限额，用 token 或者带 `--cost` 用钱；关掉的开关；worker 放弃了的那些任务 |
+
 
 每一条命令都会把 shell 的时区和语言随请求一起送出，就像仪表盘送浏览器的那样，所以活在
 终端里的人和活在浏览器里的人一样被安放好。
@@ -268,3 +271,11 @@ Shell 补全由二进制文件自己提供：
 | `teanode computer daemon [--name NAME]` | 同一个程序，但在前台，连接断了会重连，直到被中断——给终端用，或者给一个服务管理器用 |
 
 运维者可以用 `agent.features.computer` 为整台服务器关掉电脑这件事。
+
+### teanode calendar
+
+| 命令 | 它做什么 |
+| --- | --- |
+| `teanode calendar list\|show\|add\|edit\|remove` | 你的日历，你的手机和电脑通过 CalDAV 同步它。`list --from 2026-09-14 --until 2026-09-21` 为每一次发生的事印一行，重复的事件按每一次出现各印一行；`add --title Standup --starts 2026-09-14T09:30 --repeat FREQ=WEEKLY;BYDAY=MO` 往里放一件事；`--invite ada@example.com` 用邮件把邀请寄出去，而移动或者删除这个事件会告诉所有被邀请的人；`--all-day` 属于那一天而不是某个时刻，它的 `--ends` 是它所在的最后一天，所以两端同一个日期就是一天；`--file -` 从标准输入读一整个 iCalendar 文件。时间按日历自己的时区读写，除非它们自带偏移 |
+| `teanode calendar free` | 你什么时候有空：工作日里没有安排的那些时段，一天一天地列。`--earliest 08:00 --latest 18:00` 移动一天的两端；整天的条目不会让一天变忙，取消了的也不会。用的是回答手机 free-busy 请求的同两个函数，所以这里印出来的和同事的客户端被告知的不可能不一致 |
+| `teanode calendar calendars\|set` | 日历本身：它们叫什么、客户端把它们画成什么颜色、新事件写在哪个时区，以及一周从哪一天画起——`set --timezone Europe/Berlin`、`set --week-start monday`。除非某个日历另有说法，周从星期日开始；而五天视图无论如何都是周一到周五，因为一个工作周就是那样 |

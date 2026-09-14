@@ -76,7 +76,7 @@ TeaNode は二つのプログラムです。`teanode-server` はメールサー�
 | `group` | 誰が何をしてよいか、どのドメインの上でか。メンバー、ロール、ドメイン |
 | `role` | グループが持つ、名前の付いた権限の集まり。`role permissions` が与えられるものを列挙する |
 | `audit` | 管理上の変更の記録。絞り込みつき |
-| `mailbox` | メールボックスとその中のすべて。`folder`、`rule`、`contact`、`subscription`、`device`、`autoreply`、`programs` |
+| `mailbox` | メールボックスとその中のすべて。`folder`、`rule`、`subscription`、`device`、`autoreply`、`programs` |
 | `token` | API トークン。コンソールでの `token create --user` が誰かの最初のトークンを発行する |
 | `session` | ダッシュボードにサインインしているブラウザー |
 | `passkey` | あなたのアカウントに登録されたパスキー。登録にはダッシュボードが要る |
@@ -87,6 +87,7 @@ TeaNode は二つのプログラムです。`teanode-server` はメールサー�
 | `delivery` | 送る途中で何が起きたか、そしてキューである `delivery pending` |
 | `report` | ドメインについて受け取った DMARC 集計レポート |
 | `contact` | あなたのアドレス帳。あなたが保つ人々で、電話とコンピューターが CardDAV で同期します。`add --name "Ada Lovelace" --email ada@example.com` がひとり保ち、`edit <id> --name "Ada King"` は与えたものだけを変えてカードの残りはそのままにするので、名前を直しても電話が付けた写真は捨てられません。`--card -` は vCard 全体を標準入力から読みます。`mailbox contact` とは別物で、あちらはメールボックスがやり取りしたアドレスです |
+| `calendar` | あなたのカレンダー。電話とコンピューターが CalDAV で同期します |
 | `template` | ドメインのメールテンプレート。`render` 付き |
 | `layout` | テンプレートを描画するときに包む枠 |
 | `api` | それ以外のすべて。スキーマから直接 |
@@ -231,6 +232,7 @@ JSON ではなくバイト列だからです。ひとつめ、下書きのファ
 | --- | --- |
 | `teanode agent ask <message \| ->` | エージェントに何か言い、答えを印字します。`--new` は名前のある会話を始め、`--conversation` はひとつを続け、`--attach FILE`（繰り返せます）はファイルを渡します――画像は見せられ、テキストファイルは読まれ、それ以外は名前だけ告げられます。`--json` はすべての出来事を流し、`--quiet` は答えだけを印字します。あなたの承諾が要るツールは端末で y か n を尋ねます。フラグにはしません |
 | `teanode agent chat` | 同じことを、空行が来るまで一往復ずつ |
+| `teanode agent brief on\|off\|now` | 毎朝の短い便りを、メールで。その日に何があるか、何が返事を待っているか、何が留め置かれているか。`on --at 07:30 --days 1-5` がいつかを言い、`now` はすぐ一通送ります。「Daily brief」という普通のスケジュールを書くので `agent schedule list` に現れ、何を尋ねるかは誰でも書き換えられます |
 | `teanode agent conversation list\|show\|new\|rename\|main\|delete` | 主な会話と、名前のある会話。`list --query` は題名や話された言葉から探します。`main` は名前のある会話を主にするか、新しい主な会話を始めて古いほうを名前つきで残します。`delete` は先に尋ね、その会話に付いてきたファイルも持っていきます |
 | `teanode agent run list\|show` | エージェントが自分でしたこと。仕分け、要約、返信の記録 |
 | `teanode agent tools` | あなたのエージェントが持つツール。あなたが使える形で、リスク区分と、先に尋ねるかどうかとともに |
@@ -243,12 +245,13 @@ JSON ではなくバイト列だからです。ひとつめ、下書きのファ
 | `teanode agent settings show\|set` | あなたのエージェント。`set enabled=true name=Bertie instructions=-` は長い値を標準入力から読みます。キーは `set --help` が並べます |
 | `teanode agent settings categories add\|remove` | 決まったものの隣に置く、あなた自身の分類 |
 | `teanode agent settings forget` | エージェントと、それが学んだすべてを削除します。先に尋ねます |
-| `teanode agent source list\|grant\|revoke\|set` | エージェントが届いてよいメールボックスと、それぞれで何をするか。`set --mailbox work triage=true auto-reply=true auto-reply.scope=known` |
+| `teanode agent source list\|grant\|revoke\|set\|allow\|deny` | エージェントが何に届いてよいか、そしてそれぞれで何をするか。メールボックスには `set --mailbox work triage=true auto-reply=true auto-reply.scope=known`。他の二種類のソースには `allow calendar` と `deny addressbook`。こちらはスイッチだけで方針はありません。渡していないソースからは、何ひとつモデルへ送られません |
 | `teanode agent usage [--since] [--by day\|kind\|mailbox\|model]` | あなたのトークン |
 | `teanode agent draft <item-id> [--say "…"]` | メールへの返信をエージェントに書かせ、あなたが使えるように印字します。何も保存されず、送られません |
 | `teanode agent replies [--status held\|sent\|cancelled\|refused\|failed] [--mailbox]` | エージェントがあなたのために書いた返信と、それぞれがどうなったか。メールをそのままにした場合はその理由も |
 | `teanode agent replies cancel <reply-id>` | 留め置かれた返信を取り消します。下書きは消え、何も送られません |
 | `teanode agent admin usage\|list\|limit\|disable\|enable\|dead-letters\|retry` | 全員のエージェント。`agent:audit` が要ります。日、種類、メールボックス、モデル、エージェントごとのトークン。各人のソースと今日の支出。一人だけの上限を、トークンで、あるいは `--cost` で金額で。停止のスイッチ。ワーカーが諦めた仕事 |
+
 
 どのコマンドもシェルの時間帯と言語をリクエストとともに送ります。ダッシュボードがブラウザー
 のものを送るのと同じで、端末に住む人も、ブラウザーに住む人と同じように位置づけられます。
@@ -280,3 +283,11 @@ JSON ではなくバイト列だからです。ひとつめ、下書きのファ
 | `teanode computer daemon [--name NAME]` | 同じプログラムを前面で。接続が切れれば繋ぎ直し、中断されるまで走ります。端末のため、あるいはサービスマネージャーのため |
 
 運用者は `agent.features.computer` で、サーバー全体についてコンピューターを止められます。
+
+### teanode calendar
+
+| コマンド | 何をするか |
+| --- | --- |
+| `teanode calendar list\|show\|add\|edit\|remove` | あなたのカレンダー。電話とコンピューターが CalDAV で同期します。`list --from 2026-09-14 --until 2026-09-21` は何かが起きるたびに一行を印字し、繰り返す予定は出現ごとに一行になります。`add --title Standup --starts 2026-09-14T09:30 --repeat FREQ=WEEKLY;BYDAY=MO` が何かを入れ、`--invite ada@example.com` は招待をメールで送り、予定を動かしたり消したりすれば招いた全員に伝わります。`--all-day` は時刻ではなくその日に属し、その `--ends` はそれがある最後の日なので、両端が同じ日付なら一日です。`--file -` は iCalendar ファイル全体を標準入力から読みます。時刻はオフセットを伴わない限り、カレンダー自身の時間帯で読み書きされます |
+| `teanode calendar free` | あなたが空いているとき。働く一日のうち何も入っていない区間を、日ごとに。`--earliest 08:00 --latest 18:00` が一日の両端を動かします。終日の項目はその日を埋めず、取り消されたものも埋めません。電話の free-busy 要求に答えるのと同じ二つの関数で求めるので、ここに印字されるものと同僚のクライアントが告げられるものが食い違うことはありません |
+| `teanode calendar calendars\|set` | カレンダーそのもの。何と呼ばれるか、クライアントが何色で塗るか、新しい予定がどの時間帯で書かれるか、そして週がどの曜日から描かれるか。`set --timezone Europe/Berlin`、`set --week-start monday`。カレンダーが別を言わない限り週は日曜から始まり、五日間のビューはどちらにせよ月曜から金曜です。働く一週間とはそういうものだからです |

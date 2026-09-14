@@ -65,6 +65,8 @@ welcome:
       Priority: what the agent thinks is waiting on you, beside Starred. The
       chips on a row are its category, its priority, and whether somebody needs
       an answer.
+    calendar: The calendar, as a week. Your phone keeps it in step over CalDAV, and an invitation that arrives as mail becomes an event you can answer.
+    contacts: The address book. The people you keep, synchronized to your phone over CardDAV — photographs, birthdays and all — rather than a list of everyone who has ever written.
     agent: >-
       Your agent's own page: what to call it, how it should write, which
       mailboxes it may reach, and what it has spent today.
@@ -172,7 +174,7 @@ welcome:
     points:
       sorts:
         title: Sorts what arrives
-        body: A category, a priority, whether somebody is waiting on an answer, and a line of summary — as chips on the row, and a Priority view beside Starred.
+        body: A category, a priority, whether somebody is waiting on an answer, and a line of summary — as chips on the row, and a Priority view beside Starred. A brief each morning says what the day holds.
       drafts:
         title: Drafts in your voice
         body: A summary folded above a long conversation, and a reply written for you to read, change and send. Sending stays with you.
@@ -190,6 +192,33 @@ welcome:
       browser: Your browser
       web: The web
       calendar: Your calendar
+    conversation:
+      label: A conversation with the agent, played back
+      title: Bertie
+      budget: 11k of 200k today
+      placeholder: Ask your agent
+      yes: Send it
+      no: Not now
+      sent: Sent as you, and filed in the conversation.
+      say:
+        today: What needs me today?
+        thursday: Am I free Thursday afternoon?
+        reply: Tell Grace Thursday at four works.
+      tool:
+        searched: Searched your mail · read 4 messages
+        calendar: Read your calendar · 14–18 September
+        drafted: Drafted a reply to Grace Hopper
+      reply:
+        today: >-
+          Three things. Grace needs an answer on the contract before your call —
+          clause 7 moved from sixty days to ninety. Katherine's board numbers
+          want the retention figure checked. Radia asked you to read a draft,
+          which can wait until this evening.
+        thursday: >-
+          After two, yes. Standup at half nine, and nothing else until the
+          contract review at four.
+      card:
+        send: Send "Thursday at four works" to Grace Hopper?
   featuresHeading: What it does
   features:
     mailbox:
@@ -204,6 +233,9 @@ welcome:
     forwards:
       title: Forwards flexibly
       body: Patterns route each address to a mailbox, an inbox elsewhere, a webhook or another server.
+    calendar:
+      title: A calendar and an address book
+      body: Your phone keeps both in step over CalDAV and CardDAV, signing in with the app password it already has. Invitations arrive and go out as mail.
     subscriptions:
       title: Every mailing list, and the way out
       body: Newsletters on a page of their own. Leave one the way its sender says to, or mute it and let it file itself.
@@ -219,7 +251,6 @@ welcome:
   extrasLead: Also, when you want them
   extras:
     templates: Templates and layouts
-    contacts: Contacts
     cli: Command line client
     clamav: ClamAV
     spamd: External SpamAssassin

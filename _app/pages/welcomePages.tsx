@@ -11,6 +11,7 @@ import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import type { SvgIconComponent } from '@mui/icons-material'
 import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined'
+import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined'
 import CallSplitIcon from '@mui/icons-material/CallSplit'
 import CheckIcon from '@mui/icons-material/Check'
 import ConfirmationNumberOutlinedIcon from '@mui/icons-material/ConfirmationNumberOutlined'
@@ -41,6 +42,7 @@ import { Markdown, renderMarkdown } from '../components/markdown'
 import { Mark } from '../components/logo'
 import { Release } from '../components/release'
 import { pageWidth, PublicShell } from '../components/shell'
+import { Conversation } from '../components/conversation'
 import { StackComparison } from '../components/stack'
 import { T, useTranslate } from '../i18n'
 import { brand, monospaceFamily } from '../theme'
@@ -60,6 +62,7 @@ const features: { key: string, Icon: SvgIconComponent }[] = [
   { key: 'imap', Icon: DevicesOutlinedIcon },
   { key: 'authenticates', Icon: VerifiedUserOutlinedIcon },
   { key: 'forwards', Icon: CallSplitIcon },
+  { key: 'calendar', Icon: CalendarMonthOutlinedIcon },
   { key: 'subscriptions', Icon: NewspaperOutlinedIcon },
   { key: 'marks', Icon: LabelOutlinedIcon },
   { key: 'access', Icon: GroupsOutlinedIcon },
@@ -68,7 +71,7 @@ const features: { key: string, Icon: SvgIconComponent }[] = [
 
 // What comes with it and is off until asked for: a row of names rather than
 // a paragraph about them.
-const extras = ['templates', 'contacts', 'cli', 'clamav', 'spamd', 'geoip', 's3', 'socks5', 'dns01']
+const extras = ['templates', 'cli', 'clamav', 'spamd', 'geoip', 's3', 'socks5', 'dns01']
 
 // What a personal agent does, once somebody turns theirs on. Four things
 // rather than the whole list, because the whole list is the documentation.
@@ -181,10 +184,15 @@ export const WelcomePage = () => {
         {/* Three addresses, and where each one goes. */}
         {/* The agent. Its own section rather than a ninth card: it is the
             largest thing here since mailboxes, and the sentence that has to
-            land is the one about it being off until somebody turns it on. */}
+            land is the one about it being off until somebody turns it on.
+
+            The words on the left, the thing itself on the right: a recording
+            of the drawer, drawn the way the dashboard draws it. The four
+            points go underneath, where they read as a list rather than
+            competing with the conversation for the same column. */}
         <Section>
           <Overline><T id='welcome.agent.heading'/></Overline>
-          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '5fr 6fr' }, gap: { xs: 3, md: 6 } }}>
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr auto' }, gap: { xs: 4, md: 6 }, alignItems: 'start' }}>
             <Box sx={{ minWidth: 0 }}>
               <Typography sx={{ mb: 2 }}><T id='welcome.agent.lead'/></Typography>
               <Typography variant='body2' color='text.secondary' sx={{ lineHeight: 1.6, mb: 2.5 }}>
@@ -199,23 +207,24 @@ export const WelcomePage = () => {
                 ))}
               </Stack>
             </Box>
-            <Stack sx={{ minWidth: 0, gap: 1.5 }}>
-              {agentPoints.map(({ key, Icon }) => (
-                <Stack key={key} direction='row' sx={{ gap: 1.5, alignItems: 'flex-start' }}>
-                  <Tile sx={{ mb: 0, flexShrink: 0, width: 34, height: 34, borderRadius: '9px' }}>
-                    <Icon sx={{ fontSize: 18 }}/>
-                  </Tile>
-                  <Box sx={{ minWidth: 0, pt: 0.25 }}>
-                    <Typography sx={{ fontWeight: 600, fontSize: 14.5 }}>
-                      <T id={`welcome.agent.points.${key}.title`}/>
-                    </Typography>
-                    <Typography variant='body2' color='text.secondary' sx={{ lineHeight: 1.5 }}>
-                      <T id={`welcome.agent.points.${key}.body`}/>
-                    </Typography>
-                  </Box>
-                </Stack>
-              ))}
-            </Stack>
+            <Box sx={{ minWidth: 0, justifySelf: { xs: 'stretch', md: 'end' }, width: '100%', maxWidth: 440 }}>
+              <Conversation/>
+            </Box>
+          </Box>
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' }, gap: 1.5, mt: { xs: 4, md: 5 } }}>
+            {agentPoints.map(({ key, Icon }) => (
+              <Box key={key} sx={{ minWidth: 0 }}>
+                <Tile sx={{ mb: 1, width: 34, height: 34, borderRadius: '9px' }}>
+                  <Icon sx={{ fontSize: 18 }}/>
+                </Tile>
+                <Typography sx={{ fontWeight: 600, fontSize: 14.5 }}>
+                  <T id={`welcome.agent.points.${key}.title`}/>
+                </Typography>
+                <Typography variant='body2' color='text.secondary' sx={{ lineHeight: 1.5 }}>
+                  <T id={`welcome.agent.points.${key}.body`}/>
+                </Typography>
+              </Box>
+            ))}
           </Box>
         </Section>
 

@@ -1222,9 +1222,16 @@ the model.
 
 **`maxRoundsPerResearch`** — The same for a research run.
 
-**`maxRoundsPerReply`** — Set, validated, and read by nothing: a reply is a
-single call to a model and has no rounds. Kept so a stored configuration does
-not fail to load.
+**`maxRoundsPerReply`** — How many turns a drafting run may take. A reply is a
+run of the conversation loop now, with the thread, the mailbox, the address
+book and the diary to read before it writes: "are you free Thursday" cannot be
+answered from the message alone. Six by default.
+
+**`maxRoundsPerTriage`** — How many turns a sorting run may take, three by
+default. The smallest of the three on purpose: sorting happens to every
+message that arrives, and nearly every message can be sorted from what is in
+front of the model, so the prompt tells it to answer at once and this is the
+ceiling on the exceptions.
 
 **`maxToolCallsPerRun`** — Set, validated, and read by nothing. What actually
 bounds a run is `maxRoundsPerAsk`, together with the rule that stops a turn
@@ -1278,6 +1285,16 @@ the extension. Unset means yes.
 
 **`allowPrivateAddresses`** — Hosts the headless browser may reach inside
 the network, which the address guard would otherwise refuse.
+
+**`proxyListen`** — Where the guarded proxy binds. Every page this server
+opens goes out through that proxy, which is what resolves names for the
+browser so that nothing else does: the check then runs on the address the
+connection is actually made to, rather than on a name that may resolve
+differently a moment later. Empty binds an unused port on the one address Chrome
+reaches this server at — its own connection says which that is, so it works
+whether Chrome runs on this machine or in a container beside it, without
+putting the proxy on every other network this machine is on. Set it when that guess is wrong, or to pin the port for a firewall.
+The proxy requires a password that only this server and its Chrome know.
 
 **`idleTimeout`** — How long a run's browser context outlives its last use.
 

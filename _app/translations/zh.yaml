@@ -60,6 +60,8 @@ welcome:
   screenshots:
     mailbox: 邮箱。可以嵌套的文件夹、覆盖全部邮件的搜索，以及像邮件程序那样呈现的邮件。
     priority: 优先：代理认为正在等你的东西，就在「星标」旁边。行上的标签是它给的类别、优先级，以及是否有人需要答复。
+    calendar: 日历，按周看。你的手机通过 CalDAV 让它保持同步，而以邮件形式到达的邀请会变成一个你可以答复的事件。
+    contacts: 通讯录。你保存下来的人，通过 CardDAV 同步到你的手机——照片、生日，一应俱全——而不是一份「谁给你写过信」的名单。
     agent: 你自己代理的页面：叫它什么、它该怎么写、它能够到哪些邮箱，以及它今天花了多少。
     subscriptions: 这个邮箱收到的每一个邮件列表，以及各自寄来的东西，还有两条出路：退订，或者静音让它自己归档。
     programs: 每台设备一份应用专用密码，用它让邮件程序通过 IMAP 登录，并通过提交端口发信。
@@ -159,7 +161,7 @@ welcome:
     points:
       sorts:
         title: 给到达的邮件分类
-        body: 一个类别、一个优先级、是否有人在等回复，以及一行摘要——作为行上的标签，还有一个和「星标」并列的「优先」视图。
+        body: 一个类别、一个优先级、是否有人在等回复，以及一行摘要——作为行上的标签，还有一个和「星标」并列的「优先」视图。每天早上还有一封简报，说这一天有什么。
       drafts:
         title: 用你的口吻写草稿
         body: 长对话上方折起一段摘要，还有一封写给你读、改、发的回信。发出这件事仍然由你来做。
@@ -177,6 +179,31 @@ welcome:
       browser: 你的浏览器
       web: 网页
       calendar: 你的日历
+    conversation:
+      label: 一段和代理的对话，回放
+      title: Bertie
+      budget: 今天 11k / 200k
+      placeholder: 问问你的代理
+      yes: 发出去
+      no: 先不要
+      sent: 以你的名义寄出，并归入这个会话。
+      say:
+        today: 今天有什么需要我？
+        thursday: 我周四下午有空吗？
+        reply: 告诉 Grace 周四四点可以。
+      tool:
+        searched: 搜索了你的邮件 · 读了 4 封
+        calendar: 读了你的日历 · 9 月 14 日至 18 日
+        drafted: 给 Grace Hopper 起草了一封回信
+      reply:
+        today: >-
+          三件事。Grace 在等合同的答复，要赶在你那个电话之前——第 7 条从六十天改成了
+          九十天。Katherine 的董事会数字需要核对留存率。Radia 请你读一份草稿，那个
+          可以等到今天晚上。
+        thursday: >-
+          两点以后有空。九点半站会，之后一直到四点的合同评审之前都没别的。
+      card:
+        send: 给 Grace Hopper 发出「周四四点可以」？
   featuresHeading: 它能做什么
   features:
     mailbox:
@@ -191,6 +218,9 @@ welcome:
     forwards:
       title: 灵活转发
       body: 用模式把每个地址送到邮箱、别处的收件箱、webhook 或另一台服务器。
+    calendar:
+      title: 一个日历和一本通讯录
+      body: 你的手机通过 CalDAV 和 CardDAV 让两者保持同步，用它已经有的那份应用专用密码登录。邀请以邮件的形式来，也以邮件的形式去。
     subscriptions:
       title: 每一个邮件列表，以及离开的办法
       body: 订阅信有自己的一页。按发信人自己说的方式退订，或者静音它，让它自己归档。
@@ -206,7 +236,6 @@ welcome:
   extrasLead: 还有，需要时可以打开
   extras:
     templates: 模板和版式
-    contacts: 联系人
     cli: 命令行客户端
     clamav: ClamAV
     spamd: 外部 SpamAssassin
