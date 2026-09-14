@@ -207,7 +207,7 @@ export const WelcomePage = () => {
                 ))}
               </Stack>
             </Box>
-            <Box sx={{ minWidth: 0, justifySelf: { xs: 'stretch', md: 'end' }, width: '100%', maxWidth: 440 }}>
+            <Box sx={{ minWidth: 0, justifySelf: { xs: 'center', md: 'end' }, width: '100%', maxWidth: 440 }}>
               <Conversation/>
             </Box>
           </Box>
