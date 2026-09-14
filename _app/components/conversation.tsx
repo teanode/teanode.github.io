@@ -159,9 +159,9 @@ export const Conversation = () => {
       }
       const step = script[index]
       if (step.kind === 'card') {
-        // A card is the answer to the turn, so it is thought about first, the
-        // same as a reply. Then it is answered a moment later, because the
-        // point of a card is that somebody says yes to it.
+        // A card ends the turn the way a reply does, so the dots run up to it
+        // and stop when it lands. Then it is answered a moment later, because
+        // the point of a card is that somebody says yes to it.
         setThinking(true)
         timer = setTimeout(() => {
           if (cancelled) {
@@ -179,8 +179,10 @@ export const Conversation = () => {
         return
       }
       if (step.kind === 'tool') {
-        // It runs, and then it is done: the tick arrives part way through.
-        setThinking(false)
+        // The dots stay up: a tool running is the turn still working, and the
+        // drawer keeps them under the tool line until the answer arrives.
+        // The tick arrives part way through the line's own time.
+        setThinking(true)
         setShown(index + 1)
         setWorking(index)
         timer = setTimeout(() => {
@@ -192,7 +194,7 @@ export const Conversation = () => {
         return
       }
       if (step.kind === 'reply') {
-        // Thinking, and then the words.
+        // The dots have been up since the question; the words replace them.
         setThinking(true)
         timer = setTimeout(() => {
           if (cancelled) {
@@ -244,12 +246,17 @@ export const Conversation = () => {
   }
 
   // Follow the end, the way the drawer does while something is arriving.
+  //
+  // `thinking` belongs here as much as the lines do: the dots are an element
+  // appended to the transcript, so once it is long enough to scroll they
+  // arrive below the fold, and without this nothing goes to look at them —
+  // which reads as the dots never having been there at all.
   useEffect(() => {
     const element = body.current
     if (element) {
       element.scrollTop = element.scrollHeight
     }
-  }, [shown, typed, answered])
+  }, [shown, typed, answered, thinking, working])
 
   const line = {
     borderRadius: '10px',
