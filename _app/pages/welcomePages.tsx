@@ -11,6 +11,8 @@ import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import type { SvgIconComponent } from '@mui/icons-material'
 import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined'
+import AccountTreeOutlinedIcon from '@mui/icons-material/AccountTreeOutlined'
+import BedtimeOutlinedIcon from '@mui/icons-material/BedtimeOutlined'
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined'
 import CallSplitIcon from '@mui/icons-material/CallSplit'
 import CheckIcon from '@mui/icons-material/Check'
@@ -22,6 +24,7 @@ import GitHubIcon from '@mui/icons-material/GitHub'
 import GroupsOutlinedIcon from '@mui/icons-material/GroupsOutlined'
 import InboxOutlinedIcon from '@mui/icons-material/InboxOutlined'
 import LabelOutlinedIcon from '@mui/icons-material/LabelOutlined'
+import LibraryBooksOutlinedIcon from '@mui/icons-material/LibraryBooksOutlined'
 import MailOutlineIcon from '@mui/icons-material/EmailOutlined'
 import LanguageOutlinedIcon from '@mui/icons-material/LanguageOutlined'
 import NewspaperOutlinedIcon from '@mui/icons-material/NewspaperOutlined'
@@ -43,6 +46,7 @@ import { Mark } from '../components/logo'
 import { Release } from '../components/release'
 import { pageWidth, PublicShell } from '../components/shell'
 import { Conversation } from '../components/conversation'
+import { Knowledge } from '../components/knowledge'
 import { StackComparison } from '../components/stack'
 import { T, useTranslate } from '../i18n'
 import { brand, monospaceFamily } from '../theme'
@@ -77,6 +81,19 @@ const extras = ['templates', 'cli', 'clamav', 'spamd', 'geoip', 's3', 'socks5', 
 // rather than the whole list, because the whole list is the documentation.
 // What the assistant can be given, in the order somebody would grant it.
 const agentReach = ['mail', 'contacts', 'computer', 'browser', 'web', 'calendar']
+
+// What the agent's memory does, which is three things and not one: it writes
+// itself, it reads what the person already has, and it tidies while nobody is
+// there. The order is the order they happen in.
+const memoryPoints: { key: string, Icon: SvgIconComponent }[] = [
+  { key: 'writes', Icon: AccountTreeOutlinedIcon },
+  { key: 'reads', Icon: LibraryBooksOutlinedIcon },
+  { key: 'dreams', Icon: BedtimeOutlinedIcon },
+]
+
+// Where it will read from, named rather than described: somebody deciding
+// wants to see their own thing on the list.
+const memorySources = ['checkout', 'archive', 'notes', 'wiki', 'web', 'sent']
 
 const agentPoints: { key: string, Icon: SvgIconComponent }[] = [
   { key: 'sorts', Icon: SortOutlinedIcon },
@@ -225,6 +242,58 @@ export const WelcomePage = () => {
                 </Typography>
               </Box>
             ))}
+          </Box>
+        </Section>
+
+        {/* What it keeps between conversations. It follows the agent
+            because it is the agent's, and it is the other way round on the
+            page — the thing on the left, the words on the right — so two
+            sections of the same shape do not run together.
+
+            The drawing is a page out of the graph, with the link the night
+            drew across it. That link is the argument for a graph over a
+            list, so it is the thing that moves. */}
+        <Section>
+          <Overline><T id='welcome.memory.heading'/></Overline>
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'auto 1fr' }, gap: { xs: 4, md: 6 }, alignItems: 'start' }}>
+            <Box sx={{ minWidth: 0, justifySelf: { xs: 'center', md: 'start' }, width: '100%', maxWidth: 440, order: { xs: 1, md: 0 } }}>
+              <Knowledge/>
+            </Box>
+            <Box sx={{ minWidth: 0, order: { xs: 0, md: 1 } }}>
+              <Typography sx={{ maxWidth: measure, mb: 2 }}><T id='welcome.memory.lead'/></Typography>
+              <Typography variant='body2' color='text.secondary' sx={{ maxWidth: measure, lineHeight: 1.6, mb: 2.5 }}>
+                <T id='welcome.memory.body'/>
+              </Typography>
+              <Typography variant='body2' color='text.secondary' sx={{ mb: 1 }}>
+                <T id='welcome.memory.sourcesLead'/>
+              </Typography>
+              <Stack direction='row' sx={{ flexWrap: 'wrap', gap: 0.75 }}>
+                {memorySources.map((key) => (
+                  <Chip key={key} variant='outlined' label={translate(`welcome.memory.sources.${key}`)} sx={{ height: 26, fontSize: 12.5 }}/>
+                ))}
+              </Stack>
+
+              {/* The three things it does, beside the drawing rather than
+                  under it: the drawing is tall, and a row of cards under a
+                  half-empty column is a hole in the page. */}
+              <Stack sx={{ gap: 2.5, mt: 4, maxWidth: measure }}>
+                {memoryPoints.map(({ key, Icon }) => (
+                  <Stack key={key} direction='row' sx={{ gap: 1.75, alignItems: 'flex-start', minWidth: 0 }}>
+                    <Tile sx={{ flexShrink: 0, width: 34, height: 34, borderRadius: '9px' }}>
+                      <Icon sx={{ fontSize: 18 }}/>
+                    </Tile>
+                    <Box sx={{ minWidth: 0 }}>
+                      <Typography sx={{ fontWeight: 600, fontSize: 14.5 }}>
+                        <T id={`welcome.memory.points.${key}.title`}/>
+                      </Typography>
+                      <Typography variant='body2' color='text.secondary' sx={{ lineHeight: 1.5 }}>
+                        <T id={`welcome.memory.points.${key}.body`}/>
+                      </Typography>
+                    </Box>
+                  </Stack>
+                ))}
+              </Stack>
+            </Box>
           </Box>
         </Section>
 

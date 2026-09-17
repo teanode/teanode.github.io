@@ -134,6 +134,29 @@
     }
   },
   {
+    "slug": "memory",
+    "group": {
+      "en": "Running it",
+      "zh": "运行它",
+      "ja": "動かす"
+    },
+    "title": {
+      "en": "Memory",
+      "zh": "记忆",
+      "ja": "記憶"
+    },
+    "description": {
+      "en": "What your agent keeps between conversations: a graph of pages it writes without being asked, the places it reads from, and what it does with all of it overnight.",
+      "zh": "代理在对话之间留下的东西：一张它不用你开口就会自己写的页面图、它读取的那些地方，以及它在夜里拿这些做什么。",
+      "ja": "エージェントが会話のあいだに保つもの。頼まれなくても自分で書くページの図、読みに行く場所、そして夜のあいだにそれらへ何をするか。"
+    },
+    "filename": {
+      "en": "en/memory.markdown",
+      "zh": "zh/memory.markdown",
+      "ja": "ja/memory.markdown"
+    }
+  },
+  {
     "slug": "command-line",
     "group": {
       "en": "Running it",

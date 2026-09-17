@@ -91,6 +91,8 @@ PostgreSQL 里。
 
 ## 接下来读什么
 
+- [记忆](/doc/memory)是它在对话之间留下的东西：一张它不用你开口就会自己写的页面图、
+  它读取的那些地方，以及它在夜里拿这些做什么。
 - [配置](/doc/configuration#agent)记录了 `agent` 这一节里的每一项设置：提供方、模型、
   功能、限额、保留期、搜索、工具、浏览器，以及连接的服务器。
 - [命令行](/doc/command-line#teanode-agent)介绍 `teanode agent`，从终端就能够到这全部。

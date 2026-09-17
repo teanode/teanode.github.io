@@ -234,9 +234,11 @@ JSON ではなくバイト列だからです。ひとつめ、下書きのファ
 | `teanode agent chat` | 同じことを、空行が来るまで一往復ずつ |
 | `teanode agent brief on\|off\|now` | 毎朝の短い便りを、メールで。その日に何があるか、何が返事を待っているか、何が留め置かれているか。`on --at 07:30 --days 1-5` がいつかを言い、`now` はすぐ一通送ります。「Daily brief」という普通のスケジュールを書くので `agent schedule list` に現れ、何を尋ねるかは誰でも書き換えられます |
 | `teanode agent conversation list\|show\|new\|rename\|main\|delete` | 主な会話と、名前のある会話。`list --query` は題名や話された言葉から探します。`main` は名前のある会話を主にするか、新しい主な会話を始めて古いほうを名前つきで残します。`delete` は先に尋ね、その会話に付いてきたファイルも持っていきます |
-| `teanode agent run list\|show` | エージェントが自分でしたこと。仕分け、要約、返信の記録 |
+| `teanode agent run list\|show` | エージェントが自分でしたこと。モデルの呼び出しはどれも一つの実行で、`list` は `--first` と `--offset` でページを送ります。`agent:act` を持つ運用者は `--all` か `--agent <id>` で全員のものを一覧できます |
 | `teanode agent tools` | あなたのエージェントが持つツール。あなたが使える形で、リスク区分と、先に尋ねるかどうかとともに |
-| `teanode agent memory list\|add\|remove` | エージェントがあなたについて憶えていること。`add "会計" "帳簿は Maria" --applies-to triage,reply` は、その記憶を読む実行を指定します |
+| `teanode agent memory index\|get\|search\|note\|page\|link\|unlink\|move\|forget\|history\|learned` | エージェントがあなたについて知っていること。番号の付いた事実を載せたページとして扱います。`get people/alice-chen`、`note people/alice-chen "帳簿を見ている" --applies-to triage,reply`、`link people/alice-chen projects/greenfinch --relation works_on`、`move notes/kittiwake things`。`move --number 3 people/alice-chen projects/greenfinch` はページ丸ごとではなく事実をひとつだけ別のページへ移し、どの言葉から来たかを保ちます。ほかに `forget people/alice-chen --number 2` と `history projects/greenfinch` |
+| `teanode agent knowledge list\|add\|pause\|resume\|sync\|allow\|remove` | エージェントが読みに行く場所。`add "work" ~/work --computer laptop --under work`、`sync` は今もう一度読み、`pause` は見つけたものを残したまま止めます。`--format` はそこにあるものの読み方を言います。`files`（git を解するファイルの木）、`journal`（日付のついたノート）、`records`（どんなスクリプトでも書ける JSON 行のフォルダー。隣に置いた `refresh` を常駐プログラムが走査のたびに実行します――エージェントに書かせられます）、あるいはチャットの書き出し |
+| `teanode agent dream log\|runs\|now\|bootstrap\|reread` | 夜のこと。読み、書き留め、下読みする実行です。`runs <id>` はその夜が行ったモデル呼び出しを並べ、どれも `agent run show` で開ける実行です。`now` はエージェントの時間帯の内側で、次の時計の刻みにひとつ始めます。`bootstrap on` は読むものがなくなるまで広い上限で走り続け、最初の取り込みのためのものです。`reread --minutes 60` は、ある夜がその時間内に既読と印を付けたものを戻します |
 | `teanode agent schedule list\|add\|remove\|run` | 決まった時刻に自分ですること。`add Morning "0 8 * * 1-5" "今日わたしを待っているものは？" --deliver mail`。あなたの時間帯の cron 行です。あるいは単一の時刻 `"@at 2026-09-12 09:00"`、あるいは今からの隔たり `"@in 20m"`。後者はそれが指す時刻として保存され、一度だけ走ります |
 | `teanode agent feedback` | あなたのしたことから記録された訂正。エージェントは例として見せられます |
 | `teanode agent channel list\|set\|unlink\|remove` | エージェントと話すチャットアプリ。あなた自身の Telegram か Discord のボットです。`set telegram --token -` はボットのトークンを標準入力から読みます。`list` は、あるチャットが `/link CODE` としてボットに送ることで結び付くコードと、ボットが動いているかどうかを示します。`unlink` は新しいコードを引きます |

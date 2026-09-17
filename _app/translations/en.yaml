@@ -70,6 +70,8 @@ welcome:
     agent: >-
       Your agent's own page: what to call it, how it should write, which
       mailboxes it may reach, and what it has spent today.
+    knowledge: One page of what your agent knows. Its path is its address, each fact is numbered so it can be cited, and the history says who wrote every line and what was there before.
+    graph: The same knowledge as a graph. Pages by kind, links that say how, and a double click opens what a page is joined to.
     subscriptions: Every mailing list this mailbox receives, with what each has sent, and the two ways out — leave it, or mute it and let it file itself.
     programs: An app password for each device, which signs a mail program in over IMAP and sends through the submission port.
     access: People, groups and roles. A group can be tied to one domain, so its permissions reach only that far.
@@ -240,6 +242,54 @@ welcome:
       card:
         send: Send "Thursday at four works" to Grace Hopper?
         remind: Send the reminder to Osborne & Sons?
+  memory:
+    heading: A memory that learns you
+    lead: >-
+      What your agent knows is a graph of pages, not a list of notes. A page is
+      a person, a project, a place, a thing or a stretch of time; it lives at a
+      path like projects/greenfinch, and every fact on it is numbered, carries the words
+      it came from, and can be cited in an answer. Pages are joined by links that
+      say how — who works on what, who knows whom, what a decision belongs to.
+    body: >-
+      Nothing is ever deleted. A fact nothing has wanted in months stops arriving
+      uninvited and is still there when you search for it, and every change to
+      every page says who made it — you, the agent, last night's run, a source
+      being read — and what was there before, so you can put it back. It is all
+      on the Knowledge page, and all on the command line.
+    sourcesLead: Where it reads from, once you point it at something
+    sources:
+      checkout: A checkout on your computer
+      archive: A chat archive
+      notes: Your notes
+      wiki: A wiki, through a skill
+      web: A site you name
+      sent: Your own sent mail
+    points:
+      writes:
+        title: It writes without being asked
+        body: A job runs once a conversation goes quiet and files what the conversation taught, so what you said on Tuesday is there on Wednesday. The first version asked the model to write during the turn; over 456 turns it wrote two, both tests. Given a task and a memory tool, a model does the task.
+      reads:
+        title: It reads what you already have
+        body: Point it at a checkout, a chat export or a folder of dated notes and it keeps a searchable, citable copy. The walking, the sniffing and the refusing happen on the machine the files are on, so a key or a password never crosses the wire.
+      dreams:
+        title: It tidies while you sleep
+        body: In hours you set, after you have been quiet a while, it reads what arrived, writes up the month, rewrites the pages that changed, divides one that has outgrown itself, and walks the graph for connections nobody wrote down. Then it asks itself the questions you are likely to ask tomorrow and writes down the ones it could not answer.
+    page:
+      label: A page from the agent's memory, and the link its nightly run drew across it
+      connections: Connections
+      opening: Greenfinch, the claims system Osborne & Sons file through. Ours to run, and the thing most of this quarter went into.
+      facts:
+        leads: Grace Hopper has led the controls work since March.
+        readme: Its readme says it is a claims portal for wholesale customers.
+        terms: Payment terms moved from sixty days to ninety in September.
+        member: Grace Hopper works at Osborne & Sons.
+      from:
+        conversation: You said so · 4 March
+        file: README.md · on your laptop
+        thread: The contract thread · 12 September
+        night: Drawn last night, from two pages nothing had joined
+      lastNight: Read 42 messages and 6 files · filed 9 facts on 5 pages · merged 2
+      dreaming: Walking the graph for connections nobody wrote down…
   featuresHeading: What it does
   features:
     mailbox:

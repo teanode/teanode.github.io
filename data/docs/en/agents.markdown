@@ -119,6 +119,9 @@ says so there rather than trusting everyone to leave a switch alone.
 
 ## Further reading
 
+- [Memory](/doc/memory) is what it keeps between conversations: a graph of
+  pages it writes without being asked, the places it reads from, and what it
+  does with all of it overnight.
 - [Configuration](/doc/configuration#agent) documents every setting in the
   `agent` section: providers, models, features, limits, retention, search,
   tools, the browser, and connected servers.
