@@ -270,7 +270,7 @@ welcome:
         body: A job runs once a conversation goes quiet and files what the conversation taught, so what you said on Tuesday is there on Wednesday. The first version asked the model to write during the turn; over 456 turns it wrote two, both tests. Given a task and a memory tool, a model does the task.
       reads:
         title: It reads what you already have
-        body: Point it at a checkout, a chat export or a folder of dated notes and it keeps a searchable, citable copy. The walking, the sniffing and the refusing happen on the machine the files are on, so a key or a password never crosses the wire.
+        body: Point it at a checkout, a chat export or a folder of dated notes and it keeps a searchable, citable copy. The walking, the sniffing and the refusing happen on the machine the files are on, so a key or a password never crosses the wire. What it read is yours to search too, without asking it and without paying for a turn.
       dreams:
         title: It tidies while you sleep
         body: In hours you set, after you have been quiet a while, it reads what arrived, writes up the month, rewrites the pages that changed, divides one that has outgrown itself, and walks the graph for connections nobody wrote down. Then it asks itself the questions you are likely to ask tomorrow and writes down the ones it could not answer.

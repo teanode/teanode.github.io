@@ -43,7 +43,13 @@ there is on the command line too:
     teanode agent memory note projects/greenfinch "Terms moved to ninety days"
     teanode agent memory link people/alice-chen projects/greenfinch --relation works_on
     teanode agent memory move notes/kittiwake things
+    teanode agent memory merge work/old-portal projects/greenfinch
     teanode agent memory history projects/greenfinch
+
+A page also has **other names**. What you call a thing in conversation is
+rarely its heading — "the portal", "Greenfinch", "the claims thing" — and an
+alias is how your agent finds the page under the name you used. They sit
+beside the page's name on the Knowledge page and on `memory page --alias`.
 
 ## It writes without being asked
 
@@ -72,7 +78,7 @@ where it does, and it keeps a searchable, citable copy:
 | kind | what it is |
 | --- | --- |
 | `computer` | a checkout or a folder on a computer you have attached |
-| `archive` | a chat export, or a folder of dated notes |
+| `archive` | an export sitting on a computer: dated notes, or records a script of yours writes |
 | `skill` | anything an installed skill can list: a wiki, an issue tracker |
 | `web` | a site you name, within the prefixes you allow, to a depth you set |
 | `sent` | your own sent mail |
@@ -80,6 +86,13 @@ where it does, and it keeps a searchable, citable copy:
     teanode agent knowledge add "work" ~/work --computer laptop --under work
     teanode agent knowledge sync work
     teanode agent knowledge pause work      # stop reading, keep what it found
+    teanode agent knowledge set work --cron "0 4 * * *" --under projects
+
+`set` changes a source where it stands and leaves alone everything you did
+not mention. Before it existed, correcting the hour a source is read meant
+removing it and adding it again, which forgets every document it ever read
+and pays for the first pass twice. Edit, on the source's row in the
+dashboard, is the same thing.
 
 A `computer` source is read **on the computer**. The walking, the sniffing
 and the refusing all happen in the daemon you run on your own machine, and
@@ -98,6 +111,50 @@ Which commits are **yours** is decided by the addresses on the contact card
 you have marked as yourself, so mark one: `teanode contact me <id>`. A source
 that finds commits by addresses it cannot place lists them and points you at
 the address book, rather than quietly attributing none of your work to you.
+
+## Searching it yourself
+
+Until this, the only thing that could look through your own documents was
+your agent, which meant asking it and paying for the turn. Now you can ask
+directly:
+
+    teanode agent knowledge search "the migration that failed"
+    teanode agent knowledge read <document-id> --from 4000
+
+It is the search the agent's knowledge tool runs, over the same passages,
+ranked the same way. An identifier is looked up exactly before anything else:
+paste `ResetPayloadAngularOffset` and the file and line that define it come
+back above the passages. Each passage sits under the document it came from,
+with the identifier that reads that document back. `read` takes that
+identifier, `--from` says where in the text to start, and a read that stops
+short prints the command that carries on.
+
+On the Knowledge page this is "Search what it read". Read opens a document in
+place, Read on adds the next stretch.
+
+Ranking is by meaning as well as by words where the server has an embedding
+model. Where it has none the answer says so, and a paraphrase that shares no
+word with your question will not be found.
+
+## Why it did not know that
+
+Something plainly written on a page can still never reach an answer, and from
+outside there is no telling whether recall missed it, a night retired it, or
+it is worded so that nothing matches. Ask what a question would carry:
+
+    teanode agent memory recall "when does the portal ship?"
+
+Back come the pages that turn would be handed, with the facts on each
+numbered as the page numbers them. It is the recall a real turn does, so the
+answer is the real one. Nothing is said to a model and nothing is marked as
+used, so you can run it as often as you like while you correct a page, and
+the same graph answers the same way twice. On the Knowledge page this is
+"What would it recall?".
+
+`teanode agent memory evaluate <file>` puts a whole set of questions through
+the same path and says, per question, whether the facts it needed were
+carried, with totals and a non-zero exit when any missed. Run it before and
+after a night to see what the night changed.
 
 ## What it does at night
 

@@ -37,7 +37,12 @@
     teanode agent memory note projects/greenfinch "账期改成了九十天"
     teanode agent memory link people/alice-chen projects/greenfinch --relation works_on
     teanode agent memory move notes/kittiwake things
+    teanode agent memory merge work/old-portal projects/greenfinch
     teanode agent memory history projects/greenfinch
+
+一个页面还有**别的名字**。你在对话里怎么称呼一样东西，往往不是它的标题——「那个门户」
+「Greenfinch」「理赔那个玩意儿」——而别名就是你的代理在你用了别的叫法时还能找到这个页面的
+办法。它们在知识页面上就挨着页面的名字，命令行上是 `memory page --alias`。
 
 ## 不用你开口，它自己写
 
@@ -61,7 +66,7 @@
 | 种类 | 是什么 |
 | --- | --- |
 | `computer` | 你已接入的某台电脑上的一个代码检出或者一个文件夹 |
-| `archive` | 一份聊天导出，或者一个按日期记的笔记文件夹 |
+| `archive` | 放在某台电脑上的一份导出：按日期记的笔记，或者你写的脚本产出的 records |
 | `skill` | 任何一个已安装的技能能列出来的东西：一个 wiki、一个问题追踪系统 |
 | `web` | 你指定的一个网站，限定在你允许的前缀之内，深度由你设定 |
 | `sent` | 你自己发出去的邮件 |
@@ -69,6 +74,11 @@
     teanode agent knowledge add "work" ~/work --computer laptop --under work
     teanode agent knowledge sync work
     teanode agent knowledge pause work      # 停止读取，已经找到的都留着
+    teanode agent knowledge set work --cron "0 4 * * *" --under projects
+
+`set` 就地改一个来源，你没提到的都原样不动。在它存在之前，想改一下读取的钟点，就只能把
+这个来源删掉再加一遍，而那会忘掉它读过的每一份文档，并且让第一遍的代价付两次。仪表盘上
+那一行的「编辑」，做的是同一件事。
 
 一个 `computer` 来源是**在那台电脑上**读的。遍历、判别和拒绝，全都发生在你自己机器上跑
 的那个守护进程里，只有通过了过滤的文本才会经过网络。在一个代码仓库里，清单就是 git 所
@@ -82,6 +92,41 @@
 哪些提交是**你的**，是按你标记为自己的那张联系人名片上的地址来判断的，所以请标一张：
 `teanode contact me <id>`。一个来源如果发现了一些它认不出的提交地址，会把它们列出来并
 指向通讯录，而不是悄悄地把你的工作一件都不算在你头上。
+
+## 自己去搜
+
+在这之前，能翻你自己那些文档的只有你的代理，也就是说得去问它，并且为那一轮付钱。现在你
+可以直接问：
+
+    teanode agent knowledge search "那次失败的迁移"
+    teanode agent knowledge read <document-id> --from 4000
+
+它就是代理的知识工具跑的那个搜索，翻的是同一批段落，排序方式也一样。标识符会在别的之前被
+精确查一遍：把 `ResetPayloadAngularOffset` 粘进去，定义它的那个文件和行号会排在段落上面。
+每一段都列在它所来自的文档下面，带着可以把那份文档读回来的标识符。`read` 接的就是那个标识
+符，`--from` 说明从正文的哪里开始；一次没读到结尾的读取，会把接着往下读的那条命令打印出来。
+
+知识页面上，这是「搜索它读过的东西」。「阅读」就地打开一份文档，「继续读」再往下接一段。
+
+服务器配了嵌入模型的地方，排序同时按词和按语义来。没有的地方，答案会说明，而一句跟你的问题
+一个词都不重合的同义改写是找不到的。
+
+## 它为什么不知道那件事
+
+一件明明白白写在页面上的事，仍然可能从来没出现在回答里；而从外面看，你没法判断是召回没
+够着它、是某一夜把它退下去了，还是它的措辞让什么都对不上。那就问一问，一个问题会带进去
+什么：
+
+    teanode agent memory recall "那个门户什么时候上线？"
+
+回来的是那一轮会拿到的那些页面，每个页面上的事实按页面自己的编号列着。它就是一轮真实对话
+做的那个召回，所以这个答案就是真的那个。没有任何东西问过模型，也没有任何东西被标成用过，
+所以你可以一边改页面一边想问多少遍就问多少遍，同一张图两遍的答案也一样。知识页面上，这是
+「它会召回什么？」。
+
+`teanode agent memory evaluate <file>` 把一整组问题送进同一条路，逐题说明它需要的那些事实
+有没有被带上，并给出总计；只要有一题没中，退出码就不是零。在一夜之前和之后各跑一次，就能
+看出这一夜改变了什么。
 
 ## 它在夜里做什么
 
