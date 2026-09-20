@@ -8,11 +8,12 @@ TeaNode 是两个程序。`teanode-server` 是邮件服务器，加上只有它�
 | --- | --- |
 | `teanode-server run` | 运行服务器 |
 | `teanode-server config env` | 写出一份起步用的环境文件 |
+| `teanode-server config rules import\|show` | 内置垃圾邮件过滤器的模式规则：导入一套，或者看看存着的是什么 |
+| `teanode-server user list\|add\|password\|remove\|reset\|rescue` | 不经过服务器把账号救回来 |
 | `teanode-server config init` | 迁移数据库，并存储环境变量描述的配置 |
 | `teanode-server config show\|validate` | 查看和检查存储的配置 |
 | `teanode-server config import\|export` | 把 `teanode.yaml` 加载进数据库，或写出一份 |
 | `teanode-server tls self-signed` | 用于本地开发的证书 |
-| `teanode-server user list\|add\|password\|remove\|reset` | 不经过服务器恢复账户 |
 | `teanode-server password` | 为导出的配置哈希一个密码 |
 
 这些命令读取服务器读取的环境变量（`TEANODE_DATABASE_URL` 等），所以它们在服务器运行的地方运行：在它的容器里，或者把它的 env 文件加载进 shell。`teanode-server user` 直接编辑存储的配置，是为启动不了或没有人能登录的服务器准备的；日常的账户管理用 `teanode user`，经过服务器。
@@ -234,15 +235,16 @@ Shell 补全由二进制文件自己提供：
 | `teanode agent memory index\|get\|search\|note\|page\|merge\|link\|unlink\|move\|forget\|history\|recall\|learned` | 你的代理关于你知道些什么，作为一个个带编号事实的页面：`get people/alice-chen`、`note people/alice-chen "管账" --applies-to triage,reply`、`link people/alice-chen projects/greenfinch --relation works_on`、`move notes/kittiwake things`；`move --number 3 people/alice-chen projects/greenfinch` 是把其中一条事实挪到另一个页面上，而不是挪整个页面，并且保留它所依据的原话；`forget people/alice-chen --number 2`；不带编号的 `forget people/alice-chen` 会连同它下面的一切一起拿掉，并且先问一句，`--force` 跳过这个询问；`merge work/old-portal projects/greenfinch` 把一个页面折进另一个；还有 `history projects/greenfinch` |
 | `teanode agent memory recall "<question>"` | 一个问题会往一轮对话里带进什么：召回会展开的那些页面，每一个连同上面的事实，按页面自己的编号，用 `memory get` 打印页面的样子打印出来。它就是一轮真实对话做的那个召回，所以它能回答「它当时为什么不知道那件事？」，而不用再问它一遍——而且它不花钱：没有任何东西问过模型，也没有任何东西被标成用过，所以同一张图问两遍答案一样。`--json` 把页面和事实按原样打印出来 |
 | `teanode agent memory evaluate <file>` | 把一组问题重新跑一遍召回，然后逐题说明它需要的那些事实会不会被带上：一题一行——`direct 03 hit`、`changed 12 miss: carried people/alice-chen saying "berlin"`——然后是分类和总计，只要有一题没中，退出码就不是零。没有任何东西问过模型，图里也没有任何东西被标成用过，所以同一张图问两遍答案一样，而这一组题可以在一夜之前和之后各跑一次，看看这一夜值多少。文件的格式，以及一组可以拿你自己图里的问题替换掉的起始题目，在仓库的 `docs/evaluation/` 里 |
-| `teanode agent knowledge list\|add\|set\|pause\|resume\|sync\|remove` | 你的代理读取的那些地方：`add "work" ~/work --computer laptop --under work`；`set work --cron "0 4 * * *" --under projects` 改一个已经存在的来源——它的名字、它的路径、它找到的东西归到哪里、多久读一次、格式、邮箱——你没给的都原样不动，所以只是改个钟点，不会让你付出「删掉再加一遍」的代价；`sync` 现在就再读一遍；`pause` 会把已经找到的都留着；`remove` 会忘掉它找到的一切，所以先问一句，`--force` 跳过这个询问。`--format` 说明那里的东西该怎么读：`files`（一棵文件树，认得 git）、`journal`（按日期记的笔记），或者 `records`（一个装 JSON 行的文件夹，任何脚本都能写，旁边放一个 `refresh` 脚本，守护进程会在每次扫描前运行它——可以让你的代理来写） |
+| `teanode agent knowledge list\|add\|set\|pause\|resume\|sync\|remove` | 你的代理读取的那些地方：`add "work" ~/work --computer laptop --under work`；`set work --cron "0 4 * * *" --under projects` 改一个已经存在的来源——它的名字、它的路径、它找到的东西归到哪里、多久读一次、格式、邮箱、它下面每一个代码检出是不是都要读——你没给的都原样不动，所以只是改个钟点，不会让你付出「删掉再加一遍」的代价。`--read-every-checkout` 会读这条路径底下每一个检出的文件——默认情况下，一个几乎没有你的工作在里面的检出只保留它的简介，页面会说明它是什么、在哪儿，而它的源码不被索引，来源那一行会说明这样的检出有多少个、涉及多少文件；`--own-commits-at-least` 说明一个检出要有多少你自己的提交，它的文件才会被读，不管它的历史有多长（不去管它，程序会自己算：两个提交，或者日志的五十分之一，取大的那个，上限二十五——并且永远不会超过整段历史，所以一个你只提交过一次、别人一次都没提交过的仓库就算你的；`1` 是旧规则，有任何一个提交就算）；`--commits-per-pass` 说明对这棵树的一遍扫描要带上多少历史，由里面的那些检出分摊，从新到旧（程序自己的节奏是两千）；`sync` 现在就再读一遍；`pause` 会把已经找到的都留着；`remove` 会忘掉它找到的一切，所以先问一句，`--force` 跳过这个询问。`--format` 说明那里的东西该怎么读：`files`（一棵文件树，认得 git）、`journal`（按日期记的笔记），或者 `records`（一个装 JSON 行的文件夹，任何脚本都能写，旁边放一个 `refresh` 脚本，守护进程会在每次扫描前运行它——可以让你的代理来写） |
 | `teanode agent knowledge search "<words>"` | 在已经索引过的东西里找段落——你的代码、你的聊天、你的笔记——不用请你的代理替你去找。它跟你代理的知识工具跑的是同一个搜索，所以你看到的就是它看到的：从日志里抄出来的一个标识符（`ResetPayloadAngularOffset`）会被精确查出来，并打印成定义它的那个文件和行号，然后才是那些段落，每一段都列在它所来自的文档下面，带着可以把那份文档读回来的标识符。`--first` 说要几条，`--source <id-or-name>` 把范围缩到一个来源，`--json` 按原样打印每一行，带着各自的分数。如果这套部署没有配嵌入模型，它会说明——只按词找到的，会漏掉一句一个词都不重合的同义改写 |
 | `teanode agent knowledge read <document-id>` | 按搜索打印出来的标识符读其中一份文档；从引用里抄出来的 `<id>#<passage>` 也认。`--from` 是从正文的哪里开始，按字符数算，`--first` 是打印多少；一次没读到结尾的读取会说明还剩多少，并打印出接着往下读的那条命令 |
 | `teanode agent dream log\|runs\|now\|bootstrap\|reread` | 那些梦：负责读取、归档和自测的运行；`runs <id>` 列出某一趟梦做过的每一次模型调用，每一次都是一个可以用 `agent run show` 打开的运行；`now` 会在下一个时钟点、在代理的时段之内开始一趟；`bootstrap on` 会用更宽的限额一直跑下去，直到没有东西等着被读，用于第一次全量读取；`reread --minutes 60` 把某一夜在那段时间里标成已读的东西放回去 |
 | `teanode agent schedule list\|add\|set\|enable\|disable\|remove\|run` | 它在设定的时间自己做的那些事：`add Morning "0 8 * * 1-5" "今天有什么需要我？" --deliver mail`，一行你所在时区的 cron；或者一个单独的时刻 `"@at 2026-09-12 09:00"`，又或者一个从现在起的间隔 `"@in 20m"`——它会被存成它所指的那个时刻，并且只跑一次。`set <id> --cron "0 7 * * 1-5"` 就地改一个——`--name`、`--cron`、`--prompt`（`-` 从标准输入读）和 `--deliver`，你给什么才改什么——而 `disable <id>` 让它不再运行但不拿掉它，`enable <id>` 再让它跑起来 |
 | `teanode agent feedback` | 从你的所作所为记录下来的更正，代理会把它们当例子看 |
 | `teanode agent channel list\|set\|unlink\|remove` | 你用来和代理说话的聊天应用：你自己的 Telegram 或者 Discord 机器人。`set telegram --token -` 从标准输入读机器人的令牌；`list` 显示某个聊天要发给机器人的 `/link CODE` 里的那个码，以及机器人是否在跑；`unlink` 会画一个新码 |
+| `teanode contact list\|show\|add\|edit\|remove` | 你的通讯录：你留着的那些人，你的手机和电脑通过 CardDAV 同步它们。`add --name "Ada Lovelace" --email ada@example.com` 留下一个；`edit <id> --name "Ada King"` 只改你给的那部分，名片上其余的原样不动，所以改个名字不会把手机放上去的那张照片扔掉；`--card -` 从标准输入读一整张 vCard |
 | `teanode agent skill list\|search\|install\|update\|remove\|enable\|disable\|scope\|secret` | 从技能注册表安装的工具，给这台服务器上的所有人：`search` 说有些什么，`install weather` 在保留任何东西之前先检查签名和哈希，`update` 不带名字就把有更新的都装上。`scope <name> operator\|person\|skill` 决定这里由谁来填这个技能的秘密——整台服务器一套值、每个人自己的，或者技能自己声明的那样。安装和划定范围需要 `server:manage`。会运行命令的技能，命令跑在你接上的电脑上，会先问，而且无人看着的运行永远用不到它。`secret list\|set\|clear` 是给技能向 *你* 而不是向服务器索要的那些值用的：`secret set news NEWSAPI_KEY` 从终端读取而不回显，没有终端时从标准输入读 |
-| `teanode agent mcp list\|connect\|disconnect` | 运维者声明的那些连接的服务器，以及你到它们的连接；`connect tracker --credential -` 从标准输入读你的凭据，需要授权的服务器会打印要打开的地址；`--loopback` 则把授权带回这个终端，给只应答环回地址的服务用 |
+| `teanode agent mcp list\|connect\|disconnect\|serve` | 运维者声明的那些连接的服务器，以及你到它们的连接；`connect tracker --credential -` 从标准输入读你的凭据，需要授权的服务器会打印要打开的地址；`--loopback` 则把授权带回这个终端，给只应答环回地址的服务用; `serve` 在这个终端上应答这套协议，所以这台机器上的一个程序可以用你代理的那些工具，而且哪里都不用粘令牌——`claude mcp add teanode -- teanode agent mcp serve` |
 | `teanode agent settings show\|set` | 你的代理：`set enabled=true name=Bertie instructions=-` 从标准输入读那个长值；键由 `set --help` 列出 |
 | `teanode agent settings categories add\|remove` | 固定的那些之外，你自己的类别 |
 | `teanode agent settings forget` | 删掉这个代理和它学到的一切；会先问 |

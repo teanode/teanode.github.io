@@ -242,6 +242,16 @@ welcome:
       card:
         send: Send "Thursday at four works" to Grace Hopper?
         remind: Send the reminder to Osborne & Sons?
+  mcp:
+    heading: And from your editor
+    lead: TeaNode answers the Model Context Protocol, so a coding harness or an editor can use your agent's tools and ask your agent questions.
+    body: >-
+      A caller is offered exactly what that account's permissions already
+      allow, less whatever the operator switched off — the same catalogue a
+      conversation gets, so somebody who may not read mail is not offered the
+      search. The boundary is the API token, which is the operator's to hand
+      out. Ask it a question in words and you get its answer with the whole of
+      its memory of you behind it, rather than six calls of your own.
   memory:
     heading: A memory that learns you
     lead: >-

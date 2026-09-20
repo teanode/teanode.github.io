@@ -157,6 +157,29 @@
     }
   },
   {
+    "slug": "mcp",
+    "group": {
+      "en": "Running it",
+      "zh": "运行它",
+      "ja": "動かす"
+    },
+    "title": {
+      "en": "Model Context Protocol",
+      "zh": "Model Context Protocol",
+      "ja": "Model Context Protocol"
+    },
+    "description": {
+      "en": "TeaNode on both ends of the protocol: answering it, so your editor can use your agent's tools and ask it questions, and connecting out to servers of your own.",
+      "zh": "TeaNode 在这套协议的两端：它应答协议，让你的编辑器可以用你代理的工具、也可以向它提问；它也连出去，接到你自己的那些服务器。",
+      "ja": "この取り決めの両端に立つ TeaNode。応える側として、エディターからエージェントの道具を使い問いを投げられるように。つなぎに行く側として、あなた自身のサーバーへ。"
+    },
+    "filename": {
+      "en": "en/mcp.markdown",
+      "zh": "zh/mcp.markdown",
+      "ja": "ja/mcp.markdown"
+    }
+  },
+  {
     "slug": "command-line",
     "group": {
       "en": "Running it",

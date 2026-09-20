@@ -138,10 +138,19 @@ docker run --rm ghcr.io/ziyan/teanode:latest \\
 chmod 600 .env
 docker compose up -d`
 
+const connect = `# on the machine your command line is signed in on
+claude mcp add teanode -- teanode agent mcp serve
+
+# or from anywhere, with an API token
+claude mcp add --transport http teanode \\
+  https://mail.example.com/api/v1/mcp \\
+  --header "Authorization: Bearer tnt_..."`
+
 export const WelcomePage = () => {
   const translate = useTranslate()
   const quickStart = generatePath(routes.docPath, { docId: 'quick-start' })
   const snippet = useMemo(() => renderMarkdown('```bash\n' + install + '\n```'), [])
+  const mcpSnippet = useMemo(() => renderMarkdown('```bash\n' + connect + '\n```'), [])
   const answers = useMemo(
     () => Object.fromEntries(questions.map((key) => [key, renderMarkdown(translate(`welcome.questions.${key}.answer`)).html])),
     [translate],
@@ -242,6 +251,28 @@ export const WelcomePage = () => {
                 </Typography>
               </Box>
             ))}
+          </Box>
+
+          {/* The four points above are the agent working inside the
+              dashboard. This is the same kit reached from outside it, which
+              is a different claim and reads badly folded into one of them. */}
+          <Box
+            sx={{
+              display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 1fr) minmax(0, 1fr)' },
+              gap: { xs: 2.5, md: 5 }, alignItems: 'start',
+              mt: { xs: 4, md: 5 }, pt: { xs: 3, md: 4 }, borderTop: 1, borderColor: 'divider',
+            }}
+          >
+            <Box sx={{ minWidth: 0 }}>
+              <Overline><T id='welcome.mcp.heading'/></Overline>
+              <Typography sx={{ maxWidth: measure, mb: 1.5 }}><T id='welcome.mcp.lead'/></Typography>
+              <Typography variant='body2' color='text.secondary' sx={{ maxWidth: measure, lineHeight: 1.6 }}>
+                <T id='welcome.mcp.body'/>
+              </Typography>
+            </Box>
+            <Box sx={{ minWidth: 0 }}>
+              <Markdown html={mcpSnippet.html} compact/>
+            </Box>
           </Box>
         </Section>
 

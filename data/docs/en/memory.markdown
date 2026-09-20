@@ -104,6 +104,15 @@ any passage that looks like a private key, a token or a credential — refused
 on the machine, counted, and named in the source's log, so a mistake in the
 server cannot widen it.
 
+A picture that came with a thread or a message is kept too. A night looks
+first at what it can see for nothing — the file's name, its size, the thread
+it arrived in — and decides which are worth opening, because describing a
+picture costs money and most of them are avatars. What it opens, the model
+reads out: the error on the screen, the identifier, the timestamp, which
+becomes the file's text and is searchable and quotable like anything else.
+What it decides against keeps its bytes and carries the reason in plain
+words, and the source's page counts all three.
+
 Everything read from a source is data, never instructions. It reaches the
 model the way a fetched web page does.
 
