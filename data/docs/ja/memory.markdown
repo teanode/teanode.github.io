@@ -23,7 +23,7 @@
 どの行が確かめられてどの行が確かめられないかは、ダッシュボードが言います。
 
 事実は日付を二つ持ちます。答える問いが違うからです。それが本当だったのはいつか、そして
-エージェントがそれを知ったのはいつか。「大阪に引っ越した」のは 2019 年で、知ったのは先週の
+エージェントがそれを知ったのはいつか。「Rivermouth に引っ越した」のは 2019 年で、知ったのは先週の
 火曜です。2019 年についての問いが欲しいのは前者です。
 
 **リンク**は二つのページを結び、どう結ばれているかを言います。「関連」ではなく、
@@ -40,7 +40,7 @@
     teanode agent memory get people/alice-chen
     teanode agent memory note projects/greenfinch "支払い条件が九十日になった"
     teanode agent memory link people/alice-chen projects/greenfinch --relation works_on
-    teanode agent memory move notes/kittiwake things
+    teanode agent memory move notes/marigold things
     teanode agent memory merge work/old-portal projects/greenfinch
     teanode agent memory history projects/greenfinch
 
@@ -71,13 +71,21 @@ turn のあいだに書かれたのは二つ、どちらもテストでした。
 あなたが知っていることの大半は、会話の中にはありません。それが実際にある場所へエージェント
 を向ければ、検索でき、引用できる写しを保ちます。
 
-| 種類 | 何か |
-| --- | --- |
-| `computer` | 接続したコンピューターのチェックアウト、あるいはフォルダー |
-| `archive` | コンピューターに置いてある書き出し。日付のついたノート、あるいはあなたのスクリプトが書く records |
-| `skill` | 入れてあるスキルが一覧できるもの。wiki、課題管理 |
-| `web` | あなたが挙げたサイト。許した接頭辞の内側を、決めた深さまで |
-| `sent` | あなた自身の送信済みメール |
+情報源にはそれぞれ**型**があり、型はある種の場所の読み方を言います。署名された登録簿には、
+コンピューターのフォルダー（ノート、文書、履歴ごとの git チェックアウト）、日付のついた
+ノート、あなた自身の送信済みメール、ウェブサイト、ニュースフィード、Gmail と Google Drive、
+GitHub、そして Claude Code や Codex との会話があります。その多くは、そのコンピューターで
+すでにサインインしているコマンドラインの道具を走らせるので、届く範囲はその道具が届く範囲
+です。トークンの要る型はそう言い、あなたが情報源ごとに、ダッシュボードかコマンドラインで
+入れます。保存される前に封じられます。自分の型をファイルから足すこともでき、誰も署名して
+いないので、手元のものと印が付きます。
+
+    teanode agent source-type search
+    teanode agent source-type install rss
+    teanode agent knowledge add "releases" --type rss --setting url=https://example.com/feed.xml
+    teanode agent knowledge secret set releases token
+
+フォルダーはインストールなしで足せます。
 
     teanode agent knowledge add "work" ~/work --computer laptop --under work
     teanode agent knowledge sync work
@@ -103,7 +111,8 @@ turn のあいだに書かれたのは二つ、どちらもテストでした。
 お金がかかり、その多くはアイコンだからです。開いたものはモデルが読み上げます。画面に出た
 エラー、識別子、時刻。それがそのファイルの本文になり、ほかと同じように検索でき引用できます。
 開かないと決めたものはバイトを保ち、理由を平たい言葉で連れています。情報源のページはこの
-三つを数えます。
+三つを数えます。`pdftoppm` と `tesseract` の入ったコンピューターは、スキャンした PDF や、
+絵でできたオフィス文書も同じように読みます。tesseract がそこに持つどの言語でも読めます。
 
 情報源から読まれたものはすべてデータであって、指示ではありません。取ってきたウェブページと
 同じ扱いでモデルに届きます。
@@ -122,7 +131,7 @@ turn のあいだに書かれたのは二つ、どちらもテストでした。
     teanode agent knowledge read <document-id> --from 4000
 
 エージェントの knowledge ツールが走らせる、その検索です。同じ一節を、同じ順位の付け方で
-見ます。識別子は何より先にそのまま引かれます。`ResetPayloadAngularOffset` を貼れば、それを
+見ます。識別子は何より先にそのまま引かれます。`ComputeShippingQuote` を貼れば、それを
 定義しているファイルと行が一節より上に返ります。一節はどの文書から来たかの下に置かれ、その
 文書を読み返すための識別子が付きます。`read` はその識別子を取り、`--from` は本文のどこから
 始めるかを言い、終わりまで届かなかった読みは、続きから読む命令を印字します。
@@ -146,9 +155,14 @@ recall が届かなかったのか、ある夜が下げたのか、何にも当�
 問わず、使われた印も付かないので、ページを直しながら何度でも走らせられますし、同じ図は二度
 とも同じに答えます。ナレッジのページでは「何を思い出すか」です。
 
+エージェントはときどき自分でも確かめます。主な会話で、憶えていることをいくつか確かめてほしい
+と頼み、答えはボタンになっています。「記憶」タブには、その問いと、時とともにどれだけ当たった
+かが出ます。記憶の確認はエージェントの設定で切れます。
+
 `teanode agent memory evaluate <file>` は一組の問いをまとめて同じ道に通し、必要な事実が
 運ばれたかを問いごとに言い、合計を出します。ひとつでも外せば終了コードは非ゼロです。夜の
-前と後で走らせれば、その夜が何を変えたかが分かります。
+前と後で走らせれば、その夜が何を変えたかが分かります。`teanode agent memory answers <file>` はさらに一歩進み、
+答えそのものをあなたの答えと照らして採点します。記憶だけ、情報源だけ、そして両方から。
 
 ## 夜のあいだに何をするか
 
@@ -186,7 +200,7 @@ recall が届かなかったのか、ある夜が下げたのか、何にも当�
 それが図が作り話で埋まっていく道筋だからです。
 
     teanode agent dream log             # 直前の夜が何をしたか
-    teanode agent dream now             # 次の時計の刻みで一度始める
+    teanode agent dream now             # 時間帯にかかわらず今ひとつ始める
     teanode agent dream bootstrap on    # できるかぎり速く、全部読む
 
 夜が行う呼び出しはどれも、開いて読めるふつうの実行です。エージェントのページのいちばん上の

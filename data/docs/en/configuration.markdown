@@ -232,9 +232,6 @@ Relative paths elsewhere in this file resolve against it.
 **`logLevel`** — LogLevel is one of DEBUG, INFO, NOTICE, WARNING, ERROR,
 CRITICAL.
 
-**`logDirectory`** — LogDirectory, when set, receives a copy of every received
-message as a .eml file. Useful when debugging; it grows without bound.
-
 **`secret`** — Secret signs the bounce return path on outgoing mail and the
 passwords derived from SMTP credential keys. Generated on first run.  Changing
 it invalidates every SMTP password and orphans bounces for mail already in
@@ -309,6 +306,40 @@ that is no longer claimed; groups without an `idpGroup` are never touched.
 they sign in: no password, an identity bound to the provider, a Personal
 mailbox, and the groups their claims name. Off, only people whose account
 already has an identity at this provider may sign in through it.
+
+### `graphql`
+
+Document limits apply before SQL work on HTTP requests, agent operations and
+websocket subscriptions. Changes take effect on the next request.
+
+**`maximumDepth`** (default `32`, range `1` to `256`): maximum delimiter nesting
+before parsing, and maximum selection depth after expanding fragments. Strings
+and comments do not add nesting.
+
+**`maximumTokenCount`** (default `20000`, range `1` to `1000000`): maximum lexical
+tokens in one document. A quoted string is one token; the document also has a
+one-megabyte byte limit.
+
+**`maximumSelectionCount`** (default `5000`, range `1` to `100000`): maximum total
+selections visited across operations and fragment definitions, including repeated
+fragment expansion and aliases. This is a document-work limit, not a result-row
+limit; individual resolvers retain their pagination bounds.
+
+**`maximumListItemCount`** (default `1000`, range `1` to `100000`): largest
+explicit `first` argument, including `pagination.first`. Variables and variable
+defaults count too. Omitted, null and nonpositive sizes are charged as 1,000 rows,
+so setting this below 1,000 requires callers to supply a smaller positive size.
+Resolvers may enforce a smaller cap of their own.
+
+**`maximumWorkCount`** (default `200000`, range `1` to `100000000`): maximum
+pagination-weighted field selections in the selected operation. Each field is
+charged once per requested item at every paginated ancestor. Aliases and repeated
+fragments count separately; conditional selections count even when skipped.
+This bounds pagination-driven work, not the size of unpaginated collections,
+SQL scans, or model calls. Resolver-specific limits still apply.
+
+The shared mail-audit pagination helper treats omitted and zero sizes as a
+1,000-row page. They no longer request an unlimited database result.
 
 ### `listen`
 
@@ -667,6 +698,16 @@ adding one does not duplicate mail that already has somewhere to go.
 
 **`kind`** — Kind is one of null, email, webhook or mailServer.
 
+`openai-codex` is OpenAI reached with a personal sign-in rather than a key:
+a ChatGPT plan, through the Codex API that the Codex command line also runs
+on. It answers at a different address, speaks the responses protocol rather
+than chat completions, and bills against the plan's allowance instead of
+credits. It takes
+`refreshToken` and `account` and no `apiKey`, and it offers the models the
+plan lists for the account, asked each time the model list is read: every
+other name is refused outright. It has no embeddings,
+so `models.embedding` still needs a keyed provider or a local one.
+
 **`email`** — Email is the destination address when kind is email.
 
 **`webhook`** — Webhook is the destination URL when kind is webhook.
@@ -853,9 +894,22 @@ that published rule data when you enable it and load it.
 
 ### `storage`
 
+**`mode`**: `local` requires a directory and treats S3 as a best-effort mirror.
+`shared` requires enabled S3 and an empty directory; object-store errors are
+returned to the caller. Use shared mode for multiple instances. Empty preserves
+existing behavior: a directory selects local storage, otherwise S3 is required.
+Changing mode does not migrate existing messages or uploaded files.
+
 **`directory`** — Directory holds the raw messages, relative to
 server.dataDirectory. They are kept out of the database because they are
 large, are never queried, and would make a backup expensive.
+
+Empty is allowed when `s3` is enabled, and then nothing is kept on this
+machine at all. That is what several instances sharing one store want: a
+directory there holds only the messages the instance that handled them wrote,
+so no instance has all of them and each keeps a copy of somebody's mail that
+nothing else needs. The trade is that the store must answer for a message to
+be stored, where a directory keeps working while the network does not.
 
 **`spoolRetention`** — SpoolRetention is how long a message is kept, which is
 how far back the dashboard can show content and how long a stalled delivery
@@ -1024,6 +1078,14 @@ service is ever contacted and nothing below is constructed.
 this server, read after the fixed conduct and before a person's own —
 "this is a school; never answer a parent automatically".
 
+**`effort`** — How hard a turn somebody typed thinks and looks before it
+answers: empty for the model's own default, `low`, `medium` or `high` for
+every turn alike, or `auto` for a model to judge each message with the
+conversation before it. A thanks is answered at once, a question about how
+their own systems work is researched, and a pushback on the last answer or a
+request for care gets the most.
+Runs with nobody present keep their own.
+
 **`providers`** — The model services this server may call, one entry each.
 
 **`models`** — Which model does which work.
@@ -1049,6 +1111,16 @@ below.
 **`mcp`** — Servers speaking the Model Context Protocol whose tools join the
 catalog.
 
+**`skipCertificateCheck`** — Hosts whose TLS certificate is not checked,
+by name. A real loss and narrower than it looks: for a host named here,
+anything answering at that address can pretend to be it, so it is only
+for equipment that cannot be verified at all — a controller shipping a
+certificate issued for `127.0.0.1`, which can never be valid for the
+address it is reached at. Only a skill going to the endpoint it declares
+is given this; the remote image proxy, one-click unsubscribe and
+`web_fetch` follow addresses out of somebody else's mail and always
+check.
+
 ### `agent.providers[]`
 
 **`name`** — What `provider:model` names. Any label, and stable: the models
@@ -1063,6 +1135,25 @@ endpoint; a local server is `http://ollama:11434/v1`.
 
 **`apiKey`** — Authenticates this server to the service. A secret; shown
 redacted, kept when a settings update leaves it blank.
+
+**`refreshToken`** — Authenticates a provider that is signed in to rather
+than keyed, which at present means `openai-codex`. A secret, shown redacted
+and kept when a settings update leaves it blank.
+
+It is the long half of a pair: the server trades it for a short-lived access
+token before each run of requests, and never writes that token down. The
+dashboard fills it in: Settings, Agent, Providers, a provider of kind
+`openai-codex`, and "Sign in with ChatGPT", which shows a one-time code to
+enter on OpenAI's page from any device. `teanode agent signin` gets one at a
+browser on the machine it runs on, for pasting here instead.
+
+Where the service rotates these, the server writes the newer one back here, so
+the sign-in survives a restart; a new one written here is taken up by the
+running provider without a restart.
+
+**`account`** — Which of a signed-in person's accounts the work is billed
+to, where the service asks for it. Not a secret: it names an account, it
+does not open one.
 
 **`enabled`** — Keeps the key while switching the provider off. Unset means
 on. Work assigned to a disabled provider fails validation, so a provider
@@ -1084,6 +1175,9 @@ prices. `cacheWrite` is what putting a prompt into the cache costs, which some
 services bill above the input price and report apart from it; left unset it
 costs nothing, which is right for a service that does not charge for it and
 wrong for one that does.
+
+**`model`** — Which model a `modelPricing` entry prices: the name after
+the provider's, matched the way `allow` and `deny` are.
 
 **`modelPricing`** — Prices for particular models of this provider, since
 one service's models rarely cost alike: a small model and a large one behind
@@ -1119,10 +1213,47 @@ re-embedded by a backfill, which runs when a mailbox is granted with sorting
 and its own backfill on. Mail vectors from the old model are left where they
 are; they match nothing, so that mailbox falls back to searching by words.
 
+**`embeddingDimensions`** — How wide a vector to ask the embedding model
+for, where it takes such a request; zero, the default, is the model's own
+width. Worth setting where the knowledge sources are, because that is
+where the vectors are: half a million chunks at 1536 floats is three
+gigabytes of table and index, and at 512 it is one. The models that
+accept this argument are trained so that the first few hundred numbers
+carry nearly all of the meaning, so the search is barely worse and the
+store is a third the size. The width travels with the model's name
+wherever a vector is kept — two widths of one model are two spaces, and
+must never be ranked against each other — so changing it makes the
+existing vectors stale in the same way changing `embedding` does.
+
+**`decide`** — The model for a question whose answers are known in advance:
+is this file worth opening, which of these folders does this page belong
+under. It writes nothing and cannot be asked to, so it must name a
+`typesafe` provider, and no other kind of work may name one.
+
+Empty is the whole of "off", and is the default. Every decision that can use
+one also has a path that asks a language model, and that is what runs when
+this is not set, so nothing here is needed for the agent to work.
+
+Worth setting where the same decision is made tens of thousands of times.
+The answer comes back in well under a second rather than after a model has
+written a sentence about it, it carries how sure it is, and it cannot be a
+word that was not on the list — which is most of the error handling around
+asking a model to choose.
+
+**`scan`** — The model for bulk understanding with nobody present: filing
+what a conversation taught, summarizing a document, writing a month's
+page, consolidating a page from its facts. It runs over everything the
+person has, so it should be the cheapest model that can follow an
+instruction. Empty falls back to `fast`, then to `default`.
+
 **`triage`**, **`research`**, **`summarize`**, **`reply`**, **`ask`**,
-**`schedule`**, **`compact`** — Overrides per kind of work. Resolution is
-the override, else `fast` for triage, summarize and compact, else
-`default`.
+**`schedule`** — Overrides per kind of work. Resolution is the override,
+else `fast` for triage and summarize, else `default`.
+
+**`compact`** — The model that folds a long history into a note and names
+a conversation. Empty means the model the conversation itself is held
+with: a chat compacts on the chat's model, a dream on the scan model. Set
+it to fold every conversation with one model instead.
 
 **`choices`** — Models a person may pick for their own conversations. Empty
 means no choice: everyone uses the `ask` model. Processing never takes a
@@ -1167,13 +1298,42 @@ talk to their agent's primary conversation.
 **`skills`** — Tools installed from the skill registry. Off here, nothing
 installed is offered and nothing can be installed.
 
+**`remember`** — The run after a conversation that files what it taught
+into the person's pages. Off, the agent keeps only what the person or the
+model explicitly asked it to keep, which is what it did before this
+existed and is measurably almost nothing.
+
+**`knowledge`** — The places a person points their agent at — a checkout,
+a chat archive, a wiki — and searching them. Off, no source is read and
+none can be added.
+
+**`dreaming`** — The nightly run that works through what arrived,
+rewrites the pages it touched and tidies the graph. Off, nothing is filed
+or consolidated while nobody is there; what is already in the graph stays
+and is still read.
+
+**`subagents`** — Letting a turn hand a piece of work to a run of its own.
+It costs what a second run costs, against the same person's budget, so a
+deployment counting tokens may want it off.
+
 ### `agent.skillSecrets`
 
 The values the installed skills need and do not carry. A skill declares the
 keys it wants; an operator fills them in here, one entry per value with the
 `skill` that asked for it, the `key` it asked under, and the `value`, which
 is a secret. `teanode agent skill list` says which keys each installed skill
-is waiting for.
+is waiting for. On a running server the stored configuration is changed
+with `teanode settings set agent 'skillSecrets:=[{"skill":"news","key":"NEWSAPI_KEY","value":"..."}]'`,
+which merges by skill and key; a blank value removes one, and `teanode
+settings show agent` says which are filled in without showing them.
+
+**`skill`** — Which installed skill asked for the value, by its name.
+
+**`key`** — The key that skill asked for it under, as `teanode agent skill
+list` prints it.
+
+**`value`** — The value itself. A secret: sealed with `server.secret`,
+shown redacted, and kept when a settings update leaves it blank.
 
 Only the keys a skill scoped to the operator, which is the default. A key it
 scoped to the person is each person's own: they fill it in on their agent
@@ -1197,6 +1357,17 @@ is cut with a marker.
 across its files; `25MB` by default. A picture is shown to the model, a
 text file is read to it, and anything else is named.
 
+**`maxScannedAttachmentBytes`** — The largest file a knowledge source
+carries off a person's machine: a picture or a document that a record in a
+`records` folder said it came with, kept in object storage so that
+something can read it later. `25MB` by default, which takes in every
+screenshot and nearly every document while leaving out the videos and disk
+images that would fill a store without teaching the agent anything.
+Anything larger is named on the source's page as passed over, and never
+uploaded. One source may set its own, in bytes, on its specification; this
+is what the rest use. Not to be confused with `maxAttachmentBytes` above,
+which is what a person may hand the agent in a conversation.
+
 **`dailyTokensPerAgent`** — The default budget per person per day, which an
 operator may override for one person. At the limit, processing for that
 person is deferred to the next day with the reason on the run, and
@@ -1217,10 +1388,48 @@ first stops the day. Zero means no limit of this kind.
 in a month, beside `monthlyTokensPerServer`, and warned about at 80 % the
 same way. Zero means no cap.
 
+**`embeddingTokensPerDay`** — Meant to bound embedding apart from
+everything else, because the first pass over a person's checkout and chat
+archive is a hundred million tokens at a thousandth of the price of a
+conversation, and counting it against the same daily budget would stop
+the load on its first night and every night after. Zero, the default, is
+no limit. Set, validated and read by nothing so far: embedding is counted
+in `dailyTokensPerAgent` and in the money caps like every other call, and
+this does not yet change that.
+
+**`dreamShare`** — How much of the daily budget one night's run may
+spend, as a fraction, so that a night never eats the day. Zero resolves
+to `0.3`.
+
+**`scanConcurrency`** — How many calls the nightly reading makes at once.
+One for a service metered by the call; as many as it has slots for a
+model of the person's own, where the reading is bound by nothing but the
+machine. Zero and one both mean one at a time.
+
+**`rewriteConcurrency`** — How many pages the nightly run rewrites at once,
+after the reading. One when unset. Each rewrite changes only its own page,
+so pages can be rewritten side by side; on a model that answers slowly, a
+few at once is what leaves the rest of the night its time.
+
+**`ingestChunksPerRun`** — How many chunks one pass of an ingest job
+embeds before it hands the queue back, so that one enormous source does
+not hold the worker. Zero resolves to `2000`.
+
 **`maxRoundsPerAsk`** — How many times one conversation turn may go back to
 the model.
 
 **`maxRoundsPerResearch`** — The same for a research run.
+
+**`maxRoundsPerDream`** — How many turns one call of a dream may take: a
+batch of documents read, a month written up, a page divided. Each is a run
+of the conversation loop, and the ones that decide where something goes have
+every tool the person has — including their attached computer — so a call may
+look a page up, find a file and run something over it before it answers.
+Twelve by default, the last of which is told it is the last and must answer.
+It was four while a night could only look a page up; four left nothing for
+the answer once the smallest useful errand on a machine took three rounds.
+Setting it puts the pacing back wherever an operator wants it, and it also
+bounds the call that describes an indexed checkout.
 
 **`maxRoundsPerReply`** — How many turns a drafting run may take. A reply is a
 run of the conversation loop now, with the thread, the mailbox, the address
@@ -1241,7 +1450,8 @@ not fail to load.
 **`requestTimeout`** — How long one call to a provider may take.
 
 **`concurrency`** — How many runs a worker executes at once, per instance.
-Read when the worker is built, so a change needs a restart of that instance.
+Read when the worker is built, so a change needs a restart of that instance,
+which the status line says is owed.
 
 ### `agent.retention`
 
@@ -1321,6 +1531,12 @@ inferred: `stdio` when a command is set and no URL, otherwise `http`.
 **`command`**, **`args`** — The executable and its arguments, for the
 `stdio` transport.
 
+**`location`** — Location is where a command-spoken server runs: "server",
+the default, is this server's own host, as this process; "computer" is the
+person's own attached computer, as them. A server on the computer is reached
+only while one is attached, and never by a run with nobody present, and it
+cannot be marked headless.
+
 **`env`** — Variables given to the subprocess over this server's own
 environment, each with a `name` and a `value`; how a stdio server is given
 its secrets. The values are secrets.
@@ -1350,6 +1566,13 @@ two endpoints by hand skips discovery, and then a `clientId` is needed.
 
 **`clientId`**, **`clientSecret`**, **`scopes`**, **`authorizationUrl`**,
 **`tokenUrl`** — The OAuth client's fields.
+
+**`redirect`** — Where the authorization comes back to. `server`, the
+default, is the dashboard. `computer` is a loopback address on the person's
+attached computer, which sends the browser on to the dashboard to finish.
+For a service that sends an authorization only to a loopback address, the
+flow meant for a program on somebody's own machine. The person has to finish
+it in a browser on that computer. Only for `auth: oauth`.
 
 **`headless`** — Whether processing runs with nobody present may use the
 server's read-only tools.
@@ -1381,4 +1604,3 @@ unlike a password, it cannot be guessed.
 benefit.
 
 **`expires`** — Expires, when set, is when it stops working.
-

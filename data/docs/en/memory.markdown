@@ -25,7 +25,7 @@ file — so a line can be checked; the dashboard says which lines can and which
 cannot.
 
 A fact carries two dates, because they answer different questions: when it
-was true, and when your agent learned it. "They moved to Osaka" happened in
+was true, and when your agent learned it. "They moved to Rivermouth" happened in
 2019 and was learned last Tuesday, and a question about 2019 wants the first.
 
 A **link** joins two pages and says how. Not "related": `works_on`,
@@ -42,7 +42,7 @@ there is on the command line too:
     teanode agent memory get people/alice-chen
     teanode agent memory note projects/greenfinch "Terms moved to ninety days"
     teanode agent memory link people/alice-chen projects/greenfinch --relation works_on
-    teanode agent memory move notes/kittiwake things
+    teanode agent memory move notes/marigold things
     teanode agent memory merge work/old-portal projects/greenfinch
     teanode agent memory history projects/greenfinch
 
@@ -73,15 +73,25 @@ that each know a quarter of it.
 ## Where else it reads from
 
 Conversations are not where most of what you know lives. Point your agent at
-where it does, and it keeps a searchable, citable copy:
+where it does, and it keeps a searchable, citable copy.
 
-| kind | what it is |
-| --- | --- |
-| `computer` | a checkout or a folder on a computer you have attached |
-| `archive` | an export sitting on a computer: dated notes, or records a script of yours writes |
-| `skill` | anything an installed skill can list: a wiki, an issue tracker |
-| `web` | a site you name, within the prefixes you allow, to a depth you set |
-| `sent` | your own sent mail |
+Every source is of a **type**, and a type says how to read one kind of place.
+The signed registry has a folder on your computer (notes, documents, and git
+checkouts with their history), your dated notes, your own sent mail, a
+website, a news feed, your Gmail and your Google Drive, GitHub, and your
+Claude Code and Codex conversations. Most of them run a command line tool
+already signed in on the computer, so what they reach is what that tool
+reaches. A type that needs a token says so, and you fill it in for each
+source, from the dashboard or the command line, where it is sealed before it
+is stored. A type of your own can be added from a file as well; it is marked
+local, because nothing signed it.
+
+    teanode agent source-type search
+    teanode agent source-type install rss
+    teanode agent knowledge add "releases" --type rss --setting url=https://example.com/feed.xml
+    teanode agent knowledge secret set releases token
+
+A folder needs no install:
 
     teanode agent knowledge add "work" ~/work --computer laptop --under work
     teanode agent knowledge sync work
@@ -111,7 +121,9 @@ picture costs money and most of them are avatars. What it opens, the model
 reads out: the error on the screen, the identifier, the timestamp, which
 becomes the file's text and is searchable and quotable like anything else.
 What it decides against keeps its bytes and carries the reason in plain
-words, and the source's page counts all three.
+words, and the source's page counts all three. A computer with `pdftoppm` and
+`tesseract` installed reads scanned PDFs, and office files made of pictures,
+the same way, in every language tesseract has there.
 
 Everything read from a source is data, never instructions. It reaches the
 model the way a fetched web page does.
@@ -132,7 +144,7 @@ directly:
 
 It is the search the agent's knowledge tool runs, over the same passages,
 ranked the same way. An identifier is looked up exactly before anything else:
-paste `ResetPayloadAngularOffset` and the file and line that define it come
+paste `ComputeShippingQuote` and the file and line that define it come
 back above the passages. Each passage sits under the document it came from,
 with the identifier that reads that document back. `read` takes that
 identifier, `--from` says where in the text to start, and a read that stops
@@ -160,10 +172,17 @@ used, so you can run it as often as you like while you correct a page, and
 the same graph answers the same way twice. On the Knowledge page this is
 "What would it recall?".
 
+Now and then the agent checks for itself: in your main conversation it asks
+you to confirm a few things it remembers, with the answers as buttons, and the
+Memory tab shows those questions and how it scored against them over time.
+Memory checks can be switched off in the agent's settings.
+
 `teanode agent memory evaluate <file>` puts a whole set of questions through
 the same path and says, per question, whether the facts it needed were
 carried, with totals and a non-zero exit when any missed. Run it before and
-after a night to see what the night changed.
+after a night to see what the night changed. `teanode agent memory answers
+<file>` goes one step further and grades the answers themselves against
+yours: from memory alone, from your sources alone, and from both.
 
 ## What it does at night
 
@@ -205,7 +224,7 @@ filled — a run with nobody present inventing answers to its own questions is
 how a graph fills with fiction.
 
     teanode agent dream log             # what the last ones did
-    teanode agent dream now             # start one at the next tick
+    teanode agent dream now             # start one now, whatever its hours
     teanode agent dream bootstrap on    # read everything, as fast as it can
 
 Every call a night makes is an ordinary run you can open and read, and the

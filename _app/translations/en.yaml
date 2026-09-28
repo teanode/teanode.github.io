@@ -163,9 +163,9 @@ welcome:
   agent:
     heading: A personal agent, if you want one
     lead: >-
-      Point the server at a language model — OpenAI, Anthropic, Gemini, or an
-      Ollama or vLLM on the same machine — and each person can turn on an agent of
-      their own. It sorts what arrives, writes drafts in your own voice, and
+      Point the server at a language model (OpenAI, Anthropic, Gemini, an Ollama
+      or vLLM on the same machine, or a ChatGPT plan you already pay for) and
+      each person can turn on an agent of their own. It sorts what arrives, writes drafts in your own voice, and
       answers questions about your mail with exactly your permissions and
       nobody else's.
     privacy: >-
@@ -246,12 +246,13 @@ welcome:
     heading: And from your editor
     lead: TeaNode answers the Model Context Protocol, so a coding harness or an editor can use your agent's tools and ask your agent questions.
     body: >-
-      A caller is offered exactly what that account's permissions already
-      allow, less whatever the operator switched off — the same catalogue a
-      conversation gets, so somebody who may not read mail is not offered the
-      search. The boundary is the API token, which is the operator's to hand
-      out. Ask it a question in words and you get its answer with the whole of
-      its memory of you behind it, rather than six calls of your own.
+      Point a program at the address and approve it in your browser; there is
+      no token to copy. It is offered what your permissions allow, less
+      whatever the operator switched off, so somebody who may not read mail is
+      not offered the search, and the token it gets is good for the agent tools
+      alone. Settings, then Apps, disconnects it. Ask it a question in words and
+      the answer has its memory of you behind it, rather than six calls of your
+      own.
   memory:
     heading: A memory that learns you
     lead: >-

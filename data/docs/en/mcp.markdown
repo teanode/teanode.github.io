@@ -11,24 +11,48 @@ question to your agent in words.
 
     POST /api/v1/mcp
 
-Authenticated by an ordinary API token. There is no session: every request
-carries the token and nothing is kept between requests, so a restart on
-either side loses nothing.
+Every request carries a token, and nothing is kept between requests, so a
+restart on either side loses nothing. There are three ways to give a program
+one.
 
-Two ways to connect:
+    # point it at the address, then approve it in your browser
+    claude mcp add --transport http teanode https://mail.example.com/api/v1/mcp
 
-    # on the machine your command line is signed in on
+    # on a machine your command line is signed in on
     claude mcp add teanode -- teanode agent mcp serve
 
-    # or from anywhere, with a token
+    # or hand it an API token yourself
     claude mcp add --transport http teanode \
         https://mail.example.com/api/v1/mcp \
         --header "Authorization: Bearer tnt_..."
 
-The first is a pipe rather than a second implementation. `teanode agent mcp
-serve` posts each message to that same endpoint using the profile you are
-already signed in with, so whatever the server offers it offers, and there is
-no token to paste anywhere.
+The first needs nothing copied anywhere. Refused without a token, the program
+is told where to register and where to send you; you sign in to the
+dashboard if you are not already, see which program is asking, and allow it.
+It registers without a secret, because a program on somebody's machine cannot
+keep one, and proves it is the program that asked when it collects the token.
+
+The token it gets is narrower than an API token: it is good for the agent
+tools and refused by the GraphQL API and everything else. It is replaced every
+time it is refreshed, so these tokens are listed by program rather than beside
+your API tokens. Settings, then Apps, renames a program or disconnects it,
+which revokes every token it holds, and so does `teanode app`.
+
+Some hosted assistants do not register themselves and ask you for a client
+identifier instead. Register one for that assistant's own callback address. It
+has to be that exact address: an approval is only ever sent to an address the
+program registered.
+
+The second is a pipe rather than a second implementation. `teanode agent mcp
+serve` posts each message to the same endpoint with the profile you are
+already signed in with, so whatever the server offers it offers.
+
+The third is for a program that does neither. An API token carries its
+account's whole permissions, so it is the operator's to hand out and yours to
+keep.
+
+What programs did through the agent tools is on the agent's Activity tab,
+each tool called and each question asked, under the kind `mcp`.
 
 ### What a caller is offered
 
@@ -38,14 +62,14 @@ the servers you have connected and the skills the operator installed.
 Somebody who may not read mail is not offered the mail search, because it is
 not in their catalogue to begin with.
 
-This grants nothing the token did not already grant. An API token carries its
-account's whole permissions, and the GraphQL API beside this endpoint already
-exposes every operation those permissions allow. What changes is the shape of
-the request, not what may be asked. The boundary that matters is the token,
-and it is the operator's to hand out.
+None of this grants anything the token did not already allow. A program
+approved in the browser is held to the agent tools; one given an API token
+could already reach every operation that account's permissions allow through
+the GraphQL API beside this endpoint. What changes is the shape of the
+request, not what may be asked.
 
 A `tools/call` runs the tool. It does not start a conversation in which a
-model decides to run it — you already knew what you wanted, and a model in
+model decides to run it. You already knew what you wanted, and a model in
 the middle would cost money, take seconds, and answer differently each time.
 Every call is executed and audited as you.
 
@@ -53,7 +77,7 @@ Calls arrive marked as confirmed. Your harness asks you before it runs a
 tool, and there is no card this server could show that would reach you; the
 credential you handed the harness is what says you meant it. Anything a tool
 marks untrusted is wrapped before it goes back, the same way the agent's own
-loop wraps it — the harness hands it to a model of its own, which needs
+loop wraps it, because the harness hands it to a model of its own, which needs
 telling as much as ours does.
 
 ### Asking the agent, rather than driving it
@@ -87,7 +111,7 @@ better served by the list.
 
 ## Connecting out: servers your agent uses
 
-The other direction. An operator declares a server — a name, an address, and
+The other direction. An operator declares a server: a name, an address, and
 how people authenticate with it: nothing, a shared credential, each person's
 own, or OAuth. You then connect your own credential, or authorize in a
 browser for a server using OAuth. Credentials are sealed with the server

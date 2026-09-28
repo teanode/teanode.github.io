@@ -16,6 +16,13 @@ that answers the OpenAI API — which includes [Ollama](https://ollama.com/) on
 the same machine, and that is the configuration where nothing leaves your
 server at all.
 
+Or a ChatGPT plan you already pay for, instead of an API key. Add a provider
+of kind `openai-codex`, choose Sign in with ChatGPT, and enter the one-time
+code it shows on OpenAI's page from any device. The agent's turns are then
+billed against the plan's allowance rather than API credits. Search by
+meaning still needs an embedding model from a provider with a key, or a local
+one.
+
 Nothing else. The agent runs inside the same binary as everything else, and
 the queue it works from is in the same PostgreSQL.
 

@@ -138,13 +138,12 @@ docker run --rm ghcr.io/ziyan/teanode:latest \\
 chmod 600 .env
 docker compose up -d`
 
-const connect = `# on the machine your command line is signed in on
-claude mcp add teanode -- teanode agent mcp serve
-
-# or from anywhere, with an API token
+const connect = `# point it at the address, then approve it in your browser
 claude mcp add --transport http teanode \\
-  https://mail.example.com/api/v1/mcp \\
-  --header "Authorization: Bearer tnt_..."`
+  https://mail.example.com/api/v1/mcp
+
+# or, on a machine your command line is signed in on
+claude mcp add teanode -- teanode agent mcp serve`
 
 export const WelcomePage = () => {
   const translate = useTranslate()

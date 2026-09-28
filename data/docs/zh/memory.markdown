@@ -21,7 +21,7 @@
 行可以核对，哪些不行。
 
 一条事实带着两个日期，因为它们回答的是不同的问题：它是什么时候成立的，和代理是什么时候
-知道的。「他们搬去了大阪」这件事发生在 2019 年，而代理是上周二才知道的；一个关于 2019
+知道的。「他们搬去了 Rivermouth」这件事发生在 2019 年，而代理是上周二才知道的；一个关于 2019
 年的问题要的是前者。
 
 一条**连线**把两个页面连起来，并说明是怎么连的。不是「相关」，而是 `works_on`、
@@ -36,7 +36,7 @@
     teanode agent memory get people/alice-chen
     teanode agent memory note projects/greenfinch "账期改成了九十天"
     teanode agent memory link people/alice-chen projects/greenfinch --relation works_on
-    teanode agent memory move notes/kittiwake things
+    teanode agent memory move notes/marigold things
     teanode agent memory merge work/old-portal projects/greenfinch
     teanode agent memory history projects/greenfinch
 
@@ -61,15 +61,21 @@
 ## 它还会去哪里读
 
 对话并不是你所知道的大部分东西待的地方。把代理指向它们真正待的地方，它就会保留一份可以
-搜索、可以引用的副本：
+搜索、可以引用的副本。
 
-| 种类 | 是什么 |
-| --- | --- |
-| `computer` | 你已接入的某台电脑上的一个代码检出或者一个文件夹 |
-| `archive` | 放在某台电脑上的一份导出：按日期记的笔记，或者你写的脚本产出的 records |
-| `skill` | 任何一个已安装的技能能列出来的东西：一个 wiki、一个问题追踪系统 |
-| `web` | 你指定的一个网站，限定在你允许的前缀之内，深度由你设定 |
-| `sent` | 你自己发出去的邮件 |
+每一个来源都属于一种**类型**，类型说明一类地方该怎么读。签过名的仓库里有：你电脑上的一个
+文件夹（笔记、文档，以及带着历史的 git 检出）、你按日期记的笔记、你自己发出去的邮件、一个
+网站、一个新闻源、你的 Gmail 和你的 Google Drive、GitHub，以及你跟 Claude Code 和 Codex 的
+对话。它们大多数会运行那台电脑上一个已经登录好的命令行工具，所以它们够得着的，就是那个工具
+够得着的。需要令牌的类型会说明，你为每一个来源填上，在仪表盘或者命令行上都行，存下来之前会
+被封起来。你也可以从一个文件加一种自己的类型；它会被标成本地的，因为没有谁给它签过名。
+
+    teanode agent source-type search
+    teanode agent source-type install rss
+    teanode agent knowledge add "releases" --type rss --setting url=https://example.com/feed.xml
+    teanode agent knowledge secret set releases token
+
+文件夹不用安装：
 
     teanode agent knowledge add "work" ~/work --computer laptop --under work
     teanode agent knowledge sync work
@@ -91,7 +97,8 @@
 大小、它来自哪条会话——然后决定哪些值得打开，因为描述一张图片是要花钱的，而大多数不过是头像。
 打开的那些由模型读出来：屏幕上的报错、标识符、时间戳，这些就成了这个文件的文本，跟别的东西
 一样可以搜索、可以引用。决定不打开的那些留着自己的字节，并用明白话带着理由，来源的页面会把
-这三类都数出来。
+这三类都数出来。装了 `pdftoppm` 和 `tesseract` 的电脑，会用同样的办法读扫描的 PDF，以及
+由图片组成的办公文档，tesseract 在那台机器上有哪些语言，它就能读哪些语言。
 
 从来源读到的一切都是数据，绝不是指令。它到达模型的方式，和一个抓取回来的网页是一样的。
 
@@ -108,7 +115,7 @@
     teanode agent knowledge read <document-id> --from 4000
 
 它就是代理的知识工具跑的那个搜索，翻的是同一批段落，排序方式也一样。标识符会在别的之前被
-精确查一遍：把 `ResetPayloadAngularOffset` 粘进去，定义它的那个文件和行号会排在段落上面。
+精确查一遍：把 `ComputeShippingQuote` 粘进去，定义它的那个文件和行号会排在段落上面。
 每一段都列在它所来自的文档下面，带着可以把那份文档读回来的标识符。`read` 接的就是那个标识
 符，`--from` 说明从正文的哪里开始；一次没读到结尾的读取，会把接着往下读的那条命令打印出来。
 
@@ -130,9 +137,13 @@
 所以你可以一边改页面一边想问多少遍就问多少遍，同一张图两遍的答案也一样。知识页面上，这是
 「它会召回什么？」。
 
+代理也会时不时自己检查一下：它在你的主对话里请你确认几件它记得的事，答案做成按钮，而「记忆」
+页会列出那些问题，以及它一段时间以来答得怎么样。记忆检查可以在代理的设置里关掉。
+
 `teanode agent memory evaluate <file>` 把一整组问题送进同一条路，逐题说明它需要的那些事实
 有没有被带上，并给出总计；只要有一题没中，退出码就不是零。在一夜之前和之后各跑一次，就能
-看出这一夜改变了什么。
+看出这一夜改变了什么。`teanode agent memory answers <file>` 更进一步，拿你的答案给它的回答
+打分：只凭记忆、只凭你的来源，以及两者一起。
 
 ## 它在夜里做什么
 
@@ -164,7 +175,7 @@
 ——一次没有人在场的运行去给自己的问题编答案，正是一张图被虚构填满的方式。
 
     teanode agent dream log             # 最近几趟都做了什么
-    teanode agent dream now             # 在下一个时钟点开始一趟
+    teanode agent dream now             # 现在就开始一趟，不管它的时段
     teanode agent dream bootstrap on    # 尽可能快地把所有东西都读完
 
 夜里的每一次调用，都是一次你可以打开来读的普通运行；代理页面顶上的那句话，会说昨晚一共
