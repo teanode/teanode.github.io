@@ -60,7 +60,9 @@ Your whole catalogue, filtered the way a conversation's is: what your
 permissions allow, less whatever the operator switched off, plus the tools of
 the servers you have connected and the skills the operator installed.
 Somebody who may not read mail is not offered the mail search, because it is
-not in their catalogue to begin with.
+not in their catalogue to begin with. Every tool comes with its annotations,
+read-only or destructive, so the program can tell a look from a change the
+way the agent does.
 
 None of this grants anything the token did not already allow. A program
 approved in the browser is held to the agent tools; one given an API token
@@ -126,9 +128,19 @@ catalogue. Each server's tool list is held for five minutes, and three
 failures in a row withdraw a server's tools until the next interval, so one
 service being down does not take your agent's whole kit with it.
 
-A tool from a connected server needs your word before it runs, unless the
-operator listed it as read-only. Everything such a server returns is data. It
-never instructs.
+Each tool arrives with the annotations its server gave it, such as read-only
+or destructive. A read-only tool runs without asking, and so does one the
+operator listed as read-only; a destructive one asks. Every other call is
+judged by the fast model and asks only where it acts for you toward other
+people, moves money, places or cancels an order, or deletes something. A card
+for every look at an account teaches people to approve without reading, which
+is worse than no card. Everything such a server returns is data. It never
+instructs.
+
+Some services send an authorization only to a loopback address, the way
+meant for a program on your own machine. A server declared that way is
+authorized through your attached computer instead: finish it in a browser on
+that computer and the dashboard completes the connection.
 
 ## Pointing it at itself
 
