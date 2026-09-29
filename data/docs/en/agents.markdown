@@ -79,13 +79,21 @@ somebody up or keep somebody for you. Your own computer, attached with
 you — only while you are present in the conversation, and asking first for
 anything that changes the machine. Your own browser tab, through an extension,
 so it can act on a page only you can sign into while you watch. Your calendar,
-so it knows what your week already holds. And the web, when a search provider
-is configured.
+so it knows what your week already holds, and your reminders list beside it.
+The notes your phone's Notes app keeps in your mail account, which it can
+read and help write. And the web, when a search provider is configured.
 
 **Remembers.** Facts about you between conversations — who the accountant is,
 how you sign, what never to answer automatically. It learns from your hands
 too: a message you file somewhere other than where it sorted it becomes an
 example the next run is shown.
+
+**Offers, and keeps at it.** Each night it looks through your mail for work
+it could do for you and writes each as an offer on the Ideas tab: what it
+would do, where it stops to ask, and what in your mail prompted it. Nothing
+happens until you start one. A conversation can carry a goal it keeps working
+toward across turns of its own, and the Goals tab lists every one in progress
+with a note on where it stands.
 
 ## What it costs, and how to cap it
 

@@ -184,6 +184,42 @@ after a night to see what the night changed. `teanode agent memory answers
 <file>` goes one step further and grades the answers themselves against
 yours: from memory alone, from your sources alone, and from both.
 
+## The big picture
+
+Facts answer questions a fact is close to. A question about a whole, such as
+what the strengths and weaknesses of the thing your repositories make up are,
+has no fact close to it, and recall used to answer it with a handful of
+scattered details. Four layers above the facts answer it now, each written
+from the one below.
+
+**Components and dependencies.** For code, the computer reads each checkout's
+build files and sends its components and what it depends on. A component with
+a build file of its own becomes a page under the checkout's page, and each
+dependency becomes a link between them with the build file as its evidence.
+
+**Overviews.** At night the agent writes a short overview on each page that
+has something to say: what it is, its parts, how it relates to what it is
+linked to, what has been happening, what stands out. Deeper pages go first, so
+a page's overview reads its children's, and a page nothing touched is not
+written again.
+
+**Themes and reflections.** Pages more linked to each other than to the rest
+are grouped into themes, and themes into larger ones. A few themes a night are
+asked for what the overviews alone do not say: a pattern that repeats, a
+tension, a risk, a question nobody answered. Each observation has to cite at
+least two pages or facts it was shown, or it is dropped.
+
+**The survey.** A broad question is put to every overview in scope at once,
+each run free to look things up but not to change anything, and the parts are
+combined into one report that keeps its citations. Ask your agent, and the
+conversation is woken with the report when it is ready; or from a terminal:
+
+    teanode agent survey "what are the weak spots in the claims system?"
+    teanode agent memory overview projects/greenfinch
+
+Overviews, reflections and a survey's parts run on the `synthesize` model, so
+the judgments can go to a better model than the bulk of the night's reading.
+
 ## What it does at night
 
 When you have been quiet for half an hour, inside hours you set, and not more

@@ -80,7 +80,7 @@ const extras = ['templates', 'cli', 'clamav', 'spamd', 'geoip', 's3', 'socks5', 
 // What a personal agent does, once somebody turns theirs on. Four things
 // rather than the whole list, because the whole list is the documentation.
 // What the assistant can be given, in the order somebody would grant it.
-const agentReach = ['mail', 'contacts', 'computer', 'browser', 'web', 'calendar']
+const agentReach = ['mail', 'contacts', 'calendar', 'reminders', 'notes', 'computer', 'browser', 'web']
 
 // What the agent's memory does, which is three things and not one: it writes
 // itself, it reads what the person already has, and it tidies while nobody is

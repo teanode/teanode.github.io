@@ -65,7 +65,9 @@ welcome:
       Priority: what the agent thinks is waiting on you, beside Starred. The
       chips on a row are its category, its priority, and whether somebody needs
       an answer.
-    calendar: The calendar, as a week. Your phone keeps it in step over CalDAV, and an invitation that arrives as mail becomes an event you can answer.
+    calendar: The calendar, as a week, with the reminders list a tab away. Your phone keeps both in step over CalDAV, and an invitation that arrives as mail becomes an event you can answer.
+    drawerMail: The chat drawer, on every page. Asked what needs you today, the agent searches your mail and answers from what it found.
+    drawerCalendar: The same conversation, a question later. It looks up the calendar tool, reads Thursday, and answers.
     contacts: The address book. The people you keep, synchronized to your phone over CardDAV — photographs, birthdays and all — rather than a list of everyone who has ever written.
     agent: >-
       Your agent's own page: what to call it, how it should write, which
@@ -194,6 +196,8 @@ welcome:
       browser: Your browser
       web: The web
       calendar: Your calendar
+      reminders: Your reminders
+      notes: Your notes
     conversation:
       pick: Choose a conversation
       names:
@@ -316,8 +320,8 @@ welcome:
       title: Forwards flexibly
       body: Patterns route each address to a mailbox, an inbox elsewhere, a webhook or another server.
     calendar:
-      title: A calendar and an address book
-      body: Your phone keeps both in step over CalDAV and CardDAV, signing in with the app password it already has. Invitations arrive and go out as mail.
+      title: A calendar, reminders, notes and contacts
+      body: Your phone keeps them in step over CalDAV, CardDAV and IMAP, signing in with the app password it already has, so its own Calendar, Reminders, Notes and Contacts apps just work. Invitations arrive and go out as mail.
     subscriptions:
       title: Every mailing list, and the way out
       body: Newsletters on a page of their own. Leave one the way its sender says to, or mute it and let it file itself.

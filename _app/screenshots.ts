@@ -27,7 +27,7 @@ export const screenshot = (page: string, theme: ScreenshotTheme, language: strin
 // It opens on the mailbox, which is what the dashboard opens on and the thing
 // most people are deciding about, and works outwards from there.
 export const screenshotPages = [
-  'mailbox', 'priority', 'calendar', 'contacts', 'agent', 'knowledge', 'graph',
+  'mailbox', 'drawerMail', 'priority', 'calendar', 'drawerCalendar', 'contacts', 'agent', 'knowledge', 'graph',
   'subscriptions', 'programs', 'access', 'aliases', 'dns', 'agents',
 ] as const
 export type ScreenshotPage = typeof screenshotPages[number]
@@ -35,6 +35,8 @@ export type ScreenshotPage = typeof screenshotPages[number]
 // Where each picture was taken, for the address bar drawn over it.
 export const screenshotPaths: Record<ScreenshotPage, string> = {
   mailbox: '/mailbox/inbox',
+  drawerMail: '/mailbox/inbox',
+  drawerCalendar: '/mailbox/calendar',
   priority: '/mailbox/priority',
   calendar: '/mailbox/calendar',
   contacts: '/mailbox/contacts',
