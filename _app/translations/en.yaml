@@ -69,6 +69,9 @@ welcome:
     drawerMail: The chat drawer, on every page. Asked what needs you today, the agent searches your mail and answers from what it found.
     drawerCalendar: The same conversation, a question later. It looks up the calendar tool, reads Thursday, and answers.
     contacts: The address book. The people you keep, synchronized to your phone over CardDAV — photographs, birthdays and all — rather than a list of everyone who has ever written.
+    financeSpending: Finance. Income and spending across twelve months, with what was left over; money moved between your own accounts is left out.
+    financeCategories: A month by spending category, under its budgets. Each budget says how far it has gone and whether the month is on track.
+    financeNetWorth: Net worth. Everything you own and owe, from linked accounts, values you enter, and estimates the agent makes where you allowed it.
     agent: >-
       Your agent's own page: what to call it, how it should write, which
       mailboxes it may reach, and what it has spent today.
@@ -178,7 +181,7 @@ welcome:
     points:
       sorts:
         title: Sorts what arrives
-        body: A category, a priority, whether somebody is waiting on an answer, and a line of summary — as chips on the row, and a Priority view beside Starred. A brief each morning says what the day holds.
+        body: A category, a priority, whether somebody is waiting on an answer, and a line of summary, as chips on the row, with a Priority view beside Starred. A brief each morning says what the day holds, and anything that cannot wait reaches you when it arrives.
       drafts:
         title: Drafts in your voice
         body: A summary folded above a long conversation, and a reply written for you to read, change and send. Sending stays with you.
@@ -198,6 +201,7 @@ welcome:
       calendar: Your calendar
       reminders: Your reminders
       notes: Your notes
+      finances: Your finances
     conversation:
       pick: Choose a conversation
       names:
@@ -257,6 +261,28 @@ welcome:
       alone. Settings, then Apps, disconnects it. Ask it a question in words and
       the answer has its memory of you behind it, rather than six calls of your
       own.
+  finance:
+    heading: And your money
+    lead: Link your banks, cards and brokerages through Plaid or SimpleFIN, and the Finance page shows where the money went, where the month is heading, and what it all adds up to.
+    body: >-
+      The rows are kept in your own database, beside your mail, and the
+      credentials are sealed with the server's secret. Your agent reads the
+      same rows, so you can ask how much went on eating out in September, or
+      whether the emergency fund is on track.
+    more: How finance works
+    points:
+      linked:
+        title: Linked, or brought in
+        body: SimpleFIN with a setup token of your own, or Plaid with the operator's keys. Syncs every six hours.
+      categories:
+        title: Your own categories
+        body: Filed by you, by your rules, by the bank's category, and only then by a model. Transfers count as neither spending nor income.
+      budgets:
+        title: Budgets that look ahead
+        body: Each says where the month is heading, counting the bills still to come. Savings targets say what they need each month.
+      netWorth:
+        title: Net worth
+        body: Accounts, holdings, a house and a car, in any currency, with the agent estimating what you let it.
   memory:
     heading: A memory that learns you
     lead: >-

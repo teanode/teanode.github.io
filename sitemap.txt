@@ -7,6 +7,7 @@ https://teanode.com/doc/configuration
 https://teanode.com/doc/agents
 https://teanode.com/doc/memory
 https://teanode.com/doc/mcp
+https://teanode.com/doc/finance
 https://teanode.com/doc/command-line
 https://teanode.com/doc/security
 https://teanode.com/doc/security-review

@@ -27,7 +27,8 @@ export const screenshot = (page: string, theme: ScreenshotTheme, language: strin
 // It opens on the mailbox, which is what the dashboard opens on and the thing
 // most people are deciding about, and works outwards from there.
 export const screenshotPages = [
-  'mailbox', 'drawerMail', 'priority', 'calendar', 'drawerCalendar', 'contacts', 'agent', 'knowledge', 'graph',
+  'mailbox', 'drawerMail', 'priority', 'calendar', 'drawerCalendar', 'contacts',
+  'financeSpending', 'financeCategories', 'financeNetWorth', 'agent', 'knowledge', 'graph',
   'subscriptions', 'programs', 'access', 'aliases', 'dns', 'agents',
 ] as const
 export type ScreenshotPage = typeof screenshotPages[number]
@@ -40,15 +41,18 @@ export const screenshotPaths: Record<ScreenshotPage, string> = {
   priority: '/mailbox/priority',
   calendar: '/mailbox/calendar',
   contacts: '/mailbox/contacts',
+  financeSpending: '/finance/spending',
+  financeCategories: '/finance/spending',
+  financeNetWorth: '/finance/net-worth',
   agent: '/settings/agent',
-  knowledge: '/settings/knowledge/projects/greenfinch',
-  graph: '/settings/knowledge/explore',
-  agents: '/server/agents',
+  knowledge: '/knowledge/projects/greenfinch',
+  graph: '/knowledge/explore',
+  agents: '/manage/agent',
   subscriptions: '/mailbox/subscriptions',
-  programs: '/mailbox/settings/devices',
-  access: '/access',
-  aliases: '/domains/example.com/aliases',
-  dns: '/domains/example.com/settings',
+  programs: '/settings/mailbox/devices',
+  access: '/manage/access',
+  aliases: '/manage/domains/example.com/aliases',
+  dns: '/manage/domains/example.com/settings',
 }
 
 // Every dashboard screenshot is this shape, so a slot the size of one can be

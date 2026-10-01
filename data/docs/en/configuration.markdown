@@ -236,6 +236,15 @@ CRITICAL.
 passwords derived from SMTP credential keys. Generated on first run.  Changing
 it invalidates every SMTP password and orphans bounces for mail already in
 flight, so when moving a server to a new machine this has to come with it.
+Everything sealed in the database is sealed with it too. Started with
+`--secret-file` (or `TEANODE_SECRET_FILE`), the server reads it from that file
+instead and the database does not hold it; see "Keeping the server secret out
+of the database" in [`docs/reference/deployment.md`](https://github.com/ziyan/teanode/blob/main/docs/reference/deployment.md).
+
+**`secretCheck`** — SecretCheck is derived from the secret and written in its
+place when the secret is kept in a file, so that an instance given the wrong
+file refuses to start. It opens nothing. Written by the server; never set by
+hand.
 
 **`mailServers`** — MailServers are the hosts to publish in every domain's MX
 records, in order of preference. Optional; when empty the MX record names this
@@ -708,6 +717,21 @@ plan lists for the account, asked each time the model list is read: every
 other name is refused outright. It has no embeddings,
 so `models.embedding` still needs a keyed provider or a local one.
 
+The plan says how much of its allowance is used on every answer, and the
+Models tab of the agent settings shows what it last said under the provider:
+the plan's name, and a bar for each window with what is left and when it
+resets. Nothing asks the plan between turns, so the numbers are as of its
+last answer, and none are shown until it has answered once. The last reading
+is written to the database, so a restart shows it again rather than nothing.
+A window whose reset time has passed since is shown as the whole
+allowance, until the next answer says how much of the new one is used.
+
+While it runs, each instance shows what the plan said in answer to its own
+turns. With more than one instance, the tab shows what the plan last told
+whichever instance served the page, which may be older than what it told
+another; the database keeps the newest of them, which is what every
+instance starts from.
+
 **`email`** — Email is the destination address when kind is email.
 
 **`webhook`** — Webhook is the destination URL when kind is webhook.
@@ -1060,7 +1084,7 @@ a server at somebody else's builds.
 ### `agent`
 
 The secrets in this section — provider keys, the search key, what a
-connected server is reached with — are sealed with `server.secret` before
+connected server is reached with, the Plaid secret — are sealed with `server.secret` before
 they are stored and opened when they are read, the way the domain table's
 keys are. A database dump holds ciphertext; a server started with a
 different secret cannot read them and says so.
@@ -1110,6 +1134,10 @@ below.
 
 **`mcp`** — Servers speaking the Model Context Protocol whose tools join the
 catalog.
+
+**`finance`** — Which providers people may link their banks, cards,
+brokerages and loans through, and the operator's keys for those that need
+them. Its own section below.
 
 **`skipCertificateCheck`** — Hosts whose TLS certificate is not checked,
 by name. A real loss and narrower than it looks: for a host named here,
@@ -1228,7 +1256,8 @@ existing vectors stale in the same way changing `embedding` does.
 **`decide`** — The model for a question whose answers are known in advance:
 is this file worth opening, which of these folders does this page belong
 under. It writes nothing and cannot be asked to, so it must name a
-`typesafe` provider, and no other kind of work may name one.
+`typesafe` provider, and no other kind of work may name one except
+`categorize`.
 
 Empty is the whole of "off", and is the default. Every decision that can use
 one also has a path that asks a language model, and that is what runs when
@@ -1239,6 +1268,13 @@ The answer comes back in well under a second rather than after a model has
 written a sentence about it, it carries how sure it is, and it cannot be a
 word that was not on the list — which is most of the error handling around
 asking a model to choose.
+
+**`categorize`** — The model that assigns spending categories to finance
+transactions. The one field that may name either kind of provider: a
+`typesafe` provider's decision model, which picks a category from the list
+directly and says how sure it is, or a chat model, which is asked to pick
+one in words. Empty falls back to `decide`, then to `scan`, then to `fast`,
+then to `default`.
 
 **`scan`** — The model for bulk understanding with nobody present: filing
 what a conversation taught, summarizing a document, writing a month's
@@ -1412,6 +1448,18 @@ One for a service metered by the call; as many as it has slots for a
 model of the person's own, where the reading is bound by nothing but the
 machine. Zero and one both mean one at a time.
 
+**`recallTokens`** — How much of a turn's prompt the pages and facts
+recall carries may take, in tokens, a third of it held for facts that no
+carried page holds. Zero resolves to `1200`, about two to four pages. More
+carries more of what recall found, on every turn.
+
+**`digestDocumentRunes`** — A bound on how much of each document a
+dream's reading is shown, in characters, from its first passage on. Zero,
+the default, reads every document whole: a call holds as many documents
+as fit in about forty thousand characters, twenty at most, and a longer
+document is read in parts of that size, in order, and marked read with
+its last part. Set it to read less of each, for less reading.
+
 **`rewriteConcurrency`** — How many pages the nightly run rewrites at once,
 after the reading. One when unset. Each rewrite changes only its own page,
 so pages can be rewritten side by side; on a model that answers slowly, a
@@ -1476,13 +1524,48 @@ which case the `web_search` tool is not offered.
 
 **`apiKey`** — The provider's key. A secret.
 
+### `agent.finance`
+
+The operator holds the provider keys; each person holds their own finance
+sources, the links to their logins
+([`docs/decisions/20260929-the-operator-holds-the-provider-keys-the-person-holds-the-finance-source.md`](https://github.com/ziyan/teanode/blob/main/docs/decisions/20260929-the-operator-holds-the-provider-keys-the-person-holds-the-finance-source.md)).
+
+**`offeredProviders`** — The providers a person may link through: `plaid`,
+`simplefin`, or both. Empty, the default, offers none. SimpleFIN needs
+nothing from the operator: the person pays for the bridge and pastes their
+own setup token. Plaid needs the operator's developer account below, and a
+listed `plaid` without its keys is accepted and not offered to anybody.
+
+### `agent.finance.plaid`
+
+The operator's Plaid developer account.
+
+**`environment`** — `sandbox` for Plaid's fake institutions, free and for
+trying it out, or `production` for real ones. Required once the keys are
+set: keys work only in the environment they were issued for.
+
+**`clientId`** — The developer account's client id. Set together with
+`secret`, or neither.
+
+**`secret`** — The developer account's secret for the environment above. A
+secret.
+
+**`countryCodes`** — The countries whose institutions Plaid Link offers, as
+two-letter codes in capitals, for example `US` and `CA`. Empty means `US`.
+
+**`products`** — What a finance source is linked with: `transactions`, and
+optionally `investments` for brokerage holdings and `liabilities` for what
+is owed on loans and cards. Must include `transactions` when set. Empty
+means `transactions` alone. Plaid charges a monthly fee per finance source
+for each product on paid plans, which is why the operator chooses.
+
 ### `agent.tools`
 
 Risk classes are the floor; this can only make the agent more cautious.
 Both lists take family names — `mailbox`, `domains`, `audit`, `people`,
-`server`, `account`, `general`, `servers`, `browser`, `computer`, `skills`
-— or tool names. `servers` is the family of the connected servers' tools, and `people`
-the family of the ones that reach accounts and access.
+`server`, `account`, `general`, `servers`, `browser`, `computer`, `skills`,
+`finance` — or tool names. `servers` is the family of the connected servers' tools, `people`
+the family of the ones that reach accounts and access, and `finance` the finance tool.
 
 **`disabled`** — Families or tools never offered to anybody.
 

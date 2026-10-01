@@ -11,6 +11,7 @@ import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import type { SvgIconComponent } from '@mui/icons-material'
 import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined'
+import AccountBalanceOutlinedIcon from '@mui/icons-material/AccountBalanceOutlined'
 import AccountTreeOutlinedIcon from '@mui/icons-material/AccountTreeOutlined'
 import BedtimeOutlinedIcon from '@mui/icons-material/BedtimeOutlined'
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined'
@@ -28,9 +29,12 @@ import LibraryBooksOutlinedIcon from '@mui/icons-material/LibraryBooksOutlined'
 import MailOutlineIcon from '@mui/icons-material/EmailOutlined'
 import LanguageOutlinedIcon from '@mui/icons-material/LanguageOutlined'
 import NewspaperOutlinedIcon from '@mui/icons-material/NewspaperOutlined'
+import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined'
 import ReplyOutlinedIcon from '@mui/icons-material/ReplyOutlined'
 import RemoveIcon from '@mui/icons-material/Remove'
 import RocketLaunchOutlinedIcon from '@mui/icons-material/RocketLaunchOutlined'
+import SavingsOutlinedIcon from '@mui/icons-material/SavingsOutlined'
+import ShowChartOutlinedIcon from '@mui/icons-material/ShowChartOutlined'
 import SmartphoneOutlinedIcon from '@mui/icons-material/SmartphoneOutlined'
 import SortOutlinedIcon from '@mui/icons-material/SortOutlined'
 import VerifiedUserOutlinedIcon from '@mui/icons-material/VerifiedUserOutlined'
@@ -80,7 +84,16 @@ const extras = ['templates', 'cli', 'clamav', 'spamd', 'geoip', 's3', 'socks5', 
 // What a personal agent does, once somebody turns theirs on. Four things
 // rather than the whole list, because the whole list is the documentation.
 // What the assistant can be given, in the order somebody would grant it.
-const agentReach = ['mail', 'contacts', 'calendar', 'reminders', 'notes', 'computer', 'browser', 'web']
+const agentReach = ['mail', 'contacts', 'calendar', 'reminders', 'notes', 'finances', 'computer', 'browser', 'web']
+
+// What linking a bank gives a person, in the order the Finance page shows
+// it: where the money went, where the month is heading, and what it adds up to.
+const financePoints: { key: string, Icon: SvgIconComponent }[] = [
+  { key: 'linked', Icon: AccountBalanceOutlinedIcon },
+  { key: 'categories', Icon: ReceiptLongOutlinedIcon },
+  { key: 'budgets', Icon: SavingsOutlinedIcon },
+  { key: 'netWorth', Icon: ShowChartOutlinedIcon },
+]
 
 // What the agent's memory does, which is three things and not one: it writes
 // itself, it reads what the person already has, and it tidies while nobody is
@@ -148,6 +161,7 @@ claude mcp add teanode -- teanode agent mcp serve`
 export const WelcomePage = () => {
   const translate = useTranslate()
   const quickStart = generatePath(routes.docPath, { docId: 'quick-start' })
+  const financeDoc = generatePath(routes.docPath, { docId: 'finance' })
   const snippet = useMemo(() => renderMarkdown('```bash\n' + install + '\n```'), [])
   const mcpSnippet = useMemo(() => renderMarkdown('```bash\n' + connect + '\n```'), [])
   const answers = useMemo(
@@ -272,6 +286,45 @@ export const WelcomePage = () => {
             <Box sx={{ minWidth: 0 }}>
               <Markdown html={mcpSnippet.html} compact/>
             </Box>
+          </Box>
+
+          {/* Money is the agent's too, once a bank is linked, but it is a
+              page of the dashboard as much as a thing to ask about, so it
+              gets the words on the left and what it shows on the right. */}
+          <Box
+            sx={{
+              display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 1fr) minmax(0, 1fr)' },
+              gap: { xs: 2.5, md: 5 }, alignItems: 'start',
+              mt: { xs: 4, md: 5 }, pt: { xs: 3, md: 4 }, borderTop: 1, borderColor: 'divider',
+            }}
+          >
+            <Box sx={{ minWidth: 0 }}>
+              <Overline><T id='welcome.finance.heading'/></Overline>
+              <Typography sx={{ maxWidth: measure, mb: 1.5 }}><T id='welcome.finance.lead'/></Typography>
+              <Typography variant='body2' color='text.secondary' sx={{ maxWidth: measure, lineHeight: 1.6, mb: 1.5 }}>
+                <T id='welcome.finance.body'/>
+              </Typography>
+              <Button component={NavLink} to={financeDoc} size='small' sx={{ ml: -1 }}>
+                <T id='welcome.finance.more'/>
+              </Button>
+            </Box>
+            <Stack spacing={1.75} sx={{ minWidth: 0 }}>
+              {financePoints.map(({ key, Icon }) => (
+                <Stack key={key} direction='row' spacing={1.5} sx={{ alignItems: 'flex-start' }}>
+                  <Tile sx={{ width: 34, height: 34, borderRadius: '9px', flexShrink: 0 }}>
+                    <Icon sx={{ fontSize: 18 }}/>
+                  </Tile>
+                  <Box sx={{ minWidth: 0 }}>
+                    <Typography sx={{ fontWeight: 600, fontSize: 14.5 }}>
+                      <T id={`welcome.finance.points.${key}.title`}/>
+                    </Typography>
+                    <Typography variant='body2' color='text.secondary' sx={{ lineHeight: 1.5 }}>
+                      <T id={`welcome.finance.points.${key}.body`}/>
+                    </Typography>
+                  </Box>
+                </Stack>
+              ))}
+            </Stack>
           </Box>
         </Section>
 

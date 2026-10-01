@@ -180,6 +180,29 @@
     }
   },
   {
+    "slug": "finance",
+    "group": {
+      "en": "Running it",
+      "zh": "运行它",
+      "ja": "動かす"
+    },
+    "title": {
+      "en": "Finance",
+      "zh": "财务",
+      "ja": "金融"
+    },
+    "description": {
+      "en": "Your banks, cards and brokerages linked through Plaid or SimpleFIN: transactions in your own categories, budgets that say where the month is heading, savings targets and net worth, all kept in your own database.",
+      "zh": "通过 Plaid 或 SimpleFIN 接入你的银行、信用卡和证券账户：按你自己的类别归好的交易、说得出这个月走向的预算、储蓄目标和净资产，全都存在你自己的数据库里。",
+      "ja": "Plaid か SimpleFIN でつないだ銀行、カード、証券口座。自分のカテゴリで分けた取引、月の行き先を言う予算、貯蓄目標と純資産。どれもあなた自身のデータベースに。"
+    },
+    "filename": {
+      "en": "en/finance.markdown",
+      "zh": "zh/finance.markdown",
+      "ja": "ja/finance.markdown"
+    }
+  },
+  {
     "slug": "command-line",
     "group": {
       "en": "Running it",

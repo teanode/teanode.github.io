@@ -81,12 +81,27 @@ anything that changes the machine. Your own browser tab, through an extension,
 so it can act on a page only you can sign into while you watch. Your calendar,
 so it knows what your week already holds, and your reminders list beside it.
 The notes your phone's Notes app keeps in your mail account, which it can
-read and help write. And the web, when a search provider is configured.
+read and help write. Your finances, through banks and cards you link
+(see [Finance](/doc/finance)). And the web, when a search provider is
+configured.
 
 **Remembers.** Facts about you between conversations — who the accountant is,
 how you sign, what never to answer automatically. It learns from your hands
 too: a message you file somewhere other than where it sorted it becomes an
-example the next run is shown.
+example the next run is shown. And it learns from its own work: when a
+conversation where it ran commands got somewhere, it files what worked as a
+lesson, but only when a command it names actually succeeded, and the next
+time the same kind of work comes up it is shown the two nearest lessons.
+
+**Tells you what cannot wait.** When the mail it sorts shows something you
+should know now (a notice from your child's school, a run of sign-in codes you
+did not ask for), it says so in the conversation drawer and in the chat app
+you linked, unasked. Several messages about one thing make one alert. It
+sends five a day at most, nothing between 22:00 and 07:00 unless it cannot
+wait, and never the same thing twice in a week. Say "don't tell me about
+these" and that sender, domain or kind is muted; the Alerts tab lists what it
+said and what you muted, and each of the limits can be changed there or with
+`teanode agent settings set`.
 
 **Offers, and keeps at it.** Each night it looks through your mail for work
 it could do for you and writes each as an offer on the Ideas tab: what it
@@ -137,6 +152,8 @@ says so there rather than trusting everyone to leave a switch alone.
 - [Memory](/doc/memory) is what it keeps between conversations: a graph of
   pages it writes without being asked, the places it reads from, and what it
   does with all of it overnight.
+- [Finance](/doc/finance) is the banks, cards and brokerages it can read, and
+  the budgets and net worth built on them.
 - [Configuration](/doc/configuration#agent) documents every setting in the
   `agent` section: providers, models, features, limits, retention, search,
   tools, the browser, and connected servers.
