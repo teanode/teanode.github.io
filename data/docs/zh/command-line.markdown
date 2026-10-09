@@ -227,35 +227,47 @@ Shell 补全由二进制文件自己提供：
 | --- | --- |
 | `teanode agent ask <message \| ->` | 对你的代理说点什么，并打印它的回答；`--new` 开一个具名对话，`--conversation` 接着某一个，`--attach FILE`（可重复）递给它一个文件——图片给它看，文本文件念给它听，其他的报个名字——`--json` 流式输出每一个事件，`--quiet` 只打印答案。需要你点头的工具会在终端上问，y 或者 n——绝不做成一个开关 |
 | `teanode agent chat` | 同样的事，一轮一轮来，直到一个空行 |
-| `teanode agent brief on\|off\|now` | 每天早上一封简报，以邮件寄来：这一天有什么、什么在等回复、什么被扣着。`on --at 07:30 --days 1-5` 说什么时候；`now` 立刻寄一封。它会写一个名叫「Daily brief」的普通日程，所以 `agent schedule list` 看得到它，任何人都可以改写它问的是什么 |
 | `teanode agent conversation list\|show\|new\|rename\|goal\|main\|archive\|unarchive\|delete` | 主对话和那些命名的对话；`list --query` 按标题或者说过的话里的词找一个，`list --archived` 列出收起来的那些而不是还开着的；`show` 在消息上方打印目标（如果有的话），在下方打印任务清单、做完的打勾，并用 `--first` 和 `--offset` 往回翻长对话；`main` 把一个命名对话变成主对话，或者开一个新的主对话、把旧的留成命名的；`archive <id>` 把一个连同里面的一切收起来，`unarchive <id>` 再拿回来，两个都不会先问，因为两个都不丢东西；`delete` 会先问，并且会带走随它一起来的文件 |
-| `teanode agent conversation goal [<conversation-id>] [<goal>]` | 代理在一个对话里一直朝着做的事，跨它自己的多个回合，直到它说做到了、或者你把它清掉：`goal <id> "这周回复房东的每一封邮件；发出去之前先问我"` 设一个，`goal <id> --clear` 撤掉它并停下正在进行的那一轮，单独一个 `goal` 会列出还在进行的目标及其状态——进行中，或者在等你——以及代理对每一个的最后一句话，和代理页面的「目标」页是同一份清单；`goal <id> --met` 说明一个已经做完，如果它正在执行某条想法，那条想法也随之完成。`conversation new --goal` 开一个一上来就带目标的对话 |
-| `teanode agent idea list\|propose\|start\|done\|dismiss\|reopen` | 你的代理提出要为你做的事，以及每一条提议后来怎样了：和「想法」页、代理的 `idea` 工具是同一份清单。`list` 列出还开着的，`--status dismissed` 或 `--all` 列出其余的；`start <id>` 开一个以这条想法命名的对话，并打印要在里面说的话，加 `--send` 就直接说出去；`done`、`dismiss` 和 `reopen` 说明一条的结果。`propose` 保存一条你自己写的，并像代理的那样核对：它只能用到你的代理有的工具，在工具要代表你对别人做事时必须说明会先问，并用 `--evidence message:<item-id>:<它是什么>` 说明是什么引出了它 |
+| `teanode agent goal list [--state working\|waiting\|met\|dropped]` | 代理在对话之外、在后台一直在做的事，最近活跃的在前：每个目标的 id、它进展到哪里（进行中、等你回应、已达成、已放弃）、它的标题和一行状态；和代理页面的「目标」页是同一份清单 |
+| `teanode agent goal show <goal-id>` | 一个目标：它是为了什么、它的状态、它下次什么时候再看、它建了些什么（日程、后台工作、邮件规则、提醒事项、主动通知的静音），以及它上面发生过什么，最新的在前 |
+| `teanode agent goal start <title> <description>` | 在后台开始一个目标：先是几个词的标题，再是它为了什么、做完是什么样子。它的第一轮立刻在它自己的对话里运行；只有需要你的时候，你才会在主对话里听到它 |
+| `teanode agent goal tell <goal-id> <text>` | 回答一个在等你的目标，或者告诉它一件它该知道的事；一分钟之后它接着做 |
+| `teanode agent goal take-schedule <goal-id> <schedule-id>` | 把一个日程交给这个目标：日程的每次运行都在目标的对话里进行，算作目标的回合；目标有日程的时候，不再自己安排回合 |
+| `teanode agent goal done\|drop\|reopen <goal-id>` | 把一个目标标成已达成、停下它，或者把一个已达成或已放弃的目标重新拿起来 |
+| `teanode agent idea list\|get\|propose\|start\|done\|dismiss\|reopen` | 你的代理提出要为你做的事，以及每一条提议后来怎样了：和「想法」页、代理的 `idea` 工具是同一份清单。`list` 列出还开着的，`--status dismissed` 或 `--all` 列出其余的，`--limit` 加 `--offset` 列出其中一页；`get <id>` 完整显示一条，连同开始它时你要说的话，以及是什么引出了它；`start <id>` 开一个以这条想法命名的对话，并打印要在里面说的话，加 `--send` 就直接说出去；`done`、`dismiss` 和 `reopen` 说明一条的结果。`propose` 保存一条你自己写的，并像代理的那样核对：它只能用到你的代理有的工具，在工具要代表你对别人做事时必须说明会先问，并用 `--evidence message:<item-id>:<它是什么>` 说明是什么引出了它 |
 | `teanode agent conversation todo list` | 一个对话保存的任务清单：代理自己的，它在分好几步做一件事时写下，并且每一轮都拿给自己看。`todo list <conversation-id>` 把它打印出来；只有代理会改它 |
 | `teanode agent run list\|show\|stop` | 代理自己做过什么：每一次模型调用都是一次运行，`list` 用 `--first` 和 `--offset` 翻页；`--kind triage --kind reply` 或者 `--kind triage,reply` 把范围缩到某几类运行，`--query` 缩到它们是关于什么的；有 `agent:act` 的运维者可以用 `--all` 或者 `--agent <id>` 列出所有人的；`stop <run-id>` 就地停下一个，已经做完的那些算数 |
 | `teanode agent tools` | 你的代理有哪些工具，按你可以使用的样子，带上风险等级以及它是否会先问 |
-| `teanode agent memory index\|get\|search\|note\|page\|merge\|link\|unlink\|move\|forget\|history\|recall\|learned` | 你的代理关于你知道些什么，作为一个个带编号事实的页面：`get people/alice-chen`、`note people/alice-chen "管账" --applies-to triage,reply`、`link people/alice-chen projects/greenfinch --relation works_on`、`move notes/marigold things`；`move --number 3 people/alice-chen projects/greenfinch` 是把其中一条事实挪到另一个页面上，而不是挪整个页面，并且保留它所依据的原话；`forget people/alice-chen --number 2`；不带编号的 `forget people/alice-chen` 会连同它下面的一切一起拿掉，并且先问一句，`--force` 跳过这个询问；`merge work/old-portal projects/greenfinch` 把一个页面折进另一个；还有 `history projects/greenfinch`。`search "<words>"` 按词找页面和事实，每次 `--first` 条（默认 40）；找到更多时会说明还有多少页面和事实（数不完的地方写「至少」），以及打印下一页的 `--offset` |
+| `teanode agent memory index\|get\|search\|note\|page\|merge\|link\|unlink\|move\|forget\|history\|recall\|learned` | 你的代理关于你知道些什么，作为一个个带编号事实的页面：`get people/alice-chen`，用 `--link-limit` 和 `--link-offset` 可以把一个页面的连线分几次打印；`note people/alice-chen "管账" --applies-to triage,reply`、`link people/alice-chen projects/portal --relation works_on`、`move notes/marigold things`；`move --number 3 people/alice-chen projects/portal` 是把其中一条事实挪到另一个页面上，而不是挪整个页面，并且保留它所依据的原话；`forget people/alice-chen --number 2`；不带编号的 `forget people/alice-chen` 会连同它下面的一切一起拿掉，并且先问一句，`--force` 跳过这个询问；还有 `history projects/portal`。`search "<words>"` 按词找页面和事实，每次 `--first` 条（默认 40）；找到更多时会说明还有多少页面和事实（数不完的地方写「至少」），以及打印下一页的 `--offset` |
 | `teanode agent memory recall "<question>"` | 一个问题会往一轮对话里带进什么：召回会展开的那些页面，每一个连同上面的事实，按页面自己的编号，用 `memory get` 打印页面的样子打印出来。它就是一轮真实对话做的那个召回，所以它能回答「它当时为什么不知道那件事？」，而不用再问它一遍——而且它不花钱：没有任何东西问过模型，也没有任何东西被标成用过，所以同一张图问两遍答案一样。`--json` 把页面和事实按原样打印出来。`--search "<words>"`（最多两个）和 `--broad` 按一份检索计划来走，就像一轮真实对话按它的深度判断来走；`--explain` 还会说明原因：检索方式和计划、跑过的每一个查询（消息本身、每个计划中的搜索、连线页面的那一跳、宽泛的那一遍），每个搜索找到了多少，以及什么被留在了外面 |
 | `teanode agent memory overview <path>` | 一个页面所讲的那样东西是怎么运作的，由最近一夜根据这个页面以及它下面和旁边的页面写成：它是什么、有哪些部分、跟它连着的东西是什么关系、最近在发生什么、有什么突出的地方。`--rewrite` 请下一夜重写；`memory get` 也会把它打印在开头下面，主题的话还会带上它的反思。最后会说明这份概览覆盖了多少，由服务器来数：它的提示词展示了下面多少个页面、一个主题的多少个页面和多少条连线（总共有多少），其中多少没有自己的概览，以及写它所依据的东西之后有没有变过 |
 | `teanode agent survey "<question>"` | 根据概览回答一个关于整体的问题：范围内每个页面一次只读的运行，几个同时跑，然后一次把它们合成一份带引用的报告。`--scope themes/<one>` 或者任何一个页面可以缩小范围；不给的话覆盖每一个顶层主题。运行的种类是 survey，要几分钟。它在服务器上开始这次调查，然后每隔几秒问一下完成了没有，所以不会有一个请求开那么久。因为一时的原因失败的读取（服务器在它的代理后面重启、网络断了、超时）会再试，间隔越来越长；三十分钟之后命令就不再等了。不管怎么结束，它都会说出这次调查的 id，供 `teanode agent background show <id>` 使用；`--no-wait` 打印 id 就返回，中途停掉命令也会让它接着跑。`--json` 给出完成的结果，连同报告和那些运行 |
 | `teanode agent background list\|show\|stop` | 你的代理没等结果就开始的那些调查和子代理，以及 `agent survey` 开始的调查：`list` 按从新到旧说明哪些在排队、在跑、或者刚结束；`show <id>` 打印一个的报告或回答，并在标准错误上说明它的状态和它做过的运行；`stop <id>` 停下一个还在排队或在跑的，它之后什么也不会唤醒 |
 | `teanode agent memory evaluate <file>` | 把一组问题重新跑一遍召回，然后逐题说明它需要的那些事实会不会被带上：一题一行——`direct 03 hit`、`changed 12 miss: carried people/alice-chen saying "berlin"`——然后是分类和总计，只要有一题没中，退出码就不是零。没有任何东西问过模型，图里也没有任何东西被标成用过，所以同一张图问两遍答案一样，而这一组题可以在一夜之前和之后各跑一次，看看这一夜值多少。文件的格式，以及一组可以拿你自己图里的问题替换掉的起始题目，在仓库的 `docs/evaluation/` 里。`--mode planned` 按每个问题所带的计划来走（见 `memory plan`），就像一轮真实对话那样 |
-| `teanode agent memory answers <file>` | 回答一组问题里每一个带 `expectedAnswer` 的问题，分别只凭记忆、只凭来源，或者两者一起（`--from memory,sources,both`），再拿预期的答案给每一个回答打分：每个问题和来源一行——`memory changed-01 stale gave the old address`——然后是按来源分的得分、各项裁定、花费，以及一个回答用了多长时间。每个问题和来源调用两次模型，作为 `evaluate` 类的运行；不会往任何对话或者图里写东西。`--json` 打印每一个回答。见仓库的 `docs/evaluation/`。`memory@planned` 和 `both@planned` 会按每个问题的 `plan` 来走 |
+| `teanode agent memory answers <file>` | 回答一组问题里每一个带 `expectedAnswer` 的问题，分别只凭记忆、只凭来源，或者两者一起（`--from memory,sources,both`），再拿预期的答案给每一个回答打分：每个问题和来源一行——`memory changed-01 stale gave the old address`——然后是按来源分的得分、各项裁定、花费，以及一个回答用了多长时间。每个问题和来源调用两次模型，作为 `evaluate` 类的运行；不会往任何对话或者图里写东西。`--json` 打印每一个回答。见 `docs/evaluation/`。`memory@planned` 和 `both@planned` 会按每个问题的 `plan` 来走 |
 | `teanode agent memory plan <file>` | 问深度判断，一轮真实对话会为每个问题走哪份检索计划；用 `--output <file>` 把这组问题连同每个问题的 `plan` 写回去，供 `evaluate --mode planned` 和 `answers --from memory@planned` 使用。每个问题调用一次快速模型，作为 `evaluate` 类的运行。`--stored` 改为给记忆检查里已确认和已更正的问题做计划，而不是给一个文件里的 |
 | `teanode agent knowledge list\|add\|set\|pause\|resume\|sync\|remove` | 你的代理读取的那些地方：`add "work" ~/work --computer laptop --under work`；`set work --cron "0 4 * * *" --under projects` 改一个已经存在的来源——它的名字、它的路径、它找到的东西归到哪里、多久读一次、格式、邮箱、它下面每一个代码检出是不是都要读——你没给的都原样不动，所以只是改个钟点，不会让你付出「删掉再加一遍」的代价。`--read-every-checkout` 会读这条路径底下每一个检出的文件——默认情况下，一个几乎没有你的工作在里面的检出只保留它的简介，页面会说明它是什么、在哪儿，而它的源码不被索引，来源那一行会说明这样的检出有多少个、涉及多少文件；`--own-commits-at-least` 说明一个检出要有多少你自己的提交，它的文件才会被读，不管它的历史有多长（不去管它，程序会自己算：两个提交，或者日志的五十分之一，取大的那个，上限二十五——并且永远不会超过整段历史，所以一个你只提交过一次、别人一次都没提交过的仓库就算你的；`1` 是旧规则，有任何一个提交就算）；`--commits-per-pass` 说明对这棵树的一遍扫描要带上多少历史，由里面的那些检出分摊，从新到旧（程序自己的节奏是两千）；`sync` 现在就再读一遍；`pause` 会把已经找到的都留着；`remove` 会忘掉它找到的一切，所以先问一句，`--force` 跳过这个询问。`--format` 说明那里的东西该怎么读：`files`（一棵文件树，认得 git）、`journal`（按日期记的笔记），或者 `records`（一个装 JSON 行的文件夹，任何脚本都能写，旁边放一个 `refresh` 脚本，守护进程会在每次扫描前运行它——可以让你的代理来写） |
 | `teanode agent knowledge search "<words>"` | 在已经索引过的东西里找段落——你的代码、你的聊天、你的笔记——不用请你的代理替你去找。它跟你代理的知识工具跑的是同一个搜索，所以你看到的就是它看到的：从日志里抄出来的一个标识符（`ComputeShippingQuote`）会被精确查出来，并打印成定义它的那个文件和行号，然后才是那些段落，每一段都列在它所来自的文档下面，带着可以把那份文档读回来的标识符。`--first` 说要几条，`--source <id-or-name>` 把范围缩到一个来源，`--json` 按原样打印每一行，带着各自的分数。如果这套部署没有配嵌入模型，它会说明——只按词找到的，会漏掉一句一个词都不重合的同义改写。`--offset` 说明跳过排名里的多少条；一次找到的比打印出来的多的搜索，结尾会说明还有多少段落（数不完的地方写「至少」），以及打印下一页的 `--offset`；一页接一页地读，每一段只会出现一次，顺序和第一次一样 |
 | `teanode agent knowledge read <document-id>` | 按搜索打印出来的标识符读其中一份文档；从引用里抄出来的 `<id>#<passage>` 也认。`--from` 是从正文的哪里开始，按字符数算，`--first` 是打印多少；一次没读到结尾的读取会说明还剩多少，并打印出接着往下读的那条命令 |
 | `teanode agent source-type list\|search\|install\|update\|add-local\|show\|remove` | 这台服务器能读的那些知识来源类型，从签过名的来源类型仓库里装：`search` 说明仓库里有什么，`install rss` 在保存之前先核对签名，`update` 装一个更新的版本，`add-local <source.md>` 加一个你自己的类型，没有签名、标成本地，`show` 说明一种类型会运行什么、要哪些设置。某种类型的来源用 `teanode agent knowledge add <name> --type rss --setting url=https://example.com/feed.xml` 来加 |
 | `teanode agent knowledge secret list\|set` | 一个来源的类型所要的密钥，比如某个服务的令牌：是你的，每个来源一套。`secret list <source>` 说明它要什么、每一项有没有填；`secret set <source> <key>` 不带值时会不回显地读入 |
-| `teanode agent dream log\|runs\|now\|bootstrap\|reread` | 那些梦：负责读取、归档和自测的运行；`runs <id>` 列出某一趟梦做过的每一次模型调用，每一次都是一个可以用 `agent run show` 打开的运行；`now` 会在下一分钟开始一趟，不管代理的时段是什么；`bootstrap on` 会用更宽的限额一直跑下去，直到没有东西等着被读，用于第一次全量读取；`reread --minutes 60` 把某一夜在那段时间里标成已读的东西放回去 |
+| `teanode agent dream log\|runs\|now\|bootstrap\|reread` | 那些梦：负责读取、归档和自测的运行；`runs <id>` 列出某一趟梦做过的每一次模型调用，每一次都是一个可以用 `agent run show` 打开的运行；`now` 会在一分钟之内开始一趟，不管代理的时段是什么；`bootstrap on` 会用更宽的限额一直跑下去，直到没有东西等着被读，用于第一次全量读取；`reread --minutes 60` 把某一夜在那段时间里标成已读的东西放回去 |
 | `teanode agent schedule list\|add\|set\|enable\|disable\|remove\|run` | 它在设定的时间自己做的那些事：`add Morning "0 8 * * 1-5" "今天有什么需要我？" --deliver mail`，一行你所在时区的 cron；或者一个单独的时刻 `"@at 2026-09-12 09:00"`，又或者一个从现在起的间隔 `"@in 20m"`——它会被存成它所指的那个时刻，并且只跑一次。`set <id> --cron "0 7 * * 1-5"` 就地改一个——`--name`、`--cron`、`--prompt`（`-` 从标准输入读）和 `--deliver`，你给什么才改什么——而 `disable <id>` 让它不再运行但不拿掉它，`enable <id>` 再让它跑起来 |
+| `teanode agent brief on\|off\|now` | 每天早上一封简报，以邮件寄来：这一天有什么、什么在等回复、什么被扣着。`on --at 07:30 --days 1-5` 说什么时候；`now` 立刻寄一封。它会写一个名叫「Daily brief」的普通日程，所以 `agent schedule list` 看得到它，任何人都可以改写它问的是什么 |
 | `teanode agent feedback` | 从你的所作所为记录下来的更正，代理会把它们当例子看 |
 | `teanode agent channel list\|set\|unlink\|remove` | 你用来和代理说话的聊天应用：你自己的 Telegram 或者 Discord 机器人。`set telegram --token -` 从标准输入读机器人的令牌；`list` 显示某个聊天要发给机器人的 `/link CODE` 里的那个码，以及机器人是否在跑；`unlink` 会画一个新码 |
 | `teanode contact list\|show\|add\|edit\|remove` | 你的通讯录：你留着的那些人，你的手机和电脑通过 CardDAV 同步它们。`add --name "Ada Lovelace" --email ada@example.com` 留下一个；`edit <id> --name "Ada King"` 只改你给的那部分，名片上其余的原样不动，所以改个名字不会把手机放上去的那张照片扔掉；`--card -` 从标准输入读一整张 vCard |
-| `teanode agent skill list\|search\|install\|update\|remove\|enable\|disable\|scope\|secret` | 从技能注册表安装的工具，给这台服务器上的所有人：`search` 说有些什么，`install weather` 在保留任何东西之前先检查签名和哈希，`update` 不带名字就把有更新的都装上。`scope <name> operator\|person\|skill` 决定这里由谁来填这个技能的秘密——整台服务器一套值、每个人自己的，或者技能自己声明的那样。安装和划定范围需要 `server:manage`。会运行命令的技能，命令跑在你接上的电脑上，会先问，而且无人看着的运行永远用不到它。`secret list\|set\|clear` 是给技能向 *你* 而不是向服务器索要的那些值用的：`secret set news NEWSAPI_KEY` 从终端读取而不回显，没有终端时从标准输入读 |
+| `teanode calendar list\|show\|add\|edit\|remove` | 你的日历，你的手机和电脑通过 CalDAV 同步它。`list --from 2026-09-14 --until 2026-09-21` 为每一次发生的事印一行，重复的事件按每一次出现各印一行；`add --title Standup --starts 2026-09-14T09:30 --repeat FREQ=WEEKLY;BYDAY=MO` 往里放一件事；`--invite ada@example.com` 用邮件把邀请寄出去，而移动或者删除这个事件会告诉所有被邀请的人；`--all-day` 属于那一天而不是某个时刻，它的 `--ends` 是它所在的最后一天，所以两端同一个日期就是一天；`--file -` 从标准输入读一整个 iCalendar 文件。时间按日历自己的时区读写，除非它们自带偏移 |
+| `teanode calendar free` | 你什么时候有空：工作日里没有安排的那些时段，一天一天地列。`--earliest 08:00 --latest 18:00` 移动一天的两端；整天的条目不会让一天变忙，取消了的也不会。用的是回答手机 free-busy 请求的同两个函数，所以这里印出来的和同事的客户端被告知的不可能不一致 |
+| `teanode calendar calendars\|set` | 日历本身：它们叫什么、客户端把它们画成什么颜色、新事件写在哪个时区，以及一周从哪一天画起——`set --timezone Europe/Berlin`、`set --week-start monday`。除非某个日历另有说法，周从星期日开始；而五天视图无论如何都是周一到周五，因为一个工作周就是那样 |
+| `teanode reminder list\|add\|edit\|done\|reopen\|remove` | 你的提醒事项清单，就是日历旁边那份，手机上的「提醒事项」通过 CalDAV 同步它。`add "买邮票" --due 2026-09-29` 在那一天到期，`--due 2026-09-29T15:00` 按日历的时区在那个时刻到期；`list --done` 列出已经勾掉的，`list --all` 两种都列；`done` 勾掉一条，`reopen` 把它放回去 |
+| `teanode note list\|show\|add\|edit\|remove` | 你的备忘录：手机的「备忘录」存在你邮件账户里、通过 IMAP 同步的那些。`add "行李清单"` 写一条，第一行就是它的标题，`--file -` 从标准输入读正文，`edit <id>` 替换一条的正文；手机下次同步时会看到改动。有不止一个邮箱时，用 `--mailbox` 选一个 |
+| `teanode calendar request <request-id>` | 查一次日历保存有没有完成，即使它的事件或者日历已经被删掉。`add`、`edit` 和 `remove` 在改动一个事件之前会打印一个请求 ID；得到一个不确定的回应之后，在这里查它，或者用 `--request-id` 带着同样的操作和字段重试。重试一次删除，会在加载那个已删除的事件之前先核对它是否完成。查不到回执，可能意味着原来的请求还在进行。字段变了就需要一个新的 ID |
+| `teanode calendar stop <request-id>` | 在丢掉一个不确定请求的字段之前先把它了结。还没提交的请求会被持久地停下；已经完成的改动会被报告出来，而不会被撤销。停止的回应失败了，那仍然是不确定的，所以用同一个请求 ID 重试 |
+| `teanode agent skill list\|search\|install\|update\|remove\|enable\|disable\|scope\|secret` | 从技能注册表安装的工具，给这台服务器上的所有人：`list` 说出每个技能有哪些工具，`list <name>` 说明那个技能的每个工具做什么，`search` 说有些什么，`install weather` 在保留任何东西之前先检查签名和哈希，`update` 不带名字就把有更新的都装上。`scope <name> operator\|person\|skill` 决定这里由谁来填这个技能的秘密：整台服务器一套值、每个人自己的，或者技能自己声明的那样。安装和划定范围需要 `server:manage`。会运行命令的技能，命令跑在你接上的电脑上，和 `shell` 工具一样，只有快速模型判断一次调用会代表你发言或者撤不回来时才先问；没有人看着时，不用问的就运行，其余的拒绝。`secret list\|set\|clear` 是给技能向 *你* 而不是向服务器索要的那些值用的：`secret set news NEWSAPI_KEY` 从终端读取而不回显，没有终端时从标准输入读 |
 | `teanode agent mcp list\|connect\|disconnect\|serve` | 运维者声明的那些连接的服务器，以及你到它们的连接；`connect tracker --credential -` 从标准输入读你的凭据，需要授权的服务器会打印要打开的地址；`--loopback` 则把授权带回这个终端，给只应答环回地址的服务用; `serve` 在这个终端上应答这套协议，所以这台机器上的一个程序可以用你代理的那些工具，而且哪里都不用粘令牌——`claude mcp add teanode -- teanode agent mcp serve` |
 | `teanode app list\|rename\|disconnect` | 通过在浏览器里批准而获准以你的身份使用代理工具的那些程序：`rename <client-id> <name>` 让名字在续期时保留，`disconnect <client-id>` 吊销它持有的每一个令牌，于是它得重新获得批准 |
-| `teanode agent settings show\|set` | 你的代理：`set enabled=true name=Bertie instructions=-` 从标准输入读那个长值；键由 `set --help` 列出。`set alerts=false` 让它不再主动告诉你邮件里的事；`alert-quiet-start=22:00 alert-quiet-end=07:00` 是只说等不得的事的那段夜里，`alert-daily-most=5` 是一天最多几条 |
+| `teanode agent settings show\|set` | 你的代理：`set enabled=true name=Bertie instructions=-` 从标准输入读那个长值；键由 `set --help` 列出。`set alerts=false` 让它不再主动告诉你邮件里的事；`alert-quiet-start=22:00 alert-quiet-end=07:00` 是只说等不得的事的那段夜里，`alert-daily-most=5` 是一天最多几条。`unattended=outward,destructive` 让它在你不在的时候也做这几类本来要等你点头的事（另外几类是 `money`、`granting` 和 `listed`；留空就一类都不允许） |
 | `teanode agent alert list\|mute\|mutes\|unmute` | 你的代理主动告诉过你什么，以及你请它别再说的：和代理页面上的「主动通知」卡片是同一份清单。`list` 列出每一条提醒以及它关于的那些邮件；`mute <alert-id>` 停掉关于它所涵盖内容的提醒（那一阵，或者一封邮件的发件人），`--scope subjectKey`、`sender`、`domain` 或 `kind` 按它的主题、发件人、他们的域名或它的种类（一阵，或者像 `notification` 这样的类别）；`mute --target offers@shop.example.com` 由你自己点名一个，范围从它本身读出，除非 `--scope` 另说；`mutes` 列出这些，`unmute <mute-id>` 收回一个 |
 | `teanode agent settings categories add\|remove` | 固定的那些之外，你自己的类别 |
 | `teanode agent settings forget` | 删掉这个代理和它学到的一切；会先问 |
@@ -284,32 +296,44 @@ Shell 补全由二进制文件自己提供：
 | `teanode finance link-plaid` | 打印打开 Plaid 窗口的那个页面的地址，给浏览器用，然后一直等到新的财务来源出现；`--no-wait` 立刻返回 |
 | `teanode finance link-simplefin [<setup-token> \| -]` | 向 SimpleFIN Bridge 兑换一个设置令牌；`-` 或者不带参数时不回显地读取它。一个令牌只能兑换一次 |
 | `teanode finance import-credential --provider plaid\|simplefin [--institution-name NAME] [- \| <file>]` | 把在别处建好的连接作为财务来源带进来，而不是再接入一次：一个用这台服务器的 Plaid 密钥建立的连接的 Plaid 访问令牌（这样省下一个 Plaid 名额），或者一个已经兑换过的 SimpleFIN 访问地址。凭据从文件、标准输入或者不回显的提示里读，从不从命令行读；建任何东西之前先问一遍服务商，第一次同步在一分钟内开始 |
+| `teanode finance import-statement <file \| ->` | 把一份 OFX 对账单（`.ofx`、`.qfx` 或 `.qbo`），比如一张卡导出的交易，导入到「导入的对账单」这个财务来源里；已经导入过的交易（同一个账户、同一个 FITID）会被更新而不是再加一遍，所以有重叠的文件不会把任何东西加两次。打印账户，以及新增、更新和已经存在的各有多少 |
+| `teanode finance import-transactions [--dry-run] <file.json \| ->` | 从一个由行组成的 JSON 对象导入一个账户的交易，而不是从文件，比如从截图里读出来的行：`financeAccountId`（这些行所属的导入账户，取自 `teanode finance accounts`；给了它，账号就可以不填）、`isNewAccount`、`institutionName`、`accountName`、`accountNumber`（显示出来的数字，被遮住的写成 `****1234`）、`statementAccountKind`（`bank`、`card` 或 `other`）、`currencyCode`、`bankCode`、`ledgerBalanceAmount`、`ledgerBalanceOn`、`ledgerBalanceTimeZone`、`monthlyTotals`（`[{totalMonth, totalAmount}]`）和 `transactionRows`（`[{postedOn, description, amount, transactionKind, runningBalanceAmount, totalMonth}]`），金额带符号，钱出去为负。流水余额必须一行接一行地对得上，每个月的行加起来必须等于那个月的合计，否则什么都不发送，并指出第一行或第一个对不上的月份。没有 `financeAccountId` 时，这些行进入以它们的账号为键的账户，否则进入同一家机构里、种类和币种相同、账号以这几位结尾的唯一那个账户；有好几个这样的账户，或者这家机构里有账户但末几位对不上，都会被拒绝并点出来，除非 `isNewAccount` 为 true。只有账户里还没有的行才会加进去，按日期和精确金额来比对。打印导入了什么、核对了什么。`--dry-run` 什么都不写，打印账户（已有的带上它的 id 和它是怎么找到的，或者是新的）、新行有多少、已经存在的有多少、每一条新行，以及核对了什么 |
+| `teanode finance rename-statement-account [--account-number DIGITS] <finance-account-id> [name]` | 给一个导入对账单的账户起你自己的名字、填上它账号的末几位，或者两样都做，之后的导入会保留下来；它的资产也跟着改名，除非你给资产改过名。`--account-number` 接受 4 到 8 位数字，给那些在账号的位置上只显示一个词或者什么都不显示的对账单用；它会作为账户的账号显示出来，并和截图里的数字比对，`--account-number ""` 把你填的收回，让对账单自己的再显示出来 |
+| `teanode finance delete-statement-account <finance-account-id>` | 删除一个导入对账单的账户，连同它的交易和给它估值的资产（先问）；服务商的账户会被拒绝，因为下一次同步又会把它带回来 |
+| `teanode finance statement-import` | 你的对账单导入地址（把 OFX 文件寄到这里就会导入），以及上一次导入做了什么 |
+| `teanode finance regenerate-statement-import-address` | 给导入地址换一个新令牌；旧地址立刻不再收邮件（先问） |
 | `teanode finance repair <source-id>` | 再打开一次 Plaid 页面，在机构要求时重新登录同一个财务来源；一直等到它再次同步 |
 | `teanode finance sources\|sync\|disable-source\|enable-source\|delete-source` | 你的财务来源，立刻同步一个、关掉或打开，或者连同它带进来的一切一起删除（先问）；每一条都拒绝不是财务来源的来源 |
-| `teanode finance accounts\|transactions\|spending-summary` | 财务账户和它们的余额；交易，可用 `--from`、`--to`、`--since 30d`、`--month 2026-09`、`--text`、`--finance-account`、`--is-uncategorized`，以及取下一页的 `--after`；按 `--group-by spendingCategory\|merchant\|month\|financeAccount\|providerCategory` 分组的支出和收入 |
-| `teanode finance trades` | 投资账户里的买入、卖出和转入转出的证券，最新的在前，带着证券、数量、单价、金额和手续费；`--from`、`--to`、`--since`、`--month`、`--finance-account`、`--finance-security`，以及取下一页的 `--after`。交易买卖从不算支出；股息、利息和手续费是交易记录 |
+| `teanode finance accounts\|transactions\|spending-summary` | 财务账户和它们的余额；交易，可用 `--from`、`--to`、`--since 30d`、`--month 2026-09`、`--text`、`--finance-account`、`--is-uncategorized`（需要一个支出类别的那些，显示为 `(needs a category)`）、`--duplicate-of <id>`（一笔交易的那些镜像副本）、`--is-duplicate-included`（否则镜像副本不列出，并有一条说明有多少），以及取下一页的 `--offset` 或 `--after`，还有一条说明显示的是总共多少行里的哪几行；镜像副本标成 `(duplicate of <id>, not counted)`；按 `--group-by spendingCategory\|merchant\|month\|financeAccount\|providerCategory` 分组的支出和收入 |
+| `teanode finance credit-usage` | 你的信用卡相对于信用额度欠了多少：先是用汇总货币算的总额和使用率，然后是每张卡，使用率最高的在前，带着它欠的钱、它的额度、额度从哪里来（`provider`；`derived`，即欠款加上剩余可用额度；或者 `unknown`）和它的使用率；因为没有额度而没算进去的卡，会连同它们的欠款数出来；`--currency` 换算成另一种货币 |
+| `teanode finance trades` | 投资账户里的买入、卖出和转入转出的证券，最新的在前，带着证券、数量、单价、金额和手续费；`--from`、`--to`、`--since`、`--month`、`--finance-account`、`--finance-security`，以及取下一页的 `--offset` 或 `--after`，还有一条说明显示的是总共多少行里的哪几行。交易买卖从不算支出；股息、利息和手续费是交易记录 |
 | `teanode finance exchange-rate\|convert-currency\|reporting-currency\|set-reporting-currency` | 某一天两种货币之间的欧洲央行汇率（遇到周末取之前最近的一天，并说明是哪天），换算一笔金额，以及你的合计用哪种货币显示；`set-reporting-currency --clear` 回到默认 |
 | `teanode finance net-worth\|assets\|asset-history\|create-asset\|update-asset\|close-asset\|delete-asset\|record-valuation\|delete-valuation` | 每天的净资产；你拥有和欠下的一切及其最新价值，持仓还有它的证券、数量、单价和成本（`asset-history` 里按天也有）；`create-asset "Car" --kind vehicle --currency USD --value 18000` 加一项并给出第一个价值；`record-valuation <asset-id> 16500 --on 2026-09-30` 记下它值多少；`--is-estimate-allowed` 让代理从网上估它的价，这只有你能允许 |
-| `teanode finance spending-categories\|create-spending-category\|update-spending-category\|delete-spending-category` | 你自己的一份钱花在哪里的清单 |
-| `teanode finance spending-rules\|create-spending-rule\|update-spending-rule\|delete-spending-rule` | 把商户或描述里含有某些词的交易归类的规则；新规则也作用于以前的交易，除了你自己选过的 |
-| `teanode finance categorize-transaction\|mark-transfer` | 改一笔交易的支出类别（`--create-spending-rule` 让这个商户从此都这样归类），或者把在你自己账户之间挪动的钱标成转账 |
-| `teanode finance budgets\|set-budget\|budget-status\|spending-by-day\|cash-flow` | 每个支出类别的月度预算，以及收入类别上你每月预期的收入（`budgets` 会说明每一项是哪种）；`budget-status` 是本月对照每项预算，带着这个月的走向和节奏（低于、正常、有风险、超出），再是每个收入类别对照到今天为止的预期（落后、正常、领先）；逐日的支出对照上个月；按月的收入和支出 |
-| `teanode finance saving-summary` | 本月用汇总货币算的储蓄：收入预算减去支出预算，对照到目前为止的收入减支出和这个月的走向，带着差额和节奏（落后、正常、领先）；`--month` 看别的月份，`--currency` 换算成另一种货币 |
+| `teanode finance spending-categories\|create-spending-category\|update-spending-category\|delete-spending-category` | 你自己的一份钱花在哪里的清单，以及内置的 `transfer` 和 `other` 两个类别（`transfer` 和 `other` 两列说明是哪个），它们可以改名或者隐藏，但不能删除，不能变成收入，也不能有上级或下级类别 |
+| `teanode finance spending-rules\|create-spending-rule\|update-spending-rule\|delete-spending-rule` | 把商户或描述里含有某些词的交易归类的规则；新规则也作用于以前的交易，除了你自己选过的。`create-spending-rule "online payment" --spending-category transfer` 把它匹配到的标成转账 |
+| `teanode finance categorize-transaction <transaction-id>... <spending-category>` | 改一笔交易的支出类别，或者一次改好几笔（最多 500 笔，要么全改，要么都不改）；`--create-spending-rule` 让这个商户从此都这样归类，改好几笔时保存的正好是 `propose-spending-rules` 列出的那些规则，每一条都排在本来会胜出的那条规则前面，并打印保存了什么、略过了什么。`categorize-transaction <id> transfer` 把在你自己账户之间挪动的钱标成转账，既不算支出也不算收入，换成任何别的支出类别就取消转账。`categorize-transaction <id> other` 把一笔哪个支出类别都不合适的交易归到内置的「其他」类别下，不管它叫什么名字；没有 `none`，因为没有支出类别的交易就是还没决定的 |
+| `teanode finance propose-spending-rules <transaction-id>... <spending-category>` | `categorize-transaction --create-spending-rule` 会为这些交易（最多 5000 笔，最多 50 条规则）保存哪些支出规则，但什么都不保存：每个商户（或描述）一条，除非先试的那条规则已经把它归到那里，带着每条规则匹配其中多少笔、还会改动多少笔别的交易，以及它排在哪条已有规则前面（`zoomly eats → Dining`）；然后是有多少因为太短或太泛、或者含有每次都会变的数字（一个长数字或一个日期）而被略过 |
+| `teanode finance count-transaction\|undo-count-transaction <transaction-id>` | 镜像副本是同一笔费用，在同一个 Plaid 连接的另一个投资账户上又报告了一次（比如一家证券公司把账户层面的费用在每个账户上都报一次），它会列出来，但不计入任何合计；`count-transaction` 说明这一笔是一笔独立的真实费用并把它计入，此后镜像检测不再管它；`undo-count-transaction` 收回这一点，检测会立刻重新判断。计入一笔不是重复的交易会被拒绝 |
+| `teanode finance annotate-transaction <transaction-id> <annotation>` | 写下一笔交易是为了什么，或者用 `--clear` 拿掉；只有你在对话里要求，你的代理才会替换你写的 |
+| `teanode finance receipts` | 你的收据，最近的购买在前，没印日期的排在最后，带着每一张的核对结果和它对应到了什么；`--from`、`--to`、`--since`、`--month`、`--finance-transaction`、`--is-unmatched`、`--is-undated`（只看没印日期的；不能和日期范围一起用）、`--limit`，以及取下一页的 `--offset` 或 `--after`，还有一条说明显示的是总共多少行里的哪几行 |
+| `teanode finance budgets\|set-budget\|budget-status\|spending-by-day\|cash-flow` | 每个支出类别的月度预算，以及收入类别上你每月预期的收入（`budgets` 会说明每一项是哪种）；`budget-status` 是本月对照每项预算，带着这个月的走向和节奏（低于、正常、有风险、超出），再是每个收入类别对照到今天为止的预期（落后、正常、领先），加上 `--year 2026` 就改看一整个日历年，每个月按它当时的预算，带着到目前为止的预算、做了预算的月份，以及这一年的走向；逐日的支出对照上个月；按月的收入和支出 |
+| `teanode finance saving-summary` | 本月用汇总货币算的储蓄：收入预算减去支出预算，对照到目前为止的收入减支出和这个月的走向，带着差额和节奏（落后、正常、领先）；`--month` 看别的月份，`--year` 看一个日历年（今年就是到今天为止），只算有预算的月份并说明是哪几个月，那一年没有预算的话就给出它的收入、支出和剩下多少；`--currency` 换算成另一种货币 |
 | `teanode finance savings-targets\|create-savings-target\|update-savings-target\|close-savings-target` | 在某一天之前要存下的金额，以及从现在起每月需要多少，用 `--measure cash_flow`（没花掉的钱，默认）、`net_worth`（自 `--started-on` 以来增加的净资产，除非 `--starting-amount` 另说，起点会替你记下）或 `asset_value`（`--finance-account` 和 `--asset` 值多少；整个财务账户算上它的现金和每一项持仓，以后买的也算）来衡量 |
 
 ### teanode computer
 
 你自己的电脑，接到你的代理上。这个程序跑着的时候，代理就多了两个工具——`shell`，在这里
 运行一条命令；`filesystem`，读、改、写、复制、列出、搜索和 grep 你的文件——以你的身份，在
-这台机器的任何地方，就像你自己的一个终端那样。只有你在场的对话可以使用它们：定时的运行、
-分类的运行，任何没有人看着的东西，永远看不见你的电脑。会改变这台机器或者伸到它外面去的
+这台机器的任何地方，就像你自己的一个终端那样。定时的运行、目标和梦也会用它们，这时没有人
+看着；本来要先问你的事这时会被拒绝，除非你允许了在你不在时做这类事。读陌生人来信的那些运行
+（分类、起草、调研）只读邮件，永远看不见你的电脑。会改变这台机器或者伸到它外面去的
 命令（删除、移动、安装、sudo、push、ssh，以及更重的那些形状）会先问你，在抽屉里的卡片上
 或者在终端上；一个被移动或者删除的文件，以及往这台机器自己会运行的东西里写入（shell 的
 启动文件、密钥、开机自启），也一样。没有什么是替你拒绝的——你的点头是最后一句话。那张卡片
 是服务器的：程序运行服务器送来的东西，所以它信任服务器，就像一个终端信任坐在它前面的人。
 程序以你的身份登录，用的是活动配置档案的令牌，绝不是服务器的身份。可以同时接上好几台电脑，
 按名字分辨。命令在 `/bin/sh -c`（Windows 上是 `cmd /C`）下运行，不是你的登录 shell，所以
-你的别名不在作用域里。程序同时应答四个请求，第五个会被拒绝而不是排队。
+你的别名不在作用域里。程序来一个请求就应答一个，不管同时有多少个在跑。
 
 | 命令 | 它做什么 |
 | --- | --- |
@@ -320,17 +344,15 @@ Shell 补全由二进制文件自己提供：
 | `teanode computer background list [--conversation ID]` | 代理的 shell 在你各台电脑上留在后台跑的那些命令，以及最近结束的那些，从新到旧：每个一行，带着它的 id、电脑、它的状态（`running`、`exit N`、`stopped`，或者跑满一个后台命令所能跑的时长后的 `stopped after 24 hours`）、按你本地时间的开始时刻，以及那条命令。`--conversation` 只看某一个对话开的那些 |
 | `teanode computer background read <computer> <id> [--tail BYTES]` | 其中一个最后写下的东西：先是它在标准输出上的输出，再是它在标准错误上的错误，有一行说明哪一个被截断过，最后一行说明它的状态。`--tail` 是每个流的末尾要打印多少，默认 64 KiB，最多 256 KiB |
 | `teanode computer background stop <computer> <id>` | 结束其中一个。开它的那个代理会听说它结束了，就跟听说任何一个它没要求的结束一样 |
+| `teanode computer herdr list [--computer NAME]` | 你各台电脑上 herdr 里的 Claude Code 和 Codex 会话：每个窗格在 herdr 里显示的名字（工作区；有好几个标签时加上标签；一个标签里不止一个编程助手时再加上助手，比如 `website › review › Codex`），其他每一条命令都把它和窗格的 id 一样当作 `<pane>` 接受；然后是它的状态（`idle`、`working`、`asking`、`unknown`，由电脑上的程序判断）、目录和标题；再是每一个在等的问题，带着它的指纹和编了号的选项 |
+| `teanode computer herdr read <pane> [--computer NAME] [--turns N]` | 从一个会话的历史文件里读它最后几轮，默认 10 轮，最多 100 轮 |
+| `teanode computer herdr screen <pane> [--computer NAME] [--lines N]` | 窗格现在显示的内容，或者它的最后 `--lines` 行 |
+| `teanode computer herdr send <pane> <text> [--computer NAME]` | 把这段文字输入到窗格里并按回车；正在工作的会话会把它当成它这一轮里的一条消息来读。会话在提问时会被拒绝 |
+| `teanode computer herdr wait <pane> [--computer NAME] [--seconds N]` | 等会话停止工作，默认 30 秒，最多 600 秒 |
+| `teanode computer herdr answer <pane> --fingerprint F --option N [--option N] [--text TEXT]` | 回答会话在等的问题，用选项的编号，或者用 `--text` 回答那个要填文字的选项。问题已经不是那个指纹对应的问题时会被拒绝。不带 `--fingerprint` 时，打印问题和它的指纹 |
+| `teanode computer herdr watch <pane> --conversation ID` | 会话下一次做完它这一轮时，唤醒那个对话 |
+| `teanode computer herdr open <claude|codex> <directory> [--computer NAME] [--name NAME] [--skip-permissions]` | 在那个目录里、在一个新的 herdr 窗格中启动 Claude Code 或 Codex（`--skip-permissions` 让 Claude Code 带着 `--dangerously-skip-permissions` 启动，让 Codex 带着 `--yolo` 启动）：放在以这个目录命名的工作区的一个新标签里，或者一个新的工作区里。一启动就停下来提问的（要不要信任这个文件夹），算作已经打开、正在提问 |
+| `teanode computer herdr close <pane> [--computer NAME]` | 结束这个会话的编程助手并关闭它的窗格；它在工作时会被拒绝。它说过的话留在它的历史里 |
+| `teanode computer herdr setup [--computer NAME] [--remove]` | 把 TeaNode 的报告钩子加进那台电脑上 Claude Code 的设置里，和已有的钩子放在一起，或者把它们拿掉 |
 
 运维者可以用 `agent.features.computer` 为整台服务器关掉电脑这件事。
-
-### teanode calendar
-
-| 命令 | 它做什么 |
-| --- | --- |
-| `teanode calendar list\|show\|add\|edit\|remove` | 你的日历，你的手机和电脑通过 CalDAV 同步它。`list --from 2026-09-14 --until 2026-09-21` 为每一次发生的事印一行，重复的事件按每一次出现各印一行；`add --title Standup --starts 2026-09-14T09:30 --repeat FREQ=WEEKLY;BYDAY=MO` 往里放一件事；`--invite ada@example.com` 用邮件把邀请寄出去，而移动或者删除这个事件会告诉所有被邀请的人；`--all-day` 属于那一天而不是某个时刻，它的 `--ends` 是它所在的最后一天，所以两端同一个日期就是一天；`--file -` 从标准输入读一整个 iCalendar 文件。时间按日历自己的时区读写，除非它们自带偏移 |
-| `teanode calendar free` | 你什么时候有空：工作日里没有安排的那些时段，一天一天地列。`--earliest 08:00 --latest 18:00` 移动一天的两端；整天的条目不会让一天变忙，取消了的也不会。用的是回答手机 free-busy 请求的同两个函数，所以这里印出来的和同事的客户端被告知的不可能不一致 |
-| `teanode calendar calendars\|set` | 日历本身：它们叫什么、客户端把它们画成什么颜色、新事件写在哪个时区，以及一周从哪一天画起——`set --timezone Europe/Berlin`、`set --week-start monday`。除非某个日历另有说法，周从星期日开始；而五天视图无论如何都是周一到周五，因为一个工作周就是那样 |
-| `teanode reminder list\|add\|edit\|done\|reopen\|remove` | 你的提醒事项清单，就是日历旁边那份，手机上的「提醒事项」通过 CalDAV 同步它。`add "买邮票" --due 2026-09-29` 在那一天到期，`--due 2026-09-29T15:00` 按日历的时区在那个时刻到期；`list --done` 列出已经勾掉的，`list --all` 两种都列；`done` 勾掉一条，`reopen` 把它放回去 |
-| `teanode note list\|show\|add\|edit\|remove` | 你的备忘录：手机的「备忘录」存在你邮件账户里、通过 IMAP 同步的那些。`add "行李清单"` 写一条，第一行就是它的标题，`--file -` 从标准输入读正文，`edit <id>` 替换一条的正文；手机下次同步时会看到改动。有不止一个邮箱时，用 `--mailbox` 选一个 |
-| `teanode calendar request <request-id>` | 查一次日历保存有没有完成，即使它的事件或者日历已经被删掉。`add`、`edit` 和 `remove` 在改动一个事件之前会打印一个请求 ID；得到一个不确定的回应之后，在这里查它，或者用 `--request-id` 带着同样的操作和字段重试。重试一次删除，会在加载那个已删除的事件之前先核对它是否完成。查不到回执，可能意味着原来的请求还在进行。字段变了就需要一个新的 ID |
-| `teanode calendar stop <request-id>` | 在丢掉一个不确定请求的字段之前先把它了结。还没提交的请求会被持久地停下；已经完成的改动会被报告出来，而不会被撤销。停止的回应失败了，那仍然是不确定的，所以用同一个请求 ID 重试 |

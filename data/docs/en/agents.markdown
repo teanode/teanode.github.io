@@ -66,8 +66,9 @@ writing and again before sending it climbs the same ladder the out-of-office
 reply climbs: never to a mailing list, a bounce, an automatic message, spam,
 or a message not addressed to you.
 
-**Answers your questions.** A drawer on every page of the dashboard, and
-`teanode agent ask` from a terminal. It works through the same operations the
+**Answers your questions.** A drawer on every page of the dashboard, which
+you can also [call and talk to](/doc/voice), and `teanode agent ask` from a
+terminal. It works through the same operations the
 dashboard uses, as you, with exactly your permissions: it searches your mail,
 reads it, files it, drafts, keeps your folders and rules. Anything it cannot
 undo, and anything that leaves the server, stops at a card you approve or
@@ -76,8 +77,9 @@ decline.
 **Reaches past the mailbox, if you let it.** Your contacts, so it can look
 somebody up or keep somebody for you. Your own computer, attached with
 `teanode computer`, where it runs a command or reads and edits your files as
-you — only while you are present in the conversation, and asking first for
-anything that changes the machine. Your own browser tab, through an extension,
+you, asking first for anything that changes the machine. The Claude Code and
+Codex sessions you keep in herdr on those computers, which it reads, types
+into and brings you the questions of (see [Coding sessions](/doc/coding-sessions)). Your own browser tab, through an extension,
 so it can act on a page only you can sign into while you watch. Your calendar,
 so it knows what your week already holds, and your reminders list beside it.
 The notes your phone's Notes app keeps in your mail account, which it can
@@ -101,14 +103,28 @@ sends five a day at most, nothing between 22:00 and 07:00 unless it cannot
 wait, and never the same thing twice in a week. Say "don't tell me about
 these" and that sender, domain or kind is muted; the Alerts tab lists what it
 said and what you muted, and each of the limits can be changed there or with
-`teanode agent settings set`.
+`teanode agent settings set`. The skills the operator installed can be
+watched the same way: new Gmail, new GitHub notifications, new transactions
+at a payment service, judged like mail and said only when they matter.
 
-**Offers, and keeps at it.** Each night it looks through your mail for work
-it could do for you and writes each as an offer on the Ideas tab: what it
-would do, where it stops to ask, and what in your mail prompted it. Nothing
-happens until you start one. A conversation can carry a goal it keeps working
-toward across turns of its own, and the Goals tab lists every one in progress
-with a note on where it stands.
+**Offers, and keeps at it.** In its dreams it looks through your mail for
+work it could do for you and writes each as an offer on the Ideas tab: what
+it would do, where it stops to ask, and what in your mail prompted it.
+Nothing happens until you start one. A goal ("keep the newsletters out of
+my inbox", "chase the refund until it arrives") runs in the background, in a
+conversation of its own, for days if it needs to. Your chat hears from it
+only when it needs you; the Goals tab says what each goal is doing, what it
+did, and what it made along the way.
+
+**Works while you are away, as far as you let it.** Schedules, goals and
+dreams run with nobody watching, and they reach your computers too. A call
+that would ask you first is refused then, and the run says what it would
+have done, unless you chose to allow that kind of thing for when you are not
+there: speaking for you, spending or moving money, what cannot be undone,
+giving somebody access, or the tools on your own "ask me first" list. Each is
+off until you turn it on, on your agent's settings. The operator's own
+confirm list can never be allowed this way, and the runs that read mail from
+strangers never use the allowance.
 
 ## What it costs, and how to cap it
 
@@ -154,6 +170,9 @@ says so there rather than trusting everyone to leave a switch alone.
   does with all of it overnight.
 - [Finance](/doc/finance) is the banks, cards and brokerages it can read, and
   the budgets and net worth built on them.
+- [Voice](/doc/voice) is calling your agent from the drawer.
+- [Coding sessions](/doc/coding-sessions) is your Claude Code and Codex
+  sessions, which it works in beside you.
 - [Configuration](/doc/configuration#agent) documents every setting in the
   `agent` section: providers, models, features, limits, retention, search,
   tools, the browser, and connected servers.

@@ -157,6 +157,52 @@
     }
   },
   {
+    "slug": "voice",
+    "group": {
+      "en": "Running it",
+      "zh": "运行它",
+      "ja": "動かす"
+    },
+    "title": {
+      "en": "Voice",
+      "zh": "语音",
+      "ja": "音声"
+    },
+    "description": {
+      "en": "Call your agent from the chat drawer: say what you want, hear the answer as it is written, and cut in when you like. On a laptop or a phone.",
+      "zh": "在聊天抽屉里给代理打电话：说出你要什么，答案边写边读给你听，想打断就打断。笔记本和手机上都行。",
+      "ja": "チャットのドロワーからエージェントに電話する。言いたいことを話し、書かれるそばから答えを聞き、好きなときに割り込める。ノートパソコンでも電話でも。"
+    },
+    "filename": {
+      "en": "en/voice.markdown",
+      "zh": "zh/voice.markdown",
+      "ja": "ja/voice.markdown"
+    }
+  },
+  {
+    "slug": "coding-sessions",
+    "group": {
+      "en": "Running it",
+      "zh": "运行它",
+      "ja": "動かす"
+    },
+    "title": {
+      "en": "Coding sessions",
+      "zh": "编程会话",
+      "ja": "コーディングのセッション"
+    },
+    "description": {
+      "en": "Your Claude Code and Codex sessions in herdr, on every computer you attached: your agent reads them, types into them where you can see, and brings you their questions to answer from anywhere.",
+      "zh": "你在各台电脑的 herdr 里开着的 Claude Code 和 Codex 会话：代理读取它们，在你看得到的地方输入，并把它们的提问带给你，让你在任何地方都能回答。",
+      "ja": "つないだすべてのコンピューターの herdr にある Claude Code と Codex のセッション。エージェントが内容を読み、あなたに見える形で入力し、質問をあなたに届けるので、どこからでも答えられる。"
+    },
+    "filename": {
+      "en": "en/coding-sessions.markdown",
+      "zh": "zh/coding-sessions.markdown",
+      "ja": "ja/coding-sessions.markdown"
+    }
+  },
+  {
     "slug": "mcp",
     "group": {
       "en": "Running it",

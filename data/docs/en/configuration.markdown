@@ -1470,7 +1470,26 @@ embeds before it hands the queue back, so that one enormous source does
 not hold the worker. Zero resolves to `2000`.
 
 **`maxRoundsPerAsk`** — How many times one conversation turn may go back to
-the model.
+the model. 150 by default; it was 40, which a turn working through a long
+errand on the person's computer ran out of.
+
+**`maxRoundsPerSubagent`** — How many rounds one subagent may take. Zero
+resolves to `20`.
+
+**`goalTurnsPerDay`** — How many turns of its own one goal takes in a day,
+counting its own check-ins, not the runs of a schedule it keeps. Zero
+resolves to `48`, a turn every half hour.
+
+**`goalTurnsAlone`** — How many of those turns a goal takes without a word
+from the person before it stops and asks them. Zero resolves to `24`.
+
+**`goalsInProgress`** — How many goals one person may have working or waiting
+at once. Zero resolves to `20`.
+
+**`backgroundWakesAlone`** — How many turns finished background commands and
+work may wake in one conversation before the person writes there again; past
+it, endings are written into the conversation and wake nothing. Zero resolves
+to `20`.
 
 **`maxRoundsPerResearch`** — The same for a research run.
 
@@ -1599,6 +1618,46 @@ The proxy requires a password that only this server and its Chrome know.
 
 **`maxContexts`** — How many contexts may be open at once.
 
+### `agent.voice`
+
+Talking to the agent in the drawer. The person presses the telephone beside
+send; what they say streams through this server to the provider's realtime
+transcription as they say it, the provider says when they start and stop
+talking, and each finished utterance is sent as an ordinary turn, the same as
+if they had typed it. The answer is spoken back through the provider's
+text-to-speech, and stops when the person starts talking. Off by default.
+
+**`enabled`** — Whether the drawer offers the microphone.
+
+**`provider`** — The provider of kind `openai` whose key and address the
+transcription uses. Empty is the first one.
+
+**`transcriptionModel`** — The realtime transcription model. It has to be
+one that detects speech itself; `gpt-live-transcribe` and
+`gpt-realtime-whisper` need the application to end each turn and are refused.
+Empty is `gpt-4o-transcribe`.
+
+**`silenceMS`** — How long a pause ends what somebody is saying, in
+milliseconds, up to 5000. Zero is 500. Longer lets a person think in the
+middle of a sentence; shorter answers sooner. A pause longer than this in the
+middle of one request sends it as two turns, the second reaching the agent
+while it works on the first, as a typed follow-up would.
+
+**`speechModel`** — The text-to-speech model the answers are spoken with,
+through the same provider. Empty is `gpt-4o-mini-tts`.
+
+**`askModel`** — The model a spoken turn is answered with, as
+`provider:model`; empty is the one a typed turn uses. A call wants the first
+words soon, and on a long conversation a smaller model starts speaking a second
+or more before a larger one, even though it reads the conversation uncached
+the first time. When this model differs from the typed one, it is given
+`think_harder`: for a hard question it says a short line and hands the rest of
+the turn to the typed model, with the same conversation and tools.
+
+**`speechVoice`** — The provider's voice the answers are spoken in, such as
+`marin`, `cedar`, `alloy` or `coral`. Empty is `marin`. Each person may choose
+their own on their agent's settings, which this is the default for.
+
 ### `agent.mcp`
 
 **`servers`** — The declared servers, one entry each.
@@ -1623,8 +1682,10 @@ inferred: `stdio` when a command is set and no URL, otherwise `http`.
 **`location`** — Location is where a command-spoken server runs: "server",
 the default, is this server's own host, as this process; "computer" is the
 person's own attached computer, as them. A server on the computer is reached
-only while one is attached, and never by a run with nobody present, and it
-cannot be marked headless.
+only while one is attached, by schedules, goals and nights as by a
+conversation, and it cannot be marked headless: that flag offers a server to
+the runs that read mail from strangers, which do not reach the person's
+machine.
 
 **`env`** — Variables given to the subprocess over this server's own
 environment, each with a `name` and a `value`; how a stdio server is given
@@ -1663,8 +1724,9 @@ For a service that sends an authorization only to a loopback address, the
 flow meant for a program on somebody's own machine. The person has to finish
 it in a browser on that computer. Only for `auth: oauth`.
 
-**`headless`** — Whether processing runs with nobody present may use the
-server's read-only tools.
+**`headless`** — Whether the restricted runs that read mail from strangers
+(sorting, research) may use the server's read-only tools. Schedules, goals and
+nights reach every connected server without it.
 
 **`readOnly`** — The tools that only read, which need no confirmation and
 are the only ones a headless run may call. Every other tool of the server

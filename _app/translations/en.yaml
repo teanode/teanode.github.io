@@ -68,9 +68,13 @@ welcome:
     calendar: The calendar, as a week, with the reminders list a tab away. Your phone keeps both in step over CalDAV, and an invitation that arrives as mail becomes an event you can answer.
     drawerMail: The chat drawer, on every page. Asked what needs you today, the agent searches your mail and answers from what it found.
     drawerCalendar: The same conversation, a question later. It looks up the calendar tool, reads Thursday, and answers.
+    drawerVoice: The same conversation as a call. The bars follow your voice, the words heard so far sit beside them, and the answer is read aloud as it is written.
+    drawerHerdr: A Claude Code session on your computer stopped to ask something. The question comes to you, with its options as buttons, wherever you are talking to your agent.
+    herdr: The coding sessions in herdr on your computers, with which one is working, which is idle, and which is waiting on you.
     contacts: The address book. The people you keep, synchronized to your phone over CardDAV — photographs, birthdays and all — rather than a list of everyone who has ever written.
     financeSpending: Finance. Income and spending across twelve months, with what was left over; money moved between your own accounts is left out.
     financeCategories: A month by spending category, under its budgets. Each budget says how far it has gone and whether the month is on track.
+    financeReceipt: A charge with its receipt, read from a photo line by line, checked against its printed total and matched to the charge on its own.
     financeNetWorth: Net worth. Everything you own and owe, from linked accounts, values you enter, and estimates the agent makes where you allowed it.
     agent: >-
       Your agent's own page: what to call it, how it should write, which
@@ -202,6 +206,7 @@ welcome:
       reminders: Your reminders
       notes: Your notes
       finances: Your finances
+      codingSessions: Your coding sessions
     conversation:
       pick: Choose a conversation
       names:
@@ -250,9 +255,52 @@ welcome:
       card:
         send: Send "Thursday at four works" to Grace Hopper?
         remind: Send the reminder to Osborne & Sons?
+  voice:
+    heading: Call it
+    lead: Press the telephone in the chat drawer and talk. Each thing you finish saying goes to your agent as a turn, and the answer is read back to you as it is written.
+    body: >-
+      It works on any page, on a laptop or a phone, and a spoken turn reaches
+      every tool a typed one does. What was said stays in the conversation, so
+      you can hang up and carry on typing.
+    more: How voice works
+    points:
+      call:
+        title: Answers straight away
+        body: It says it is looking before it looks, and makes the small sounds a listener makes while you talk at length.
+      ear:
+        title: Written for the ear
+        body: The answer first, a few short sentences, numbers said the way people say them, and a check before acting on a name it may have misheard.
+      cutIn:
+        title: Cut in when you like
+        body: Start talking and the answer drops to a murmur, then stops. The agent is told how much of it you heard.
+      key:
+        title: The key stays on the server
+        body: The drawer talks to your server and your server talks to the provider. Calls count against the same daily limits.
+  coding:
+    heading: Your coding sessions, from anywhere
+    lead: Keep your Claude Code and Codex sessions in herdr, and your agent sees every one of them, on every computer you attached.
+    body: >-
+      It reads what each session did, types an instruction into one where you
+      can see it, and brings you the questions they stop to ask. Ask it from
+      ChatGPT or Grok on your phone, by voice in the car, what your sessions
+      are up to, and answer the one that is waiting.
+    more: How coding sessions work
+    points:
+      sees:
+        title: Every session, every computer
+        body: Working, idle or asking, with the directory and the title, on the Connections tab and from the command line.
+      types:
+        title: Types where you can see
+        body: One process, one history and one screen, which you and the agent share. You can take over at any moment.
+      asks:
+        title: Their questions come to you
+        body: In the drawer with the options as buttons, and in your chat app. Whoever answers first wins, and a stale answer is refused.
+      anywhere:
+        title: From anything that speaks MCP
+        body: ChatGPT, Grok, an editor or a voice call in the drawer. Tell a session what to do next, or ask to hear when it is done.
   mcp:
-    heading: And from your editor
-    lead: TeaNode answers the Model Context Protocol, so a coding harness or an editor can use your agent's tools and ask your agent questions.
+    heading: And from your editor, or your phone
+    lead: TeaNode answers the Model Context Protocol, so a coding harness, an editor, or a chat assistant such as ChatGPT or Grok can use your agent's tools and ask your agent questions.
     body: >-
       Point a program at the address and approve it in your browser; there is
       no token to copy. It is offered what your permissions allow, less
@@ -272,11 +320,14 @@ welcome:
     more: How finance works
     points:
       linked:
-        title: Linked, or brought in
-        body: SimpleFIN with a setup token of your own, or Plaid with the operator's keys. Syncs every six hours.
+        title: Linked, or imported
+        body: SimpleFIN with a setup token of your own, or Plaid with the operator's keys. A card no provider reaches comes in from a statement file or screenshots.
       categories:
         title: Your own categories
-        body: Filed by you, by your rules, by the bank's category, and only then by a model. Transfers count as neither spending nor income.
+        body: Filed by you, by your rules, by the bank's category, and only then by a model. Choose a page of transactions and file them, and their merchants, at once.
+      receipts:
+        title: Receipts, line by line
+        body: Photographed into the chat or arriving as mail, checked against the printed total and matched to the charge, so you can search what you bought.
       budgets:
         title: Budgets that look ahead
         body: Each says where the month is heading, counting the bills still to come. Savings targets say what they need each month.

@@ -4,16 +4,16 @@ two directions share a wire format and almost nothing else.
 
 **Outward**, your agent connects to servers you have, so their tools become
 its tools. **Inward**, TeaNode answers the protocol itself, so a coding
-harness or an editor you run can use your agent's tools, and can put a
-question to your agent in words.
+harness, an editor, or a chat assistant such as ChatGPT or Grok can use your
+agent's tools, and can put a question to your agent in words.
 
 ## Answering it: your tools, from your editor
 
     POST /api/v1/mcp
 
-Every request carries a token, and nothing is kept between requests, so a
-restart on either side loses nothing. There are three ways to give a program
-one.
+Every request carries a token. The one thing kept between requests is the
+rest of a long answer (see below), in memory, so a restart loses only that.
+There are three ways to give a program one.
 
     # point it at the address, then approve it in your browser
     claude mcp add --transport http teanode https://mail.example.com/api/v1/mcp
@@ -99,6 +99,26 @@ run ends the conversation itself is where the answer is.
 A turn that stops to raise a confirmation card cannot be answered from a
 harness. The answer says so, and says the card is waiting in the dashboard,
 rather than looking like an answer that simply stopped.
+
+### Long answers
+
+Clients cut a long tool answer themselves, somewhere past twelve thousand
+characters and without saying where, so the model on the other end cannot
+read on. A tool called over MCP is given a smaller budget, so the tools that
+page themselves (a search, a file read) fit. Anything still longer is sent a
+part at a time: the first part ends with a line naming `result_more` and
+where to go on from, and calling it returns the next part. The rest is held
+for thirty minutes.
+
+### From your phone
+
+Connect a chat assistant that speaks MCP (ChatGPT, Grok, and others) to the
+same address, approve it in your browser, and your mail, calendar, memory
+and finances are reachable from that assistant's app, by voice if it has a
+voice mode. So are the [coding sessions](/doc/coding-sessions) on your
+computers: ask what each one is doing, answer the one that is waiting, tell
+another what to do next. The tool that reaches them tells these clients it
+is read-only, at your word, so they run it without asking each time.
 
 ### Two tools are left out
 

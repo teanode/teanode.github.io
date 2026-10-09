@@ -32,6 +32,33 @@ and nothing is made unless it answers.
 
 A new link syncs within a minute, then every six hours.
 
+## Accounts no provider reaches
+
+Some cards and banks are reached by neither provider, or only let their
+holder export a file. Those come in as imported statements, which need
+nothing from the operator.
+
+**A statement file.** Export an OFX file (`.ofx`, `.qfx` or `.qbo`) and upload
+it under Accounts on the Finance page, run `teanode finance import-statement`,
+or mail it to your own statement import address, which the same page shows.
+A phone's banking app can usually share the export straight into a mail.
+Transactions already imported are updated rather than added again, so
+overlapping files count nothing twice, and your agent tells you in the main
+conversation which account the statement went into and how many
+transactions it brought.
+
+**Screenshots.** An app that shows the transactions but exports nothing can
+be photographed. Send the screenshots to your agent in the drawer; it reads
+each row, and the import checks them before anything is written: running
+balances must chain from row to row and each month must come to its printed
+total, or nothing is imported and the row that does not add up is named.
+Only the rows the account does not hold already are added, and the account
+is found by the last digits it shows, so a later file or later screenshots
+land in the same account.
+
+Accounts imported either way can be renamed, given the last digits of their
+number when the statement shows none, or deleted with their transactions.
+
 ## What you get
 
 **Transactions, filed by you.** Every transaction goes under one of your own
@@ -39,15 +66,50 @@ spending categories. It is filed by the first of these that has an answer:
 you, a spending rule you made ("anything from Corner Grocer is groceries"),
 the provider's own category, and last a model. The model is sent the
 merchant, the description, the amount and the provider's category, never an
-account number. Money moving between your own accounts, and paying off a card,
-is marked as a transfer and counts as neither spending nor income.
+account number. Two categories are built in: Transfer, for money moving
+between your own accounts and paying off a card, which counts as neither
+spending nor income, and Other, for what fits none of yours. A transaction
+with no category is one still to be decided, and the Transactions list can
+show just those.
+
+**Many at once.** Choose transactions with the box at the start of each row
+(shift chooses a run, Select all every one the filters match, on every
+page) and give them a category together. Tick the box beside it and the
+same choice is saved as spending rules: one per merchant, each listed with
+how many transactions it matches and how many others it would change before
+anything is saved.
+
+**What a transaction was for.** Write a note on any transaction ("party
+supplies"), or let your agent write one. It changes yours only when you ask
+it to in a conversation.
+
+**Receipts.** A receipt is stored line by line as printed, checked against
+its printed totals, and matched to the charge it explains. Photograph one
+into the chat, upload a photo or a screenshot on the transaction itself, or
+let the agent read one that arrived as mail. A receipt is matched without
+asking only to the one charge of exactly its amount that shares a word of
+the merchant; anything less certain is offered to you. One recorded before
+its charge arrives waits, and is matched when the charge comes in. The
+photo sits above the lines, and you can zoom into it. The Receipts tab lists
+them all, searchable by what was bought, so "when did I last buy coffee
+beans" has an answer.
+
+**Duplicates.** Some brokerages report one account-level fee on every account
+of a connection. Those mirrored copies are found, marked and left out of
+every total, and you can say a copy is a real charge of its own.
+
+**Ask about one.** A transaction's details end with Ask the agent, which opens
+the drawer with that transaction attached to your question.
 
 **Budgets that say where the month is heading.** A budget is a monthly amount
 for a spending category. Each one shows what has gone so far and where the
 month is heading: the spending so far, the charges that come every month and
 have not come yet, and the rest at this month's pace. It is under, on track,
 at risk or over. An income category can have a budget too, the income you
-expect each month, and it reads behind, on track or ahead.
+expect each month, and it reads behind, on track or ahead. A budget's row
+opens its transactions for the month. Spending has a year view too: the
+year's totals, a chart of its months, and budgets and saving for the year
+from each month's own figures, with where the year is heading.
 
 **Saving.** For any month: what you expected to save (income budgets less
 spending budgets), what you have saved so far, and where the month is heading.
@@ -79,7 +141,7 @@ muted on its own.
 The same operations, under the same names, in three places:
 
 - **The dashboard.** The Finance page, `/finance`, has Spending,
-  Transactions, Accounts, Budgets, Net worth and Savings targets. The agent
+  Transactions, Receipts, Accounts, Budgets, Net worth and Savings targets. The agent
   page's Finance tab is the setup: linking, repairing, syncing and the
   reporting currency.
 - **The command line.** `teanode finance`, listed in the

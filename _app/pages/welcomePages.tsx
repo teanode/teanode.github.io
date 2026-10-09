@@ -19,16 +19,23 @@ import CallSplitIcon from '@mui/icons-material/CallSplit'
 import CheckIcon from '@mui/icons-material/Check'
 import ConfirmationNumberOutlinedIcon from '@mui/icons-material/ConfirmationNumberOutlined'
 import DevicesOutlinedIcon from '@mui/icons-material/DevicesOutlined'
+import DirectionsCarOutlinedIcon from '@mui/icons-material/DirectionsCarOutlined'
 import DnsOutlinedIcon from '@mui/icons-material/DnsOutlined'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import GitHubIcon from '@mui/icons-material/GitHub'
 import GroupsOutlinedIcon from '@mui/icons-material/GroupsOutlined'
+import HearingOutlinedIcon from '@mui/icons-material/HearingOutlined'
+import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined'
 import InboxOutlinedIcon from '@mui/icons-material/InboxOutlined'
+import KeyOutlinedIcon from '@mui/icons-material/KeyOutlined'
+import KeyboardOutlinedIcon from '@mui/icons-material/KeyboardOutlined'
 import LabelOutlinedIcon from '@mui/icons-material/LabelOutlined'
 import LibraryBooksOutlinedIcon from '@mui/icons-material/LibraryBooksOutlined'
 import MailOutlineIcon from '@mui/icons-material/EmailOutlined'
 import LanguageOutlinedIcon from '@mui/icons-material/LanguageOutlined'
 import NewspaperOutlinedIcon from '@mui/icons-material/NewspaperOutlined'
+import PhoneInTalkOutlinedIcon from '@mui/icons-material/PhoneInTalkOutlined'
+import RecordVoiceOverOutlinedIcon from '@mui/icons-material/RecordVoiceOverOutlined'
 import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined'
 import ReplyOutlinedIcon from '@mui/icons-material/ReplyOutlined'
 import RemoveIcon from '@mui/icons-material/Remove'
@@ -37,6 +44,7 @@ import SavingsOutlinedIcon from '@mui/icons-material/SavingsOutlined'
 import ShowChartOutlinedIcon from '@mui/icons-material/ShowChartOutlined'
 import SmartphoneOutlinedIcon from '@mui/icons-material/SmartphoneOutlined'
 import SortOutlinedIcon from '@mui/icons-material/SortOutlined'
+import TerminalOutlinedIcon from '@mui/icons-material/TerminalOutlined'
 import VerifiedUserOutlinedIcon from '@mui/icons-material/VerifiedUserOutlined'
 import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutlineOutlined'
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined'
@@ -84,15 +92,34 @@ const extras = ['templates', 'cli', 'clamav', 'spamd', 'geoip', 's3', 'socks5', 
 // What a personal agent does, once somebody turns theirs on. Four things
 // rather than the whole list, because the whole list is the documentation.
 // What the assistant can be given, in the order somebody would grant it.
-const agentReach = ['mail', 'contacts', 'calendar', 'reminders', 'notes', 'finances', 'computer', 'browser', 'web']
+const agentReach = ['mail', 'contacts', 'calendar', 'reminders', 'notes', 'finances', 'computer', 'codingSessions', 'browser', 'web']
 
 // What linking a bank gives a person, in the order the Finance page shows
 // it: where the money went, where the month is heading, and what it adds up to.
 const financePoints: { key: string, Icon: SvgIconComponent }[] = [
   { key: 'linked', Icon: AccountBalanceOutlinedIcon },
-  { key: 'categories', Icon: ReceiptLongOutlinedIcon },
+  { key: 'categories', Icon: LabelOutlinedIcon },
+  { key: 'receipts', Icon: ReceiptLongOutlinedIcon },
   { key: 'budgets', Icon: SavingsOutlinedIcon },
   { key: 'netWorth', Icon: ShowChartOutlinedIcon },
+]
+
+// A call with the agent: what it is like, in the order somebody notices it
+// on their first call, then where the key is, which an operator asks.
+const voicePoints: { key: string, Icon: SvgIconComponent }[] = [
+  { key: 'call', Icon: PhoneInTalkOutlinedIcon },
+  { key: 'ear', Icon: HearingOutlinedIcon },
+  { key: 'cutIn', Icon: RecordVoiceOverOutlinedIcon },
+  { key: 'key', Icon: KeyOutlinedIcon },
+]
+
+// The coding sessions on the person's computers: seeing them, typing into
+// them, their questions coming to the person, and from where.
+const codingPoints: { key: string, Icon: SvgIconComponent }[] = [
+  { key: 'sees', Icon: TerminalOutlinedIcon },
+  { key: 'types', Icon: KeyboardOutlinedIcon },
+  { key: 'asks', Icon: HelpOutlineOutlinedIcon },
+  { key: 'anywhere', Icon: DirectionsCarOutlinedIcon },
 ]
 
 // What the agent's memory does, which is three things and not one: it writes
@@ -161,7 +188,6 @@ claude mcp add teanode -- teanode agent mcp serve`
 export const WelcomePage = () => {
   const translate = useTranslate()
   const quickStart = generatePath(routes.docPath, { docId: 'quick-start' })
-  const financeDoc = generatePath(routes.docPath, { docId: 'finance' })
   const snippet = useMemo(() => renderMarkdown('```bash\n' + install + '\n```'), [])
   const mcpSnippet = useMemo(() => renderMarkdown('```bash\n' + connect + '\n```'), [])
   const answers = useMemo(
@@ -266,6 +292,12 @@ export const WelcomePage = () => {
             ))}
           </Box>
 
+          {/* Talking to it, and the coding sessions it works in beside the
+              person: each a thing of its own, the words on the left and
+              what it does on the right, like money below. */}
+          <PointsBlock section='voice' docId='voice' points={voicePoints}/>
+          <PointsBlock section='coding' docId='coding-sessions' points={codingPoints}/>
+
           {/* The four points above are the agent working inside the
               dashboard. This is the same kit reached from outside it, which
               is a different claim and reads badly folded into one of them. */}
@@ -291,41 +323,7 @@ export const WelcomePage = () => {
           {/* Money is the agent's too, once a bank is linked, but it is a
               page of the dashboard as much as a thing to ask about, so it
               gets the words on the left and what it shows on the right. */}
-          <Box
-            sx={{
-              display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 1fr) minmax(0, 1fr)' },
-              gap: { xs: 2.5, md: 5 }, alignItems: 'start',
-              mt: { xs: 4, md: 5 }, pt: { xs: 3, md: 4 }, borderTop: 1, borderColor: 'divider',
-            }}
-          >
-            <Box sx={{ minWidth: 0 }}>
-              <Overline><T id='welcome.finance.heading'/></Overline>
-              <Typography sx={{ maxWidth: measure, mb: 1.5 }}><T id='welcome.finance.lead'/></Typography>
-              <Typography variant='body2' color='text.secondary' sx={{ maxWidth: measure, lineHeight: 1.6, mb: 1.5 }}>
-                <T id='welcome.finance.body'/>
-              </Typography>
-              <Button component={NavLink} to={financeDoc} size='small' sx={{ ml: -1 }}>
-                <T id='welcome.finance.more'/>
-              </Button>
-            </Box>
-            <Stack spacing={1.75} sx={{ minWidth: 0 }}>
-              {financePoints.map(({ key, Icon }) => (
-                <Stack key={key} direction='row' spacing={1.5} sx={{ alignItems: 'flex-start' }}>
-                  <Tile sx={{ width: 34, height: 34, borderRadius: '9px', flexShrink: 0 }}>
-                    <Icon sx={{ fontSize: 18 }}/>
-                  </Tile>
-                  <Box sx={{ minWidth: 0 }}>
-                    <Typography sx={{ fontWeight: 600, fontSize: 14.5 }}>
-                      <T id={`welcome.finance.points.${key}.title`}/>
-                    </Typography>
-                    <Typography variant='body2' color='text.secondary' sx={{ lineHeight: 1.5 }}>
-                      <T id={`welcome.finance.points.${key}.body`}/>
-                    </Typography>
-                  </Box>
-                </Stack>
-              ))}
-            </Stack>
-          </Box>
+          <PointsBlock section='finance' docId='finance' points={financePoints}/>
         </Section>
 
         {/* What it keeps between conversations. It follows the agent
@@ -541,6 +539,46 @@ const Card = ({ children }: { children: ReactNode }) => (
 )
 
 // The small square an icon sits in, the way the dashboard's tiles draw theirs.
+// A block of the agent's section: its heading, a lead, a paragraph and a
+// link to its document on the left, and its points on the right.
+const PointsBlock = ({ section, docId, points }: { section: string, docId: string, points: { key: string, Icon: SvgIconComponent }[] }) => (
+  <Box
+    sx={{
+      display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 1fr) minmax(0, 1fr)' },
+      gap: { xs: 2.5, md: 5 }, alignItems: 'start',
+      mt: { xs: 4, md: 5 }, pt: { xs: 3, md: 4 }, borderTop: 1, borderColor: 'divider',
+    }}
+  >
+    <Box sx={{ minWidth: 0 }}>
+      <Overline><T id={`welcome.${section}.heading`}/></Overline>
+      <Typography sx={{ maxWidth: measure, mb: 1.5 }}><T id={`welcome.${section}.lead`}/></Typography>
+      <Typography variant='body2' color='text.secondary' sx={{ maxWidth: measure, lineHeight: 1.6, mb: 1.5 }}>
+        <T id={`welcome.${section}.body`}/>
+      </Typography>
+      <Button component={NavLink} to={generatePath(routes.docPath, { docId })} size='small' sx={{ ml: -1 }}>
+        <T id={`welcome.${section}.more`}/>
+      </Button>
+    </Box>
+    <Stack spacing={1.75} sx={{ minWidth: 0 }}>
+      {points.map(({ key, Icon }) => (
+        <Stack key={key} direction='row' spacing={1.5} sx={{ alignItems: 'flex-start' }}>
+          <Tile sx={{ width: 34, height: 34, borderRadius: '9px', flexShrink: 0 }}>
+            <Icon sx={{ fontSize: 18 }}/>
+          </Tile>
+          <Box sx={{ minWidth: 0 }}>
+            <Typography sx={{ fontWeight: 600, fontSize: 14.5 }}>
+              <T id={`welcome.${section}.points.${key}.title`}/>
+            </Typography>
+            <Typography variant='body2' color='text.secondary' sx={{ lineHeight: 1.5 }}>
+              <T id={`welcome.${section}.points.${key}.body`}/>
+            </Typography>
+          </Box>
+        </Stack>
+      ))}
+    </Stack>
+  </Box>
+)
+
 const Tile = ({ children, sx }: { children: ReactNode, sx?: object }) => (
   <Box
     sx={{
