@@ -295,6 +295,9 @@ welcome:
       asks:
         title: Their questions come to you
         body: In the drawer with the options as buttons, and in your chat app. Whoever answers first wins, and a stale answer is refused.
+      remembers:
+        title: They know what your agent knows
+        body: With teanode hook installed, a session starts with the project's page and where the last one there stopped, and each prompt brings what it recalls from that project alone.
       anywhere:
         title: From anything that speaks MCP
         body: ChatGPT, Grok, an editor or a voice call in the drawer. Tell a session what to do next, or ask to hear when it is done.

@@ -282,6 +282,8 @@ recall が届かなかったのか、ある夜が下げたのか、何にも当�
 - [エージェント](/doc/agents)はパーソナルエージェントの残りの部分です。何が要るか、
   メールボックスを渡すと何をするか、運用者が何を有効にするか。
 - [設定](/doc/configuration#agent)は `agent` の下のすべてのキーを記録しています。
-  `agent.limits`、夜の取り分、走査用のモデルを含みます。
+  `agent.limits`、夢の取り分、走査用のモデルを含みます。
 - [コマンドライン](/doc/command-line#teanode-agent)は `teanode agent memory`、
   `knowledge`、`dream` を余さず扱います。
+- [コーディングのセッション](/doc/coding-sessions)は、Claude Code と Codex が仕事をしながら
+  この記憶を見せられる仕組みです。

@@ -67,6 +67,33 @@ allow a tool that writes. Sending and answering raise no confirmation card
 in the dashboard either, because a card for every answer was more than
 people wanted. If you want one, put `herdr` on your own "ask me first" list.
 
+## What your agent knows, in the session
+
+A coding session can also be shown what your agent knows about the checkout
+it runs in, with or without herdr. On the computer, signed in to your
+server, run `teanode hook install claude-code` (or `codex`). The hooks go in
+beside the tool's own, and `teanode hook uninstall` takes out only TeaNode's.
+
+- **When a session starts** it is shown the project's page and the facts on
+  it most in use, and where the last session in that directory stopped: its
+  title, your last few requests and the start of its last answer.
+- **When you type a prompt** it is given what the prompt recalls, kept to
+  that project, the pages under it and the work linked to it, so a question
+  about a build does not carry your mail or your money into the coding tool.
+  A page shown in the last five prompts is not shown again, and a short
+  prompt or a slash command recalls nothing.
+- **When an answer ends** the computer's source for that tool, if you added
+  one, is asked to read again now, so the session is searchable within a
+  minute and the next one knows where this one stopped.
+
+A checkout this computer never read is matched by its git remote, and the
+session is told where and at which commit memory read it. A hook that
+cannot reach the server shows nothing and never stops the tool. Codex runs
+hooks only with `hooks = true` under `[features]` in `~/.codex/config.toml`.
+`teanode agent memory checkout` prints what a session in a directory would
+be shown, and the Recall dialog on the Knowledge page has a checkout field
+that does the same.
+
 ## How it knows a session is asking
 
 From the screen. The program recognizes the forms the current Claude Code and

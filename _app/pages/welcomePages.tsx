@@ -119,6 +119,7 @@ const codingPoints: { key: string, Icon: SvgIconComponent }[] = [
   { key: 'sees', Icon: TerminalOutlinedIcon },
   { key: 'types', Icon: KeyboardOutlinedIcon },
   { key: 'asks', Icon: HelpOutlineOutlinedIcon },
+  { key: 'remembers', Icon: AccountTreeOutlinedIcon },
   { key: 'anywhere', Icon: DirectionsCarOutlinedIcon },
 ]
 

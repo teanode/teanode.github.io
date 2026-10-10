@@ -240,6 +240,7 @@ Shell 补全由二进制文件自己提供：
 | `teanode agent tools` | 你的代理有哪些工具，按你可以使用的样子，带上风险等级以及它是否会先问 |
 | `teanode agent memory index\|get\|search\|note\|page\|merge\|link\|unlink\|move\|forget\|history\|recall\|learned` | 你的代理关于你知道些什么，作为一个个带编号事实的页面：`get people/alice-chen`，用 `--link-limit` 和 `--link-offset` 可以把一个页面的连线分几次打印；`note people/alice-chen "管账" --applies-to triage,reply`、`link people/alice-chen projects/portal --relation works_on`、`move notes/marigold things`；`move --number 3 people/alice-chen projects/portal` 是把其中一条事实挪到另一个页面上，而不是挪整个页面，并且保留它所依据的原话；`forget people/alice-chen --number 2`；不带编号的 `forget people/alice-chen` 会连同它下面的一切一起拿掉，并且先问一句，`--force` 跳过这个询问；还有 `history projects/portal`。`search "<words>"` 按词找页面和事实，每次 `--first` 条（默认 40）；找到更多时会说明还有多少页面和事实（数不完的地方写「至少」），以及打印下一页的 `--offset` |
 | `teanode agent memory recall "<question>"` | 一个问题会往一轮对话里带进什么：召回会展开的那些页面，每一个连同上面的事实，按页面自己的编号，用 `memory get` 打印页面的样子打印出来。它就是一轮真实对话做的那个召回，所以它能回答「它当时为什么不知道那件事？」，而不用再问它一遍——而且它不花钱：没有任何东西问过模型，也没有任何东西被标成用过，所以同一张图问两遍答案一样。`--json` 把页面和事实按原样打印出来。`--search "<words>"`（最多两个）和 `--broad` 按一份检索计划来走，就像一轮真实对话按它的深度判断来走；`--explain` 还会说明原因：检索方式和计划、跑过的每一个查询（消息本身、每个计划中的搜索、连线页面的那一跳、宽泛的那一遍），每个搜索找到了多少，以及什么被留在了外面 |
+| `teanode agent memory checkout [directory]` | 一个在某目录里的 Claude Code 或 Codex 会话会从 `teanode hook` 看到什么：这个目录所在检出的页面、页面上最常用的事实，以及那里上一个会话停在哪里。`--prompt "<words>"` 改为打印这个提示会想起什么，只限检出的项目和与它相连的东西（`--everywhere` 用上全部记忆）。电脑的名字不是这台机器的主机名时，用 `--computer` 指明。不会把任何东西标记为用过 |
 | `teanode agent memory overview <path>` | 一个页面所讲的那样东西是怎么运作的，由最近一夜根据这个页面以及它下面和旁边的页面写成：它是什么、有哪些部分、跟它连着的东西是什么关系、最近在发生什么、有什么突出的地方。`--rewrite` 请下一夜重写；`memory get` 也会把它打印在开头下面，主题的话还会带上它的反思。最后会说明这份概览覆盖了多少，由服务器来数：它的提示词展示了下面多少个页面、一个主题的多少个页面和多少条连线（总共有多少），其中多少没有自己的概览，以及写它所依据的东西之后有没有变过 |
 | `teanode agent survey "<question>"` | 根据概览回答一个关于整体的问题：范围内每个页面一次只读的运行，几个同时跑，然后一次把它们合成一份带引用的报告。`--scope themes/<one>` 或者任何一个页面可以缩小范围；不给的话覆盖每一个顶层主题。运行的种类是 survey，要几分钟。它在服务器上开始这次调查，然后每隔几秒问一下完成了没有，所以不会有一个请求开那么久。因为一时的原因失败的读取（服务器在它的代理后面重启、网络断了、超时）会再试，间隔越来越长；三十分钟之后命令就不再等了。不管怎么结束，它都会说出这次调查的 id，供 `teanode agent background show <id>` 使用；`--no-wait` 打印 id 就返回，中途停掉命令也会让它接着跑。`--json` 给出完成的结果，连同报告和那些运行 |
 | `teanode agent background list\|show\|stop` | 你的代理没等结果就开始的那些调查和子代理，以及 `agent survey` 开始的调查：`list` 按从新到旧说明哪些在排队、在跑、或者刚结束；`show <id>` 打印一个的报告或回答，并在标准错误上说明它的状态和它做过的运行；`stop <id>` 停下一个还在排队或在跑的，它之后什么也不会唤醒 |
@@ -247,7 +248,7 @@ Shell 补全由二进制文件自己提供：
 | `teanode agent memory answers <file>` | 回答一组问题里每一个带 `expectedAnswer` 的问题，分别只凭记忆、只凭来源，或者两者一起（`--from memory,sources,both`），再拿预期的答案给每一个回答打分：每个问题和来源一行——`memory changed-01 stale gave the old address`——然后是按来源分的得分、各项裁定、花费，以及一个回答用了多长时间。每个问题和来源调用两次模型，作为 `evaluate` 类的运行；不会往任何对话或者图里写东西。`--json` 打印每一个回答。见 `docs/evaluation/`。`memory@planned` 和 `both@planned` 会按每个问题的 `plan` 来走 |
 | `teanode agent memory plan <file>` | 问深度判断，一轮真实对话会为每个问题走哪份检索计划；用 `--output <file>` 把这组问题连同每个问题的 `plan` 写回去，供 `evaluate --mode planned` 和 `answers --from memory@planned` 使用。每个问题调用一次快速模型，作为 `evaluate` 类的运行。`--stored` 改为给记忆检查里已确认和已更正的问题做计划，而不是给一个文件里的 |
 | `teanode agent knowledge list\|add\|set\|pause\|resume\|sync\|remove` | 你的代理读取的那些地方：`add "work" ~/work --computer laptop --under work`；`set work --cron "0 4 * * *" --under projects` 改一个已经存在的来源——它的名字、它的路径、它找到的东西归到哪里、多久读一次、格式、邮箱、它下面每一个代码检出是不是都要读——你没给的都原样不动，所以只是改个钟点，不会让你付出「删掉再加一遍」的代价。`--read-every-checkout` 会读这条路径底下每一个检出的文件——默认情况下，一个几乎没有你的工作在里面的检出只保留它的简介，页面会说明它是什么、在哪儿，而它的源码不被索引，来源那一行会说明这样的检出有多少个、涉及多少文件；`--own-commits-at-least` 说明一个检出要有多少你自己的提交，它的文件才会被读，不管它的历史有多长（不去管它，程序会自己算：两个提交，或者日志的五十分之一，取大的那个，上限二十五——并且永远不会超过整段历史，所以一个你只提交过一次、别人一次都没提交过的仓库就算你的；`1` 是旧规则，有任何一个提交就算）；`--commits-per-pass` 说明对这棵树的一遍扫描要带上多少历史，由里面的那些检出分摊，从新到旧（程序自己的节奏是两千）；`sync` 现在就再读一遍；`pause` 会把已经找到的都留着；`remove` 会忘掉它找到的一切，所以先问一句，`--force` 跳过这个询问。`--format` 说明那里的东西该怎么读：`files`（一棵文件树，认得 git）、`journal`（按日期记的笔记），或者 `records`（一个装 JSON 行的文件夹，任何脚本都能写，旁边放一个 `refresh` 脚本，守护进程会在每次扫描前运行它——可以让你的代理来写） |
-| `teanode agent knowledge search "<words>"` | 在已经索引过的东西里找段落——你的代码、你的聊天、你的笔记——不用请你的代理替你去找。它跟你代理的知识工具跑的是同一个搜索，所以你看到的就是它看到的：从日志里抄出来的一个标识符（`ComputeShippingQuote`）会被精确查出来，并打印成定义它的那个文件和行号，然后才是那些段落，每一段都列在它所来自的文档下面，带着可以把那份文档读回来的标识符。`--first` 说要几条，`--source <id-or-name>` 把范围缩到一个来源，`--json` 按原样打印每一行，带着各自的分数。如果这套部署没有配嵌入模型，它会说明——只按词找到的，会漏掉一句一个词都不重合的同义改写。`--offset` 说明跳过排名里的多少条；一次找到的比打印出来的多的搜索，结尾会说明还有多少段落（数不完的地方写「至少」），以及打印下一页的 `--offset`；一页接一页地读，每一段只会出现一次，顺序和第一次一样 |
+| `teanode agent knowledge search "<words>"` | 在已经索引过的东西里找段落——你的代码、你的聊天、你的笔记——不用请你的代理替你去找。它跟你代理的知识工具跑的是同一个搜索，所以你看到的就是它看到的：从日志里抄出来的一个标识符（`ComputeShippingQuote`）会被精确查出来，并打印成定义它的那个文件和行号，然后才是那些段落，每一段都列在它所来自的文档下面，带着可以把那份文档读回来的标识符。`--first` 说要几条，`--source <id-or-name>` 把范围缩到一个来源，`--json` 按原样打印每一行，带着各自的分数。如果这套部署没有配嵌入模型，它会说明——只按词找到的，会漏掉一句一个词都不重合的同义改写。`--offset` 说明跳过排名里的多少条；一次找到的比打印出来的多的搜索，结尾会说明还有多少段落（数不完的地方写「至少」），以及打印下一页的 `--offset`；一页接一页地读，每一段只会出现一次，顺序和第一次一样。在一棵文件树上搜索时，它还会说明段落都在哪些目录里，最多的在前；`--directory <其中一个>`（几台电脑上都有这个路径时，加上 `--computer`）只在那个目录里搜索，大的文件树就是这样一部分一部分地搜 |
 | `teanode agent knowledge read <document-id>` | 按搜索打印出来的标识符读其中一份文档；从引用里抄出来的 `<id>#<passage>` 也认。`--from` 是从正文的哪里开始，按字符数算，`--first` 是打印多少；一次没读到结尾的读取会说明还剩多少，并打印出接着往下读的那条命令 |
 | `teanode agent source-type list\|search\|install\|update\|add-local\|show\|remove` | 这台服务器能读的那些知识来源类型，从签过名的来源类型仓库里装：`search` 说明仓库里有什么，`install rss` 在保存之前先核对签名，`update` 装一个更新的版本，`add-local <source.md>` 加一个你自己的类型，没有签名、标成本地，`show` 说明一种类型会运行什么、要哪些设置。某种类型的来源用 `teanode agent knowledge add <name> --type rss --setting url=https://example.com/feed.xml` 来加 |
 | `teanode agent knowledge secret list\|set` | 一个来源的类型所要的密钥，比如某个服务的令牌：是你的，每个来源一套。`secret list <source>` 说明它要什么、每一项有没有填；`secret set <source> <key>` 不带值时会不回显地读入 |
@@ -281,6 +282,26 @@ Shell 补全由二进制文件自己提供：
 
 每一条命令都会把 shell 的时区和语言随请求一起送出，就像仪表盘送浏览器的那样，所以活在
 终端里的人和活在浏览器里的人一样被安放好。
+
+### teanode hook
+
+Claude Code 和 Codex 运行的东西，让这台电脑上的编程会话看到你的代理对它所在的检出知道些什么。`teanode hook
+install claude-code` 把钩子加进 `~/.claude/settings.json`，`teanode hook install codex` 加进
+`~/.codex/hooks.json`，文件里别的钩子都留着；`uninstall` 只拿掉 TeaNode 的。钩子运行的就是安装时的这个
+程序，指明它登录时用的已保存配置（只用 `--url` 连到的服务器会被拒绝：先登录，这样钩子就不依赖工具环境里
+的令牌），以及安装时给的 `--computer`。钩子自己的退出状态从不传出去：失败的钩子什么也不显示。
+
+| 事件 | 会话得到什么 |
+| --- | --- |
+| 会话开始、恢复或被压缩 | 检出的页面和上面最常用的事实，以及那里留下的上一个会话：它的标题、这个人最后几次的请求和它最后一个回答的开头 |
+| 输入一个提示 | 这个提示想起的东西和它带出来的经验，只限检出的项目、项目下面和与它相连的页面，以及经验（安装时加 `--everywhere` 就用上全部记忆）；最近五次提示里出现过的页面不再出现，少于三个词的提示或者斜杠命令什么也不会想起 |
+| 一个回答结束、会话被压缩或结束 | 这台电脑的 `claude-code` 或 `codex` 来源被要求马上再读一遍，所以这个会话一分钟内就能搜到，下一个会话也知道这一个停在哪里 |
+
+这台电脑的来源从没做过概况的检出，按它的 git 远程地址而不是路径来匹配，会话会被告知记忆是在哪里、在哪个
+提交上读的这个项目。连不上服务器的钩子什么也不显示，也绝不会让工具停下；出了什么问题，写在用户缓存目录下的
+`hook.log` 里（Linux 上是 `~/.cache/teanode/hooks`）。Codex 只有在 `~/.codex/config.toml` 的 `[features]`
+下写了 `hooks = true` 才会运行钩子，并且会在一个新钩子第一次运行前请你信任它。`teanode agent memory
+checkout` 不用开会话就能打印出一个会话会看到什么。
 
 ### teanode finance
 

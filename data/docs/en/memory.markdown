@@ -322,3 +322,5 @@ finding the switch.
   including `agent.limits`, the dream's share, and the scan model.
 - [The command line](/doc/command-line#teanode-agent) covers `teanode agent
   memory`, `knowledge` and `dream` in full.
+- [Coding sessions](/doc/coding-sessions#what-your-agent-knows-in-the-session)
+  is how Claude Code and Codex are shown this memory as they work.

@@ -252,6 +252,7 @@ provider——这样读取除了机器的时间之外不花钱。在按量计费
 - [代理](/doc/agents)是私人代理的其余部分：它需要什么、拿到一个邮箱会做什么，以及运维者
   要打开什么。
 - [配置](/doc/configuration#agent)记录了 `agent` 底下的每一个键，包括 `agent.limits`、
-  夜里那一份份额，以及扫描用的模型。
+  做梦时的那一份份额，以及扫描用的模型。
 - [命令行](/doc/command-line#teanode-agent)完整地讲了 `teanode agent memory`、
   `knowledge` 和 `dream`。
+- [编程会话](/doc/coding-sessions)讲了 Claude Code 和 Codex 怎样在干活时看到这份记忆。

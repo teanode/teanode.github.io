@@ -29,8 +29,9 @@ are left out of what is read aloud.
 **You can cut in.** Start talking over an answer and it drops to a murmur at
 once, and stops if you keep going. The agent is told how much of the answer
 you heard, so it never assumes you heard what you did not. Tap the bars to
-cut an answer short. The speaker button stops reading answers aloud on that
-device without ending the call.
+cut an answer short. The microphone button mutes you for a word with
+somebody else: nothing of it is heard or transcribed, answers go on being
+read aloud, and the mute lasts until you unmute or the call ends.
 
 **It does everything a typed turn does.** A spoken turn steers a turn
 already running, answers an open question card, and reaches every tool your
