@@ -1,0 +1,5 @@
+# GitHub Pages builds this site with Jekyll, which leaves out files whose
+# names start with a dot. The app association file has to be served, so that
+# iOS opens the TeaNode app for teanode.com/app/connect links.
+include:
+  - .well-known

@@ -1,0 +1,12 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["B8GVHNH75A.com.teanode.app"],
+        "components": [
+          { "/": "/app/connect", "#": "*", "comment": "A code that connects the TeaNode app to a server" }
+        ]
+      }
+    ]
+  }
+}

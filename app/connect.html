@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex">
+<title>Connect the TeaNode app</title>
+<script>
+  // The link carries a one-time code after the "#", which a browser never
+  // sends anywhere. Take it out of the address bar and the history at once,
+  // so it is not left behind on a phone without the app.
+  if (location.hash) history.replaceState(null, '', location.pathname)
+</script>
+<style>
+  :root { color-scheme: light dark; --accent: #729d39; }
+  body { font: 17px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; margin: 0; padding: 48px 24px; max-width: 34rem; margin-inline: auto; background: Canvas; color: CanvasText; }
+  h1 { font-size: 1.6rem; line-height: 1.25; margin: 0 0 12px; }
+  p { margin: 0 0 14px; }
+  .leaf { width: 48px; height: 48px; margin-bottom: 20px; }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+<svg class="leaf" viewBox="0 0 64 64" aria-hidden="true"><path fill="#729d39" d="M56 8C30 8 10 20 10 40c0 6 3 11 7 14 2-14 10-24 22-30-9 7-15 16-17 28 3 1 6 2 10 2 20 0 26-22 24-46z"/></svg>
+<h1>Open this link on your iPhone</h1>
+<p>This link connects the TeaNode app to your server. On an iPhone with the app installed, scanning the code or opening the link starts the app.</p>
+<p>If you see this page on your phone, open the TeaNode app and tap <strong>Scan code</strong> instead, or make a new code on your dashboard: this one has been cleared from this page.</p>
+<p><a href="/">About TeaNode</a></p>
+</body>
+</html>
