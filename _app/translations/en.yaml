@@ -348,8 +348,8 @@ welcome:
     body: >-
       Nothing is ever deleted. A fact nothing has wanted in months stops arriving
       uninvited and is still there when you search for it, and every change to
-      every page says who made it — you, the agent, last night's run, a source
-      being read — and what was there before, so you can put it back. It is all
+      every page says who made it (you, the agent, a dream, a source
+      being read) and what was there before, so you can put it back. It is all
       on the Knowledge page, and all on the command line.
     sourcesLead: Where it reads from, once you point it at something
     sources:
@@ -370,7 +370,7 @@ welcome:
         title: It tidies while you sleep
         body: In hours you set, after you have been quiet a while, it reads what arrived, writes up the month, rewrites the pages that changed, divides one that has outgrown itself, and walks the graph for connections nobody wrote down. Then it asks itself the questions you are likely to ask tomorrow and writes down the ones it could not answer.
     page:
-      label: A page from the agent's memory, and the link its nightly run drew across it
+      label: A page from the agent's memory, and the link a dream drew across it
       connections: Connections
       opening: Greenfinch, the claims system Osborne & Sons file through. Ours to run, and the thing most of this quarter went into.
       facts:
@@ -382,7 +382,7 @@ welcome:
         conversation: You said so · 4 March
         file: README.md · on your laptop
         thread: The contract thread · 12 September
-        night: Drawn last night, from two pages nothing had joined
+        night: Drawn in the last dream, from two pages nothing had joined
       lastNight: Read 42 messages and 6 files · filed 9 facts on 5 pages · merged 2
       dreaming: Walking the graph for connections nobody wrote down…
   featuresHeading: What it does

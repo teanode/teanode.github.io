@@ -72,7 +72,10 @@ terminal. It works through the same operations the
 dashboard uses, as you, with exactly your permissions: it searches your mail,
 reads it, files it, drafts, keeps your folders and rules. Anything it cannot
 undo, and anything that leaves the server, stops at a card you approve or
-decline.
+decline. In the drawer, swipe a message to the left to reply to it, so the
+agent knows which one you mean, or to the right to copy it. When it needs to
+know where you are, it asks the browser you are chatting in, which asks your
+permission the first time.
 
 **Reaches past the mailbox, if you let it.** Your contacts, so it can look
 somebody up or keep somebody for you. Your own computer, attached with
@@ -167,7 +170,7 @@ says so there rather than trusting everyone to leave a switch alone.
 
 - [Memory](/doc/memory) is what it keeps between conversations: a graph of
   pages it writes without being asked, the places it reads from, and what it
-  does with all of it overnight.
+  does with all of it in its dreams.
 - [Finance](/doc/finance) is the banks, cards and brokerages it can read, and
   the budgets and net worth built on them.
 - [Voice](/doc/voice) is calling your agent from the drawer.

@@ -114,7 +114,7 @@ any passage that looks like a private key, a token or a credential — refused
 on the machine, counted, and named in the source's log, so a mistake in the
 server cannot widen it.
 
-A picture that came with a thread or a message is kept too. A night looks
+A picture that came with a thread or a message is kept too. A dream looks
 first at what it can see for nothing — the file's name, its size, the thread
 it arrived in — and decides which are worth opening, because describing a
 picture costs money and most of them are avatars. What it opens, the model
@@ -160,7 +160,7 @@ word with your question will not be found.
 ## Why it did not know that
 
 Something plainly written on a page can still never reach an answer, and from
-outside there is no telling whether recall missed it, a night retired it, or
+outside there is no telling whether recall missed it, a dream retired it, or
 it is worded so that nothing matches. Ask what a question would carry:
 
     teanode agent memory recall "when does the portal ship?"
@@ -180,7 +180,7 @@ Memory checks can be switched off in the agent's settings.
 `teanode agent memory evaluate <file>` puts a whole set of questions through
 the same path and says, per question, whether the facts it needed were
 carried, with totals and a non-zero exit when any missed. Run it before and
-after a night to see what the night changed. `teanode agent memory answers
+after a dream to see what the dream changed. `teanode agent memory answers
 <file>` goes one step further and grades the answers themselves against
 yours: from memory alone, from your sources alone, and from both.
 
@@ -197,15 +197,15 @@ build files and sends its components and what it depends on. A component with
 a build file of its own becomes a page under the checkout's page, and each
 dependency becomes a link between them with the build file as its evidence.
 
-**Overviews.** At night the agent writes a short overview on each page that
+**Overviews.** In its dreams the agent writes a short overview on each page that
 has something to say: what it is, its parts, how it relates to what it is
 linked to, what has been happening, what stands out. Deeper pages go first, so
 a page's overview reads its children's, and a page nothing touched is not
 written again.
 
 **Themes and reflections.** Pages more linked to each other than to the rest
-are grouped into themes, and themes into larger ones. A few themes a night are
-asked for what the overviews alone do not say: a pattern that repeats, a
+are grouped into themes, and themes into larger ones. Each dream asks a few
+themes for what the overviews alone do not say: a pattern that repeats, a
 tension, a risk, a question nobody answered. Each observation has to cite at
 least two pages or facts it was shown, or it is dropped.
 
@@ -218,9 +218,9 @@ conversation is woken with the report when it is ready; or from a terminal:
     teanode agent memory overview projects/greenfinch
 
 Overviews, reflections and a survey's parts run on the `synthesize` model, so
-the judgments can go to a better model than the bulk of the night's reading.
+the judgments can go to a better model than the bulk of a dream's reading.
 
-## What it does at night
+## What it does in its dreams
 
 When you have been quiet for half an hour, inside hours you set, and not more
 than once every six, your agent works over its own graph. It has its own
@@ -235,12 +235,12 @@ of reading and none of your business, so they stay searchable and unread.
 It writes up the month. `time/2026/09` is a page like any other, built from a
 digest assembled without a model at all — commits by repository, the threads
 you took part in, your own notes, with the noise dropped — and then written
-up in your own words. That is one call a night for the month in hand.
+up in your own words. That is one call a dream for the month in hand.
 
 It rewrites the pages that changed, merges facts that say the same thing, and
 divides a page that has outgrown itself into themed children. It reweighs the
 links: every link is downscaled a little, then any link whose both ends you
-used today rises, so a link used today ends the night above where it started.
+used today rises, so a link used today ends the dream above where it started.
 Facts nothing has wanted in half a year stop arriving uninvited — they are
 still there when you search.
 
@@ -263,15 +263,15 @@ how a graph fills with fiction.
     teanode agent dream now             # start one now, whatever its hours
     teanode agent dream bootstrap on    # read everything, as fast as it can
 
-Every call a night makes is an ordinary run you can open and read, and the
-sentence at the top of the agent page says what last night came to.
+Every call a dream makes is an ordinary run you can open and read, and the
+sentence at the top of the agent page says what the last dream came to.
 
 ## What it costs
 
 A first ingest is years of record at once. Point `models.scan` at a model of
 your own — an OpenAI-compatible server such as Ollama, llama.cpp or vLLM,
 declared as a provider at zero price — and the reading costs nothing but the
-machine's time. On a metered service the night is still bounded by its share
+machine's time. On a metered service a dream is still bounded by its share
 of the daily budget, and by the caps your operator set.
 
 Searching by meaning uses the `pgvector` extension where the database has it,
@@ -281,18 +281,18 @@ set. The compose file ships an image that has it.
 ## Nothing is deleted
 
 Every change files a revision against the page: what changed, who changed it
-— you, the agent, the job that files conversations, the night, a source being
-read — and what was there before. Without the "before" a history can be read
+(you, the agent, the job that files conversations, a dream, a source being
+read) and what was there before. Without the "before" a history can be read
 but not undone, which is the half you want at the moment you go looking.
-Without the actor, a page the night wrote and a page you wrote look
+Without the actor, a page a dream wrote and a page you wrote look
 identical.
 
-A page the night retires is marked dormant, not deleted: out of the index,
+A page a dream retires is marked dormant, not deleted: out of the index,
 still findable by search. Deleting is yours to do, and deleting a page
 deletes what is under it.
 
 Every page and fact also carries the build that last wrote it, so a rule
-written today reaches a graph filled last month: the first thing a night does
+written today reaches a graph filled last month: the first thing a dream does
 is offer everything an older build wrote to the rules as they stand and strike
 what fails them, in the page's history, with the words it used to say.
 
@@ -322,5 +322,5 @@ finding the switch.
   including `agent.limits`, the dream's share, and the scan model.
 - [The command line](/doc/command-line#teanode-agent) covers `teanode agent
   memory`, `knowledge` and `dream` in full.
-- [Coding sessions](/doc/coding-sessions#what-your-agent-knows-in-the-session)
-  is how Claude Code and Codex are shown this memory as they work.
+- [Memory in coding sessions](/doc/coding-memory) is how Claude Code and
+  Codex are shown this memory as they work.
