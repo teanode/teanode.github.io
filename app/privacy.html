@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TeaNode app privacy policy</title>
+<style>
+  :root { color-scheme: light dark; --accent: #729d39; }
+  body { font: 17px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; margin: 0; padding: 48px 24px; max-width: 40rem; margin-inline: auto; background: Canvas; color: CanvasText; }
+  h1 { font-size: 1.6rem; line-height: 1.25; margin: 0 0 8px; }
+  h2 { font-size: 1.15rem; margin: 28px 0 8px; }
+  p, li { margin: 0 0 12px; }
+  ul { padding-left: 1.2rem; }
+  .leaf { width: 48px; height: 48px; margin-bottom: 20px; }
+  .muted { opacity: 0.7; }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+<svg class="leaf" viewBox="0 0 64 64" aria-hidden="true"><path fill="#729d39" d="M56 8C30 8 10 20 10 40c0 6 3 11 7 14 2-14 10-24 22-30-9 7-15 16-17 28 3 1 6 2 10 2 20 0 26-22 24-46z"/></svg>
+<h1>TeaNode app privacy policy</h1>
+<p class="muted">Last updated October 11, 2026.</p>
+
+<p>The TeaNode app is a client for a TeaNode server: a mail server and personal agent that you, or someone you trust, runs. The app talks to the server you connect it to and to nothing else of ours, except the notification relay described below. We do not collect, sell or share your data, we show no ads, and the app contains no analytics or tracking code.</p>
+
+<h2>What goes to your server</h2>
+<p>Everything you do in the app is sent to the TeaNode server you connected it to, over HTTPS, so that the server can do it: the messages you write and the pictures, files and links you send or share to the app; your voice while you are on a call with your agent; your location, when your agent asks for it to answer something and you allow it; and what you read and change in your mail, calendar, contacts, finance and the agent's memory. That server keeps it as its operator configures it. Its privacy is between you and whoever runs it.</p>
+<p>The app keeps its sign-in in the iPhone's keychain, and a key for decrypting notifications. Removing the phone on your dashboard, or signing out in the app, ends the sign-in.</p>
+
+<h2>Notifications</h2>
+<p>Notifications reach your phone through Apple's push service and a relay that holds the app's Apple push key. What a notification says is encrypted on your server with a key only your phone has, and decrypted on the phone before it is shown, so neither Apple nor the relay can read it. The app gives the relay your phone's push token once, and the relay hands it back sealed, for your server to keep. When your server sends a notification, the relay sees that token and the server's address; it stores neither, and holds them in memory only to deliver the notification and to limit how often one phone is sent to.</p>
+<p>A Live Activity, which shows on the lock screen while your agent works on something you asked, cannot be encrypted this way. It therefore carries only one word: working, waiting, done or failed. Never what your agent is doing or saying.</p>
+
+<h2>Siri, widgets and the share sheet</h2>
+<p>What you ask through Siri or a shortcut is sent to your server like a typed message; turning your speech into words is done by Siri, under Apple's privacy policy. Widgets read your next events, unread mail count and what waits for you from your server, and show them on your phone. Nothing from these leaves your phone except to your server.</p>
+
+<h2>Crash reports</h2>
+<p>If you choose to share crash reports or feedback with app developers in your iPhone's settings or in TestFlight, Apple passes them to us. They describe the app's state when it stopped and include your device model and system version. We use them only to fix the app.</p>
+
+<h2>Children</h2>
+<p>The app is not directed to children.</p>
+
+<h2>Changes and questions</h2>
+<p>If this policy changes, the new one is published here with its date. TeaNode is open source; questions are welcome as an issue at <a href="https://github.com/ziyan/teanode/issues">github.com/ziyan/teanode</a>.</p>
+<p><a href="/">About TeaNode</a></p>
+</body>
+</html>
