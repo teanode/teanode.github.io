@@ -261,9 +261,9 @@
       "ja": "金融"
     },
     "description": {
-      "en": "Your banks, cards and brokerages linked through Plaid or SimpleFIN: transactions in your own categories, budgets that say where the month is heading, savings targets and net worth, all kept in your own database.",
-      "zh": "通过 Plaid 或 SimpleFIN 接入你的银行、信用卡和证券账户：按你自己的类别归好的交易、说得出这个月走向的预算、储蓄目标和净资产，全都存在你自己的数据库里。",
-      "ja": "Plaid か SimpleFIN でつないだ銀行、カード、証券口座。自分のカテゴリで分けた取引、月の行き先を言う予算、貯蓄目標と純資産。どれもあなた自身のデータベースに。"
+      "en": "Your banks, cards and brokerages linked through Plaid or SimpleFIN: transactions in your own categories, budgets that say where the month is heading, savings targets, net worth, and a tax year put together from your paystubs, W-2s, 1099s and 1098s, all kept in your own database.",
+      "zh": "通过 Plaid 或 SimpleFIN 接入你的银行、信用卡和证券账户：按你自己的类别归好的交易、说得出这个月走向的预算、储蓄目标、净资产，以及用工资单、W-2、1099 和 1098 拼起来的纳税年度，全都存在你自己的数据库里。",
+      "ja": "Plaid か SimpleFIN でつないだ銀行、カード、証券口座。自分のカテゴリで分けた取引、月の行き先を言う予算、貯蓄目標と純資産、そして給与明細、W-2、1099、1098 から組み立てる課税年度。どれもあなた自身のデータベースに。"
     },
     "filename": {
       "en": "en/finance.markdown",

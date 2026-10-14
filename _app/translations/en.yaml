@@ -1,7 +1,7 @@
 ---
 language: English
 title: TeaNode
-tagline: A self-hosted agentic mailbox. Your own domains, your own server, and an assistant that never leaves it.
+tagline: A personal assistant on a server of your own, with an iPhone app. It looks after your mail, your days, your money and your taxes, and nothing leaves your hardware.
 nav:
   docs: Documentation
   github: GitHub
@@ -32,14 +32,80 @@ notFound:
   toHome: Go to the front page
   toDocs: Read the documentation
 welcome:
-  headline: Send and receive emails at your own domains.
+  headline: A personal assistant that lives on your own server.
   lead: >-
-    Read the mail here or in any mail program, forward what belongs somewhere
-    else, and give each person a private assistant that reaches their mail,
-    their contacts, their calendar, their computer and their browser. One binary, one
-    PostgreSQL, your hardware. Point the assistant at an Ollama or a vLLM of
-    your own and nothing leaves the machine.
+    It reads your mail, keeps your calendar, files your receipts and tax
+    forms, writes up your meetings and keeps an eye on your coding sessions,
+    and it remembers what it learns about you. Talk to it from the iPhone app,
+    a browser or a call. One program and one PostgreSQL on your hardware;
+    point it at an Ollama or a vLLM of your own and nothing leaves the machine.
   getStarted: Get started
+  iphoneButton: The iPhone app
+  lifeHeading: What it looks after
+  life:
+    mail:
+      title: Your mail
+      body: Sorts what arrives, says what is waiting on you, and drafts the answer in your voice. Sending stays with you.
+    days:
+      title: Your days
+      body: A calendar, reminders, notes and an address book your phone keeps in step, and invitations answered from the conversation.
+    money:
+      title: Your money
+      body: Banks, cards and brokerages linked or imported, spending filed your way, budgets that look ahead, and receipts matched to their charges.
+    taxes:
+      title: Your taxes
+      body: Paystubs, W-2s, 1099s and 1098s read from a PDF or a photo, and the year added up into what you are likely to owe or get back.
+    meetings:
+      title: Your meetings
+      body: Record on your iPhone, and get a transcript as it happens, the speakers by name, and a summary filed where it belongs.
+    memory:
+      title: What you told it
+      body: A memory of the people, projects and places in your life, which it writes as you talk, cites when it answers, and tidies in its dreams.
+    coding:
+      title: Your coding sessions
+      body: Claude Code and Codex on every computer. Their questions come to you, and they start knowing what your agent knows.
+    computer:
+      title: Your computer and browser
+      body: Files, a terminal and a browser on the machines you attach, with your word asked before anything it cannot undo.
+  phone:
+    heading: TeaNode for iPhone
+    lead: Your assistant, in your pocket.
+    body: >-
+      Chat with it, call it, answer it from a notification, and hand it what
+      you are looking at from any app. One app for every TeaNode server: scan the code your dashboard shows and
+      it connects as you, with nothing to type. It carries what the dashboard
+      does, from mail and the calendar to finance and knowledge, drawn in the
+      system's own controls and at your text size.
+    availability: In TestFlight now, and on its way to the App Store
+    privacy: The app's privacy policy
+    galleryLabel: Screens of the iPhone app, with invented data
+    points:
+      chat:
+        title: The conversation, everywhere
+        body: Every card the dashboard's drawer shows, including a coding session's question with its answers as buttons. Ask about a mail, a charge or a page from where it is.
+      notify:
+        title: Answer from the notification
+        body: What needs you arrives as a notification you can reply to. A running turn sits on the lock screen as a Live Activity, and widgets show what is waiting and what is next.
+      call:
+        title: Call it, or ask Siri
+        body: A real phone call you can cut into, on the speaker or in your headphones. Ask TeaNode and Call TeaNode work from Siri, Shortcuts and Control Center.
+      share:
+        title: Share anything to it
+        body: A picture, a file, a link or some words go to your agent with a note. Paystubs and W-2s go straight to Taxes, and a bank's export to your statements.
+      record:
+        title: Record a meeting
+        body: The phone records, the server transcribes as it goes, and an upload the network cut off carries on where it stopped.
+      setup:
+        title: Mail, calendars and contacts too
+        body: One profile adds your mailbox, calendars and contacts to the iPhone's own apps, and your address book can come in from the phone.
+    captions:
+      conversation: "The conversation: a mail drafted, a coding session's question, and a reply waiting for your word."
+      mail: The inbox, with what is important and what needs a reply marked.
+      calendar: The month, with your reminders a tap away.
+      finance: Where the money went, month by month.
+      recording: "A recorded meeting: the summary, then the transcript, speaker by speaker."
+      knowledge: A person's page in memory, with the mail, the event and the receipt it is linked to.
+      contacts: The address book, kept in step with the server.
   readDocs: Read the documentation
   viewSource: View the source
   release:
@@ -54,7 +120,8 @@ welcome:
     webhook: A webhook
     reply: Replies and mail you send go out signed as your domain.
     agent: Your assistant sorts what lands in the mailbox, and drafts what you answer.
-  screenshotsHeading: What it looks like
+  screenshotsHeading: And in a browser
+  screenshotsLead: The same assistant in the dashboard, with the chat drawer on every page.
   previous: Previous page
   next: Next page
   openPicture: Open the picture full screen
@@ -71,7 +138,7 @@ welcome:
     drawerVoice: The same conversation as a call. The bars follow your voice, the words heard so far sit beside them, and the answer is read aloud as it is written.
     drawerHerdr: A Claude Code session on your computer stopped to ask something. The question comes to you, with its options as buttons, wherever you are talking to your agent.
     herdr: The coding sessions in herdr on your computers, with which one is working, which is idle, and which is waiting on you.
-    contacts: The address book. The people you keep, synchronized to your phone over CardDAV — photographs, birthdays and all — rather than a list of everyone who has ever written.
+    contacts: The address book. The people you keep, synchronized to your phone over CardDAV (photographs, birthdays and all) rather than a list of everyone who has ever written.
     financeSpending: Finance. Income and spending across twelve months, with what was left over; money moved between your own accounts is left out.
     financeCategories: A month by spending category, under its budgets. Each budget says how far it has gone and whether the month is on track.
     financeReceipt: A charge with its receipt, read from a photo line by line, checked against its printed total and matched to the charge on its own.
@@ -81,7 +148,7 @@ welcome:
       mailboxes it may reach, and what it has spent today.
     knowledge: One page of what your agent knows. Its path is its address, each fact is numbered so it can be cited, and the history says who wrote every line and what was there before.
     graph: The same knowledge as a graph. Pages by kind, links that say how, and a double click opens what a page is joined to.
-    subscriptions: Every mailing list this mailbox receives, with what each has sent, and the two ways out — leave it, or mute it and let it file itself.
+    subscriptions: "Every mailing list this mailbox receives, with what each has sent, and the two ways out: leave it, or mute it and let it file itself."
     programs: An app password for each device, which signs a mail program in over IMAP and sends through the submission port.
     access: People, groups and roles. A group can be tied to one domain, so its permissions reach only that far.
     mail: The mail list, filtered to one domain. Every message the server has handled and what it decided about each one.
@@ -96,6 +163,13 @@ welcome:
     layout: Editing a layout, the frame around every message a domain sends.
     reports: DMARC aggregate reports received about your domains, which show who is sending as them.
     report: One report. Which addresses sent mail as the domain, how much, and whether it passed.
+  mailHeading: And your own mail server, if you want one
+  headlineMail: Send and receive mail at your own domains.
+  mailLead: >-
+    TeaNode began as a mail server, and it still is one once you give it a
+    domain. It receives at your domains, checks every message, files it in a
+    mailbox you read here or in any mail program, and forwards what belongs
+    somewhere else. Your assistant then reads that mail where it lands.
   examplesHeading: For example
   examples:
     you: Your own mailbox, read here or in any mail program.
@@ -170,13 +244,14 @@ welcome:
       As their plans stood in September 2026. Plans change; the licence does
       not.
   agent:
-    heading: A personal agent, if you want one
+    heading: An assistant of your own
     lead: >-
       Point the server at a language model (OpenAI, Anthropic, Gemini, an Ollama
       or vLLM on the same machine, or a ChatGPT plan you already pay for) and
-      each person can turn on an agent of their own. It sorts what arrives, writes drafts in your own voice, and
-      answers questions about your mail with exactly your permissions and
-      nobody else's.
+      each person in the household or the team gets an agent of their own. It
+      sorts what arrives, writes drafts in your own voice, and answers
+      questions about your life with exactly your permissions and nobody
+      else's.
     privacy: >-
       Off until you turn it on, and blind to every mailbox until you grant it
       one. Nothing reaches a model while mail is being delivered; the work is
@@ -191,7 +266,7 @@ welcome:
         body: A summary folded above a long conversation, and a reply written for you to read, change and send. Sending stays with you.
       answers:
         title: Answers, if you let it
-        body: Under a policy you write — who, which kinds, when, how many a day. Every reply waits in Drafts with a banner to cancel it or take it over.
+        body: "Under a policy you write: who, which kinds, when, how many a day. Every reply waits in Drafts with a banner to cancel it or take it over."
       asks:
         title: Answers your questions
         body: A drawer on every page, and teanode agent ask in a terminal. It searches, files and drafts as you, and stops for your word before anything it cannot undo.
@@ -233,7 +308,7 @@ welcome:
         file: Put the receipt on my laptop.
       tool:
         searched: read 4 messages
-        calendar: 14–18 September
+        calendar: 14 to 18 September
         drafted: a reply to Grace Hopper
         invoices: 2 of 7 outstanding
         contact: Osborne & Sons
@@ -241,23 +316,23 @@ welcome:
         saved: ~/Documents/receipt.pdf
       reply:
         today: >-
-          Three things. Grace needs an answer on the contract before your call —
+          Three things. Grace needs an answer on the contract before your call:
           clause 7 moved from sixty days to ninety. Katherine's board numbers
           want the retention figure checked. Radia asked you to read a draft,
           which can wait until this evening.
         thursday: >-
           After two, yes. Standup at half nine, and nothing else until the
           contract review at four.
-        unpaid: Two. Osborne & Sons, £4,200, thirty-one days over. Halliday, £980, eight days over — that one is within the terms you agreed.
+        unpaid: Two. Osborne & Sons, £4,200, thirty-one days over. Halliday, £980, eight days over, and that one is within the terms you agreed.
         chase: Written and waiting in Drafts. It is polite, it names the invoice and the date, and it does not mention the second one.
         parcel: Out for delivery, due before six. The carrier wrote at half seven this morning; the message is in Archive, sorted as a notification.
-        file: Saved. It is a PDF, so I have left it for you rather than reading it out — open it and I can work from what you tell me.
+        file: Saved. It is a PDF, so I have left it for you rather than reading it out. Open it and I can work from what you tell me.
       card:
         send: Send "Thursday at four works" to Grace Hopper?
         remind: Send the reminder to Osborne & Sons?
   voice:
     heading: Call it
-    lead: Press the telephone in the chat drawer and talk. Each thing you finish saying goes to your agent as a turn, and the answer is read back to you as it is written.
+    lead: Press the telephone in the chat drawer, or call it from the iPhone app, and talk. Each thing you finish saying goes to your agent as a turn, and the answer is read back to you as it is written.
     body: >-
       It works on any page, on a laptop or a phone, and a spoken turn reaches
       every tool a typed one does. What was said stays in the conversation, so
@@ -313,7 +388,7 @@ welcome:
       the answer has its memory of you behind it, rather than six calls of your
       own.
   finance:
-    heading: And your money
+    heading: Your money
     lead: Link your banks, cards and brokerages through Plaid or SimpleFIN, and the Finance page shows where the money went, where the month is heading, and what it all adds up to.
     body: >-
       The rows are kept in your own database, beside your mail, and the
@@ -337,6 +412,58 @@ welcome:
       netWorth:
         title: Net worth
         body: Accounts, holdings, a house and a car, in any currency, with the agent estimating what you let it.
+  taxes:
+    heading: Your taxes
+    lead: >-
+      Hand it your paystubs, W-2s, 1099s and 1098s, as a PDF, a photo, a file
+      shared from your phone or a forwarded mail, and it puts the tax year
+      together: what you earned, what was withheld, and what you are likely to
+      owe or get back.
+    body: >-
+      Each form is read into its boxes and checked against itself, each
+      paystub against the one before it, and each W-2 against the year's last
+      paystub. Only the last four digits of a taxpayer number are ever kept,
+      and the file is kept without its text. It is an estimate to start a
+      return from, not the return.
+    more: How taxes work
+    anchor: taxes
+    points:
+      documents:
+        title: Every form, read for you
+        body: Paystubs line by line, W-2s box by box, 1099-INT, DIV and B, and 1098s, mailed to an address of your own or shared from the phone.
+      checks:
+        title: Checked as they come
+        body: Social Security and Medicare worked out from the wages, a missing paystub or a W-2 that disagrees pointed out, and tax withheld past the year's maximum noticed.
+      projection:
+        title: The year, carried to December
+        body: Pay projected at your own cadence, retirement contributions stopping at the year's limit, and interest and dividends previewed from your accounts before the 1099s arrive.
+      estimate:
+        title: An estimate, with the deductions
+        body: The federal brackets, itemizing when it beats the standard deduction, gains at their own rates, and the child and dependent care credits, set beside what was withheld.
+  meetings:
+    heading: Your meetings
+    lead: >-
+      Record a meeting on your iPhone and your agent writes it up: a
+      transcript as it happens, the speakers by name, and a summary of what
+      was decided.
+    body: >-
+      The original stays on your server. Correct a line it misheard or name a
+      speaker, and it summarizes again with what you fixed; what the meeting
+      taught goes on the pages of the people and projects involved, with a
+      link back to the moment it was said.
+    points:
+      live:
+        title: Transcribed as you go
+        body: Pieces are transcribed side by side while the recording runs, so a long meeting is not a long wait.
+      speakers:
+        title: Who said what
+        body: Name a speaker once and every passage follows. Only the speakers nobody has named are left to ask about, and the filler is left out.
+      corrections:
+        title: Your corrections stay
+        body: Every version of the transcript is kept, and a later pass never undoes a line you fixed.
+      memory:
+        title: Into memory
+        body: Decisions, dates and promises land on the pages they belong to, cited to the recording.
   memory:
     heading: A memory that learns you
     lead: >-
@@ -344,7 +471,7 @@ welcome:
       a person, a project, a place, a thing or a stretch of time; it lives at a
       path like projects/greenfinch, and every fact on it is numbered, carries the words
       it came from, and can be cited in an answer. Pages are joined by links that
-      say how — who works on what, who knows whom, what a decision belongs to.
+      say how: who works on what, who knows whom, what a decision belongs to.
     body: >-
       Nothing is ever deleted. A fact nothing has wanted in months stops arriving
       uninvited and is still there when you search for it, and every change to
@@ -425,19 +552,52 @@ welcome:
     socks5: SOCKS5 proxy
     dns01: DNS-01 certificates
   startHeading: Getting started
-  startLead: Four commands with docker compose, then open the dashboard.
-  startAfter: >-
-    The first visitor to the dashboard creates the account. Add your domain
-    there, and it lists the DNS records to publish.
+  startLead: One compose file either way. Start with just the assistant, and add your own mail when you want it.
+  start:
+    assistant:
+      title: Just the assistant
+      note: No domain and no mail ports. It listens on 127.0.0.1:8080; put an HTTPS proxy in front of it to reach it from your phone.
+      after: Open the dashboard, claim the account, choose a model and turn the assistant on.
+      guide: Running the assistant alone
+    mail:
+      title: With your own mail
+      note: Mail at your domains, with the assistant and everything above.
+      after: >-
+        The first visitor to the dashboard creates the account. Add your domain
+        there, and it lists the DNS records to publish.
   startWalkthrough: The quick start
   needHeading: What you need
   needs:
-    domain: A domain whose DNS you can edit.
-    host: A host with a stable address and ports 25, 80, 443, 587 and 993 open.
-    docker: Docker with compose. PostgreSQL comes with the compose file.
-  needsAfter: Nothing else. No cloud account, no DNS API; certificates are automatic.
+    host: A computer that stays on, with Docker and compose. PostgreSQL comes with the compose file.
+    model: A model to think with. An API key, a ChatGPT plan you already pay for, or an Ollama or vLLM of your own.
+    https: For the iPhone app and for away from home, an HTTPS address in front of it, from any reverse proxy.
+    mail: For your own mail, a domain whose DNS you can edit and ports 25, 80, 443, 587 and 993 open.
+  needsAfter: >-
+    No account with us, because there is nothing of ours to sign up for.
+    Notifications to the app pass through a relay that sees the calling
+    server's address and a payload it cannot read.
   questionsHeading: Questions
   questions:
+    mailserver:
+      question: Do I have to run a mail server?
+      answer: >-
+        No. The assistant runs on its own, with no domain, no MX records and no
+        mail ports, and the calendar, reminders and contacts are separate
+        choices. Add hosted mail later from Server, then Setup, and what you
+        already have stays.
+    app:
+      question: Is the iPhone app on the App Store?
+      answer: >-
+        Not yet. It is in TestFlight and on its way to the App Store, as one
+        app that connects to any TeaNode server. Until then, the `ios`
+        directory of the repository builds it with your own developer account.
+    model:
+      question: Which model does it use, and who sees my data?
+      answer: >-
+        The one your server is pointed at: OpenAI, Anthropic, Gemini, a ChatGPT
+        plan, or an Ollama or vLLM on your own hardware. What your agent reads
+        goes to that model and nowhere else, so with a local one nothing leaves
+        the machine. The operator caps what each person may spend.
     port25:
       question: Do I need port 25 open?
       answer: >-

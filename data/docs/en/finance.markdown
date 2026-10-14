@@ -136,12 +136,57 @@ falling behind, your agent tells you once a month, through the same alerts as
 mail (quiet hours and the daily limit included). A spending category can be
 muted on its own.
 
+## Taxes
+
+Paystubs, W-2s, 1099s and 1098s are read out of the file you hand in, a PDF
+or a photo, and kept to get ready for a tax return. Hand them in on the
+Finance page's Taxes tab, share them from your phone, run
+`teanode finance read-tax-document`, or mail them to your own tax document
+address, which the Taxes tab shows; a payroll mail forwarded there works the
+same. Your agent tells you in the main conversation what arrived.
+
+**What is kept.** A paystub is stored line by line as printed: each
+earning, each tax and each deduction, with the employer's part beside
+yours. A W-2 keeps its boxes. A 1099-INT, 1099-DIV or 1099-B (often all
+three in one brokerage statement) keeps its totals, and a 1098 its mortgage
+interest. Before a model reads anything, every number shaped like a
+taxpayer number is masked to its last four digits, only those four are
+stored, and the file is kept without its text.
+
+**What is checked.** A paystub has to add up: gross pay less the taxes and
+your deductions is take-home pay. A W-2's Social Security and Medicare are
+checked against its wages, and set beside the year's last paystub. A
+paystub that does not follow on from the one before, a gap of more than a
+pay period and a half, a W-2 not in once the year is over, and Social
+Security withheld past the year's maximum across employers (which comes
+back on the return) are all pointed out.
+
+**The year.** The tax year puts it together per person and employer: the
+W-2 where there is one, else the latest paystub's year to date, carried to
+December 31 at your pay cadence, with retirement contributions stopping at
+the year's limit. Before the 1099s come, interest and dividends are
+previewed from your linked accounts, leaving out IRAs, HSAs and the other
+accounts whose income is not taxed.
+
+**The estimate.** The tax owed is set beside what was withheld: federal
+income tax by the year's brackets, itemizing when mortgage interest, state
+and local taxes up to the cap and gifts beat the standard deduction,
+qualified dividends and long-term gains at their own rates, the child tax
+credit and the child and dependent care credit, and Social Security and
+Medicare. What no document says (children, dependent care paid, a
+spouse's pay that has no W-2 here, gifts, property tax) goes in the year's
+settings. The filing status is yours to set; without it, two people on the
+documents means married filing jointly. It is a start for a return, not
+the return: state tax is taken as withheld, and credits other than those
+are not counted.
+
 ## Three ways in
 
 The same operations, under the same names, in three places:
 
 - **The dashboard.** The Finance page, `/finance`, has Spending,
-  Transactions, Receipts, Accounts, Budgets, Net worth and Savings targets. The agent
+  Transactions, Receipts, Accounts, Budgets, Net worth, Savings targets and
+  Taxes. The agent
   page's Finance tab is the setup: linking, repairing, syncing and the
   reporting currency.
 - **The command line.** `teanode finance`, listed in the
