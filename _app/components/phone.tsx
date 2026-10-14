@@ -1,7 +1,9 @@
+import { useEffect, useRef } from 'react'
 import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import { useTheme } from '@mui/material/styles'
+import useMediaQuery from '@mui/material/useMediaQuery'
 
 import { useTranslate } from '../i18n'
 import { pageWidth } from './shell'
@@ -90,10 +92,46 @@ export const Phone = ({ screen, width = 260 }: { screen: PhoneScreen, width?: nu
 // Every screen side by side, with a caption under each, in a row as wide as
 // the window. The first phone lines up with the words above it, and the row
 // runs past them to the window's edges, so a phone cut off at the edge is
-// what says there is more. On a phone it snaps one phone at a time. It moves
-// only when the reader moves it.
+// what says there is more.
+//
+// On a wide window the row has no scrollbar: it moves sideways as the page
+// scrolls, from the first phone when the row comes up from the bottom of
+// the window to the last when it reaches the top. On a phone, or for a
+// reader who asked for less motion, it is a row they scroll themselves,
+// snapping one phone at a time.
 export const PhoneGallery = () => {
+  const theme = useTheme()
   const translate = useTranslate()
+  const isWide = useMediaQuery(theme.breakpoints.up('md'))
+  const isStill = useMediaQuery('(prefers-reduced-motion: reduce)')
+  const isDrivenByPage = isWide && !isStill
+  const frame = useRef<HTMLDivElement>(null)
+  const track = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const frameElement = frame.current
+    const trackElement = track.current
+    if (!isDrivenByPage || !frameElement || !trackElement) return
+    let pending = 0
+    const place = () => {
+      pending = 0
+      const distance = Math.max(0, trackElement.scrollWidth - frameElement.clientWidth)
+      const top = frameElement.getBoundingClientRect().top
+      const progress = Math.min(1, Math.max(0, 1 - top / window.innerHeight))
+      trackElement.style.transform = `translateX(${-Math.round(progress * distance)}px)`
+    }
+    const schedule = () => { if (!pending) pending = requestAnimationFrame(place) }
+    place()
+    window.addEventListener('scroll', schedule, { passive: true })
+    window.addEventListener('resize', schedule)
+    return () => {
+      cancelAnimationFrame(pending)
+      window.removeEventListener('scroll', schedule)
+      window.removeEventListener('resize', schedule)
+      trackElement.style.transform = ''
+    }
+  }, [isDrivenByPage])
+
   // Where the page's words start: the page's side padding, or, on a window
   // wider than the page, half of what is left over and then that padding.
   // The percentage is of the row's own width, which is the window's.
@@ -101,24 +139,35 @@ export const PhoneGallery = () => {
 
   return (
     <Box
+      ref={frame}
       role='list'
       aria-label={translate('welcome.phone.galleryLabel')}
-      tabIndex={0}
-      sx={{
-        display: 'flex', gap: { xs: 2.5, md: 3.5 }, overflowX: 'auto', scrollSnapType: 'x mandatory',
-        pt: 1, pb: 3, px: { xs: inset(16), md: inset(32) }, scrollPaddingInline: { xs: inset(16), md: inset(32) },
-        scrollbarWidth: 'thin',
-        '&:focus-visible': { outline: 2, outlineColor: 'primary.main', outlineOffset: -2 },
-      }}
+      tabIndex={isDrivenByPage ? undefined : 0}
+      sx={isDrivenByPage
+        ? { overflow: 'hidden', pt: 1, pb: 3 }
+        : {
+            display: 'flex', gap: 2.5, overflowX: 'auto', scrollSnapType: 'x mandatory',
+            pt: 1, pb: 3, px: inset(16), scrollPaddingInline: inset(16), scrollbarWidth: 'thin',
+            '&:focus-visible': { outline: 2, outlineColor: 'primary.main', outlineOffset: -2 },
+          }}
     >
-      {phoneScreens.map((screen) => (
-        <Box key={screen} role='listitem' sx={{ flex: 'none', width: { xs: 220, md: 236 }, scrollSnapAlign: 'start' }}>
-          <Phone screen={screen} width={220}/>
-          <Typography variant='body2' color='text.secondary' sx={{ mt: 1.75, lineHeight: 1.45, pr: 1 }}>
-            {translate(`welcome.phone.captions.${screen}`)}
-          </Typography>
-        </Box>
-      ))}
+      {/* On a wide window the phones sit in a track the page moves. A
+          padding percentage is of the frame's width, as wide as the row. */}
+      <Box
+        ref={track}
+        sx={isDrivenByPage
+          ? { display: 'flex', gap: 3.5, width: 'max-content', willChange: 'transform', px: inset(32) }
+          : { display: 'contents' }}
+      >
+        {phoneScreens.map((screen) => (
+          <Box key={screen} role='listitem' sx={{ flex: 'none', width: { xs: 220, md: 236 }, scrollSnapAlign: 'start' }}>
+            <Phone screen={screen} width={220}/>
+            <Typography variant='body2' color='text.secondary' sx={{ mt: 1.75, lineHeight: 1.45, pr: 1 }}>
+              {translate(`welcome.phone.captions.${screen}`)}
+            </Typography>
+          </Box>
+        ))}
+      </Box>
     </Box>
   )
 }
