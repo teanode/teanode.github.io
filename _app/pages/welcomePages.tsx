@@ -348,8 +348,8 @@ export const WelcomePage = () => {
         </Section>
 
         {/* The iPhone app: the words and its six points, then every screen
-            in a row the reader scrolls. */}
-        <Section id='iphone'>
+            in a row the reader scrolls, as wide as the window. */}
+        <Section id='iphone' wide={<PhoneGallery/>}>
           <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 1fr) minmax(0, 1fr)' }, gap: { xs: 3, md: 6 }, alignItems: 'start' }}>
             <Box sx={{ minWidth: 0 }}>
               <Overline><T id='welcome.phone.heading'/></Overline>
@@ -374,9 +374,6 @@ export const WelcomePage = () => {
                 <Point key={key} Icon={Icon} id={`welcome.phone.points.${key}`}/>
               ))}
             </Box>
-          </Box>
-          <Box sx={{ mt: { xs: 4, md: 6 } }}>
-            <PhoneGallery/>
           </Box>
         </Section>
 
@@ -811,8 +808,9 @@ const Cell = ({ value }: { value: string }) => {
 // step off the page, so the sections read as groups rather than as one long
 // column.
 // A band carries the steam across its top seam; any section can carry a
-// decoration of its own behind its content.
-const Section = ({ id, children, band, decoration, sx }: { id?: string, children: ReactNode, band?: boolean, decoration?: ReactNode, sx?: object }) => (
+// decoration of its own behind its content, and something under its content
+// that runs to the edges of the window.
+const Section = ({ id, children, band, decoration, wide, sx }: { id?: string, children: ReactNode, band?: boolean, decoration?: ReactNode, wide?: ReactNode, sx?: object }) => (
   <Box
     id={id}
     sx={{
@@ -828,6 +826,7 @@ const Section = ({ id, children, band, decoration, sx }: { id?: string, children
     <Box sx={{ ...pageWidth, position: 'relative', py: { xs: 4, md: 6 }, ...sx }}>
       {children}
     </Box>
+    {wide && <Box sx={{ position: 'relative', pb: { xs: 4, md: 6 } }}>{wide}</Box>}
   </Box>
 )
 

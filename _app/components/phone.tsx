@@ -1,10 +1,10 @@
-import { useEffect, useRef, useState } from 'react'
 import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import { useTheme } from '@mui/material/styles'
 
 import { useTranslate } from '../i18n'
+import { pageWidth } from './shell'
 
 // The iPhone app, drawn as a phone.
 //
@@ -87,59 +87,38 @@ export const Phone = ({ screen, width = 260 }: { screen: PhoneScreen, width?: nu
   )
 }
 
-// Every screen side by side, with a caption under each. On a wide window it
-// is a row that scrolls sideways; on a phone it snaps one phone at a time.
-// It moves only when the reader moves it.
+// Every screen side by side, with a caption under each, in a row as wide as
+// the window. The first phone lines up with the words above it, and the row
+// runs past them to the window's edges, so a phone cut off at the edge is
+// what says there is more. On a phone it snaps one phone at a time. It moves
+// only when the reader moves it.
 export const PhoneGallery = () => {
   const translate = useTranslate()
-  const strip = useRef<HTMLDivElement>(null)
-  // Whether there is more to the right, so the fade at the edge says so and
-  // goes away once there is not.
-  const [hasMore, setHasMore] = useState(true)
-
-  useEffect(() => {
-    const element = strip.current
-    if (!element) return
-    const check = () => setHasMore(element.scrollLeft + element.clientWidth < element.scrollWidth - 8)
-    check()
-    element.addEventListener('scroll', check, { passive: true })
-    window.addEventListener('resize', check)
-    return () => {
-      element.removeEventListener('scroll', check)
-      window.removeEventListener('resize', check)
-    }
-  }, [])
+  // Where the page's words start: the page's side padding, or, on a window
+  // wider than the page, half of what is left over and then that padding.
+  // The percentage is of the row's own width, which is the window's.
+  const inset = (padding: number) => `max(${padding}px, calc((100% - ${pageWidth.maxWidth}px) / 2 + ${padding}px))`
 
   return (
-    <Box sx={{ position: 'relative' }}>
-      <Box
-        ref={strip}
-        role='list'
-        aria-label={translate('welcome.phone.galleryLabel')}
-        tabIndex={0}
-        sx={{
-          display: 'flex', gap: { xs: 2.5, md: 3.5 }, overflowX: 'auto', scrollSnapType: 'x mandatory',
-          pt: 1, pb: 3, px: 0.5, scrollbarWidth: 'thin',
-          '&:focus-visible': { outline: 2, outlineColor: 'primary.main', outlineOffset: 4, borderRadius: 2 },
-        }}
-      >
-        {phoneScreens.map((screen) => (
-          <Box key={screen} role='listitem' sx={{ flex: 'none', width: { xs: 220, md: 236 }, scrollSnapAlign: 'start' }}>
-            <Phone screen={screen} width={220}/>
-            <Typography variant='body2' color='text.secondary' sx={{ mt: 1.75, lineHeight: 1.45, pr: 1 }}>
-              {translate(`welcome.phone.captions.${screen}`)}
-            </Typography>
-          </Box>
-        ))}
-      </Box>
-      <Box
-        aria-hidden
-        sx={{
-          position: 'absolute', top: 0, right: 0, bottom: 24, width: 56, pointerEvents: 'none',
-          opacity: hasMore ? 1 : 0, transition: 'opacity 200ms',
-          background: (theme) => `linear-gradient(to right, transparent, ${theme.palette.background.default})`,
-        }}
-      />
+    <Box
+      role='list'
+      aria-label={translate('welcome.phone.galleryLabel')}
+      tabIndex={0}
+      sx={{
+        display: 'flex', gap: { xs: 2.5, md: 3.5 }, overflowX: 'auto', scrollSnapType: 'x mandatory',
+        pt: 1, pb: 3, px: { xs: inset(16), md: inset(32) }, scrollPaddingInline: { xs: inset(16), md: inset(32) },
+        scrollbarWidth: 'thin',
+        '&:focus-visible': { outline: 2, outlineColor: 'primary.main', outlineOffset: -2 },
+      }}
+    >
+      {phoneScreens.map((screen) => (
+        <Box key={screen} role='listitem' sx={{ flex: 'none', width: { xs: 220, md: 236 }, scrollSnapAlign: 'start' }}>
+          <Phone screen={screen} width={220}/>
+          <Typography variant='body2' color='text.secondary' sx={{ mt: 1.75, lineHeight: 1.45, pr: 1 }}>
+            {translate(`welcome.phone.captions.${screen}`)}
+          </Typography>
+        </Box>
+      ))}
     </Box>
   )
 }
