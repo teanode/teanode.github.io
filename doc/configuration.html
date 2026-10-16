@@ -20,4 +20,1447 @@ window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-XD5JSLP4RH', {send_page_view: false});
-</script><script type="module" crossorigin src="/static/teanode.B4qXBTfP.js"></script></head><body><div id="teanode"></div></body></html>
+</script><script type="module" crossorigin src="/static/teanode.B4qXBTfP.js"></script></head><body><div id="teanode"><style>.teanode-static{max-width:760px;margin:0 auto;padding:24px 16px 48px;font:16px/1.6 system-ui,sans-serif;opacity:0;animation:teanode-static 0s 2s forwards}.teanode-static pre{overflow-x:auto}@keyframes teanode-static{to{opacity:1}}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .teanode-static{color:#e8e8ea}:root:not([data-theme=light]) .teanode-static a{color:#9ccc65}}:root[data-theme=dark] .teanode-static{color:#e8e8ea}:root[data-theme=dark] .teanode-static a{color:#9ccc65}</style><div class="teanode-static"><p><a href="/">TeaNode</a> · <a href="/doc">Documentation</a> · <a href="https://github.com/ziyan/teanode">Source</a></p><h1>Configuration</h1><p>Everything an operator sets lives in the database, alongside the mail. The
+server reads it at startup and re-reads it every few seconds, so a change made
+in the dashboard — or by another instance — takes effect without a restart.</p>
+<p>There is no configuration file. A server used to be described by
+<code>teanode.yaml</code>, and moving that into the database is what lets several
+instances run against one another without disagreeing about which domains
+exist or which credentials are valid.</p>
+<p>Two things cannot be kept there, and come from the environment instead:
+how to reach the database, and which instance this process is.</p>
+<h2>The environment</h2>
+<p>Write a starting point with:</p>
+<pre><code>teanode-server config env --output .env \
+  --hostname mail.example.com --domain example.com
+</code></pre>
+<p>One variable is required:</p>
+<p><strong><code>TEANODE_DATABASE_URL</code></strong> — where the configuration, the mail and the counters
+are kept, for example
+<code>postgres://teanode:password@postgres:5432/teanode?sslmode=disable</code>. The
+discrete <code>TEANODE_DATABASE_HOST</code>, <code>TEANODE_DATABASE_PORT</code>,
+<code>TEANODE_DATABASE_USER</code>, <code>TEANODE_DATABASE_PASSWORD</code>, <code>TEANODE_DATABASE_NAME</code>,
+<code>TEANODE_DATABASE_SSL_MODE</code> and <code>TEANODE_DATABASE_LOG_QUERIES</code> override it
+field by field. There is no default
+host: an instance whose variable is missing would otherwise reach an empty
+local database, decide it is a brand new server, and configure itself — which
+looks like it worked.</p>
+<p>Three are optional. The first matters once there is more than one instance:</p>
+<p><strong><code>TEANODE_INSTANCE_ID</code></strong> — distinguishes this process from the others sharing
+that database. It is part of the key under which usage counters are
+accumulated, and those are added up by reading a row and writing it back, so
+two instances sharing a name lose each other&#39;s counts. Defaults to the host
+name, which is what a container is already given, and is truncated to the last
+32 characters if it is longer.</p>
+<p><strong><code>TEANODE_UPGRADE_DIRECTORY</code></strong> — where an upgrade installed from the dashboard
+puts a binary it cannot write over the running one, and where the next start
+looks for it. Defaults to <code>upgrade</code> under <code>TEANODE_SERVER_DATA_DIRECTORY</code> when
+that is set, and to nothing when it is not — in which case a deployment that
+cannot replace its own executable is told it cannot upgrade itself. It must be
+an absolute path, and a relative one is refused rather than resolved: a staged
+binary has to be found again by a start from any working directory.</p>
+<p>It is a variable rather than a setting for one reason: a staged binary has to
+be found and run before anything opens the database, because this program
+reverts migrations it does not recognize and an old binary that reached the
+database first would undo the new one&#39;s schema. The settings are in the
+database. This cannot be.</p>
+<p>For a container it should be a directory on a mounted volume — the shipped
+<code>docker-compose.yml</code> names <code>/var/lib/teanode/upgrade</code>. A directory inside the
+image would work until the container was recreated and then silently be the old
+binary again. The directory is created private to the user the server runs as,
+and a staged binary that anybody else could have written is refused at the next
+start rather than run.</p>
+<p><strong><code>TEANODE_ALLOW_MIGRATION_REVERT</code></strong> — permits an older binary to undo
+migrations a newer one applied. Off by default, and the default is the
+interesting half: a start that finds migrations it does not recognize refuses
+to run rather than reverting them, because reverting drops the columns they
+added and everything in those columns, and the three ordinary ways to arrive
+there are all accidents. See <a href="https://github.com/ziyan/teanode/blob/main/docs/coding/database-migrations.md"><code>docs/coding/database-migrations.md</code></a>. Set it to
+<code>true</code> to downgrade on purpose.</p>
+<h3>First run only</h3>
+<p>The rest describe the server to create when the database has no configuration
+in it yet. After that the database is the answer and these are ignored — the
+server says so in its log when it finds them set.</p>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Sets</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>TEANODE_SERVER_NAME</code></td>
+<td><code>server.name</code></td>
+</tr>
+<tr>
+<td><code>TEANODE_SERVER_DOMAIN</code></td>
+<td>a domain to serve; created on a first run, with its own signing key</td>
+</tr>
+<tr>
+<td><code>TEANODE_SERVER_DATA_DIRECTORY</code></td>
+<td><code>server.dataDirectory</code></td>
+</tr>
+<tr>
+<td><code>TEANODE_SERVER_LOG_LEVEL</code></td>
+<td><code>server.logLevel</code></td>
+</tr>
+<tr>
+<td><code>TEANODE_SERVER_MAIL_SERVERS</code></td>
+<td><code>server.mailServers</code>, comma separated</td>
+</tr>
+<tr>
+<td><code>TEANODE_LISTEN_SMTP_INCOMING</code></td>
+<td><code>listen.smtpIncoming</code></td>
+</tr>
+<tr>
+<td><code>TEANODE_LISTEN_SMTP_OUTGOING</code></td>
+<td><code>listen.smtpOutgoing</code></td>
+</tr>
+<tr>
+<td><code>TEANODE_LISTEN_IMAP</code></td>
+<td><code>listen.imap</code></td>
+</tr>
+<tr>
+<td><code>TEANODE_LISTEN_IMAPS</code></td>
+<td><code>listen.imaps</code></td>
+</tr>
+<tr>
+<td><code>TEANODE_LISTEN_HTTP</code></td>
+<td><code>listen.http</code></td>
+</tr>
+<tr>
+<td><code>TEANODE_LISTEN_HTTPS</code></td>
+<td><code>listen.https</code></td>
+</tr>
+<tr>
+<td><code>TEANODE_TLS_HOSTS</code></td>
+<td><code>tls.hosts</code>, comma separated; defaults to the server name</td>
+</tr>
+<tr>
+<td><code>TEANODE_TLS_ACME_ENABLED</code></td>
+<td><code>tls.acme.enabled</code></td>
+</tr>
+<tr>
+<td><code>TEANODE_TLS_ACME_EMAIL</code></td>
+<td><code>tls.acme.email</code></td>
+</tr>
+<tr>
+<td><code>TEANODE_SMTP_REQUIRE_REVERSE_DNS</code></td>
+<td><code>smtp.requireReverseDns</code></td>
+</tr>
+<tr>
+<td><code>TEANODE_SMTP_DISABLE_SEND</code></td>
+<td><code>smtp.disableSend</code></td>
+</tr>
+<tr>
+<td><code>TEANODE_S3_ENABLED</code></td>
+<td><code>storage.s3.enabled</code></td>
+</tr>
+<tr>
+<td><code>TEANODE_S3_ENDPOINT</code></td>
+<td><code>storage.s3.endpoint</code></td>
+</tr>
+<tr>
+<td><code>TEANODE_S3_BUCKET</code></td>
+<td><code>storage.s3.bucket</code></td>
+</tr>
+<tr>
+<td><code>TEANODE_S3_REGION</code></td>
+<td><code>storage.s3.region</code></td>
+</tr>
+<tr>
+<td><code>TEANODE_S3_PATH_STYLE</code></td>
+<td><code>storage.s3.pathStyle</code></td>
+</tr>
+<tr>
+<td><code>TEANODE_S3_ACCESS_KEY_ID</code></td>
+<td><code>storage.s3.accessKeyId</code></td>
+</tr>
+<tr>
+<td><code>TEANODE_S3_SECRET_ACCESS_KEY</code></td>
+<td><code>storage.s3.secretAccessKey</code></td>
+</tr>
+<tr>
+<td><code>TEANODE_PASSKEY_ENABLED</code></td>
+<td><code>passkey.enabled</code></td>
+</tr>
+<tr>
+<td><code>TEANODE_PASSKEY_RELYING_PARTY_ID</code></td>
+<td><code>passkey.relyingPartyId</code>; defaults to the server name</td>
+</tr>
+<tr>
+<td><code>TEANODE_PASSKEY_ORIGINS</code></td>
+<td><code>passkey.origins</code>, comma separated; defaults to https:// and the relying party</td>
+</tr>
+<tr>
+<td><code>TEANODE_PASSKEY_REDIS_ADDRESS</code></td>
+<td><code>passkey.redis.address</code>; only needed for more than one instance</td>
+</tr>
+<tr>
+<td><code>TEANODE_PASSKEY_REDIS_PASSWORD</code></td>
+<td><code>passkey.redis.password</code></td>
+</tr>
+</tbody></table>
+<p>A variable that is set but empty means empty, not absent — some of these turn
+something off rather than change it, and <code>TEANODE_LISTEN_HTTPS</code> with no value
+is how you say there is no HTTPS listener. So leave a key commented out rather
+than blank unless you mean to clear the setting.</p>
+<p>A first run needs at least a server name and a domain. The domain is created
+with a signing key of its own, so DKIM is set up before anyone has heard of it.
+Every domain added later gets its own key the same way. No account is created: the first person
+to open the dashboard chooses their own username and password.</p>
+<h2>Moving an existing server in</h2>
+<p>A deployment that ran on <code>teanode.yaml</code> loads it once:</p>
+<pre><code>teanode-server config import --file /opt/teanode/teanode.yaml
+</code></pre>
+<p>Everything is carried across unchanged — domain and alias identifiers, signing
+keys, the server secret, the session key — because changing any of them breaks
+something that is working. Stop the server first, so that it does not adopt
+half of a configuration you are still reviewing. <code>--dry-run</code> says what would be
+loaded and writes nothing.</p>
+<p>The reverse makes a backup, in the same format:</p>
+<pre><code>teanode-server config export --file backup.yaml
+</code></pre>
+<h2>Settings that need a restart</h2>
+<p>The listeners, TLS, the object store, the data directory and the optional
+integrations are read once, when the process builds what it needs. Changing
+one of those stores the change and nothing more until the instance restarts.</p>
+<p>Every instance notices and says so — in its log, and on <strong>Settings → Server</strong>
+in the dashboard, which names the settings that are out of date and offers to
+restart. Restarting means the process exits and whatever supervises it starts
+a new one; there is no restart in place, because the point is to build those
+things again. Mail already accepted is on disk and is delivered afterwards, and
+a sender that connects during the few seconds it takes will try again.</p>
+<p>That page also says what it thinks will start the process again — a container,
+systemd, or nothing it can see. It is a guess: neither a container&#39;s restart
+policy nor a unit&#39;s <code>Restart=</code> can be read from inside the process, so it
+names the supervisor rather than promising a return, and errs towards warning.</p>
+<p>Restarting is also a command, so a deployment can do it without a browser:</p>
+<pre><code>teanode server restart
+</code></pre>
+<h2>Reading and checking it</h2>
+<pre><code>teanode-server config show                 # with secrets redacted
+teanode-server config show --show-secrets
+teanode-server config validate
+</code></pre>
+<p>These read the same environment the server does, so they run where the server
+runs — in its container, or with its env file. From anywhere else, the client
+reads and changes the same configuration through the API: <code>teanode settings show</code> for the integrations, <code>teanode domain list</code> for the domains, and so on.
+See <a href="/doc/command-line"><code>docs/reference/command-line.md</code></a>.</p>
+<h2>Sessions and tokens</h2>
+<p>Neither is configuration. Both are rows in the database, alongside the mail:
+<code>session</code> for the browsers signed in, <code>token</code> for the API tokens that let this
+tool administer the server from elsewhere.</p>
+<p>A cookie and a token are the same shape — an identifier, a secret, and a
+signature over both — and only a hash of the secret is stored, so a copy of
+the database is not a set of working logins. They are signed with different
+keys: sessions with <code>session.key</code>, tokens with <code>server.secret</code>. Rotating
+<code>session.key</code> therefore still ends every session on the server, on every
+account, which is the break-glass it has always been; it leaves tokens alone.</p>
+<p>Both record when they were last used and from where, at most once a minute, so
+the dashboard can show it without a database write per request. A revoked one
+is kept for thirty days, marked revoked, so the list can say what happened to
+it; an hourly sweep removes those and anything long expired.</p>
+<p>Each account manages its own. <code>teanode auth login</code> issues one through the
+dashboard and keeps it as a profile on the machine that asked. The console is
+the exception — it authenticates with a token minted from the server secret
+and is not an account at all, so <code>teanode token create --user ziyan laptop</code>
+is how somebody gets their first one without a browser.</p>
+<h2>Secrets</h2>
+<p><code>server.secret</code>, <code>session.key</code>, the DKIM private keys, the ACME account key and
+any AWS credentials are all stored with everything else. Two of them are worth
+understanding before you move a server:</p>
+<ul>
+<li><strong><code>server.secret</code></strong> signs every SMTP credential password. Carry it to the new
+database or every device you have configured stops being able to send.</li>
+<li><strong><code>session.key</code></strong> signs dashboard cookies. Losing it logs everybody out,
+which is all it does.</li>
+</ul>
+<p>Both are generated on the first start and never regenerated. A second instance
+starting against the same database adopts them rather than making its own.</p>
+<p>The API never returns any of them. Fields carrying a secret are redacted on the
+way out, so a token with full access still cannot read them back. <code>config export</code> does write them in the clear, because a backup that left them out
+would not restore a working server; the file it writes is readable only by you.</p>
+<h2>Paths</h2>
+<p>Relative paths resolve against <code>server.dataDirectory</code>, which has to be
+absolute. It used to be allowed to be relative, resolving against the directory
+holding <code>teanode.yaml</code>; with no file there is nothing to resolve it against,
+and a relative path would land wherever each process happened to be started
+from.</p>
+<h2>Reference</h2>
+<h3><code>server</code></h3>
+<p><strong><code>name</code></strong> — Name announced in the SMTP greeting and used as the HELO name
+when sending, for example &quot;mail.example.com&quot;. It must resolve to this host and
+its reverse DNS should match, or receiving servers will distrust mail from
+here.</p>
+<p><strong><code>dataDirectory</code></strong> — DataDirectory holds everything the server writes that is
+not in the database: keys, certificates, the message spool and the secret.
+Relative paths elsewhere in this file resolve against it.</p>
+<p><strong><code>logLevel</code></strong> — LogLevel is one of DEBUG, INFO, NOTICE, WARNING, ERROR,
+CRITICAL.</p>
+<p><strong><code>secret</code></strong> — Secret signs the bounce return path on outgoing mail and the
+passwords derived from SMTP credential keys. Generated on first run.  Changing
+it invalidates every SMTP password and orphans bounces for mail already in
+flight, so when moving a server to a new machine this has to come with it.
+Everything sealed in the database is sealed with it too. Started with
+<code>--secret-file</code> (or <code>TEANODE_SECRET_FILE</code>), the server reads it from that file
+instead and the database does not hold it; see &quot;Keeping the server secret out
+of the database&quot; in <a href="https://github.com/ziyan/teanode/blob/main/docs/reference/deployment.md"><code>docs/reference/deployment.md</code></a>.</p>
+<p><strong><code>secretCheck</code></strong> — SecretCheck is derived from the secret and written in its
+place when the secret is kept in a file, so that an instance given the wrong
+file refuses to start. It opens nothing. Written by the server; never set by
+hand.</p>
+<p><strong><code>mailServers</code></strong> — MailServers are the hosts to publish in every domain&#39;s MX
+records, in order of preference. Optional; when empty the MX record names this
+server, which is right for the single-host deployment most people run.  Set it
+when mail for these domains arrives at more than one name — a pair like mx1
+and mx2 pointing at the same host is common, and gives somewhere to move to
+without every domain having to change its DNS. The dashboard then asks each
+domain for one MX record per name, at preference 10, 20 and so on in the order
+given.  These are names mail arrives at. They are unrelated to tls.hosts,
+which is the names this server holds a certificate for.</p>
+<p><strong><code>externalAddresses</code></strong> — ExternalAddresses are the addresses mail reaches
+this server at, when they are not the address the server discovers for
+itself: a relay in front of it, a tunnel from an elsewhere, a load balancer.
+The DNS advice checks each MX host&#39;s A record against the address the server
+sees from outside, because for a server that faces the internet that is the
+one value an operator cannot look up; a server reached through something else
+fails that check for ever, on a record that is right. Listing those addresses
+here makes them count as correct. Names as well as addresses are accepted,
+and a name is resolved when the advice is worked out, so a forwarder whose
+address moves stays right.</p>
+<p><strong><code>trustedProxies</code></strong> — TrustedProxies are the addresses this server is
+reached through, when it is behind a CDN, a load balancer or a reverse proxy:
+an address, or a range in CIDR form. A connection through a proxy comes from
+the proxy, so without this every audit row and every &quot;last used from&quot; records
+the proxy&#39;s address rather than the person&#39;s. The client&#39;s address is in
+<code>X-Forwarded-For</code>, which the proxy adds — and which anybody who can reach
+this server directly can also forge, so it is read only when the connection
+came from one of these. Empty is the safe default and the right one for a
+server that faces the internet, where the connection&#39;s own address is the
+truth.</p>
+<h3><code>sso</code></h3>
+<p>Signing in through an identity provider, beside the password and passkey
+forms. OpenID Connect only; every provider that matters speaks it. Each
+provider is a button on the sign-in page. The redirect URL to register at
+the provider is <code>https://&lt;web host&gt;/api/v1/sso/&lt;id&gt;/callback</code>.</p>
+<p><strong><code>providers</code></strong> — The identity providers offered, one button each. An empty
+list means no single sign-on.</p>
+<h3><code>sso.providers[]</code></h3>
+<p><strong><code>id</code></strong> — Names the provider in the sign-in path and in each person&#39;s
+identity row: lower-case letters, digits and dashes, up to 32, and stable.
+Renaming a provider orphans every identity under it.</p>
+<p><strong><code>name</code></strong> — What the sign-in button says.</p>
+<p><strong><code>issuer</code></strong> — The OpenID Connect issuer URL, <code>https</code> only. The provider&#39;s
+configuration is read from <code>&lt;issuer&gt;/.well-known/openid-configuration</code>, and
+must name the same issuer. A private address is refused.</p>
+<p><strong><code>clientId</code></strong> — The client id the provider issued for this server.</p>
+<p><strong><code>clientSecret</code></strong> — The client secret that goes with it. A secret; shown
+redacted, kept when a settings update leaves it blank.</p>
+<p><strong><code>groupsClaim</code></strong> — The claim carrying the person&#39;s group names, matched
+against each group&#39;s <code>idpGroup</code> here. <code>groups</code> when empty. A person is put
+in every group naming a claimed name and taken out of every group naming one
+that is no longer claimed; groups without an <code>idpGroup</code> are never touched.</p>
+<p><strong><code>createUsers</code></strong> — Whether somebody with no account here gets one made when
+they sign in: no password, an identity bound to the provider, a Personal
+mailbox, and the groups their claims name. Off, only people whose account
+already has an identity at this provider may sign in through it.</p>
+<h3><code>graphql</code></h3>
+<p>Document limits apply before SQL work on HTTP requests, agent operations and
+websocket subscriptions. Changes take effect on the next request.</p>
+<p><strong><code>maximumDepth</code></strong> (default <code>32</code>, range <code>1</code> to <code>256</code>): maximum delimiter nesting
+before parsing, and maximum selection depth after expanding fragments. Strings
+and comments do not add nesting.</p>
+<p><strong><code>maximumTokenCount</code></strong> (default <code>20000</code>, range <code>1</code> to <code>1000000</code>): maximum lexical
+tokens in one document. A quoted string is one token; the document also has a
+one-megabyte byte limit.</p>
+<p><strong><code>maximumSelectionCount</code></strong> (default <code>5000</code>, range <code>1</code> to <code>100000</code>): maximum total
+selections visited across operations and fragment definitions, including repeated
+fragment expansion and aliases. This is a document-work limit, not a result-row
+limit; individual resolvers retain their pagination bounds.</p>
+<p><strong><code>maximumListItemCount</code></strong> (default <code>1000</code>, range <code>1</code> to <code>100000</code>): largest
+explicit <code>first</code> argument, including <code>pagination.first</code>. Variables and variable
+defaults count too. Omitted, null and nonpositive sizes are charged as 1,000 rows,
+so setting this below 1,000 requires callers to supply a smaller positive size.
+Resolvers may enforce a smaller cap of their own.</p>
+<p><strong><code>maximumWorkCount</code></strong> (default <code>200000</code>, range <code>1</code> to <code>100000000</code>): maximum
+pagination-weighted field selections in the selected operation. Each field is
+charged once per requested item at every paginated ancestor. Aliases and repeated
+fragments count separately; conditional selections count even when skipped.
+This bounds pagination-driven work, not the size of unpaginated collections,
+SQL scans, or model calls. Resolver-specific limits still apply.</p>
+<p>The shared mail-audit pagination helper treats omitted and zero sizes as a
+1,000-row page. They no longer request an unlimited database result.</p>
+<h3><code>listen</code></h3>
+<p><strong><code>smtpIncoming</code></strong> — SMTPIncoming receives mail from the internet. Port 25 in
+production.</p>
+<p><strong><code>smtpOutgoing</code></strong> — SMTPOutgoing receives authenticated mail from your own
+devices for relaying. Port 587 in production.</p>
+<p><strong><code>imap</code></strong> — IMAP serves mailboxes to mail programs, with STARTTLS required
+before signing in. Port 143 in production. Empty disables it.</p>
+<p><strong><code>imaps</code></strong> — IMAPS serves the same over TLS from the first byte. Port 993 in
+production, which is what most mail programs try first. Empty disables it.</p>
+<p><strong><code>http</code></strong> — HTTP serves the dashboard and answers ACME http-01 challenges.
+Port 80 must be reachable from the internet when tls.acme.challenge is
+http-01.</p>
+<p><strong><code>https</code></strong> — HTTPS serves the dashboard over TLS.</p>
+<p><strong><code>debug</code></strong> — Debug, when set, serves Go pprof endpoints. Bind it to localhost
+only.</p>
+<h3><code>imap</code></h3>
+<p>What a mail program is told to connect to for reading mail, which is what the
+mail program page in a mailbox&#39;s settings shows.</p>
+<p>Normally it follows the server — <code>server.name</code>, and the ports in
+<code>listen.imap</code> and <code>listen.imaps</code> — and all three can be left empty. Set them
+when something in front forwards a different port: a container publishing
+10993, or a router taking 993 on the outside. Without it the page hands
+somebody the port the process happens to bind, which is not the one their mail
+program can reach. It is <code>smtp.submission</code> for reading rather than sending,
+and like it changes nothing about what the server does. Only what it says.</p>
+<p><strong><code>host</code></strong> — What to connect to. Empty means <code>server.name</code>.</p>
+<p><strong><code>port</code></strong> — The port for the connection that starts plain and turns to TLS.
+Empty means the port in <code>listen.imap</code>.</p>
+<p><strong><code>tlsPort</code></strong> — The port for the connection that is TLS from the first byte,
+which is what most mail programs try. Empty means the port in <code>listen.imaps</code>.</p>
+<h3><code>tls</code></h3>
+<p><strong><code>hosts</code></strong> — Hosts to obtain certificates for. The first is the primary name.</p>
+<p><strong><code>certificateFile</code></strong> — CertificateFile and PrivateKeyFile point at PEM files
+you manage yourself. When both are set, ACME is not used.</p>
+<p><strong><code>privateKeyFile</code></strong> — See the field above; the two are set together.</p>
+<p><strong><code>acme</code></strong> — ACME obtains certificates automatically from Let&#39;s Encrypt or
+another ACME provider.</p>
+<h3><code>tls.acme</code></h3>
+<p><strong><code>enabled</code></strong> — See the field above; the two are set together.</p>
+<p><strong><code>email</code></strong> — Email is the contact address registered with the ACME provider;
+it receives expiry warnings.</p>
+<p><strong><code>directoryUrl</code></strong> — DirectoryURL is the ACME provider. Point it at the Let&#39;s
+Encrypt staging directory while testing to avoid rate limits.</p>
+<p><strong><code>challenge</code></strong> — Challenge is how domain control is proven: &quot;http-01&quot; needs
+port 80 reachable, &quot;tls-alpn-01&quot; needs port 443, &quot;dns-01&quot; needs a DNS provider
+below and is the only way to obtain a wildcard certificate.</p>
+<p><strong><code>perDomain</code></strong> — PerDomain obtains a certificate for each domain&#39;s own mail
+server name, as well as the server&#39;s own. Without it every domain is served
+the server&#39;s certificate, which names a domain the sender did not ask for.
+Off by default, so that upgrading a server does not make it ask a certificate
+authority for one certificate per domain it serves without anybody deciding
+to.</p>
+<p><strong><code>accountKey</code></strong> — AccountKey identifies this server to the certificate
+authority. Generated on first use and kept here with the other secrets; losing
+it means registering again, which works but spends rate limit.</p>
+<p><strong><code>certificate</code></strong> — Certificate and PrivateKey hold the issued certificate, in
+PEM. They are written here by the renewal, so an exported configuration is the
+whole of a working server: restoring one elsewhere keeps the certificate
+instead of asking the authority for another and spending rate limit.  This is
+the opposite choice from tls.certificateFile above, and for a reason: these
+are written by this server and read by nothing else, whereas a certificate you
+manage yourself is written by something else and has to stay where that
+something else puts it.</p>
+<p><strong><code>privateKey</code></strong> — See the field above; the two are set together.</p>
+<p><strong><code>route53</code></strong> — Route53 solves dns-01 challenges using an AWS hosted zone.</p>
+<h3><code>tls.acme.route53</code></h3>
+<p><strong><code>enabled</code></strong> — See the field above; the two are set together.</p>
+<p><strong><code>zoneId</code></strong> — ZoneID is the hosted zone that contains the records for
+tls.hosts.</p>
+<p><strong><code>region</code></strong> — See the field above; the two are set together.</p>
+<p><strong><code>endpoint</code></strong> — Endpoint points at an S3-compatible service that is not AWS,
+for example <code>http://minio:9000</code>. Empty means AWS. Self-hosting the object store
+is what makes several instances able to share a spool without sharing a
+filesystem, and without an account anywhere.</p>
+<p><strong><code>pathStyle</code></strong> — PathStyle addresses the bucket as <code>endpoint/bucket</code>. Implied
+when an endpoint is set, and only worth stating to be explicit.</p>
+<p><strong><code>accessKeyId</code></strong> — AccessKeyID and SecretAccessKey are AWS credentials kept
+here with the other secrets, so that one file is the whole of a working
+server.  Leave both empty to use the default AWS credential chain instead: the
+environment, a shared credentials file, or an instance role. On EC2 an
+instance role is the better answer, because there is no long-lived secret to
+leak.</p>
+<p><strong><code>secretAccessKey</code></strong> — See the field above; the two are set together.</p>
+<p><strong><code>credentialsFile</code></strong> — CredentialsFile is an AWS shared credentials file, as
+an alternative to the two fields above.</p>
+<p><strong><code>nameservers</code></strong> — Nameservers to query when checking that a challenge record
+has propagated, for example &quot;ns-1.example.net:53&quot;.</p>
+<h3><code>database</code></h3>
+<p>Not stored with the rest — a connection to the database cannot be kept in the
+database. It comes from <code>TEANODE_DATABASE_URL</code> and the variables beside it,
+described above. The fields are listed here because they are what those
+variables set, and because <code>config show</code> prints them.</p>
+<p><strong><code>host</code></strong> — See the field above; the two are set together.</p>
+<p><strong><code>port</code></strong> — See the field above; the two are set together.</p>
+<p><strong><code>user</code></strong> — See the field above; the two are set together.</p>
+<p><strong><code>password</code></strong> — See the field above; the two are set together.</p>
+<p><strong><code>name</code></strong> — See the field above; the two are set together.</p>
+<p><strong><code>sslMode</code></strong> — SSLMode is passed to the PostgreSQL driver: disable, allow,
+prefer, require, verify-ca or verify-full. <code>require</code> encrypts the connection
+but believes whatever answers on the port; <code>verify-full</code> also checks that the
+certificate is signed by <code>sslRootCertificate</code> and names the host being dialled,
+which is what stops something else on the network from answering as the
+database.</p>
+<p><strong><code>sslRootCertificate</code></strong> — SSLRootCertificate is the PEM file the server&#39;s
+certificate is checked against, for the two verify modes. The compose file
+generates one and mounts it at <code>/certs/server.crt</code>; a managed PostgreSQL will
+publish its own. Empty means the system trust store, which a self-signed
+certificate is not in.</p>
+<p><strong><code>logQueries</code></strong> — LogQueries echoes every SQL statement to the log. Very
+noisy.</p>
+<h3><code>smtp</code></h3>
+<p><strong><code>trustedSenders</code></strong> — TrustedSenders are domains whose mail skips the
+greylisting delay applied to unknown senders.</p>
+<p><strong><code>maxMessageSize</code></strong> — MaxMessageSize is the largest message accepted, for
+example &quot;70MB&quot;.</p>
+<p><strong><code>maxRecipientsIncoming</code></strong> — MaxRecipientsIncoming limits recipients per
+inbound message; a low value frustrates address harvesting.</p>
+<p><strong><code>maxRecipientsOutgoing</code></strong> — MaxRecipientsOutgoing limits recipients per
+relayed message.</p>
+<p><strong><code>greylistDelay</code></strong> — GreylistDelay is how long an unknown sender is stalled
+before the message is accepted. Zero disables the delay.</p>
+<p><strong><code>requireReverseDns</code></strong> — RequireReverseDNS refuses incoming mail from an
+address with no reverse DNS record that resolves back to it. On by default: it
+is cheap, and most spam comes from hosts that have none.  Turn it off when
+this server does not see the real client address — behind a load balancer, on
+a private network, or in a container network during a test — because there the
+check refuses everything.</p>
+<p><strong><code>socks5Proxy</code></strong> — SOCKS5Proxy, when set, routes outbound SMTP through a
+proxy. Useful where the host&#39;s own IP address has a poor reputation or port 25
+is blocked outbound.</p>
+<p><strong><code>disableSend</code></strong> — DisableSend stops the server from actually delivering
+mail. Deliveries are recorded and left undelivered. Use on a development
+machine.</p>
+<p><strong><code>authRateLimit</code></strong> — AuthRateLimit is how many authentication attempts one
+address may make per minute on the submission port, and AuthRateBurst how many
+it may make at once before that rate applies.  Verifying a credential is an
+HMAC and a comparison, which is fast, so without a limit an address can guess
+at whatever rate the network allows. The defaults let a mail client retry a
+mistyped password several times and stop a program working through a list.
+Zero for either disables the limit.</p>
+<p><strong><code>authRateBurst</code></strong> — How many attempts one address may make at once before
+<code>authRateLimit</code> starts applying. A mail client retrying a mistyped password
+should never see this; a program working through a list should reach it in the
+first second.</p>
+<h3><code>smtp.submission</code></h3>
+<p>The address a mail client should be told to connect to, which is what the
+dashboard shows beside a new credential.</p>
+<p>Normally it follows the server — <code>server.name</code>, and the port in
+<code>listen.smtpOutgoing</code> — and both of these can be left empty. Set them when
+something forwards a different port: a container publishing 10587, or a
+firewall taking 587 on the outside. Without it the dashboard hands somebody
+the port the process happens to bind, which is not the one their phone can
+reach.</p>
+<p>It changes nothing about what the server does. Only what it says.</p>
+<p><strong><code>host</code></strong> — What to connect to. Empty means <code>server.name</code>.</p>
+<p><strong><code>port</code></strong> — What port to connect on. Empty means the port in
+<code>listen.smtpOutgoing</code>.</p>
+<h3><code>smtp.relay</code></h3>
+<p>Hands outgoing mail to one mail server instead of delivering it by looking up
+the recipient&#39;s MX and connecting on port 25.</p>
+<p>Most people need this because their connection blocks outbound 25 — almost
+every domestic ISP and many hosting providers do, since that is how a
+compromised machine sends spam. A relay is reached on a submission port
+instead.</p>
+<p>It is also how this server sends through a provider. Amazon SES, Postmark and
+Resend all offer an SMTP endpoint, so there is nothing provider-specific to
+configure and the message arrives carrying the DKIM signature this server
+already applied. Their HTTP APIs are a different matter: only SES accepts a
+built message as-is, and Postmark and Resend take decomposed fields, which
+means re-signing by them and no way to preserve yours. Use their SMTP
+endpoints.</p>
+<table>
+<thead>
+<tr>
+<th>Provider</th>
+<th>Host</th>
+<th>Port</th>
+<th>Security</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Gmail</td>
+<td><code>smtp.gmail.com</code></td>
+<td>587</td>
+<td><code>starttls</code></td>
+</tr>
+<tr>
+<td>Amazon SES</td>
+<td><code>email-smtp.&lt;region&gt;.amazonaws.com</code></td>
+<td>587 or 2587</td>
+<td><code>starttls</code></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>465 or 2465</td>
+<td><code>tls</code></td>
+</tr>
+<tr>
+<td>Postmark</td>
+<td><code>smtp.postmarkapp.com</code></td>
+<td>587, 2525 or 25</td>
+<td><code>starttls</code></td>
+</tr>
+<tr>
+<td>Resend</td>
+<td><code>smtp.resend.com</code></td>
+<td>587 or 2587</td>
+<td><code>starttls</code></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>465 or 2465</td>
+<td><code>tls</code></td>
+</tr>
+</tbody></table>
+<p>SES wants SMTP credentials derived from an IAM user, not the access key
+itself, and they are per region. Resend&#39;s username is the literal string
+<code>resend</code> with your API key as the password. Postmark uses its server token as
+both.</p>
+<p>One thing to know about SES: it overwrites <code>Message-ID</code> and <code>Date</code>, so a
+signature covering those breaks. This server does not sign them.</p>
+<p>Mail forwarded by an alias of kind <code>mailServer</code> is not affected — that names
+its own destination, which is the point of it.</p>
+<p><strong><code>enabled</code></strong> — Whether outgoing mail goes through the relay.</p>
+<p><strong><code>host</code></strong> — The mail server to hand it to.</p>
+<p><strong><code>port</code></strong> — Usually 587, 465 or 2525.</p>
+<p><strong><code>security</code></strong> — How TLS is used: <code>starttls</code> for 587 and 2525, <code>tls</code> for 465,
+or <code>none</code>.</p>
+<p>Unlike delivering to a stranger&#39;s MX, the certificate is checked against the
+host for both encrypted modes. There is a name to check and a password about
+to be sent, so accepting any certificate would mean handing that password to
+whoever answered. <code>none</code> does not insist — STARTTLS is still used when it is
+offered — and is refused outright when a password is set.</p>
+<p><strong><code>username</code></strong> and <strong><code>password</code></strong> — What it authenticates as. Leave both empty
+for a relay that authorizes by address.</p>
+<h3><code>dkim</code></h3>
+<p><strong><code>selector</code></strong> — Selector to give a newly created domain&#39;s key. It appears in
+DNS as <code>&lt;selector&gt;._domainkey.&lt;domain&gt;</code>, so it only has to be unique within the
+domain, and changing it here does not affect domains already created.</p>
+<h3><code>domains[]</code></h3>
+<p><strong><code>id</code></strong> — ID identifies the domain in stored mail, deliveries and usage rows,
+and in dashboard URLs. It is the domain name: unique already, stable for as
+long as the domain is configured, and readable wherever it appears.  Older
+configurations carry a generated identifier here instead, and keep working —
+the rows that reference it still match. Changing it means updating those rows
+too, so nothing rewrites it automatically.</p>
+<p><strong><code>domain</code></strong> — Domain is the mail domain itself, for example &quot;example.com&quot;.</p>
+<p><strong><code>subdomain</code></strong> — Subdomain is the label whose CNAME points at this server, so
+that bounces and DMARC reports have somewhere to arrive. Usually &quot;mail&quot;,
+making mail.example.com a CNAME to server.name.</p>
+<p><strong><code>linkHost</code></strong> — LinkHost is the name in the addresses this server writes into
+mail it sends — today the pictures in a template, each one an address belonging
+to a single message. Empty means the domain&#39;s first mail server name, which is
+right when this server answers HTTPS on it. It often does not: a mail server
+name resolves to a host whose port 443 belongs to something else entirely, and
+then every picture in every message is broken while the mail itself is fine.
+The name here is a way to say where this domain&#39;s HTTPS actually is — the site
+on the apex behind a CDN, a name pointed at this server for the purpose —
+without moving where its mail arrives. It has to be a name that reaches this
+server over HTTPS with a certificate a mail program will accept, and it has to
+be under this domain: an address in somebody else&#39;s domain tells the reader who
+runs the server, which is the thing per-domain names exist to stop.</p>
+<p><strong><code>comment</code></strong> — Comment is a note for the operator; it is never used in mail
+handling.</p>
+<p><strong><code>dkim</code></strong> — DKIM is the key that signs mail sent from this domain. It is
+generated when the domain is created; the matching public key has to be
+published in DNS, which the dashboard shows you.</p>
+<p><strong><code>spamFilterScoreThreshold</code></strong> — SpamFilterScoreThreshold is the SpamAssassin
+score at or above which mail is rejected. Only meaningful when antispam is
+enabled.</p>
+<p><strong><code>aliases</code></strong> — Aliases decide where mail for this domain goes. Every alias
+whose pattern matches produces a delivery, so one address can forward to
+several places; an alias with an empty pattern is a catch-all and receives
+only what nothing else matched.</p>
+<p><strong><code>credentials</code></strong> — Credentials may authenticate to the submission port and
+send mail as this domain.</p>
+<h3><code>domains[].dkim</code></h3>
+<p><strong><code>selector</code></strong> — Selector this key is published under.</p>
+<p><strong><code>privateKey</code></strong> — PrivateKey is a PKCS#8 RSA key in PEM form.</p>
+<h3><code>domains[].aliases[]</code></h3>
+<p><strong><code>id</code></strong> — ID is generated once and never changes; stored deliveries reference
+it.</p>
+<p><strong><code>pattern</code></strong> — Pattern is a Go regular expression matched against the local
+part of the recipient address, the part before the &quot;@&quot;, without regard to
+case. Anchor it: &quot;^hello<div id="teanode"></div>quot; matches only hello@, while &quot;hello&quot; also matches
+say-hello-now@. An alias that delivers into a mailbox is anchored for you
+when made through the web UI or the API, &quot;hello&quot; becoming &quot;^hello<div id="teanode"></div>quot;, because
+a mailbox&#39;s addresses are read back from its patterns; a file imported with
+<code>config import</code> is taken as written. An empty pattern makes this a catch-all. Catch-alls are a
+fallback: they receive mail only for addresses that no pattern matched, so
+adding one does not duplicate mail that already has somewhere to go.</p>
+<p><strong><code>comment</code></strong> — Comment is a note for the operator.</p>
+<p><strong><code>kind</code></strong> — Kind is one of null, email, webhook or mailServer.</p>
+<p><code>openai-codex</code> is OpenAI reached with a personal sign-in rather than a key:
+a ChatGPT plan, through the Codex API that the Codex command line also runs
+on. It answers at a different address, speaks the responses protocol rather
+than chat completions, and bills against the plan&#39;s allowance instead of
+credits. It takes
+<code>refreshToken</code> and <code>account</code> and no <code>apiKey</code>, and it offers the models the
+plan lists for the account, asked each time the model list is read: every
+other name is refused outright. It has no embeddings,
+so <code>models.embedding</code> still needs a keyed provider or a local one.</p>
+<p>The plan says how much of its allowance is used on every answer, and the
+Models tab of the agent settings shows what it last said under the provider:
+the plan&#39;s name, and a bar for each window with what is left and when it
+resets. Nothing asks the plan between turns, so the numbers are as of its
+last answer, and none are shown until it has answered once. The last reading
+is written to the database, so a restart shows it again rather than nothing.
+A window whose reset time has passed since is shown as the whole
+allowance, until the next answer says how much of the new one is used.</p>
+<p>While it runs, each instance shows what the plan said in answer to its own
+turns. With more than one instance, the tab shows what the plan last told
+whichever instance served the page, which may be older than what it told
+another; the database keeps the newest of them, which is what every
+instance starts from.</p>
+<p><strong><code>email</code></strong> — Email is the destination address when kind is email.</p>
+<p><strong><code>webhook</code></strong> — Webhook is the destination URL when kind is webhook.</p>
+<p><strong><code>mailServer</code></strong> — MailServer is the destination server when kind is
+mailServer.</p>
+<p><strong><code>disabled</code></strong> — Disabled stops the alias from matching without deleting it.</p>
+<h3><code>domains[].aliases[].mailServer</code></h3>
+<p><strong><code>host</code></strong> — See the field above; the two are set together.</p>
+<p><strong><code>port</code></strong> — See the field above; the two are set together.</p>
+<p><strong><code>username</code></strong> — See the field above; the two are set together.</p>
+<p><strong><code>password</code></strong> — See the field above; the two are set together.</p>
+<h3><code>domains[].credentials[]</code></h3>
+<p><strong><code>id</code></strong> — ID identifies the domain in stored mail, deliveries and usage rows,
+and in dashboard URLs. It is the domain name: unique already, stable for as
+long as the domain is configured, and readable wherever it appears.  Older
+configurations carry a generated identifier here instead, and keep working —
+the rows that reference it still match. Changing it means updating those rows
+too, so nothing rewrites it automatically.</p>
+<p><strong><code>key</code></strong> — Key is the secret half of the credential.</p>
+<p><strong><code>alias</code></strong> — Alias, when set, restricts this credential to sending as exactly
+that local part of the domain. A credential for &quot;noreply&quot; cannot then send as
+anybody else, which limits the damage if it leaks.</p>
+<p><strong><code>comment</code></strong> — Comment names the device or service that holds this
+credential.</p>
+<p><strong><code>disabled</code></strong> — Disabled refuses authentication without deleting the
+credential.</p>
+<h3><code>users[]</code></h3>
+<p><strong><code>username</code></strong> — See the field above; the two are set together.</p>
+<p><strong><code>passwordHash</code></strong> — PasswordHash is a bcrypt hash. Generate one with &quot;teanode
+password&quot;.</p>
+<p><strong><code>email</code></strong> — Email receives notifications, such as a domain whose DNS records
+have stopped resolving. Optional.</p>
+<p><strong><code>tokens</code></strong> — Tokens authenticate this person&#39;s command line client, and act
+as them. Removing the account removes them with it.</p>
+<h3><code>session</code></h3>
+<p><strong><code>key</code></strong> — Key signs session cookies. Generated on first run; replacing it
+logs everybody out, which is the way to do that deliberately.</p>
+<p><strong><code>lifetime</code></strong> — Lifetime is how long a login lasts.</p>
+<h3><code>dns</code></h3>
+<p><strong><code>nameserver</code></strong> — Nameserver to query, as host:port. A public resolver is a
+reasonable default because these are public records.</p>
+<p><strong><code>checkInterval</code></strong> — CheckInterval is how often every configured domain is
+re-checked.</p>
+<p><strong><code>externalAddressServices</code></strong> — ExternalAddressServices are asked what address
+this server appears to come from, which is what its DNS records have to point
+at. A server cannot work this out alone: the address on its interface is
+usually private, and only something outside can say what a sending mail server
+sees.  Each is tried in turn until one answers. Empty disables the lookup, and
+the dashboard then asks the operator for the address instead.</p>
+<h3><code>antivirus</code></h3>
+<p><strong><code>enabled</code></strong> — See the field above; the two are set together.</p>
+<p><strong><code>host</code></strong> — See the field above; the two are set together.</p>
+<p><strong><code>port</code></strong> — See the field above; the two are set together.</p>
+<h3><code>antispam</code></h3>
+<p>Spam scoring. The score a message is compared against is the domain&#39;s
+<code>spamFilterScoreThreshold</code>, not a setting here.</p>
+<p><strong><code>enabled</code></strong> — Whether messages are scored at all.</p>
+<p><strong><code>engine</code></strong> — What does the scoring: <code>builtin</code> for the filter inside this
+server, or <code>spamd</code> for an external SpamAssassin daemon. Leaving it empty is
+resolved rather than defaulted, so that an existing deployment keeps working
+without being edited: empty with a host configured means <code>spamd</code>, and empty
+with no host means <code>builtin</code>.</p>
+<p><strong><code>spamd</code></strong> — Where the external daemon listens, used when <code>engine</code> is
+<code>spamd</code>. Its <code>host</code> and <code>port</code> are the two fields.</p>
+<p><strong><code>host</code></strong>, <strong><code>port</code></strong> — Deprecated: use <code>spamd</code>. Kept because it is what
+deployments in the field have stored, and it still works.</p>
+<p><strong><code>builtin</code></strong> — The filter inside this server. It scores from what the server
+already knows, from public block lists, from a classifier trained on your own
+mail, and optionally from public pattern rules. The four groups below can be
+turned on and off independently.</p>
+<p><strong><code>signals</code></strong> — Scoring from what the server already established about a
+message: its authentication results, the sending host&#39;s confirmed reverse DNS
+name, and the name it gave in HELO. Costs no lookups, because all of it is
+computed before scoring begins. Its one field is <code>enabled</code>.</p>
+<p><strong><code>dns</code></strong> — Reputation lookups in public block lists. A block list is queried
+with an ordinary DNS lookup, so this needs no service of its own.</p>
+<p><strong><code>timeout</code></strong> — Bounds the whole set of block list lookups for one message.</p>
+<p><strong><code>addressLists</code></strong> — The lists consulted about the connecting address. Each
+entry has a <code>zone</code> and a <code>weight</code>.</p>
+<p><strong><code>domainLists</code></strong> — The lists consulted about domains found in the message.
+Each entry has a <code>zone</code> and a <code>weight</code>.</p>
+<p><strong><code>zone</code></strong> — The suffix queries are built with, for example
+<code>zen.spamhaus.org</code>.</p>
+<p><strong><code>weight</code></strong> — The points a listing contributes.</p>
+<p><strong><code>maximumDomains</code></strong> — Caps how many domains from one message are looked up,
+so that a message full of links is not a burst of DNS queries.</p>
+<p><strong><code>bayes</code></strong> — A classifier trained on this server&#39;s own mail, from messages
+marked as spam or not spam in the dashboard. It is usually the most accurate
+part of a spam filter, because it learns the mail you actually get.</p>
+<p><strong><code>minimumMessages</code></strong> — How many messages of each kind, spam and not spam,
+must have been learned before the classifier is allowed to contribute
+anything. A classifier trained on four messages is confidently wrong, and one
+trained on two hundred of one kind and forty of the other is confidently
+wrong about everything unlike those forty. Until both counts are reached the
+classifier is silent, and the dashboard&#39;s spam breakdown shows no <code>BAYES</code>
+line.</p>
+<p><strong><code>rules</code></strong> — Public pattern rules, downloaded into the database and evaluated
+in this process. Off by default: an upgrade should not begin downloading and
+running rule files nobody asked for.</p>
+<p><strong><code>channels</code></strong> — The update channels to fetch, by name.</p>
+<p><strong><code>updateInterval</code></strong> — How often to look for a new version of the rules.</p>
+<p><strong><code>maximumEvaluationTime</code></strong> — Bounds one message&#39;s whole rule pass. Thousands
+of patterns run over text an attacker chose, so this is a limit rather than a
+target.</p>
+<p>Rules are loaded deliberately rather than downloaded unattended:</p>
+<pre><code>teanode-server config rules import --file ruleset.cf --channel updates.spamassassin.org
+teanode-server config rules show
+</code></pre>
+<p>They are stored in the database, not in a directory, because a server can run
+as several instances and they have to evaluate the same rules; each one
+notices a new version within a minute. <code>show</code> reports how many rules loaded
+and how many were skipped — a published set contains rules implemented by
+plugins this server does not have, and patterns its regular expression engine
+will not compile, and both are left out rather than guessed at.</p>
+<p>There is no automatic download. Rules are patterns this server runs against
+every message it receives, so fetching them unattended means verifying the
+publisher&#39;s signature, and the OpenPGP package that would do that is
+deprecated upstream. Adding a frozen cryptography dependency to a mail server
+is a decision worth taking deliberately.</p>
+<p>The rule data published on <code>updates.spamassassin.org</code> is produced by the
+Apache SpamAssassin project and licensed under the Apache License 2.0. The
+built-in filter is a different program and is not SpamAssassin; it only reads
+that published rule data when you enable it and load it.</p>
+<h3><code>geoip</code></h3>
+<p><strong><code>enabled</code></strong> — See the field above; the two are set together.</p>
+<p><strong><code>databaseFile</code></strong> — DatabaseFile is a MaxMind .mmdb file.</p>
+<h3><code>storage</code></h3>
+<p><strong><code>mode</code></strong>: <code>local</code> requires a directory and treats S3 as a best-effort mirror.
+<code>shared</code> requires enabled S3 and an empty directory; object-store errors are
+returned to the caller. Use shared mode for multiple instances. Empty preserves
+existing behavior: a directory selects local storage, otherwise S3 is required.
+Changing mode does not migrate existing messages or uploaded files.</p>
+<p><strong><code>directory</code></strong> — Directory holds the raw messages, relative to
+server.dataDirectory. They are kept out of the database because they are
+large, are never queried, and would make a backup expensive.</p>
+<p>Empty is allowed when <code>s3</code> is enabled, and then nothing is kept on this
+machine at all. That is what several instances sharing one store want: a
+directory there holds only the messages the instance that handled them wrote,
+so no instance has all of them and each keeps a copy of somebody&#39;s mail that
+nothing else needs. The trade is that the store must answer for a message to
+be stored, where a directory keeps working while the network does not.</p>
+<p><strong><code>spoolRetention</code></strong> — SpoolRetention is how long a message is kept, which is
+how far back the dashboard can show content and how long a stalled delivery
+can still be retried. Zero keeps messages forever and eventually fills the
+disk.</p>
+<p><strong><code>s3</code></strong> — See the field above; the two are set together.</p>
+<h3><code>storage.s3</code></h3>
+<p><strong><code>enabled</code></strong> — See the field above; the two are set together.</p>
+<p><strong><code>bucket</code></strong> — See the field above; the two are set together.</p>
+<p><strong><code>region</code></strong> — See the field above; the two are set together.</p>
+<p><strong><code>endpoint</code></strong> — Endpoint points at an S3-compatible service that is not AWS,
+for example <code>http://minio:9000</code>. Empty means AWS. Self-hosting the object store
+is what makes several instances able to share a spool without sharing a
+filesystem, and without an account anywhere.</p>
+<p><strong><code>pathStyle</code></strong> — PathStyle addresses the bucket as <code>endpoint/bucket</code>. Implied
+when an endpoint is set, and only worth stating to be explicit.</p>
+<p><strong><code>accessKeyId</code></strong> — AccessKeyID and SecretAccessKey are AWS credentials kept
+here with the other secrets, so that one file is the whole of a working
+server.  Leave both empty to use the default AWS credential chain instead: the
+environment, a shared credentials file, or an instance role. On EC2 an
+instance role is the better answer, because there is no long-lived secret to
+leak.</p>
+<p><strong><code>secretAccessKey</code></strong> — See the field above; the two are set together.</p>
+<p><strong><code>credentialsFile</code></strong> — CredentialsFile is an AWS shared credentials file, as
+an alternative to the two fields above.</p>
+<h3><code>passkey</code></h3>
+<p><strong><code>enabled</code></strong> — Enabled offers passkeys on the sign-in form and in the
+account&#39;s settings. Off by default: a server reached over plain HTTP, or on a
+name that is about to change, is one where registering a passkey would create
+something that cannot be used later.</p>
+<p><strong><code>relyingPartyId</code></strong> — RelyingPartyID is the domain a credential is bound to,
+without a scheme or a port — <code>mail.example.com</code>, or <code>example.com</code> to let the
+same passkey work on every subdomain. Empty means <code>server.name</code>. WebAuthn binds
+a credential permanently, so a passkey registered against the wrong name is one
+that will never work again and cannot be repaired, only deleted.</p>
+<p><strong><code>displayName</code></strong> — DisplayName is what the browser shows when it asks somebody
+to create or use a passkey. Empty means <code>server.name</code>.</p>
+<p><strong><code>origins</code></strong> — Origins are where the dashboard is served from, each with its
+scheme and any non-default port: <code>https://mail.example.com</code>. An assertion from
+an origin that is not listed is refused, which is what stops a page on another
+site from using these credentials. Empty means <code>https://</code> and the relying
+party.</p>
+<p><strong><code>maximumPerUser</code></strong> — MaximumPerUser bounds how many an account may register.
+Zero means five, which is a phone, a laptop, a security key and room to replace
+one before removing it.</p>
+<h3><code>passkey.redis</code></h3>
+<p>Where half-finished passkey sign-ins wait. A WebAuthn sign-in is two requests,
+and behind a load balancer the browser has no reason to come back to the
+instance it started with, so the challenge minted by the first has to be
+somewhere the second can find it. With one instance leave the address empty and
+the challenges stay in the process; nothing durable is kept here either way,
+and losing the lot costs one retry.</p>
+<p><strong><code>address</code></strong> — Address as host:port, for example <code>redis:6379</code>. Empty disables
+it.</p>
+<p><strong><code>username</code></strong> — Username, when the server requires one.</p>
+<p><strong><code>password</code></strong> — Password, when the server requires one.</p>
+<p><strong><code>database</code></strong> — Database number, zero unless something else shares the server.</p>
+<h3><code>upgrade</code></h3>
+<p><strong><code>enabled</code></strong> — Enabled asks the release list what the newest version is, on
+CheckInterval, and shows it in the dashboard. One HTTPS request to a public
+endpoint, carrying nothing about this deployment. On by default: knowing that a
+version exists is not the same as installing it, and an operator who is never
+told is an operator running last year&#39;s bugs.</p>
+<p><strong><code>automatic</code></strong> — Automatic installs what it finds without being asked:
+download, verify against the release&#39;s checksums, replace this binary, restart.
+Off by default, because a release can change how mail is handled and nobody
+installs a mail server expecting it to change underneath them. It takes any
+newer release, minor and major alike — a rule that stopped at a minor version
+would be a rule that quietly stopped upgrading.</p>
+<p>It is refused, with the reason shown in the dashboard, where there is nowhere
+to put the new binary: a deployment whose executable it cannot write over and
+which has not been given a writable staging directory in
+<code>TEANODE_UPGRADE_DIRECTORY</code>. A container is not refused — it stages onto its
+volume and runs that at the next start, so an upgrade survives a recreate — but
+a container that was never given such a volume is, and there
+<code>docker compose pull</code> is the answer.</p>
+<p>The restart does not need a supervisor. The process replaces its own image with
+the new binary, keeping the same arguments and environment, once everything has
+been drained and closed — so a server started by hand upgrades itself as well
+as one under systemd.</p>
+<p><strong>One limitation, and it matters most to the deployment this is easiest to turn
+on for.</strong> A release that crashes before it finishes starting is recovered from
+automatically only where the new binary is staged rather than written over the
+old one — a container runs the binary in its image again and says why. Where
+the binary was replaced in place, there is nothing left to fall back to on its
+own: a supervisor will restart the broken binary until somebody stops it. The
+binary it replaced is kept beside it, so the recovery is one command,</p>
+<pre><code>mv /usr/local/bin/teanode.previous /usr/local/bin/teanode
+</code></pre>
+<p>and then a restart. Automatic upgrades are worth more on a deployment that
+stages, and worth thinking about twice on one that does not.</p>
+<p><strong><code>checkInterval</code></strong> — CheckInterval is how often to look. Six hours by default:
+often enough that a security release is noticed the same day, rarely enough
+that it is not a request anybody would notice. Read once at startup, so
+changing it takes a restart — the dashboard says so. <code>enabled</code>, <code>automatic</code> and
+<code>window</code> are re-read every time the loop wakes and take effect without one.</p>
+<p>The loop itself wakes more often than this and asks nothing most of the time.
+That is what makes <code>window</code> work: a check every six hours happens at four fixed
+times a day, and a two-hour window would be hit or missed depending on when the
+process started.</p>
+<p><strong><code>window</code></strong> — Window restricts automatic upgrades to a time of day, in local
+time, as <code>02:00-04:00</code>. It may cross midnight. Empty means any time. An upgrade
+restarts the server, which takes a few seconds during which mail is not
+accepted — senders retry, but a busy hour is still a worse time than a quiet
+one.</p>
+<p>What verification means here, said plainly: the binary and the release&#39;s
+<code>SHA256SUMS</code> are fetched over HTTPS from the repository this server was built
+from, and the hash must match. That proves the bytes are the ones GitHub is
+serving for that release and that the download was not corrupted. It does not
+prove a human meant to publish them: anybody who can publish a release to that
+repository can publish a binary, and this will install it. The repository is
+compiled in rather than configured, so a stolen dashboard session cannot point
+a server at somebody else&#39;s builds.</p>
+<h3><code>agent</code></h3>
+<p>The secrets in this section — provider keys, the search key, what a
+connected server is reached with, the Plaid secret — are sealed with <code>server.secret</code> before
+they are stored and opened when they are read, the way the domain table&#39;s
+keys are. A database dump holds ciphertext; a server started with a
+different secret cannot read them and says so.</p>
+<p>The personal agent: which model services this server may call, which model
+does which work, what a deployment offers people at all, and the limits an
+operator puts on it. Off by default, and turning it on enables nothing for
+anybody — a person turns their own agent on and grants it their mailbox
+(<a href="https://github.com/ziyan/teanode/blob/main/docs/decisions/20260910-agents-belong-to-people.md"><code>docs/decisions/20260910-agents-belong-to-people.md</code></a>).</p>
+<p><strong><code>enabled</code></strong> — Whether people may have an agent at all. Off means no model
+service is ever contacted and nothing below is constructed.</p>
+<p><strong><code>instructions</code></strong> — House instructions: standing words for every agent on
+this server, read after the fixed conduct and before a person&#39;s own —
+&quot;this is a school; never answer a parent automatically&quot;.</p>
+<p><strong><code>effort</code></strong> — How hard a turn somebody typed thinks and looks before it
+answers: empty for the model&#39;s own default, <code>low</code>, <code>medium</code> or <code>high</code> for
+every turn alike, or <code>auto</code> for a model to judge each message with the
+conversation before it. A thanks is answered at once, a question about how
+their own systems work is researched, and a pushback on the last answer or a
+request for care gets the most.
+Runs with nobody present keep their own.</p>
+<p><strong><code>providers</code></strong> — The model services this server may call, one entry each.</p>
+<p><strong><code>models</code></strong> — Which model does which work.</p>
+<p><strong><code>features</code></strong> — What people may turn on at all.</p>
+<p><strong><code>limits</code></strong> — What a run may cost.</p>
+<p><strong><code>currency</code></strong> — The three-letter code every amount this server shows or
+caps is written in. Its own section below.</p>
+<p><strong><code>skillSecrets</code></strong> — The values the installed skills need. Its own section
+below.</p>
+<p><strong><code>retention</code></strong> — How long the agent&#39;s records are kept.</p>
+<p><strong><code>search</code></strong> — The web search provider behind the <code>web_search</code> tool.</p>
+<p><strong><code>tools</code></strong> — The operator&#39;s policy over the tool catalog.</p>
+<p><strong><code>browser</code></strong> — A headless browser the operator runs beside the server.</p>
+<p><strong><code>mcp</code></strong> — Servers speaking the Model Context Protocol whose tools join the
+catalog.</p>
+<p><strong><code>finance</code></strong> — Which providers people may link their banks, cards,
+brokerages and loans through, and the operator&#39;s keys for those that need
+them. Its own section below.</p>
+<p><strong><code>skipCertificateCheck</code></strong> — Hosts whose TLS certificate is not checked,
+by name. A real loss and narrower than it looks: for a host named here,
+anything answering at that address can pretend to be it, so it is only
+for equipment that cannot be verified at all — a controller shipping a
+certificate issued for <code>127.0.0.1</code>, which can never be valid for the
+address it is reached at. Only a skill going to the endpoint it declares
+is given this; the remote image proxy, one-click unsubscribe and
+<code>web_fetch</code> follow addresses out of somebody else&#39;s mail and always
+check.</p>
+<h3><code>agent.providers[]</code></h3>
+<p><strong><code>name</code></strong> — What <code>provider:model</code> names. Any label, and stable: the models
+section and every usage row refer to it.</p>
+<p><strong><code>kind</code></strong> — The API the service speaks: <code>openai</code> (also every compatible
+server — Ollama, vLLM, llama.cpp, OpenRouter, xAI, Mistral), <code>anthropic</code>,
+or <code>gemini</code>.</p>
+<p><strong><code>baseUrl</code></strong> — Where it listens. Empty means the service&#39;s public
+endpoint; a local server is <code>http://ollama:11434/v1</code>.</p>
+<p><strong><code>apiKey</code></strong> — Authenticates this server to the service. A secret; shown
+redacted, kept when a settings update leaves it blank.</p>
+<p><strong><code>refreshToken</code></strong> — Authenticates a provider that is signed in to rather
+than keyed, which at present means <code>openai-codex</code>. A secret, shown redacted
+and kept when a settings update leaves it blank.</p>
+<p>It is the long half of a pair: the server trades it for a short-lived access
+token before each run of requests, and never writes that token down. The
+dashboard fills it in: Settings, Agent, Providers, a provider of kind
+<code>openai-codex</code>, and &quot;Sign in with ChatGPT&quot;, which shows a one-time code to
+enter on OpenAI&#39;s page from any device. <code>teanode agent signin</code> gets one at a
+browser on the machine it runs on, for pasting here instead.</p>
+<p>Where the service rotates these, the server writes the newer one back here, so
+the sign-in survives a restart; a new one written here is taken up by the
+running provider without a restart.</p>
+<p><strong><code>account</code></strong> — Which of a signed-in person&#39;s accounts the work is billed
+to, where the service asks for it. Not a secret: it names an account, it
+does not open one.</p>
+<p><strong><code>enabled</code></strong> — Keeps the key while switching the provider off. Unset means
+on. Work assigned to a disabled provider fails validation, so a provider
+cannot be switched off from under the models section by accident.</p>
+<p><strong><code>models</code></strong> — A filter over what the service offers, with <code>allow</code> and
+<code>deny</code> lists of patterns matched against model names the way a shell
+matches file names (<code>qwen*</code>). Empty allow means everything; deny is applied
+after allow. Only admitted models may be assigned work.</p>
+<p><strong><code>allow</code></strong>, <strong><code>deny</code></strong> — The two lists of the filter.</p>
+<p><strong><code>pricing</code></strong> — What the service charges, per million tokens, with
+<code>input</code>, <code>output</code>, <code>cacheRead</code> and <code>cacheWrite</code>. Optional; it lets the usage view show
+money beside tokens, which is the number an operator budgets.</p>
+<p><strong><code>input</code></strong>, <strong><code>output</code></strong>, <strong><code>cacheRead</code></strong>, <strong><code>cacheWrite</code></strong> — The four
+prices. <code>cacheWrite</code> is what putting a prompt into the cache costs, which some
+services bill above the input price and report apart from it; left unset it
+costs nothing, which is right for a service that does not charge for it and
+wrong for one that does.</p>
+<p><strong><code>model</code></strong> — Which model a <code>modelPricing</code> entry prices: the name after
+the provider&#39;s, matched the way <code>allow</code> and <code>deny</code> are.</p>
+<p><strong><code>modelPricing</code></strong> — Prices for particular models of this provider, since
+one service&#39;s models rarely cost alike: a small model and a large one behind
+the same key are priced apart. Each entry has a <code>model</code> and the same four
+prices. The <code>model</code> is the name after the provider&#39;s, matched the way <code>allow</code>
+and <code>deny</code> are, so <code>gpt-5*</code> prices a family; the first entry that matches a
+model is the one used, so exact names belong above the patterns that would
+also catch them. A model no entry matches costs what <code>pricing</code> above says.</p>
+<pre><code>providers:
+  - name: openai
+    pricing: { input: 0.15, output: 0.6, cacheRead: 0.075 }
+    modelPricing:
+      - { model: gpt-5.6-terra, input: 2, output: 12, cacheRead: 0.2 }
+      - { model: gpt-5.6-luna, input: 0.2, output: 1.2, cacheRead: 0.02 }
+</code></pre>
+<h3><code>agent.models</code></h3>
+<p>Every value is written <code>provider:model</code>, and the provider must be declared,
+enabled, and admit the model.</p>
+<p><strong><code>default</code></strong> — The model for anything not named below. Required when the
+agent is enabled.</p>
+<p><strong><code>fast</code></strong> — The model for the cheap kinds of work — sorting, summaries,
+compaction — unless one of them is overridden. Empty means <code>default</code>.</p>
+<p><strong><code>embedding</code></strong> — The model that turns text into vectors, which enables
+search by meaning. Empty means no search by meaning. Changing it marks
+existing vectors stale, and the two kinds catch up differently: a person&#39;s
+memories are re-embedded a few per conversation turn, while mail is only
+re-embedded by a backfill, which runs when a mailbox is granted with sorting
+and its own backfill on. Mail vectors from the old model are left where they
+are; they match nothing, so that mailbox falls back to searching by words.</p>
+<p><strong><code>embeddingDimensions</code></strong> — How wide a vector to ask the embedding model
+for, where it takes such a request; zero, the default, is the model&#39;s own
+width. Worth setting where the knowledge sources are, because that is
+where the vectors are: half a million chunks at 1536 floats is three
+gigabytes of table and index, and at 512 it is one. The models that
+accept this argument are trained so that the first few hundred numbers
+carry nearly all of the meaning, so the search is barely worse and the
+store is a third the size. The width travels with the model&#39;s name
+wherever a vector is kept — two widths of one model are two spaces, and
+must never be ranked against each other — so changing it makes the
+existing vectors stale in the same way changing <code>embedding</code> does.</p>
+<p><strong><code>decide</code></strong> — The model for a question whose answers are known in advance:
+is this file worth opening, which of these folders does this page belong
+under. It writes nothing and cannot be asked to, so it must name a
+<code>typesafe</code> provider, and no other kind of work may name one except
+<code>categorize</code>.</p>
+<p>Empty is the whole of &quot;off&quot;, and is the default. Every decision that can use
+one also has a path that asks a language model, and that is what runs when
+this is not set, so nothing here is needed for the agent to work.</p>
+<p>Worth setting where the same decision is made tens of thousands of times.
+The answer comes back in well under a second rather than after a model has
+written a sentence about it, it carries how sure it is, and it cannot be a
+word that was not on the list — which is most of the error handling around
+asking a model to choose.</p>
+<p><strong><code>categorize</code></strong> — The model that assigns spending categories to finance
+transactions. The one field that may name either kind of provider: a
+<code>typesafe</code> provider&#39;s decision model, which picks a category from the list
+directly and says how sure it is, or a chat model, which is asked to pick
+one in words. Empty falls back to <code>decide</code>, then to <code>scan</code>, then to <code>fast</code>,
+then to <code>default</code>.</p>
+<p><strong><code>scan</code></strong> — The model for bulk understanding with nobody present: filing
+what a conversation taught, summarizing a document, writing a month&#39;s
+page, consolidating a page from its facts. It runs over everything the
+person has, so it should be the cheapest model that can follow an
+instruction. Empty falls back to <code>fast</code>, then to <code>default</code>.</p>
+<p><strong><code>synthesize</code></strong> — The model for deciding what matters across many pages
+with nobody present: writing an overview of a page or a theme, reflecting
+on a theme, and answering a survey&#39;s question for one area. Fewer calls
+than the scan, each a judgment. Empty falls back to <code>research</code>, then to
+<code>default</code> (never to <code>fast</code>).</p>
+<p><strong><code>triage</code></strong>, <strong><code>research</code></strong>, <strong><code>summarize</code></strong>, <strong><code>reply</code></strong>, <strong><code>ask</code></strong>,
+<strong><code>schedule</code></strong> — Overrides per kind of work. Resolution is the override,
+else <code>fast</code> for triage and summarize, else <code>default</code>.</p>
+<p><strong><code>compact</code></strong> — The model that folds a long history into a note and names
+a conversation. Empty means the model the conversation itself is held
+with: a chat compacts on the chat&#39;s model, a dream on the scan model. Set
+it to fold every conversation with one model instead.</p>
+<p><strong><code>choices</code></strong> — Models a person may pick for their own conversations. Empty
+means no choice: everyone uses the <code>ask</code> model. Processing never takes a
+person&#39;s choice.</p>
+<h3><code>agent.features</code></h3>
+<p>Each is on unless set to <code>false</code>. A feature that is off is hidden from
+every person&#39;s page, refused by the API with a message saying the operator
+has not enabled it, and — if it was on for somebody — stops without
+deleting anything, so turning it back on resumes.</p>
+<p><strong><code>triage</code></strong> — Category, priority and whether a reply is needed, on
+arrival.</p>
+<p><strong><code>summaries</code></strong> — Conversation summaries.</p>
+<p><strong><code>draftReplies</code></strong> — Drafting a reply on request.</p>
+<p><strong><code>search</code></strong> — Search by meaning. Needs an embedding model.</p>
+<p><strong><code>research</code></strong> — Looking things up for a message: the web, the mailbox,
+connected servers.</p>
+<p><strong><code>autoReply</code></strong> — Answering mail on a person&#39;s behalf.</p>
+<p><strong><code>ask</code></strong> — Talking to the agent.</p>
+<p><strong><code>schedules</code></strong> — Reminders and scheduled runs.</p>
+<p><strong><code>browser</code></strong> — The browser. Needs one configured.</p>
+<p><strong><code>connectedServers</code></strong> — Servers speaking the Model Context Protocol. Needs
+one declared.</p>
+<p><strong><code>computer</code></strong> — A person&#39;s own computer, attached with <code>teanode computer</code>,
+reached by the <code>shell</code> and <code>filesystem</code> tools while they are present.</p>
+<p><strong><code>chatApps</code></strong> — A person&#39;s own Telegram or Discord bot, through which they
+talk to their agent&#39;s primary conversation.</p>
+<p><strong><code>skills</code></strong> — Tools installed from the skill registry. Off here, nothing
+installed is offered and nothing can be installed.</p>
+<p><strong><code>remember</code></strong> — The run after a conversation that files what it taught
+into the person&#39;s pages. Off, the agent keeps only what the person or the
+model explicitly asked it to keep, which is what it did before this
+existed and is measurably almost nothing.</p>
+<p><strong><code>knowledge</code></strong> — The places a person points their agent at — a checkout,
+a chat archive, a wiki — and searching them. Off, no source is read and
+none can be added.</p>
+<p><strong><code>dreaming</code></strong> — The nightly run that works through what arrived,
+rewrites the pages it touched and tidies the graph. Off, nothing is filed
+or consolidated while nobody is there; what is already in the graph stays
+and is still read.</p>
+<p><strong><code>subagents</code></strong> — Letting a turn hand a piece of work to a run of its own.
+It costs what a second run costs, against the same person&#39;s budget, so a
+deployment counting tokens may want it off.</p>
+<h3><code>agent.skillSecrets</code></h3>
+<p>The values the installed skills need and do not carry. A skill declares the
+keys it wants; an operator fills them in here, one entry per value with the
+<code>skill</code> that asked for it, the <code>key</code> it asked under, and the <code>value</code>, which
+is a secret. <code>teanode agent skill list</code> says which keys each installed skill
+is waiting for. On a running server the stored configuration is changed
+with <code>teanode settings set agent &#39;skillSecrets:=[{&quot;skill&quot;:&quot;news&quot;,&quot;key&quot;:&quot;NEWSAPI_KEY&quot;,&quot;value&quot;:&quot;...&quot;}]&#39;</code>,
+which merges by skill and key; a blank value removes one, and <code>teanode settings show agent</code> says which are filled in without showing them.</p>
+<p><strong><code>skill</code></strong> — Which installed skill asked for the value, by its name.</p>
+<p><strong><code>key</code></strong> — The key that skill asked for it under, as <code>teanode agent skill list</code> prints it.</p>
+<p><strong><code>value</code></strong> — The value itself. A secret: sealed with <code>server.secret</code>,
+shown redacted, and kept when a settings update leaves it blank.</p>
+<p>Only the keys a skill scoped to the operator, which is the default. A key it
+scoped to the person is each person&#39;s own: they fill it in on their agent
+page or with <code>teanode agent skill secret set</code>, it is kept sealed in a row of
+their own rather than here, and a value written here for such a key is
+ignored.</p>
+<h3><code>agent.currency</code></h3>
+<p>What the providers&#39; prices, and so every amount this server shows or caps,
+are written in: a three-letter code such as <code>USD</code> or <code>EUR</code>, and <code>USD</code> when it
+is not set. It labels and formats; nothing is converted, so an operator whose
+prices are in euros enters them in euros and says <code>EUR</code> here.</p>
+<h3><code>agent.limits</code></h3>
+<p><strong><code>maxBodyCharacters</code></strong> — How much of a message a model is given; the rest
+is cut with a marker.</p>
+<p><strong><code>maxAttachmentBytes</code></strong> — The most one upload to a conversation may carry,
+across its files; <code>25MB</code> by default. A picture is shown to the model, a
+text file is read to it, and anything else is named.</p>
+<p><strong><code>maxScannedAttachmentBytes</code></strong> — The largest file a knowledge source
+carries off a person&#39;s machine: a picture or a document that a record in a
+<code>records</code> folder said it came with, kept in object storage so that
+something can read it later. <code>25MB</code> by default, which takes in every
+screenshot and nearly every document while leaving out the videos and disk
+images that would fill a store without teaching the agent anything.
+Anything larger is named on the source&#39;s page as passed over, and never
+uploaded. One source may set its own, in bytes, on its specification; this
+is what the rest use. Not to be confused with <code>maxAttachmentBytes</code> above,
+which is what a person may hand the agent in a conversation.</p>
+<p><strong><code>dailyTokensPerAgent</code></strong> — The default budget per person per day, which an
+operator may override for one person. At the limit, processing for that
+person is deferred to the next day with the reason on the run, and
+conversations answer that the budget is used up. Resets at midnight in the
+person&#39;s time zone. Zero means unlimited.</p>
+<p><strong><code>monthlyTokensPerServer</code></strong> — A cap for the whole server. The same
+behaviour for everyone until the first of the month; a warning is logged at
+80 %. Zero means no cap.</p>
+<p><strong><code>dailyCostPerAgent</code></strong> — The same budget said in money rather than tokens:
+what one person&#39;s calls may cost in a day, at the prices their providers are
+configured with, in <code>agent.currency</code>. An operator may override it for one
+person. Where this and <code>dailyTokensPerAgent</code> are both set, whichever runs out
+first stops the day. Zero means no limit of this kind.</p>
+<p><strong><code>monthlyCostPerServer</code></strong> — What everybody&#39;s agents may cost the deployment
+in a month, beside <code>monthlyTokensPerServer</code>, and warned about at 80 % the
+same way. Zero means no cap.</p>
+<p><strong><code>embeddingTokensPerDay</code></strong> — Meant to bound embedding apart from
+everything else, because the first pass over a person&#39;s checkout and chat
+archive is a hundred million tokens at a thousandth of the price of a
+conversation, and counting it against the same daily budget would stop
+the load on its first night and every night after. Zero, the default, is
+no limit. Set, validated and read by nothing so far: embedding is counted
+in <code>dailyTokensPerAgent</code> and in the money caps like every other call, and
+this does not yet change that.</p>
+<p><strong><code>dreamShare</code></strong> — How much of the daily budget one night&#39;s run may
+spend, as a fraction, so that a night never eats the day. Zero resolves
+to <code>0.3</code>.</p>
+<p><strong><code>scanConcurrency</code></strong> — How many calls the nightly reading makes at once.
+One for a service metered by the call; as many as it has slots for a
+model of the person&#39;s own, where the reading is bound by nothing but the
+machine. Zero and one both mean one at a time.</p>
+<p><strong><code>recallTokens</code></strong> — How much of a turn&#39;s prompt the pages and facts
+recall carries may take, in tokens, a third of it held for facts that no
+carried page holds. Zero resolves to <code>1200</code>, about two to four pages. More
+carries more of what recall found, on every turn.</p>
+<p><strong><code>digestDocumentRunes</code></strong> — A bound on how much of each document a
+dream&#39;s reading is shown, in characters, from its first passage on. Zero,
+the default, reads every document whole: a call holds as many documents
+as fit in about forty thousand characters, twenty at most, and a longer
+document is read in parts of that size, in order, and marked read with
+its last part. Set it to read less of each, for less reading.</p>
+<p><strong><code>rewriteConcurrency</code></strong> — How many pages the nightly run rewrites at once,
+after the reading. One when unset. Each rewrite changes only its own page,
+so pages can be rewritten side by side; on a model that answers slowly, a
+few at once is what leaves the rest of the night its time.</p>
+<p><strong><code>ingestChunksPerRun</code></strong> — How many chunks one pass of an ingest job
+embeds before it hands the queue back, so that one enormous source does
+not hold the worker. Zero resolves to <code>2000</code>.</p>
+<p><strong><code>maxRoundsPerAsk</code></strong> — How many times one conversation turn may go back to
+the model. 150 by default; it was 40, which a turn working through a long
+errand on the person&#39;s computer ran out of.</p>
+<p><strong><code>maxRoundsPerSubagent</code></strong> — How many rounds one subagent may take. Zero
+resolves to <code>20</code>.</p>
+<p><strong><code>goalTurnsPerDay</code></strong> — How many turns of its own one goal takes in a day,
+counting its own check-ins, not the runs of a schedule it keeps. Zero
+resolves to <code>48</code>, a turn every half hour.</p>
+<p><strong><code>goalTurnsAlone</code></strong> — How many of those turns a goal takes without a word
+from the person before it stops and asks them. Zero resolves to <code>24</code>.</p>
+<p><strong><code>goalsInProgress</code></strong> — How many goals one person may have working or waiting
+at once. Zero resolves to <code>20</code>.</p>
+<p><strong><code>backgroundWakesAlone</code></strong> — How many turns finished background commands and
+work may wake in one conversation before the person writes there again; past
+it, endings are written into the conversation and wake nothing. Zero resolves
+to <code>20</code>.</p>
+<p><strong><code>maxRoundsPerResearch</code></strong> — The same for a research run.</p>
+<p><strong><code>maxRoundsPerDream</code></strong> — How many turns one call of a dream may take: a
+batch of documents read, a month written up, a page divided. Each is a run
+of the conversation loop, and the ones that decide where something goes have
+every tool the person has — including their attached computer — so a call may
+look a page up, find a file and run something over it before it answers.
+Twelve by default, the last of which is told it is the last and must answer.
+It was four while a night could only look a page up; four left nothing for
+the answer once the smallest useful errand on a machine took three rounds.
+Setting it puts the pacing back wherever an operator wants it, and it also
+bounds the call that describes an indexed checkout.</p>
+<p><strong><code>maxRoundsPerReply</code></strong> — How many turns a drafting run may take. A reply is a
+run of the conversation loop now, with the thread, the mailbox, the address
+book and the diary to read before it writes: &quot;are you free Thursday&quot; cannot be
+answered from the message alone. Six by default.</p>
+<p><strong><code>maxRoundsPerTriage</code></strong> — How many turns a sorting run may take, three by
+default. The smallest of the three on purpose: sorting happens to every
+message that arrives, and nearly every message can be sorted from what is in
+front of the model, so the prompt tells it to answer at once and this is the
+ceiling on the exceptions.</p>
+<p><strong><code>maxToolCallsPerRun</code></strong> — Set, validated, and read by nothing. What actually
+bounds a run is <code>maxRoundsPerAsk</code>, together with the rule that stops a turn
+when the same call has failed three times. Kept so a stored configuration does
+not fail to load.</p>
+<p><strong><code>requestTimeout</code></strong> — How long one call to a provider may take.</p>
+<p><strong><code>concurrency</code></strong> — How many runs a worker executes at once, per instance.
+Read when the worker is built, so a change needs a restart of that instance,
+which the status line says is owed.</p>
+<h3><code>agent.retention</code></h3>
+<p><strong><code>runs</code></strong> — How long the record of work done without anybody watching is
+kept: run transcripts, finished and dead-lettered jobs, the replies the agent
+held or sent, and the files a run produced. Token and money usage is not swept
+by this, or by anything: those rows stay until the agent is deleted, because
+they are what a year&#39;s spending is added up from.</p>
+<p><strong><code>corrections</code></strong> — How long a person&#39;s corrections are kept.</p>
+<h3><code>agent.search</code></h3>
+<p><strong><code>kind</code></strong> — The search provider: <code>brave</code>, or empty for no web search, in
+which case the <code>web_search</code> tool is not offered.</p>
+<p><strong><code>apiKey</code></strong> — The provider&#39;s key. A secret.</p>
+<h3><code>agent.finance</code></h3>
+<p>The operator holds the provider keys; each person holds their own finance
+sources, the links to their logins
+(<a href="https://github.com/ziyan/teanode/blob/main/docs/decisions/20260929-the-operator-holds-the-provider-keys-the-person-holds-the-finance-source.md"><code>docs/decisions/20260929-the-operator-holds-the-provider-keys-the-person-holds-the-finance-source.md</code></a>).</p>
+<p><strong><code>offeredProviders</code></strong> — The providers a person may link through: <code>plaid</code>,
+<code>simplefin</code>, or both. Empty, the default, offers none. SimpleFIN needs
+nothing from the operator: the person pays for the bridge and pastes their
+own setup token. Plaid needs the operator&#39;s developer account below, and a
+listed <code>plaid</code> without its keys is accepted and not offered to anybody.</p>
+<h3><code>agent.finance.plaid</code></h3>
+<p>The operator&#39;s Plaid developer account.</p>
+<p><strong><code>environment</code></strong> — <code>sandbox</code> for Plaid&#39;s fake institutions, free and for
+trying it out, or <code>production</code> for real ones. Required once the keys are
+set: keys work only in the environment they were issued for.</p>
+<p><strong><code>clientId</code></strong> — The developer account&#39;s client id. Set together with
+<code>secret</code>, or neither.</p>
+<p><strong><code>secret</code></strong> — The developer account&#39;s secret for the environment above. A
+secret.</p>
+<p><strong><code>countryCodes</code></strong> — The countries whose institutions Plaid Link offers, as
+two-letter codes in capitals, for example <code>US</code> and <code>CA</code>. Empty means <code>US</code>.</p>
+<p><strong><code>products</code></strong> — What a finance source is linked with: <code>transactions</code>, and
+optionally <code>investments</code> for brokerage holdings and <code>liabilities</code> for what
+is owed on loans and cards. Must include <code>transactions</code> when set. Empty
+means <code>transactions</code> alone. Plaid charges a monthly fee per finance source
+for each product on paid plans, which is why the operator chooses.</p>
+<h3><code>agent.tools</code></h3>
+<p>Risk classes are the floor; this can only make the agent more cautious.
+Both lists take family names — <code>mailbox</code>, <code>domains</code>, <code>audit</code>, <code>people</code>,
+<code>server</code>, <code>account</code>, <code>general</code>, <code>servers</code>, <code>browser</code>, <code>computer</code>, <code>skills</code>,
+<code>finance</code> — or tool names. <code>servers</code> is the family of the connected servers&#39; tools, <code>people</code>
+the family of the ones that reach accounts and access, and <code>finance</code> the finance tool.</p>
+<p><strong><code>disabled</code></strong> — Families or tools never offered to anybody.</p>
+<p><strong><code>confirm</code></strong> — Write tools raised to require confirmation before they run.</p>
+<h3><code>agent.browser</code></h3>
+<p><strong><code>enabled</code></strong> — Whether the headless browser is used. Off means nothing
+connects to it.</p>
+<p><strong><code>cdpEndpoint</code></strong> — <code>host:port</code> of the DevTools debugger, for example
+<code>chrome:9222</code>, which is where the compose file&#39;s <code>browser</code> profile puts it.</p>
+<p><strong><code>attachTabs</code></strong> — Whether a person may attach their own browser tab through
+the extension. Unset means yes.</p>
+<p><strong><code>allowPrivateAddresses</code></strong> — Hosts the headless browser may reach inside
+the network, which the address guard would otherwise refuse.</p>
+<p><strong><code>proxyListen</code></strong> — Where the guarded proxy binds. Every page this server
+opens goes out through that proxy, which is what resolves names for the
+browser so that nothing else does: the check then runs on the address the
+connection is actually made to, rather than on a name that may resolve
+differently a moment later. Empty binds an unused port on the one address Chrome
+reaches this server at — its own connection says which that is, so it works
+whether Chrome runs on this machine or in a container beside it, without
+putting the proxy on every other network this machine is on. Set it when that guess is wrong, or to pin the port for a firewall.
+The proxy requires a password that only this server and its Chrome know.</p>
+<p><strong><code>idleTimeout</code></strong> — How long a run&#39;s browser context outlives its last use.</p>
+<p><strong><code>maxContexts</code></strong> — How many contexts may be open at once.</p>
+<h3><code>agent.voice</code></h3>
+<p>Talking to the agent in the drawer. The person presses the telephone beside
+send; what they say streams through this server to the provider&#39;s realtime
+transcription as they say it, the provider says when they start and stop
+talking, and each finished utterance is sent as an ordinary turn, the same as
+if they had typed it. The answer is spoken back through the provider&#39;s
+text-to-speech, and stops when the person starts talking. Off by default.</p>
+<p><strong><code>enabled</code></strong> — Whether the drawer offers the microphone.</p>
+<p><strong><code>provider</code></strong> — The provider of kind <code>openai</code> whose key and address the
+transcription uses. Empty is the first one.</p>
+<p><strong><code>transcriptionModel</code></strong> — The realtime transcription model. It has to be
+one that detects speech itself; <code>gpt-live-transcribe</code> and
+<code>gpt-realtime-whisper</code> need the application to end each turn and are refused.
+Empty is <code>gpt-4o-transcribe</code>.</p>
+<p><strong><code>silenceMS</code></strong> — How long a pause ends what somebody is saying, in
+milliseconds, up to 5000. Zero is 500. Longer lets a person think in the
+middle of a sentence; shorter answers sooner. A pause longer than this in the
+middle of one request sends it as two turns, the second reaching the agent
+while it works on the first, as a typed follow-up would.</p>
+<p><strong><code>speechModel</code></strong> — The text-to-speech model the answers are spoken with,
+through the same provider. Empty is <code>gpt-4o-mini-tts</code>.</p>
+<p><strong><code>askModel</code></strong> — The model a spoken turn is answered with, as
+<code>provider:model</code>; empty is the one a typed turn uses. A call wants the first
+words soon, and on a long conversation a smaller model starts speaking a second
+or more before a larger one, even though it reads the conversation uncached
+the first time. When this model differs from the typed one, it is given
+<code>think_harder</code>: for a hard question it says a short line and hands the rest of
+the turn to the typed model, with the same conversation and tools.</p>
+<p><strong><code>speechVoice</code></strong> — The provider&#39;s voice the answers are spoken in, such as
+<code>marin</code>, <code>cedar</code>, <code>alloy</code> or <code>coral</code>. Empty is <code>marin</code>. Each person may choose
+their own on their agent&#39;s settings, which this is the default for.</p>
+<h3><code>agent.mcp</code></h3>
+<p><strong><code>servers</code></strong> — The declared servers, one entry each.</p>
+<h3><code>agent.mcp.servers[]</code></h3>
+<p>A server with a <code>command</code> is a subprocess of this server, on its host,
+which is why only the configuration can declare one
+(<a href="https://github.com/ziyan/teanode/blob/main/docs/decisions/20260910-stdio-servers-are-the-operators.md"><code>docs/decisions/20260910-stdio-servers-are-the-operators.md</code></a>).</p>
+<p><strong><code>name</code></strong> — Namespaces the server&#39;s tools as <code>mcp__&lt;name&gt;__&lt;tool&gt;</code>.
+Unique.</p>
+<p><strong><code>transport</code></strong> — <code>http</code> (a URL) or <code>stdio</code> (a command). Empty is
+inferred: <code>stdio</code> when a command is set and no URL, otherwise <code>http</code>.</p>
+<p><strong><code>url</code></strong> — The streamable HTTP endpoint, for the <code>http</code> transport.</p>
+<p><strong><code>command</code></strong>, <strong><code>args</code></strong> — The executable and its arguments, for the
+<code>stdio</code> transport.</p>
+<p><strong><code>location</code></strong> — Location is where a command-spoken server runs: &quot;server&quot;,
+the default, is this server&#39;s own host, as this process; &quot;computer&quot; is the
+person&#39;s own attached computer, as them. A server on the computer is reached
+only while one is attached, by schedules, goals and nights as by a
+conversation, and it cannot be marked headless: that flag offers a server to
+the runs that read mail from strangers, which do not reach the person&#39;s
+machine.</p>
+<p><strong><code>env</code></strong> — Variables given to the subprocess over this server&#39;s own
+environment, each with a <code>name</code> and a <code>value</code>; how a stdio server is given
+its secrets. The values are secrets.</p>
+<p><strong><code>value</code></strong> — One variable&#39;s value.</p>
+<p><strong><code>workingDir</code></strong> — The subprocess&#39;s working directory. Empty uses the
+server&#39;s.</p>
+<p><strong><code>auth</code></strong> — <code>none</code>; <code>static</code>, one Authorization value the operator holds,
+shared by everyone; <code>user</code>, each person supplies their own credential on
+the Agent page; or <code>oauth</code>, each person authorizes through OAuth 2.1 with
+PKCE. Empty is inferred: <code>static</code> when an authorization is set, otherwise
+<code>none</code>.</p>
+<p><strong><code>authorization</code></strong> — The verbatim Authorization header value for the
+<code>static</code> mode. A secret.</p>
+<p><strong><code>oauth</code></strong> — The client this server is at an OAuth-protected server:
+<code>clientId</code>, <code>clientSecret</code> (a secret; optional for a public client),
+<code>scopes</code>, and <code>authorizationUrl</code> and <code>tokenUrl</code>, which override discovery
+when set. Leave <code>clientId</code> empty and a client is registered with the
+server the first time somebody authorizes, which is how a server that
+publishes no client id of its own is reached; the client is kept with that
+person&#39;s authorization, so refreshing later uses the same one. Setting the
+two endpoints by hand skips discovery, and then a <code>clientId</code> is needed.</p>
+<p><strong><code>clientId</code></strong>, <strong><code>clientSecret</code></strong>, <strong><code>scopes</code></strong>, <strong><code>authorizationUrl</code></strong>,
+<strong><code>tokenUrl</code></strong> — The OAuth client&#39;s fields.</p>
+<p><strong><code>redirect</code></strong> — Where the authorization comes back to. <code>server</code>, the
+default, is the dashboard. <code>computer</code> is a loopback address on the person&#39;s
+attached computer, which sends the browser on to the dashboard to finish.
+For a service that sends an authorization only to a loopback address, the
+flow meant for a program on somebody&#39;s own machine. The person has to finish
+it in a browser on that computer. Only for <code>auth: oauth</code>.</p>
+<p><strong><code>headless</code></strong> — Whether the restricted runs that read mail from strangers
+(sorting, research) may use the server&#39;s read-only tools. Schedules, goals and
+nights reach every connected server without it.</p>
+<p><strong><code>readOnly</code></strong> — The tools that only read, which need no confirmation and
+are the only ones a headless run may call. Every other tool of the server
+needs confirmation.</p>
+<p><strong><code>disabled</code></strong> — Tools never offered.</p>
+<p><strong><code>timeout</code></strong> — Bounds one call. Empty means 30 seconds.</p>
+<p><strong><code>enabled</code></strong> — Whether the server is declared at all. Unset is on; off
+leaves the declaration in place and offers none of its tools.</p>
+<h3><code>users[].tokens[]</code></h3>
+<p><strong><code>id</code></strong> — ID identifies the token, and is the half of the token string that
+is not secret. It appears in the log, so a token can be traced back to an
+entry here and revoked.</p>
+<p><strong><code>name</code></strong> — Name says what holds it, for example &quot;laptop&quot;. Not unique.</p>
+<p><strong><code>hash</code></strong> — Hash is the SHA-256 of the secret half, hex encoded. A token is
+32 random bytes, so there is nothing for a slow hash to protect against —
+unlike a password, it cannot be guessed.</p>
+<p><strong><code>created</code></strong> — Created records when it was issued, for the operator&#39;s
+benefit.</p>
+<p><strong><code>expires</code></strong> — Expires, when set, is when it stops working.</p>
+<h2>Documentation</h2><h3>Getting started</h3><ul><li><a href="/doc/introduction">What is TeaNode</a>: Send and receive mail at your own domains: mailboxes read here or over IMAP, forwarding, what it does, and what you need to run it.</li><li><a href="/doc/quick-start">Quick start</a>: TeaNode running with docker compose in a few minutes: the assistant first, with no domain, then mail at your own domain if you want it.</li><li><a href="/doc/getting-started">Getting started</a>: Standing up a mail server for one domain, from nothing to mail arriving in a mailbox you can read in a mail program, including the DNS records and the port 25 problem.</li></ul><h3>Running it</h3><ul><li><a href="/doc/deploying">Deploying</a>: The container image and the compose file, what runs beside the server, how it upgrades itself, and what to back up.</li><li><a href="/doc/configuration">Configuration</a>: Where the settings live, the environment variables that say how to reach them, and every field an operator can set.</li><li><a href="/doc/agents">Agents</a>: The personal agent: what it needs, what it does with a mailbox, and what to weigh before turning it on.</li><li><a href="/doc/memory">Memory</a>: What your agent keeps between conversations: a graph of pages it writes without being asked, the places it reads from, and what it does with all of it in its dreams.</li><li><a href="/doc/voice">Voice</a>: Call your agent from the chat drawer: say what you want, hear the answer as it is written, and cut in when you like. On a laptop or a phone.</li><li><a href="/doc/coding-sessions">Coding sessions</a>: Your Claude Code and Codex sessions in herdr, on every computer you attached: your agent reads them, types into them where you can see, and brings you their questions to answer from anywhere.</li><li><a href="/doc/coding-memory">Memory in coding sessions</a>: Claude Code and Codex shown what your agent knows about the checkout they run in: the project page and the last session when one starts, recall kept to the project before each prompt, and the transcript read within a minute.</li><li><a href="/doc/mcp">Model Context Protocol</a>: TeaNode on both ends of the protocol: answering it, so your editor can use your agent's tools and ask it questions, and connecting out to servers of your own.</li><li><a href="/doc/finance">Finance</a>: Your banks, cards and brokerages linked through Plaid or SimpleFIN: transactions in your own categories, budgets that say where the month is heading, savings targets, net worth, and a tax year put together from your paystubs, W-2s, 1099s and 1098s, all kept in your own database.</li><li><a href="/doc/command-line">The command line</a>: The two programs: the server and the few things only its host can do, and the client that administers it from anywhere through the API.</li></ul><h3>Security</h3><ul><li><a href="/doc/security">Reporting a security problem</a>: Where to report something exploitable, what is in scope, and what is not.</li><li><a href="/doc/security-review">Security review</a>: A review of the whole program: what was examined, what was found, what was fixed, and what is still open.</li></ul><h3>Contributing</h3><ul><li><a href="/doc/contributing">Contributing</a>: Naming, comments, the invariants that bite, tests, commits and the changelog that cuts a release.</li><li><a href="/doc/local-development">Local development</a>: Getting a working build and a database to point it at, a development server that cannot send mail, and the optional scanners.</li><li><a href="/doc/project-structure">Project structure</a>: What each package is for and which way the dependencies point.</li></ul><p>Every document is also plain markdown, listed in <a href="/llms.txt">/llms.txt</a>.</p></div></div></body></html>

@@ -20,4 +20,234 @@ window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-XD5JSLP4RH', {send_page_view: false});
-</script><script type="module" crossorigin src="/static/teanode.B4qXBTfP.js"></script></head><body><div id="teanode"></div></body></html>
+</script><script type="module" crossorigin src="/static/teanode.B4qXBTfP.js"></script></head><body><div id="teanode"><style>.teanode-static{max-width:760px;margin:0 auto;padding:24px 16px 48px;font:16px/1.6 system-ui,sans-serif;opacity:0;animation:teanode-static 0s 2s forwards}.teanode-static pre{overflow-x:auto}@keyframes teanode-static{to{opacity:1}}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .teanode-static{color:#e8e8ea}:root:not([data-theme=light]) .teanode-static a{color:#9ccc65}}:root[data-theme=dark] .teanode-static{color:#e8e8ea}:root[data-theme=dark] .teanode-static a{color:#9ccc65}</style><div class="teanode-static"><p><a href="/">TeaNode</a> · <a href="/doc">Documentation</a> · <a href="https://github.com/ziyan/teanode">Source</a></p><h1>Project structure</h1><p>What each package is for and which way the dependencies point. For how a
+message moves through the system, see <a href="https://github.com/ziyan/teanode/blob/main/AGENTS.md"><code>AGENTS.md</code></a>.</p>
+<h2>Layout</h2>
+<pre><code>cmd/teanode-server/     the server&#39;s entry point
+cmd/teanode/            the client&#39;s entry point
+internal/               all real code, including both programs&#39; subcommands
+web/                    dashboard source, built into internal/frontend/static
+deploy/                 docker compose files and the image&#39;s Dockerfile
+docs/                   see docs/decisions/20260818-documentation-layout.md
+vendor/                 vendored dependencies, committed
+</code></pre>
+<h2>Packages</h2>
+<p><strong><code>internal/config</code></strong> — the configuration itself. Typed structs, a validator
+that reports every problem at once with the path of each, and the <code>Store</code>
+interface, which hands out immutable snapshots and applies changes as a whole.
+Everything an operator can set lives here. Depends on nothing but utilities,
+so any package may import it — which is why the store that persists to
+PostgreSQL is not in here.</p>
+<p><strong><code>internal/db</code></strong> — PostgreSQL, through GORM: one interface per model —
+domains with their aliases and credentials, users, roles, groups, mailboxes
+with their folders and items, identities, mail, deliveries, reports,
+templates — each change to an administrative object audited in the same
+transaction, and the <code>configuration</code> table, which holds settings only. The
+domain table&#39;s secrets are sealed with the server secret. Migrations live in
+<code>internal/db/migrations</code>, forward and reverse.</p>
+<p><strong><code>internal/access</code></strong> — who may do what. Seeds the roles and groups a new
+server starts with, resolves a user&#39;s effective permissions from their
+groups, keeps every account&#39;s mailbox, signs a mail program in with an app
+password, binds an identity-provider subject to an account and reconciles
+the groups the provider claims, and is the rescue path when nobody can sign
+in.</p>
+<p><strong><code>internal/imap</code></strong> — mailboxes to mail programs, over <code>go-imap/v2</code>. A
+folder&#39;s UIDs and modseqs are its own, flags are the item&#39;s, the message is
+read from storage when asked for, and an idling session is woken by the
+database&#39;s <code>folder_changed</code> notification. Nothing is held in memory that
+another instance would need.</p>
+<p><strong><code>internal/contacts</code></strong> — the vCard format, and nothing else: parsing a card,
+writing one out, and naming a version of one with an ETag. It writes cards
+itself rather than through the vendored encoder, which does not quote a
+parameter value that needs quoting and does not fold; what it writes is a
+fixed point, which is what lets the ETag be taken over the stored text.</p>
+<p><strong><code>internal/calendar</code></strong> — the iCalendar format, and nothing else: parsing an
+event, writing one out, expanding a recurrence into the times it happens, and
+describing a time zone as the offsets themselves rather than as a name. Unlike
+the vCard side it uses the vendored encoder as it stands, which was measured
+against the cases that destroy a vCard and survives them; what it adds is line
+folding, which the library does not do.</p>
+<p><strong><code>internal/dav</code></strong> — a person&#39;s address book and their calendar to their phone
+and their desktop, over CardDAV and CalDAV. Signs in with a mailbox address and
+an app password exactly as IMAP does, serves every card and every event from
+the stored bytes rather than by re-encoding them, answers a calendar-query&#39;s
+time range from the index of when things happen, and mounts at <code>/dav</code> with no
+route that can be answered by a redirect, because a redirect turns a <code>PROPFIND</code>
+into a <code>GET</code>. <a href="https://github.com/ziyan/teanode/blob/main/docs/subsystems/contacts.md"><code>docs/subsystems/contacts.md</code></a> and <a href="https://github.com/ziyan/teanode/blob/main/docs/subsystems/calendar.md"><code>docs/subsystems/calendar.md</code></a>
+say how each fits together.</p>
+<p><strong><code>internal/scheduling</code></strong> — invitations by mail, in both directions. Delivery
+notes a message and this reads it afterwards, because working out whether one
+carries an invitation means fetching it from storage and that inside the SMTP
+transaction is a slow disk turning into refused mail.</p>
+<p><strong><code>internal/sso</code></strong> — signing in through an OpenID Connect provider: the
+authorization-code flow with PKCE, a signed and expiring state, and a client
+that will not talk to a private address. <code>internal/api/v1api/apisso</code> is the
+two HTTP paths the browser passes through.</p>
+<p><strong><code>internal/bootstrap</code></strong> — what the environment says: how to reach the
+database, which instance this process is, and — on a first run against an
+empty database — what kind of server to create. Small on purpose. Anything
+here is per-process and needs a restart to change, where anything in the
+database is shared and does not.</p>
+<p><strong><code>internal/spamfilter</code></strong> — the seam between the mail path and whatever
+scores a message. Two things satisfy it: an adapter for an external
+SpamAssassin daemon, and the filter below. <code>Message</code> carries what the server
+already established — the authentication results, the confirmed reverse DNS
+name, the parsed message — so that a filter reads them rather than working
+them out again.</p>
+<p><strong><code>internal/strainer</code></strong> — the built-in spam filter. Named for the thing that
+holds the leaves back when you pour; it is not SpamAssassin and does not
+claim to be. Four sources, each switchable: the signals the server already
+has, public block lists over ordinary DNS, a classifier trained on this
+server&#39;s own mail, and the published pattern rules.</p>
+<pre><code>strainer.go             the checks that read what the server already knows
+dns.go                  block list lookups, cached, and their refusal codes
+bayes.go                the classifier, and teaching it
+rules.go                the published rule format, parsed and evaluated
+meta.go                 the expression language rules combine each other in
+ruleload.go             keeping the parsed rules in step with the database
+</code></pre>
+<p><strong><code>internal/mx</code></strong> — the mail path, and the only package that decides what
+happens to a message.</p>
+<pre><code>exchange.go             wiring, and HandleEnvelope which picks the path
+exchange_incoming.go    inbound: authenticate, store, match aliases
+exchange_outgoing.go    submission from an authenticated credential
+exchange_delivery.go    one delivery attempt, retries, bounces on failure
+exchange_bounce.go      delivery status notifications arriving back
+exchange_dmarc.go       aggregate DMARC reports arriving back
+exchange_usage.go       in-memory counters flushed to the database
+exchange_utils.go       header formatting, the parallel authenticator
+</code></pre>
+<p><strong><code>internal/db</code></strong> is described above. One file per entity, each defining a GORM
+model separate from the shared struct in <code>internal/models</code>, so the storage
+shape can change without changing the API.</p>
+<p><strong><code>internal/api</code></strong> — what every API version shares: error values, the request
+context, and the paths. Deliberately depends on almost nothing, so the
+versioned packages and <code>internal/web</code> can all import it.</p>
+<p><strong><code>internal/api/v1api</code></strong> — version 1, mounted at <code>/api/v1</code>. A composition of
+three parts:</p>
+<pre><code>apigraph/   the GraphQL endpoint, which is the whole management API,
+            and the two multipart routes that put files on a draft.
+            Generated from Go types by reflection in internal/util/graphapi.
+            Queries read the database; mutations that change configuration
+            go through config.Store and end up in the configuration
+            tables, where every instance sees them.
+apisend/    POST /api/v1/send/{domain}/{template}, authenticated with an
+            SMTP credential, for an application that would rather not
+            speak SMTP. Takes &quot;locale&quot; beside &quot;variables&quot;, and renders
+            the closest translation the template has.
+apimail/    the raw .eml of a stored message and its attachments, which
+            are files rather than JSON and so are not GraphQL.
+</code></pre>
+<p><strong><code>internal/client</code></strong> — the other side of that API, used by the command line
+client: one file per resource with the queries written out, and
+<code>introspect.go</code>, which reads the schema from the server and builds a query
+for any operation — how <code>teanode api</code> reaches all of them without a hand
+written command each.</p>
+<p><strong><code>internal/cmd</code></strong> — the client&#39;s subcommands, one file per group, and the
+helpers both programs share: reaching a server (<code>client.go</code>), the saved
+profiles (<code>profile.go</code>), the browser sign-in (<code>loopback.go</code>), tables and
+prompts. <code>internal/cmd/server</code> is the server&#39;s own subcommands: <code>run</code>, and
+the few operations that write the database directly. See
+<a href="/doc/command-line"><code>docs/reference/command-line.md</code></a>, and <a href="https://github.com/ziyan/teanode/blob/main/docs/decisions/20260903-two-binaries.md"><code>docs/decisions/20260903-two-binaries.md</code></a>
+for why they are two programs.</p>
+<p><strong><code>internal/web</code></strong> — HTTP server, routing and middlewares. Knows nothing about
+mail.</p>
+<p><strong><code>internal/dns</code></strong> — periodically checks that each configured domain&#39;s DNS
+records are published, and reports what is missing. Advisory only; see
+<a href="https://github.com/ziyan/teanode/blob/main/docs/decisions/20260818-dns-verification-is-advisory.md"><code>docs/decisions/20260818-dns-verification-is-advisory.md</code></a>.</p>
+<p><strong><code>internal/mailer</code></strong> — renders templates and sends mail on the server&#39;s own
+behalf: a message composed in the dashboard, a template rendered for the send
+endpoint. <code>Render</code> chooses a translation by locale and fills a template in;
+<code>Send</code> assembles a message from text, HTML and attachments and hands it to
+<code>mx</code> as outgoing mail from the domain.</p>
+<p><strong><code>internal/llm</code></strong> — talking to language models, knowing nothing about mail:
+provider-neutral chat types with tool calls and streaming; clients for the
+OpenAI-compatible API (which is also Ollama, vLLM, OpenRouter and the rest),
+Anthropic&#39;s and Gemini&#39;s, over <code>net/http</code>; a registry built from the <code>agent</code>
+section that resolves <code>provider:model</code> names and picks a model per kind of
+work; <code>Extract</code>, which turns a model&#39;s answer into a typed value after
+repairing the JSON. Nothing is constructed when agents are off: <code>Open</code>
+returns nil.</p>
+<p><strong><code>internal/agent</code></strong> — the personal agent. A queue of jobs in the database
+claimed with <code>SKIP LOCKED</code> and a worker that runs them: triage (<code>triage.go</code>),
+summaries, drafts, the reply that answers on the person&#39;s behalf and the
+send that follows the hold, embeddings for search by meaning, backfills. The
+delivery hook (<code>mx.AgentHook</code>) only queues; no model is ever called in the
+SMTP path. <code>ask.go</code> is the loop that talks to the person: the prompt in
+layers, overlays rebuilt each round, compaction, and the confirmation pause
+that a destructive or outward tool never gets past on its own. The tools
+live under <code>agent/tools/</code>: the kit (<code>tools</code>) says what a tool is — a
+family, a risk class, a schema, a run reached through the context — and
+holds the catalog, filtered by the person&#39;s permissions and the operator&#39;s
+policy; every tool is a package of its own beside it (<code>tools/datetime</code>,
+<code>tools/mailread</code>, <code>tools/browser</code>, one per family where the tools share a
+body, such as <code>tools/rule</code> and <code>tools/domain</code>), registering from its
+<code>init</code>; <code>tools/all</code> imports them all. Tools reach the server only through
+<code>Operations</code>, which the API package implements by executing its own
+operations as the person. The adapter that makes tools of a connected
+server&#39;s tools stays in <code>agent</code>, since it is not a tool but a bridge to
+many. Prompts are templates under <code>prompts/</code>, with golden files in
+<code>testdata/prompts</code>. How each part actually works — the loop and its rounds,
+the prompt&#39;s layers, compaction, the event feed and what crosses instances,
+memory and its vectors, the budgets — is written down in
+<code>docs/subsystems/</code>.</p>
+<p><strong><code>internal/skills</code></strong> — skills: a file of declarations fetched from a registry
+that signs what it publishes, read here and carried out here. <code>registry.go</code>
+checks an entry&#39;s Ed25519 signature against a key embedded from <code>keys/</code> and
+the file against the hash that was signed; <code>skill.go</code> reads the header and
+refuses anything it could not carry out; <code>run.go</code> is the interpreter —
+templates, selection from an answer, a workflow&#39;s steps, and conditions. Its
+requests go through <code>util/safefetch</code>; its commands go to an attached computer
+through a <code>Shell</code> the caller hands in, never to this server. The tools it
+declares reach the catalog through <code>agent/tools_skill.go</code>.</p>
+<p><strong><code>internal/mcp</code></strong> — a client for servers that speak the Model Context
+Protocol: JSON-RPC over streamable HTTP or a subprocess&#39;s standard streams,
+tool discovery and calls, and OAuth 2.1 with PKCE for the servers that want
+a person&#39;s authorization. Only tools are consumed; what a server answers is
+data. Tests speak to in-process servers.</p>
+<p><strong><code>internal/computer</code></strong> — the person&#39;s own computer as their agent reaches
+it: the program <code>teanode computer</code> runs there, which signs in with the
+person&#39;s token, keeps a websocket to the server and answers the shell and
+filesystem tools&#39; requests as that person, anywhere on the machine; and the
+rule the server applies, which asks the person first for what changes the
+machine or reaches off it and refuses nothing outright. The rule is the
+server&#39;s alone: the program runs what it is sent, the way a terminal does
+what the person at it types. It is their own
+assistant on their own computer, so it is not confined to a sandbox; the
+guard is the card they answer, not a directory. Tests speak to a fake
+connection. <a href="https://github.com/ziyan/teanode/blob/main/docs/subsystems/devices.md"><code>docs/subsystems/devices.md</code></a> has the protocol and the rules.</p>
+<p><strong><code>internal/browser</code></strong> — a DevTools client for the Chrome the operator runs
+beside the server: an isolated context per run, the page read as a tree the
+model can point into, click, type, scroll, wait, screenshot, with every
+navigation and request through the same address guard as fetching a page
+and downloads refused. Nothing launches Chrome; tests speak to a fake.</p>
+<p><strong><code>internal/models</code></strong> — plain structs shared between <code>db</code>, <code>api</code> and <code>mx</code>. No
+behavior beyond enum helpers.</p>
+<p><strong><code>internal/util</code></strong> — protocol implementations, each independently testable and
+free of project-specific assumptions:</p>
+<pre><code>smtpd       SMTP server: the conversation, STARTTLS, AUTH, limits
+smtpc       SMTP client used for delivery
+mailparse   splitting, header decoding, address signing
+dkim        DomainKeys Identified Mail signing and verification
+spf         Sender Policy Framework evaluation
+dmarc       DMARC policy lookup and aggregate report parsing
+arc         Authenticated Received Chain, which survives forwarding
+authres     Authentication-Results header formatting and parsing
+dsn         delivery status notification parsing
+autoacme    ACME client with http-01, tls-alpn-01 and dns-01 solvers
+resolver    DNS resolver with caching
+clamav      optional virus scanning
+spamc       optional SpamAssassin scoring
+geoip       optional sender geolocation
+dropper     connection drop list
+graphapi    GraphQL schema generation from Go types
+atomicfile  write-to-temp-then-rename, used for every sensitive file
+security    identifiers, credential encoding, signing
+periodic    a loop that runs a function on an interval
+</code></pre>
+<h2>Dependency direction</h2>
+<p><code>internal/cmd/server</code> depends on everything. <code>config</code> depends on <code>db</code>, for
+the settings store, and <code>db</code> on <code>models</code>; <code>access</code>, <code>mx</code>, <code>imap</code>, <code>sso</code> and
+the API depend on <code>db</code> and <code>config</code> and not on each other, except that <code>mx</code>
+and the API both use <code>access</code> for the checks they share.</p>
+<h2>Documentation</h2><h3>Getting started</h3><ul><li><a href="/doc/introduction">What is TeaNode</a>: Send and receive mail at your own domains: mailboxes read here or over IMAP, forwarding, what it does, and what you need to run it.</li><li><a href="/doc/quick-start">Quick start</a>: TeaNode running with docker compose in a few minutes: the assistant first, with no domain, then mail at your own domain if you want it.</li><li><a href="/doc/getting-started">Getting started</a>: Standing up a mail server for one domain, from nothing to mail arriving in a mailbox you can read in a mail program, including the DNS records and the port 25 problem.</li></ul><h3>Running it</h3><ul><li><a href="/doc/deploying">Deploying</a>: The container image and the compose file, what runs beside the server, how it upgrades itself, and what to back up.</li><li><a href="/doc/configuration">Configuration</a>: Where the settings live, the environment variables that say how to reach them, and every field an operator can set.</li><li><a href="/doc/agents">Agents</a>: The personal agent: what it needs, what it does with a mailbox, and what to weigh before turning it on.</li><li><a href="/doc/memory">Memory</a>: What your agent keeps between conversations: a graph of pages it writes without being asked, the places it reads from, and what it does with all of it in its dreams.</li><li><a href="/doc/voice">Voice</a>: Call your agent from the chat drawer: say what you want, hear the answer as it is written, and cut in when you like. On a laptop or a phone.</li><li><a href="/doc/coding-sessions">Coding sessions</a>: Your Claude Code and Codex sessions in herdr, on every computer you attached: your agent reads them, types into them where you can see, and brings you their questions to answer from anywhere.</li><li><a href="/doc/coding-memory">Memory in coding sessions</a>: Claude Code and Codex shown what your agent knows about the checkout they run in: the project page and the last session when one starts, recall kept to the project before each prompt, and the transcript read within a minute.</li><li><a href="/doc/mcp">Model Context Protocol</a>: TeaNode on both ends of the protocol: answering it, so your editor can use your agent's tools and ask it questions, and connecting out to servers of your own.</li><li><a href="/doc/finance">Finance</a>: Your banks, cards and brokerages linked through Plaid or SimpleFIN: transactions in your own categories, budgets that say where the month is heading, savings targets, net worth, and a tax year put together from your paystubs, W-2s, 1099s and 1098s, all kept in your own database.</li><li><a href="/doc/command-line">The command line</a>: The two programs: the server and the few things only its host can do, and the client that administers it from anywhere through the API.</li></ul><h3>Security</h3><ul><li><a href="/doc/security">Reporting a security problem</a>: Where to report something exploitable, what is in scope, and what is not.</li><li><a href="/doc/security-review">Security review</a>: A review of the whole program: what was examined, what was found, what was fixed, and what is still open.</li></ul><h3>Contributing</h3><ul><li><a href="/doc/contributing">Contributing</a>: Naming, comments, the invariants that bite, tests, commits and the changelog that cuts a release.</li><li><a href="/doc/local-development">Local development</a>: Getting a working build and a database to point it at, a development server that cannot send mail, and the optional scanners.</li><li><a href="/doc/project-structure">Project structure</a>: What each package is for and which way the dependencies point.</li></ul><p>Every document is also plain markdown, listed in <a href="/llms.txt">/llms.txt</a>.</p></div></div></body></html>

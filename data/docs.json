@@ -35,9 +35,9 @@
       "ja": "クイックスタート"
     },
     "description": {
-      "en": "A mail server running with docker compose in a few minutes: start it, claim the dashboard, publish the DNS records, and read your mail.",
-      "zh": "用 docker compose 在几分钟内跑起一台邮件服务器：启动它、认领仪表盘、发布 DNS 记录，然后读你的邮件。",
-      "ja": "docker compose で数分でメールサーバーを動かす。起動し、ダッシュボードを取得し、DNS レコードを公開し、メールを読むまで。"
+      "en": "TeaNode running with docker compose in a few minutes: the assistant first, with no domain, then mail at your own domain if you want it.",
+      "zh": "用 docker compose 在几分钟内跑起 TeaNode：先只运行助手，不需要域名；想要的话再加上你自己域名的邮件。",
+      "ja": "docker compose で数分のうちに TeaNode を動かす。まずはドメインのいらないアシスタントだけで始め、望むなら自分のドメインのメールを加える。"
     },
     "filename": {
       "en": "en/quick-start.markdown",

@@ -20,4 +20,133 @@ window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-XD5JSLP4RH', {send_page_view: false});
-</script><script type="module" crossorigin src="/static/teanode.B4qXBTfP.js"></script></head><body><div id="teanode"></div></body></html>
+</script><script type="module" crossorigin src="/static/teanode.B4qXBTfP.js"></script></head><body><div id="teanode"><style>.teanode-static{max-width:760px;margin:0 auto;padding:24px 16px 48px;font:16px/1.6 system-ui,sans-serif;opacity:0;animation:teanode-static 0s 2s forwards}.teanode-static pre{overflow-x:auto}@keyframes teanode-static{to{opacity:1}}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .teanode-static{color:#e8e8ea}:root:not([data-theme=light]) .teanode-static a{color:#9ccc65}}:root[data-theme=dark] .teanode-static{color:#e8e8ea}:root[data-theme=dark] .teanode-static a{color:#9ccc65}</style><div class="teanode-static"><p><a href="/">TeaNode</a> · <a href="/doc">Documentation</a> · <a href="https://github.com/ziyan/teanode">Source</a></p><h1>Deploying</h1><p>There are two ways to run TeaNode: the container image, or the two binaries
+on a host. Both are built from every release and both include the dashboard,
+so there is nothing else to deploy.</p>
+<p>The <a href="/doc/quick-start">quick start</a> gets the container running in four
+commands. This page is about what is in the compose file, how the server
+upgrades, and what to back up. <a href="/doc/getting-started">Getting started</a>
+covers the binaries.</p>
+<h2>The image</h2>
+<pre><code>docker pull ghcr.io/ziyan/teanode:latest
+</code></pre>
+<p>The image contains the server, the client and the dashboard, and nothing
+else: no shell and no package manager. It runs as user 65532 rather than
+root, with only the <code>CAP_NET_BIND_SERVICE</code> capability so that it can bind
+ports 25, 80, 443 and 587, and 993 and 143 for IMAP.</p>
+<p>Pin a version rather than following <code>latest</code> on a server people depend on.
+Upgrading should be something you decide to do.</p>
+<h2>The compose file</h2>
+<p><a href="https://github.com/ziyan/teanode/blob/main/deploy/docker-compose.yml"><code>deploy/docker-compose.yml</code></a>
+in the repository is a complete deployment: the server, PostgreSQL, and the
+optional services. Copy it next to a <code>.env</code>, describe the server, and start
+it:</p>
+<pre><code>mkdir -p /opt/teanode &amp;&amp; cd /opt/teanode
+curl -LO https://raw.githubusercontent.com/ziyan/teanode/main/deploy/docker-compose.yml
+docker run --rm ghcr.io/ziyan/teanode:latest config env --output - \
+  --hostname mail.example.com --domain example.com &gt; .env
+chmod 600 .env
+docker compose up -d
+</code></pre>
+<p>Set <code>TEANODE_TLS_ACME_EMAIL</code> in <code>.env</code> before the first start: it is the
+address the certificate authority uses to warn you about an expiring
+certificate.</p>
+<p>Port 80 has to be reachable from the internet, because that is where the
+certificate authority puts its challenge. It answers those challenges and
+sends everything else to HTTPS: the dashboard is never served in the clear,
+and the answer carries <code>Strict-Transport-Security</code>, so a browser that has
+been here once will not try plain HTTP again.</p>
+<p>The server uses the host&#39;s network rather than a Docker network. SPF checks
+the address a mail server connects from, and behind a Docker bridge every
+sender would appear to come from the Docker gateway.</p>
+<h3>Mail programs</h3>
+<p>IMAP is served on 993 with TLS, and on 143 with STARTTLS, when
+<code>TEANODE_LISTEN_IMAPS</code> and <code>TEANODE_LISTEN_IMAP</code> are set; <code>config env</code> writes
+them as <code>:993</code> and <code>:143</code>. Since the container shares the host&#39;s network,
+those two ports need opening in the firewall or security group beside 25,
+587, 80 and 443. A server set up before they existed turns them on under
+<strong>Server → Listeners</strong> and restarts, because the environment only describes a
+first run.</p>
+<p>The connection to PostgreSQL is encrypted and verified. The official
+PostgreSQL image serves no TLS, so the compose file generates a certificate
+and starts PostgreSQL with it, and the <code>TEANODE_DATABASE_URL</code> that
+<code>config env</code> writes asks for <code>sslmode=verify-full</code> against that certificate.
+Pointing at a PostgreSQL of your own means pointing <code>sslrootcert</code> at that
+server&#39;s authority instead, or dropping to <code>sslmode=require</code> to encrypt
+without checking who answered.</p>
+<h3>What runs beside it</h3>
+<ul>
+<li><strong>PostgreSQL</strong> holds the configuration and everything the server has
+handled: mailboxes and what is in them, mail, deliveries, DMARC reports,
+usage counters, templates, and who may do what. It is what you back up.</li>
+<li><strong>ClamAV</strong> scans mail for viruses. The compose file starts it, but the
+server does not use it until it is switched on in the settings. Remove the
+service if you do not want it; it needs about 2GB of memory.</li>
+<li><strong>Spam</strong> is scored by a filter inside the server, which needs no second
+program. An external SpamAssassin daemon is still supported and is behind
+the <code>spamd</code> profile: <code>docker compose --profile spamd up -d</code>, with
+<code>antispam.engine</code> set to <code>spamd</code>.</li>
+<li><strong>MinIO</strong> and <strong>Redis</strong> are only for running more than one instance, and
+are behind the <code>cluster</code> profile. MinIO holds the raw messages so that every
+instance can read what any of them received. Redis holds passkey sign-ins
+that are half done, because behind a load balancer the second request may
+land on a different instance from the first.</li>
+</ul>
+<h3>The data directory</h3>
+<p><code>./data/teanode</code> is mounted at <code>/var/lib/teanode</code> and holds what the server
+writes outside the database: the message spool, the GeoIP database if you use
+one, and a staged upgrade. It must be readable and writable by user 65532.
+If an earlier version ran as root, the directory is owned by root and the
+server cannot read it; fix that once:</p>
+<pre><code>chown -R 65532:65532 ./data/teanode
+</code></pre>
+<h2>Upgrading</h2>
+<p>The dashboard checks for new releases every six hours and shows the newest
+one on <strong>Settings → Server</strong>, with its release notes. Installing from there
+downloads the binary, checks it against the release&#39;s checksums, replaces the
+running binary and restarts.</p>
+<p>In a container the new binary cannot replace the one in the image, because
+the image is discarded on the next <code>docker compose up</code>. Instead it is saved
+on the volume, in the directory named by <code>TEANODE_UPGRADE_DIRECTORY</code>, and the
+next start runs it from there. If a new release fails to start, the container
+falls back to the binary in the image and reports why.</p>
+<p>You can remove that variable. Upgrading from the dashboard then stops
+working, and <code>docker compose pull</code> is how you upgrade.</p>
+<p>Automatic upgrades are off by default. A release can change how mail is
+handled, and a mail server should not change without you knowing. Turn them
+on with <code>upgrade.automatic</code>, and limit them to a time of day with
+<code>upgrade.window</code>. See <a href="/doc/configuration#upgrade">Configuration</a>.</p>
+<h2>Settings that need a restart</h2>
+<p>The listeners, TLS, the object store, the data directory and the optional
+services are read once, when the process starts. Changing one of them saves
+the change, but it has no effect until the instance restarts. The dashboard
+tells you which settings are waiting and offers to restart. So does
+<code>teanode server restart</code>.</p>
+<p>A restart means the process exits and whatever supervises it, the container
+restart policy or systemd, starts a new one. Mail that was already accepted
+is on disk and is delivered afterwards. A sender that connects during the few
+seconds in between retries.</p>
+<h2>What to back up</h2>
+<p>The database. Along with the mail, it holds the configuration and the
+secrets: the DKIM signing keys, the server secret that every SMTP password is
+derived from, the session key, and the ACME account key and certificate.</p>
+<p>There is also a file form:</p>
+<pre><code>teanode-server config export --file backup.yaml
+</code></pre>
+<p>This writes the whole configuration, secrets included, in the format
+<code>config import</code> reads. Only you can read the file. Keep it somewhere other
+than the server.</p>
+<p>The message spool on disk is kept for <code>storage.spoolRetention</code> and then
+deleted. It only holds the message bodies of the last few days, so it is not
+usually worth backing up.</p>
+<h2>More than one instance</h2>
+<p>Several instances can run against one database. They share the configuration
+through PostgreSQL, the stored messages through the object store, and
+passkey sign-ins through Redis. Give each one its own <code>TEANODE_INSTANCE_ID</code>.
+It is part of the key the usage counters are stored under, and two instances
+with the same name overwrite each other&#39;s counts.</p>
+<pre><code>docker compose --profile cluster up -d
+</code></pre>
+<p>starts MinIO and Redis as well. Uncomment the <code>TEANODE_S3_*</code> block in <code>.env</code>
+at the same time. The credentials there are the ones MinIO is started with.</p>
+<h2>Documentation</h2><h3>Getting started</h3><ul><li><a href="/doc/introduction">What is TeaNode</a>: Send and receive mail at your own domains: mailboxes read here or over IMAP, forwarding, what it does, and what you need to run it.</li><li><a href="/doc/quick-start">Quick start</a>: TeaNode running with docker compose in a few minutes: the assistant first, with no domain, then mail at your own domain if you want it.</li><li><a href="/doc/getting-started">Getting started</a>: Standing up a mail server for one domain, from nothing to mail arriving in a mailbox you can read in a mail program, including the DNS records and the port 25 problem.</li></ul><h3>Running it</h3><ul><li><a href="/doc/deploying">Deploying</a>: The container image and the compose file, what runs beside the server, how it upgrades itself, and what to back up.</li><li><a href="/doc/configuration">Configuration</a>: Where the settings live, the environment variables that say how to reach them, and every field an operator can set.</li><li><a href="/doc/agents">Agents</a>: The personal agent: what it needs, what it does with a mailbox, and what to weigh before turning it on.</li><li><a href="/doc/memory">Memory</a>: What your agent keeps between conversations: a graph of pages it writes without being asked, the places it reads from, and what it does with all of it in its dreams.</li><li><a href="/doc/voice">Voice</a>: Call your agent from the chat drawer: say what you want, hear the answer as it is written, and cut in when you like. On a laptop or a phone.</li><li><a href="/doc/coding-sessions">Coding sessions</a>: Your Claude Code and Codex sessions in herdr, on every computer you attached: your agent reads them, types into them where you can see, and brings you their questions to answer from anywhere.</li><li><a href="/doc/coding-memory">Memory in coding sessions</a>: Claude Code and Codex shown what your agent knows about the checkout they run in: the project page and the last session when one starts, recall kept to the project before each prompt, and the transcript read within a minute.</li><li><a href="/doc/mcp">Model Context Protocol</a>: TeaNode on both ends of the protocol: answering it, so your editor can use your agent's tools and ask it questions, and connecting out to servers of your own.</li><li><a href="/doc/finance">Finance</a>: Your banks, cards and brokerages linked through Plaid or SimpleFIN: transactions in your own categories, budgets that say where the month is heading, savings targets, net worth, and a tax year put together from your paystubs, W-2s, 1099s and 1098s, all kept in your own database.</li><li><a href="/doc/command-line">The command line</a>: The two programs: the server and the few things only its host can do, and the client that administers it from anywhere through the API.</li></ul><h3>Security</h3><ul><li><a href="/doc/security">Reporting a security problem</a>: Where to report something exploitable, what is in scope, and what is not.</li><li><a href="/doc/security-review">Security review</a>: A review of the whole program: what was examined, what was found, what was fixed, and what is still open.</li></ul><h3>Contributing</h3><ul><li><a href="/doc/contributing">Contributing</a>: Naming, comments, the invariants that bite, tests, commits and the changelog that cuts a release.</li><li><a href="/doc/local-development">Local development</a>: Getting a working build and a database to point it at, a development server that cannot send mail, and the optional scanners.</li><li><a href="/doc/project-structure">Project structure</a>: What each package is for and which way the dependencies point.</li></ul><p>Every document is also plain markdown, listed in <a href="/llms.txt">/llms.txt</a>.</p></div></div></body></html>

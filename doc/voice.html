@@ -20,4 +20,74 @@ window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-XD5JSLP4RH', {send_page_view: false});
-</script><script type="module" crossorigin src="/static/teanode.B4qXBTfP.js"></script></head><body><div id="teanode"></div></body></html>
+</script><script type="module" crossorigin src="/static/teanode.B4qXBTfP.js"></script></head><body><div id="teanode"><style>.teanode-static{max-width:760px;margin:0 auto;padding:24px 16px 48px;font:16px/1.6 system-ui,sans-serif;opacity:0;animation:teanode-static 0s 2s forwards}.teanode-static pre{overflow-x:auto}@keyframes teanode-static{to{opacity:1}}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .teanode-static{color:#e8e8ea}:root:not([data-theme=light]) .teanode-static a{color:#9ccc65}}:root[data-theme=dark] .teanode-static{color:#e8e8ea}:root[data-theme=dark] .teanode-static a{color:#9ccc65}</style><div class="teanode-static"><p><a href="/">TeaNode</a> · <a href="/doc">Documentation</a> · <a href="https://github.com/ziyan/teanode">Source</a></p><h1>Voice</h1><p>Press the telephone beside send in the chat drawer and talk. What you say
+streams through your server to the provider&#39;s transcription as you say it,
+each thing you finish saying goes to your agent as an ordinary turn, and the
+answer is read back to you as it is written. It is a phone call with your
+agent, on any page of the dashboard, from a laptop or a phone.</p>
+<h2>What a call is like</h2>
+<p>While you talk, the box is replaced by five bars that follow your voice,
+the words heard so far beside them, and a red handset to hang up. The
+conversation stays on screen above it, so what was said is there to read
+afterwards, and you can stop a call and carry on typing.</p>
+<p><strong>It answers at once.</strong> A call feels live when the other side answers
+straight away. Before a lookup the agent says a few words (&quot;Let me check&quot;)
+so you are not left in silence, and while you talk at length it makes the
+small sounds a listener makes. Where the operator configured a quicker
+model for calls, that model answers, and hands a hard question (advice, a
+calculation, several steps of reasoning) to the model typed turns use,
+saying so first.</p>
+<p><strong>It is written for the ear.</strong> A spoken turn tells the agent the words were
+transcribed, so a name may be misheard, and asks for the answer first, in a
+few short sentences, with no tables or code, numbers said the way a person
+says them, and a check before it acts on a name, a sum or a day it may have
+misheard. Code blocks, web addresses and the buttons of suggested replies
+are left out of what is read aloud.</p>
+<p><strong>You can cut in.</strong> Start talking over an answer and it drops to a murmur at
+once, and stops if you keep going. The agent is told how much of the answer
+you heard, so it never assumes you heard what you did not. Tap the bars to
+cut an answer short. The microphone button mutes you for a word with
+somebody else: nothing of it is heard or transcribed, answers go on being
+read aloud, and the mute lasts until you unmute or the call ends.</p>
+<p><strong>It does everything a typed turn does.</strong> A spoken turn steers a turn
+already running, answers an open question card, and reaches every tool your
+agent has. A confirmation card is read out as needing your approval on
+screen, since approving by voice is not done yet.</p>
+<p><strong>Your voice, or its.</strong> Each person picks the voice the answers are read in
+on their agent&#39;s settings, with a sample to listen to, or tells the agent
+mid-call to change it.</p>
+<h2>Echo</h2>
+<p>On a phone the speaker sits beside the microphone, and the answer would be
+heard back and taken for you. The browser&#39;s echo cancellation is asked for;
+on top of it the drawer learns how loud the answer comes back, counts only a
+voice well above that as you, and drops anything that repeats the words just
+played. Headphones avoid the question entirely.</p>
+<h2>Turning it on</h2>
+<p>Voice is the operator&#39;s to turn on, in <code>agent.voice</code>, on the Agents tab of
+the server page or with <code>teanode settings</code>:</p>
+<pre><code>teanode settings set agent &#39;voice:={&quot;enabled&quot;:true}&#39;
+</code></pre>
+<p>It uses a provider of kind <code>openai</code>, whose key never leaves the server: the
+drawer talks to your server, and your server talks to the provider. The
+transcription model, the speech model, the default voice, the pause that
+ends what somebody is saying, and an optional quicker model for calls are
+all in <a href="/doc/configuration#agentvoice">Configuration</a>. Transcription and
+speech are counted against the agent&#39;s day like any model call, under the
+kind <code>voice</code>, so the operator&#39;s limits apply.</p>
+<h2>What it does not do yet</h2>
+<ul>
+<li>Approve a confirmation card by voice.</li>
+<li>Keep listening across a dropped connection: the drawer says it stopped, and
+you press the telephone again.</li>
+<li>Talk in the browser extension&#39;s drawer, whose page has a microphone
+permission of its own.</li>
+</ul>
+<h2>Next</h2>
+<ul>
+<li><a href="/doc/agents">Agents</a> is the agent on the other end of the call.</li>
+<li><a href="/doc/coding-sessions">Coding sessions</a> is how a call can reach the coding
+agents on your computers.</li>
+<li><a href="https://github.com/ziyan/teanode/blob/main/docs/subsystems/voice.md"><code>docs/subsystems/voice.md</code></a>
+says how it works in detail.</li>
+</ul>
+<h2>Documentation</h2><h3>Getting started</h3><ul><li><a href="/doc/introduction">What is TeaNode</a>: Send and receive mail at your own domains: mailboxes read here or over IMAP, forwarding, what it does, and what you need to run it.</li><li><a href="/doc/quick-start">Quick start</a>: TeaNode running with docker compose in a few minutes: the assistant first, with no domain, then mail at your own domain if you want it.</li><li><a href="/doc/getting-started">Getting started</a>: Standing up a mail server for one domain, from nothing to mail arriving in a mailbox you can read in a mail program, including the DNS records and the port 25 problem.</li></ul><h3>Running it</h3><ul><li><a href="/doc/deploying">Deploying</a>: The container image and the compose file, what runs beside the server, how it upgrades itself, and what to back up.</li><li><a href="/doc/configuration">Configuration</a>: Where the settings live, the environment variables that say how to reach them, and every field an operator can set.</li><li><a href="/doc/agents">Agents</a>: The personal agent: what it needs, what it does with a mailbox, and what to weigh before turning it on.</li><li><a href="/doc/memory">Memory</a>: What your agent keeps between conversations: a graph of pages it writes without being asked, the places it reads from, and what it does with all of it in its dreams.</li><li><a href="/doc/voice">Voice</a>: Call your agent from the chat drawer: say what you want, hear the answer as it is written, and cut in when you like. On a laptop or a phone.</li><li><a href="/doc/coding-sessions">Coding sessions</a>: Your Claude Code and Codex sessions in herdr, on every computer you attached: your agent reads them, types into them where you can see, and brings you their questions to answer from anywhere.</li><li><a href="/doc/coding-memory">Memory in coding sessions</a>: Claude Code and Codex shown what your agent knows about the checkout they run in: the project page and the last session when one starts, recall kept to the project before each prompt, and the transcript read within a minute.</li><li><a href="/doc/mcp">Model Context Protocol</a>: TeaNode on both ends of the protocol: answering it, so your editor can use your agent's tools and ask it questions, and connecting out to servers of your own.</li><li><a href="/doc/finance">Finance</a>: Your banks, cards and brokerages linked through Plaid or SimpleFIN: transactions in your own categories, budgets that say where the month is heading, savings targets, net worth, and a tax year put together from your paystubs, W-2s, 1099s and 1098s, all kept in your own database.</li><li><a href="/doc/command-line">The command line</a>: The two programs: the server and the few things only its host can do, and the client that administers it from anywhere through the API.</li></ul><h3>Security</h3><ul><li><a href="/doc/security">Reporting a security problem</a>: Where to report something exploitable, what is in scope, and what is not.</li><li><a href="/doc/security-review">Security review</a>: A review of the whole program: what was examined, what was found, what was fixed, and what is still open.</li></ul><h3>Contributing</h3><ul><li><a href="/doc/contributing">Contributing</a>: Naming, comments, the invariants that bite, tests, commits and the changelog that cuts a release.</li><li><a href="/doc/local-development">Local development</a>: Getting a working build and a database to point it at, a development server that cannot send mail, and the optional scanners.</li><li><a href="/doc/project-structure">Project structure</a>: What each package is for and which way the dependencies point.</li></ul><p>Every document is also plain markdown, listed in <a href="/llms.txt">/llms.txt</a>.</p></div></div></body></html>

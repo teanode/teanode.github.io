@@ -20,4 +20,125 @@ window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-XD5JSLP4RH', {send_page_view: false});
-</script><script type="module" crossorigin src="/static/teanode.B4qXBTfP.js"></script></head><body><div id="teanode"></div></body></html>
+</script><script type="module" crossorigin src="/static/teanode.B4qXBTfP.js"></script></head><body><div id="teanode"><style>.teanode-static{max-width:760px;margin:0 auto;padding:24px 16px 48px;font:16px/1.6 system-ui,sans-serif;opacity:0;animation:teanode-static 0s 2s forwards}.teanode-static pre{overflow-x:auto}@keyframes teanode-static{to{opacity:1}}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .teanode-static{color:#e8e8ea}:root:not([data-theme=light]) .teanode-static a{color:#9ccc65}}:root[data-theme=dark] .teanode-static{color:#e8e8ea}:root[data-theme=dark] .teanode-static a{color:#9ccc65}</style><div class="teanode-static"><p><a href="/">TeaNode</a> · <a href="/doc">Documentation</a> · <a href="https://github.com/ziyan/teanode">Source</a></p><h1>Contributing</h1><p>TeaNode is a mail server. Mail is unforgiving: a mistake does not throw an
+exception, it silently loses somebody&#39;s message or gets a domain&#39;s reputation
+burned. That shapes most of what follows.</p>
+<p>Start with <a href="/doc/local-development"><code>docs/reference/local-development.md</code></a> to get a build and a database.</p>
+<h2>Before you send a change</h2>
+<pre><code>make format        # gofmt
+make lint          # golangci-lint, then the naming checks if you have them
+make test          # starts a PostgreSQL container automatically
+make build
+</code></pre>
+<p>CI runs <code>make lint-ci</code>, which is golangci-lint only. A local check enforces this
+project&#39;s naming conventions and is local-only, so a contributor without it is
+never blocked; run it anyway if you have it.</p>
+<h2>Naming</h2>
+<p>These are not negotiable, and <code>make lint</code> checks most of them.</p>
+<ul>
+<li><strong>Acronyms follow the first letter.</strong> If the identifier starts with a
+capital, acronyms are fully capitalized: <code>ReferenceURI</code>, <code>SessionID</code>,
+<code>GetFTPID</code>, <code>DKIMResult</code>. If it starts lowercase, only the first letter of
+the acronym is capitalized: <code>referenceUri</code>, <code>sessionId</code>, <code>getFtpId</code>. Register
+a new acronym in the lint configuration with a comment saying what it stands
+for.</li>
+<li><strong>Do not abbreviate.</strong> <code>command</code>, not <code>cmd</code>. <code>response</code>, not <code>resp</code>.
+<code>request</code>, not <code>req</code>. Go package names are the exception and should be short.</li>
+<li><strong>No single-letter variables.</strong> <code>err</code> is the one blessed short name, and Go
+errors should be called <code>err</code> wherever possible.</li>
+<li><strong>Struct receivers are <code>self</code>.</strong> Consistently, across the whole codebase.
+<code>.golangci.yml</code> disables the linters that would object.</li>
+<li><strong>Name the same thing the same way everywhere.</strong> If it is a <code>delivery</code> in the
+database it is not a <code>send</code> in the API.</li>
+</ul>
+<h2>The dashboard</h2>
+<p>The web dashboard has its own conventions — which shared component to reach
+for, where a panel&#39;s action goes, when a row action is an icon and when it is
+a word — in <a href="https://github.com/ziyan/teanode/blob/main/docs/coding/frontend-design.md"><code>docs/coding/frontend-design.md</code></a>. Read it before adding a page or
+a panel. A page that builds by hand what a component already does is the
+change most likely to be sent back.</p>
+<h2>Comments</h2>
+<p>Explain <strong>why</strong>, not what. The what is in the code underneath.</p>
+<p>A comment earns its place when it records something the reader cannot recover
+from the code: a protocol requirement, a failure that was observed in
+production, a deliberate choice among several reasonable ones. <code>// increment the counter</code> above <code>counter++</code> is noise. <code>// Reject before the DATA command so a spammer pays for the connection</code> is worth having.</p>
+<p>Exported identifiers get a doc comment starting with their name.</p>
+<h2>Invariants</h2>
+<p>Break any of these and something downstream fails in a way that is hard to
+trace back.</p>
+<ul>
+<li><strong>Every migration ships a matching <code>.reverse.sql</code>.</strong> The migration runner in
+<code>internal/db/database_migrate.go</code> reverts unknown migrations using the
+reverse SQL it recorded when applying them, and panics when it is missing.
+See <a href="https://github.com/ziyan/teanode/blob/main/docs/coding/database-migrations.md"><code>docs/coding/database-migrations.md</code></a>.</li>
+<li><strong>Configuration identifiers are stable.</strong> A domain, alias or credential <code>id</code>
+in the configuration is generated once and never changed, because stored mail
+and deliveries reference it. Editing a pattern must not regenerate an id.</li>
+<li><strong>The stored configuration is the source of truth.</strong> It lives in the
+database, as one document, and <code>internal/config</code> defines its shape. Do not
+add a settings table of your own, and do not read an environment variable at
+the point of use: the environment says where the database is and seeds a
+first run, and everything else an operator sets belongs in <code>internal/config</code>.</li>
+<li><strong>No cloud dependency in a default code path.</strong> S3, Route53 and GeoIP are
+optional and off. Code guarded by <code>if settings.Enabled</code> must not construct a
+client, open a file or dial anything when disabled.</li>
+<li><strong>The ACME <code>http-01</code> handler comes first.</strong> A certificate authority fetches
+<code>/.well-known/acme-challenge/</code> over plain HTTP with no credentials. It must
+not meet authentication, a redirect to HTTPS, or a catch-all route.</li>
+<li><strong>The server secret is generated once.</strong> It signs bounce return paths and
+every SMTP credential&#39;s password. Rotating it invalidates all of them.</li>
+<li><strong>Never commit a secret or a real address.</strong> <code>make check-secrets</code> scans
+tracked files. Test fixtures use <code>example.com</code> and <code>example.net</code>.</li>
+</ul>
+<h2>Tests</h2>
+<p>Write the test that would have caught the bug. A test that only proves the code
+runs is not worth the maintenance.</p>
+<p>Tests that need PostgreSQL take it from <code>internal/db/dbtest</code>, which skips when
+<code>TEANODE_TEST_DATABASE_HOST</code> is unset, so <code>go test</code> still works without Docker.</p>
+<p><strong>A unit test must not reach the network.</strong> This was learned the hard way: an
+early version of <code>autoacme.Open</code> started its renewal loop during construction,
+so merely building a manager in a test contacted Let&#39;s Encrypt production.
+Construction and starting are now separate for exactly this reason.</p>
+<h2>Commits</h2>
+<p>Write the message for somebody trying to understand this change a year from
+now with no memory of the conversation that produced it.</p>
+<ul>
+<li>Subject in the imperative, under about 72 characters: &quot;Obtain certificates
+without a cloud account&quot;.</li>
+<li>Body explains why the change was needed and what it costs. Describing what
+the diff does is redundant; the diff is right there.</li>
+<li>Note behavior that changed for an operator, and anything that has to be done
+by hand when upgrading.</li>
+</ul>
+<h2>Changelog</h2>
+<p>User-visible changes get a changelog entry, and there are two places to put
+one. The Changelog block of the pull request description is where most of them
+belong: it is reviewed alongside the change it describes, and the release bot
+collects it. Writing straight into <code>CHANGELOG.md</code> under Unreleased is the other
+way, and is what somebody committing to main does. Internal refactoring that an
+operator cannot observe needs neither; say so in the description and label the
+pull request <code>no changelog</code>.</p>
+<p>That entry is also what releases the change. Every push to <code>main</code> that leaves
+something under Unreleased is cut into a release: the version comes from the
+entries — <code>Added</code> or <code>Removed</code> means a new minor, anything else a new patch —
+and the tag it pushes is what builds the binaries and the container image. A
+push with nothing under Unreleased releases nothing, which is most pushes.</p>
+<p>To see what would happen before pushing:</p>
+<pre><code>.github/scripts/cut-release.sh          # says the version, writes nothing
+.github/scripts/changelog.sh 0.2.0      # the notes that version would carry
+</code></pre>
+<p>On a laptop that reads only <code>CHANGELOG.md</code>; it says so, and says why. Reading
+the pull requests takes <code>GITHUB_REPOSITORY</code> and a token, which the workflow
+passes it.</p>
+<p>A major version is never inferred. Deciding that a change breaks whoever is
+running this is a judgment, so it is the &quot;Major release&quot; workflow, run by
+hand, with the word MAJOR typed into it.</p>
+<h2>Decisions</h2>
+<p>If your change makes a choice a future reader would question, write a decision
+record in <code>docs/decisions/</code> — see the README there. Larger work gets a design
+document in <code>docs/planning/active/</code> first, moved to <code>done/</code> when it lands.</p>
+<h2>Reporting a security problem</h2>
+<p>Do not open a public issue for anything exploitable in mail handling,
+authentication or certificate issuance. <a href="/doc/security"><code>SECURITY.md</code></a> says where it goes:
+GitHub&#39;s private vulnerability reporting, on the Security tab.</p>
+<h2>Documentation</h2><h3>Getting started</h3><ul><li><a href="/doc/introduction">What is TeaNode</a>: Send and receive mail at your own domains: mailboxes read here or over IMAP, forwarding, what it does, and what you need to run it.</li><li><a href="/doc/quick-start">Quick start</a>: TeaNode running with docker compose in a few minutes: the assistant first, with no domain, then mail at your own domain if you want it.</li><li><a href="/doc/getting-started">Getting started</a>: Standing up a mail server for one domain, from nothing to mail arriving in a mailbox you can read in a mail program, including the DNS records and the port 25 problem.</li></ul><h3>Running it</h3><ul><li><a href="/doc/deploying">Deploying</a>: The container image and the compose file, what runs beside the server, how it upgrades itself, and what to back up.</li><li><a href="/doc/configuration">Configuration</a>: Where the settings live, the environment variables that say how to reach them, and every field an operator can set.</li><li><a href="/doc/agents">Agents</a>: The personal agent: what it needs, what it does with a mailbox, and what to weigh before turning it on.</li><li><a href="/doc/memory">Memory</a>: What your agent keeps between conversations: a graph of pages it writes without being asked, the places it reads from, and what it does with all of it in its dreams.</li><li><a href="/doc/voice">Voice</a>: Call your agent from the chat drawer: say what you want, hear the answer as it is written, and cut in when you like. On a laptop or a phone.</li><li><a href="/doc/coding-sessions">Coding sessions</a>: Your Claude Code and Codex sessions in herdr, on every computer you attached: your agent reads them, types into them where you can see, and brings you their questions to answer from anywhere.</li><li><a href="/doc/coding-memory">Memory in coding sessions</a>: Claude Code and Codex shown what your agent knows about the checkout they run in: the project page and the last session when one starts, recall kept to the project before each prompt, and the transcript read within a minute.</li><li><a href="/doc/mcp">Model Context Protocol</a>: TeaNode on both ends of the protocol: answering it, so your editor can use your agent's tools and ask it questions, and connecting out to servers of your own.</li><li><a href="/doc/finance">Finance</a>: Your banks, cards and brokerages linked through Plaid or SimpleFIN: transactions in your own categories, budgets that say where the month is heading, savings targets, net worth, and a tax year put together from your paystubs, W-2s, 1099s and 1098s, all kept in your own database.</li><li><a href="/doc/command-line">The command line</a>: The two programs: the server and the few things only its host can do, and the client that administers it from anywhere through the API.</li></ul><h3>Security</h3><ul><li><a href="/doc/security">Reporting a security problem</a>: Where to report something exploitable, what is in scope, and what is not.</li><li><a href="/doc/security-review">Security review</a>: A review of the whole program: what was examined, what was found, what was fixed, and what is still open.</li></ul><h3>Contributing</h3><ul><li><a href="/doc/contributing">Contributing</a>: Naming, comments, the invariants that bite, tests, commits and the changelog that cuts a release.</li><li><a href="/doc/local-development">Local development</a>: Getting a working build and a database to point it at, a development server that cannot send mail, and the optional scanners.</li><li><a href="/doc/project-structure">Project structure</a>: What each package is for and which way the dependencies point.</li></ul><p>Every document is also plain markdown, listed in <a href="/llms.txt">/llms.txt</a>.</p></div></div></body></html>

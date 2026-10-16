@@ -20,4 +20,911 @@ window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-XD5JSLP4RH', {send_page_view: false});
-</script><script type="module" crossorigin src="/static/teanode.B4qXBTfP.js"></script></head><body><div id="teanode"></div></body></html>
+</script><script type="module" crossorigin src="/static/teanode.B4qXBTfP.js"></script></head><body><div id="teanode"><style>.teanode-static{max-width:760px;margin:0 auto;padding:24px 16px 48px;font:16px/1.6 system-ui,sans-serif;opacity:0;animation:teanode-static 0s 2s forwards}.teanode-static pre{overflow-x:auto}@keyframes teanode-static{to{opacity:1}}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .teanode-static{color:#e8e8ea}:root:not([data-theme=light]) .teanode-static a{color:#9ccc65}}:root[data-theme=dark] .teanode-static{color:#e8e8ea}:root[data-theme=dark] .teanode-static a{color:#9ccc65}</style><div class="teanode-static"><p><a href="/">TeaNode</a> · <a href="/doc">Documentation</a> · <a href="https://github.com/ziyan/teanode">Source</a></p><h1>The command line</h1><p>TeaNode is two programs. <code>teanode-server</code> is the mail server, and the few
+things only its own host can do. <code>teanode</code> is the client: it administers a
+server over the API, from anywhere, and is what an operator has open.</p>
+<p>Everything the client changes goes through the running server rather than
+into the database directly, so that a change made from the shell behaves
+exactly like the same change made in the dashboard — validated the same way,
+with the same side effects. See
+<a href="https://github.com/ziyan/teanode/blob/main/docs/decisions/20260818-the-cli-goes-through-the-api.md"><code>docs/decisions/20260818-the-cli-goes-through-the-api.md</code></a> for why, and
+<a href="https://github.com/ziyan/teanode/blob/main/docs/decisions/20260903-two-binaries.md"><code>docs/decisions/20260903-two-binaries.md</code></a> for why there are two programs.</p>
+<h2>teanode-server</h2>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>teanode-server run</code></td>
+<td>run the server</td>
+</tr>
+<tr>
+<td><code>teanode-server config env</code></td>
+<td>write a starter environment file</td>
+</tr>
+<tr>
+<td><code>teanode-server config init</code></td>
+<td>migrate the database and store what the environment describes</td>
+</tr>
+<tr>
+<td><code>teanode-server config show|validate</code></td>
+<td>inspect and check the stored configuration</td>
+</tr>
+<tr>
+<td><code>teanode-server config rules import|show</code></td>
+<td>the built-in spam filter&#39;s pattern rules: import a set, or show what is stored</td>
+</tr>
+<tr>
+<td><code>teanode-server config import|export</code></td>
+<td>load a <code>teanode.yaml</code> into the database, or write one out</td>
+</tr>
+<tr>
+<td><code>teanode-server tls self-signed</code></td>
+<td>a certificate for local development</td>
+</tr>
+<tr>
+<td><code>teanode-server user list|add|password|remove|reset|rescue</code></td>
+<td>recover the accounts without going through the server</td>
+</tr>
+<tr>
+<td><code>teanode-server password</code></td>
+<td>hash a password for an exported configuration</td>
+</tr>
+<tr>
+<td><code>teanode-server evaluate scenario &lt;file&gt;</code></td>
+<td>feed a memory scenario through filing and dreams in a database of its own, and grade its questions at each checkpoint; see <code>docs/evaluation/scenarios/</code> in the repository</td>
+</tr>
+</tbody></table>
+<p>These read the environment the server reads (<code>TEANODE_DATABASE_URL</code> and the
+rest), so they run where the server runs: in its container, or with its env
+file in the shell. <code>teanode-server user</code> edits the stored configuration
+directly and exists for a server that will not start or that nobody can log
+into; day to day, accounts are managed with <code>teanode user</code>, through the
+server.</p>
+<h2>teanode</h2>
+<h3>Signing in</h3>
+<p>From anywhere, sign in once:</p>
+<pre><code>teanode auth login --url https://mail.example.com
+</code></pre>
+<p>That opens the dashboard in a browser. Sign in there if you are not already,
+press Authorize, and the token comes back to the command over a loopback
+connection on your own machine — nothing passes through the clipboard or the
+shell history. The token is saved as a <em>profile</em> in
+<code>~/.config/teanode/profiles.json</code>, readable only by you, and becomes the one
+every command talks to.</p>
+<p>If the browser cannot reach the command — a remote desktop, a locked-down
+browser — the page shows the whole command to paste instead. A token issued
+some other way can be pasted directly:</p>
+<pre><code>teanode auth login --url https://mail.example.com --token -
+</code></pre>
+<p>Several servers are several profiles. <code>auth list</code> shows them, <code>auth switch</code>
+changes which one is active, <code>--profile NAME</code> (or <code>TEANODE_PROFILE</code>) picks
+another for one command, and <code>auth logout</code> revokes the profile&#39;s token on the
+server and forgets it.</p>
+<pre><code>teanode auth login --url https://staging.example.com --name staging
+teanode --profile staging domain list
+teanode auth switch staging
+teanode auth status
+</code></pre>
+<p>A script that would rather not have a file sets <code>TEANODE_URL</code> and
+<code>TEANODE_TOKEN</code>, which bypass profiles. Given <code>--url</code> and no token, a saved
+profile for that server lends its token.</p>
+<p>A profile can be <em>read-only</em>: every change is refused on this machine, before
+anything is sent, and reads go through as they would otherwise. That is the
+profile to hand to a script or an agent that should be able to look but not
+touch. The token itself is unchanged — the server would accept the change,
+and this profile does not ask it to.</p>
+<pre><code>teanode auth login --url https://mail.example.com --read-only
+teanode auth set-read-only mail.example.com true
+teanode auth set-read-only mail.example.com false
+</code></pre>
+<p><code>--read-only</code> on any command, or <code>TEANODE_READ_ONLY=1</code> in the environment,
+does the same for one command or one shell, whatever the profile says. There
+is no flag in the other direction: something handed the variable cannot talk
+its way out of it. A refused change exits with code 3 and says which of the
+three switches to undo. <code>auth logout</code> still revokes the profile&#39;s token,
+because forgetting a profile and leaving its token live is the worse outcome.</p>
+<p>Signing in again to a saved profile — <code>auth login</code> with no <code>--url</code>, which
+means the profile <code>--profile</code> names or else the active one, or with the
+<code>--url</code> or <code>--name</code> of one — replaces its token and revokes the old one on
+the server, and says so. It keeps the profile&#39;s read-only and certificate
+settings unless told otherwise. On a read-only profile the old token is left
+alone and named, for revoking by hand.</p>
+<p><strong>On the server itself</strong>, nothing has to be set up. With the server&#39;s
+environment in the shell — which a container already has — the client reads
+the server secret from the stored configuration, mints a token signed with
+it, and connects over the loopback interface:</p>
+<pre><code>docker compose exec teanode teanode user list
+
+set -a; . /opt/teanode/.env; set +a
+teanode domain list
+</code></pre>
+<p>This is the <em>console</em>: it is not an account, so the operations that belong to
+one — tokens, sessions, passkeys — need <code>--user</code> where they take it, or a
+real sign-in. <code>--profile local</code> reaches the console from a shell that also
+has profiles.</p>
+<p>Which server a command talks to is decided in this order: <code>--url</code>, then
+<code>--profile</code>, then the active profile, then the console. Explicit beats saved,
+and saved beats ambient, so a script that sets the variables is never
+surprised by whatever somebody last logged in to.</p>
+<h3>Commands</h3>
+<p>One group per resource, each with <code>list</code>, <code>get</code>, <code>create</code>, <code>update</code> and
+<code>delete</code> where the API has them, plus the verbs particular to the resource.
+Tables by default; <code>--json</code> on every command prints the same thing as JSON,
+so one command serves a person and a script.</p>
+<table>
+<thead>
+<tr>
+<th>Group</th>
+<th>What it covers</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>auth</code></td>
+<td>signing in, and the saved profiles</td>
+</tr>
+<tr>
+<td><code>domain</code></td>
+<td>the domains this server accepts mail for, their DNS records, and the <code>logo</code> they publish</td>
+</tr>
+<tr>
+<td><code>alias</code></td>
+<td>where mail for a domain goes; <code>alias match</code> says what an address would hit</td>
+</tr>
+<tr>
+<td><code>credential</code></td>
+<td>SMTP credentials for sending through this server</td>
+</tr>
+<tr>
+<td><code>dkim</code></td>
+<td>the keys that sign outgoing mail, and the record to publish</td>
+</tr>
+<tr>
+<td><code>user</code></td>
+<td>the accounts on this server; <code>user rescue</code> on <code>teanode-server</code> makes one an administrator</td>
+</tr>
+<tr>
+<td><code>group</code></td>
+<td>who may do what, and over which domains: members, roles, domains</td>
+</tr>
+<tr>
+<td><code>role</code></td>
+<td>the named sets of permissions a group holds; <code>role permissions</code> lists what may be given</td>
+</tr>
+<tr>
+<td><code>audit</code></td>
+<td>the log of administrative changes, with filters</td>
+</tr>
+<tr>
+<td><code>mailbox</code></td>
+<td>a mailbox and everything in it: <code>folder</code>, <code>rule</code>, <code>subscription</code>, <code>device</code>, <code>autoreply</code>, <code>programs</code></td>
+</tr>
+<tr>
+<td><code>token</code></td>
+<td>API tokens; <code>token create --user</code> on the console issues somebody&#39;s first</td>
+</tr>
+<tr>
+<td><code>session</code></td>
+<td>the browsers signed in to the dashboard</td>
+</tr>
+<tr>
+<td><code>passkey</code></td>
+<td>the passkeys registered to your account; registering one needs the dashboard</td>
+</tr>
+<tr>
+<td><code>settings</code></td>
+<td>the optional integrations; <code>settings set &lt;section&gt; key=value</code></td>
+</tr>
+<tr>
+<td><code>server</code></td>
+<td>the running instance: <code>status</code>, <code>restart</code>, <code>addresses</code>, <code>identity</code></td>
+</tr>
+<tr>
+<td><code>upgrade</code></td>
+<td>the newest release, and installing it: <code>status [--check]</code>, <code>apply</code></td>
+</tr>
+<tr>
+<td><code>mail</code></td>
+<td>handled mail: <code>list</code> with filters, <code>get</code>, <code>content</code>, <code>download</code>, <code>opens</code>, <code>count</code>, <code>send</code></td>
+</tr>
+<tr>
+<td><code>delivery</code></td>
+<td>what happened on the way out, and <code>delivery pending</code>, the queue</td>
+</tr>
+<tr>
+<td><code>report</code></td>
+<td>DMARC aggregate reports received about your domains</td>
+</tr>
+<tr>
+<td><code>template</code></td>
+<td>a domain&#39;s message templates, with <code>render</code></td>
+</tr>
+<tr>
+<td><code>layout</code></td>
+<td>the frames templates are rendered inside</td>
+</tr>
+<tr>
+<td><code>api</code></td>
+<td>everything else, straight from the schema</td>
+</tr>
+</tbody></table>
+<h3>A mailbox from the shell</h3>
+<p><code>teanode mailbox</code> is the dashboard&#39;s mailbox, without the dashboard. Most
+people have one mailbox, so <code>--mailbox</code> is needed only when there are
+several, and a folder is named rather than identified:</p>
+<pre><code>teanode mailbox folder create GitHub
+teanode mailbox rule add GitHub --when from:contains:@github.com --move GitHub --stop
+teanode mailbox rule apply
+</code></pre>
+<p>A condition is <code>field:operator:value</code>, repeatable, and every one must match.
+The fields are <code>from</code>, <code>to</code>, <code>subject</code>, <code>header</code>, <code>score</code>, <code>sender-known</code>,
+<code>category</code>, <code>priority</code>, <code>needs-reply</code> and <code>any</code>; the operators are
+<code>contains</code>, <code>equals</code>, <code>matches</code> (a regular expression), <code>above</code> and <code>below</code>.
+A header condition names the header: <code>--when header:List-Id:contains:golang</code>.
+Three of the fields ask nothing of a value and are written alone: <code>--when sender-known</code>, <code>--when needs-reply</code> and <code>--when any</code>. <code>sender-known</code> is true
+when the sender is in your address book — somebody you keep, not merely
+somebody who has written before. <code>category</code>, <code>priority</code>
+and <code>needs-reply</code> read what the agent decided about a message, so a rule
+with one of them runs once the agent has sorted the message rather than at
+delivery: <code>--when category:equals:newsletter --move Reading</code>. The categories
+are <code>personal</code>, <code>work</code>, <code>newsletter</code>, <code>notification</code>, <code>receipt</code>, <code>promotion</code>,
+<code>social</code>, <code>invitation</code>, <code>phishing</code>, <code>junk</code> and <code>other</code>, plus any the person
+added. The last two are what a standing rule about unwanted mail is written
+against, and <code>matches</code> takes both at once:
+<code>--when category:matches:^(phishing|junk)$ --move Junk --mark-read --stop</code>. The actions are flags: <code>--move</code>,
+<code>--mark-read</code>, <code>--flag</code>, <code>--forward</code>, <code>--delete</code>, and <code>--stop</code> ends the run
+after this rule.</p>
+<p>A rule files the mail that arrives after it is written. <code>rule apply</code> runs the
+stored rules over what is already in a folder, moving, marking, flagging and
+deleting as arrival would have; forwarding is not repeated, because old mail
+is not sent again. <code>rule test</code> says what would happen and changes nothing.</p>
+<p>The rest of the group is the rest of the mailbox. <code>mailbox list</code> names the
+mailboxes you can open, and <code>--all</code> every mailbox on the server with its
+owner; <code>show</code> and <code>update</code> read and change a mailbox&#39;s name and signature.
+<code>folder list|create|rename|move|pin|unpin|delete</code> is the tree in the rail.
+<code>rule list|add|remove|enable|disable|test|apply</code> is the filing.
+<code>subscription list|show|mail|unsubscribe</code> the mailing lists it receives,
+<code>device list|add|remove</code> the app passwords a mail program signs in with,
+<code>autoreply show|set|off</code> the out-of-office reply — <code>set --same-domain-only</code>
+keeps it to people at the mailbox&#39;s own domains — and <code>programs</code> the hosts
+and ports to type into a mail program.</p>
+<p>A subscription is not a stored thing but a grouping of stored things: every
+message that named the same list, keyed by the identifier the list publishes
+for itself or the address it sends from. So there is nothing to create, and
+the key is what <code>subscription list</code> prints:</p>
+<pre><code>teanode mailbox subscription list
+teanode mailbox subscription mail &lt;key&gt;
+teanode mailbox subscription unsubscribe &lt;key&gt;
+</code></pre>
+<p>Leaving is a request made to somebody else, and only one of the three ways
+finishes at the command line: a one-click request is sent, a message is sent
+to the address the sender named, and a sender offering only a page has the
+page printed for a person to open. Mail already in the mailbox stays either
+way; what stops is what has not been sent yet.</p>
+<h3>The mark a domain publishes</h3>
+<p><code>teanode domain logo show|publish|remove</code> is the BIMI logo this server hosts
+for one of its own domains:</p>
+<pre><code>teanode domain logo publish example.com mark.svg
+teanode domain check example.com          # prints the record to publish
+teanode domain logo remove example.com
+</code></pre>
+<p>The file is checked before it is stored, against the restricted profile a
+mark has to satisfy — no script, no animation, nothing fetched from
+elsewhere, square — and a refusal names the rule that refused it, because a
+receiver refuses the same file silently and the sender never learns why.
+<code>domain check</code> prints the record to publish once there is a logo to point at,
+and says underneath when something would stop a published record having any
+effect, most often a DMARC policy of none.</p>
+<p>Removing stops serving the file. Take the record down as well, or receivers
+keep fetching an address that answers nothing.</p>
+<h3>Two things that are not in the schema</h3>
+<p>Because they are bytes rather than JSON. The
+files of a draft go up as <code>multipart/form-data</code>, one <code>file</code> part each, to
+<code>PUT /api/v1/mailbox/drafts/{itemId}/attachments</code> (or
+<code>POST /api/v1/mailbox/{mailboxId}/drafts/attachments</code> for a draft that does
+not exist yet), with the same bearer token. <code>curl -F file=@report.pdf</code> does
+it; the reply is the draft as stored, with every part&#39;s index.</p>
+<p>A domain&#39;s logo is the other: <code>POST /api/v1/domains/{domainId}/logo</code> with a
+<code>file</code> part, which is what <code>domain logo publish</code> sends. Reading and removing
+one are ordinary operations in the schema; only sending it is not.</p>
+<p>Some examples:</p>
+<pre><code>teanode domain create example.com
+teanode alias create example.com --pattern &#39;^hello<div id="teanode"></div>#39; --kind email --email me@example.org
+teanode alias create example.com --pattern &#39;^you<div id="teanode"></div>#39; --kind mailbox --mailbox &lt;mailbox id&gt;
+teanode api call ListMailboxItems folderId=01... first=10
+teanode alias match example.com hello
+teanode settings set antispam enabled=true host=127.0.0.1 port=783
+teanode server status
+teanode mail list --domain example.com --status rejected --first 20
+teanode mail send example.com --from hello@example.com --to ann@example.org \
+    --template welcome --variable name=Ann
+teanode template render example.com welcome --variable name=Ann
+teanode delivery pending
+</code></pre>
+<p>Things are named the way a person names them: a domain by its name, a
+template by its domain and name, an alias or a credential by the identifier
+its list prints. Anything that cannot be undone asks first; <code>--force</code> skips
+the question. The <code>--status</code> and <code>--kind</code> filters are checked before
+anything is sent, so a typo is an error rather than an empty list; <code>mail count --by</code> is checked by the server, which knows every field. A list that
+stopped at <code>--first</code> says so on standard error, so a page is never mistaken
+for the whole.</p>
+<h3>From a script, or an agent</h3>
+<p>The same commands serve a script, with three differences that matter when
+nobody is watching.</p>
+<p>A question is only asked of somebody who can answer it. When standard input
+is not a terminal, a command that would confirm refuses at once with a
+<code>--force</code> hint instead of printing a prompt nobody sees. <code>TEANODE_FORCE=1</code>
+answers every such question for a shell that has already decided.</p>
+<p><code>--json</code> applies to failure as well as success: the error goes to standard
+error as <code>{&quot;error&quot;: &quot;...&quot;, &quot;exitCode&quot;: N}</code>, so a caller parses both the same
+way. <code>teanode api</code> always prints JSON, and so are its errors.</p>
+<p>The exit code says what kind of thing went wrong:</p>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>0</code></td>
+<td>it worked</td>
+</tr>
+<tr>
+<td><code>1</code></td>
+<td>something else went wrong; the message says what</td>
+</tr>
+<tr>
+<td><code>2</code></td>
+<td>the command was called wrongly: an argument missing, a flag that does not exist, a confirmation with nobody to ask, a value that is not one of the choices</td>
+</tr>
+<tr>
+<td><code>3</code></td>
+<td>a change refused by a read-only profile, <code>--read-only</code>, or <code>TEANODE_READ_ONLY</code>; nothing was sent</td>
+</tr>
+<tr>
+<td><code>4</code></td>
+<td>the server has no such thing</td>
+</tr>
+<tr>
+<td><code>5</code></td>
+<td>the server refused the token; sign in again</td>
+</tr>
+<tr>
+<td><code>6</code></td>
+<td>the server could not be reached at all</td>
+</tr>
+</tbody></table>
+<p>Shell completion comes from the binary itself:</p>
+<pre><code>source &lt;(teanode completion bash)
+source &lt;(teanode completion zsh)
+</code></pre>
+<p><code>settings set</code> is generic: the keys and their types come from the server&#39;s
+own schema, and <code>settings describe &lt;section&gt;</code> lists them. A value of <code>-</code> is
+read from the terminal without echoing, for a secret.</p>
+<h3>Reaching the whole API</h3>
+<p>The groups above cover what the server offers today. <code>teanode api</code> covers
+every operation in the schema, including any added since, because it works
+off the schema the server reports rather than a hand written list:</p>
+<pre><code>teanode api list                    # every operation
+teanode api list domain             # the ones about domains
+teanode api describe CreateDomain   # arguments, input shapes, return fields
+
+teanode api call ListDomains
+teanode api call GetDomain domainId=example.com
+teanode api call CreateDomain domainParameters:=&#39;{&quot;domain&quot;:&quot;example.com&quot;,&quot;subdomain&quot;:&quot;mail&quot;}&#39;
+</code></pre>
+<p>Arguments are <code>name=value</code>. Use <code>name:=&lt;json&gt;</code> for a number, boolean, list or
+object. Values whose type the schema declares as a number or boolean are
+converted for you, so <code>first=10</code> arrives as <code>10</code>.</p>
+<p>The reply carries every field that can be asked for without arguments, three
+levels deep. <code>--depth</code> changes that, and <code>--select</code> replaces the generated
+selection entirely:</p>
+<pre><code>teanode api call ListDomains --select &quot;{ id domain }&quot;
+</code></pre>
+<p>For anything the generated query cannot express, write the query:</p>
+<pre><code>teanode api graphql &#39;{ ListDomains { id domain records { records { type name verified } } } }&#39;
+teanode api graphql --file query.graphql --variables &#39;{&quot;domainId&quot;:&quot;example.com&quot;}&#39;
+</code></pre>
+<p><code>teanode api</code> always prints JSON.</p>
+<h3>Working without a running server</h3>
+<p>On the console, reads fall back to the stored configuration when the server
+is not running, because a read cannot lose anybody&#39;s change and the stored
+configuration is current either way. This is what makes the first run work:
+<code>teanode dkim show example.com</code> prints the DNS record to publish before the
+server has ever started.</p>
+<p>Writes do not fall back. When the server is down the command fails and says
+so, rather than making a change the server would overwrite the next time
+anything was saved from the dashboard. The exceptions live in the server&#39;s
+own program: <code>teanode-server user</code> for accounts, and <code>teanode-server config import</code> for a whole configuration.</p>
+<h3>teanode agent</h3>
+<p>Your own agent, and — for an operator — everybody&#39;s. Every command goes
+through the API, so a change made here is the change the Agent page would
+have made.</p>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>teanode agent ask &lt;message | -&gt;</code></td>
+<td>say something to your agent and print what it answers; <code>--new</code> starts a named conversation, <code>--conversation</code> continues one, <code>--attach FILE</code> (repeatable) hands it a file — a picture is shown to it, a text file read to it, anything else named — <code>--reply-to MESSAGE_ID</code> answers a message of the conversation (ids from <code>conversation show --json</code>), <code>--json</code> streams every event, <code>--quiet</code> prints the answer alone. A tool that needs your word asks on the terminal, y or n — never a flag</td>
+</tr>
+<tr>
+<td><code>teanode agent chat</code></td>
+<td>the same, turn by turn, until an empty line</td>
+</tr>
+<tr>
+<td><code>teanode agent conversation list|show|new|rename|goal|main|archive|unarchive|delete</code></td>
+<td>the main conversation and the named ones; <code>list --query</code> finds one by words in its title or in what was said, and <code>list --archived</code> lists the ones put away instead of the open ones; <code>show</code> prints the goal above the messages when there is one and the task list under them, the done ones ticked, and pages back through a long one with <code>--first</code> and <code>--offset</code>; <code>main</code> makes a named conversation the main one, or starts a fresh main one and keeps the old as a named one; <code>archive &lt;id&gt;</code> puts one away with everything in it and <code>unarchive &lt;id&gt;</code> brings it back, neither asking first because neither loses anything; <code>delete</code> asks first and takes the files that came with it</td>
+</tr>
+<tr>
+<td><code>teanode agent goal list [--state working|waiting|met|dropped]</code></td>
+<td>what the agent keeps at in the background between conversations, the most recently active first: each goal&#39;s id, where it stands (tracking, needs you, done, dropped), its title and its one-line status; the same list as the Goals tab of the agent&#39;s page</td>
+</tr>
+<tr>
+<td><code>teanode agent goal show &lt;goal-id&gt;</code></td>
+<td>one goal: what it is for, its status, when it looks again, what it made (schedules, background work, mail rules, reminders, alert mutes) and what happened on it, newest first</td>
+</tr>
+<tr>
+<td><code>teanode agent goal start &lt;title&gt; &lt;description&gt;</code></td>
+<td>start a goal in the background: a title of a few words, then what it is for and what done looks like. Its first turn runs at once, in its own conversation; you hear from it in your main conversation only when it needs you</td>
+</tr>
+<tr>
+<td><code>teanode agent goal tell &lt;goal-id&gt; &lt;text&gt;</code></td>
+<td>answer a goal that waits for you, or tell it something it should know; it goes on a minute later</td>
+</tr>
+<tr>
+<td><code>teanode agent goal take-schedule &lt;goal-id&gt; &lt;schedule-id&gt;</code></td>
+<td>make a schedule the goal&#39;s: its runs take place in the goal&#39;s conversation as its turns, and the goal takes none of its own while it has one</td>
+</tr>
+<tr>
+<td><code>teanode agent goal done|drop|reopen &lt;goal-id&gt;</code></td>
+<td>mark a goal met, stop it, or take one that was met or dropped up again</td>
+</tr>
+<tr>
+<td><code>teanode agent idea list|get|propose|start|done|dismiss|reopen</code></td>
+<td>what your agent offers to do for you, and what became of each offer: the same list as the Ideas tab and the agent&#39;s <code>idea</code> tool. <code>list</code> shows the open ones, <code>--status dismissed</code> or <code>--all</code> the others, and <code>--limit</code> with <code>--offset</code> a page of them; <code>get &lt;id&gt;</code> shows one whole, with what you would say to start it and what prompted it; <code>start &lt;id&gt;</code> opens a conversation named after the idea and prints what to say in it, and <code>--send</code> says it; <code>done</code>, <code>dismiss</code> and <code>reopen</code> say what became of one. <code>propose</code> keeps one you write, checked as the agent&#39;s are: it may only need tools your agent has, must say where it asks first when a tool acts toward somebody else, and names what prompted it with <code>--evidence message:&lt;item-id&gt;:&lt;what it is&gt;</code></td>
+</tr>
+<tr>
+<td><code>teanode agent conversation todo list</code></td>
+<td>the task list a conversation keeps: the agent&#39;s own, which it writes as it works through something in several steps and shows itself every round. <code>todo list &lt;conversation-id&gt;</code> prints it; only the agent changes it</td>
+</tr>
+<tr>
+<td><code>teanode agent run list|show|stop</code></td>
+<td>what the agent did on its own: every model call is a run, and <code>list</code> pages through them with <code>--first</code> and <code>--offset</code>; <code>--kind triage --kind reply</code>, or <code>--kind triage,reply</code>, narrows it to some kinds of run and <code>--query</code> to what they were about; <code>--all</code> or <code>--agent &lt;id&gt;</code> lists everybody&#39;s, for an operator with <code>agent:act</code>; <code>stop &lt;run-id&gt;</code> stops one where it is, keeping what it has already done</td>
+</tr>
+<tr>
+<td><code>teanode agent tools</code></td>
+<td>the tools your agent has, as you may use them, with the risk class and whether it asks first</td>
+</tr>
+<tr>
+<td><code>teanode agent memory index|get|search|note|page|merge|link|unlink|move|forget|history|recall|learned</code></td>
+<td>what your agent knows about you, as pages with numbered facts: <code>get people/alice-chen</code>, with <code>--link-limit</code> and <code>--link-offset</code> to print a page&#39;s links a part at a time, <code>note people/alice-chen &quot;Does the books&quot; --applies-to triage,reply</code>, <code>link people/alice-chen projects/portal --relation works_on</code>, <code>move notes/marigold things</code>, <code>move --number 3 people/alice-chen projects/portal</code> puts one fact on another page instead of the whole page, keeping the words it came from, <code>forget people/alice-chen --number 2</code>; <code>forget people/alice-chen</code> with no number takes the page and everything under it and asks first, <code>--force</code> skips the question; <code>history projects/portal</code>. <code>search &quot;&lt;words&gt;&quot;</code> finds pages and facts by words, <code>--first</code> at a time (40 by default); a search that found more says how many more pages and facts, &quot;at least&quot; where it stopped counting, and the <code>--offset</code> that prints the next page</td>
+</tr>
+<tr>
+<td><code>teanode agent memory recall &quot;&lt;question&gt;&quot;</code></td>
+<td>what a question would carry into a turn: the pages recall would expand, each with the facts on it as the page numbers them, printed the way <code>memory get</code> prints a page. It is the same recall a turn does, so it answers &quot;why did it not know that?&quot; without asking it again — and it costs nothing: no model is asked anything and nothing is marked as used, so the same graph answers the same twice. <code>--json</code> for the pages and facts as they came. <code>--search &quot;&lt;words&gt;&quot;</code> (at most two) and <code>--broad</code> follow a retrieval plan, as a live turn follows its depth judgement&#39;s. <code>--explain</code> says why as well: the retrieval mode and plan, each query that ran (the message, each planned search, the linked-pages hop, the broad pass), how many each search of each query found, where each page and fact ranked in each search and once fused, and what carried it or kept it out (the page limit, the limit on pages no fact was found on, the token budget, a retired fact), with the overview section carried and why that one</td>
+</tr>
+<tr>
+<td><code>teanode agent memory checkout [directory]</code></td>
+<td>what a Claude Code or Codex session in a directory is shown by <code>teanode hook</code>: the pages of the checkout the directory is in, their liveliest facts, and where the last session there stopped. <code>--prompt &quot;&lt;words&gt;&quot;</code> prints what that prompt would recall instead, kept to the checkout&#39;s project and what links to it (<code>--everywhere</code> for all of memory). <code>--computer</code> names the computer when it is not this one&#39;s host name. Nothing is marked as used</td>
+</tr>
+<tr>
+<td><code>teanode agent memory overview &lt;path&gt;</code></td>
+<td>how the thing a page is about works, as the dream last wrote it from the page and the pages under and beside it: what it is, its parts, how it relates to what it is linked to, what has been happening, what stands out. <code>--rewrite</code> asks the next dream to write it again; <code>memory get</code> prints it too, under the opening, with a theme&#39;s reflections. It ends with what the overview covers, counted by the server: how many of the pages under it, of a theme&#39;s pages and of its links its prompt shows of how many there are, how many of those had no overview of their own, and whether what it is written from has changed since</td>
+</tr>
+<tr>
+<td><code>teanode agent survey &quot;&lt;question&gt;&quot;</code></td>
+<td>answer a question about a whole from the overviews: one read-only run a page in scope, several at once, then one that combines them into a report with citations. <code>--scope themes/&lt;one&gt;</code> or any page narrows it; with none it covers every top-level theme. Runs of kind survey, a few minutes. It starts the survey on the server and asks every few seconds whether it has finished, so no request is held open that long. A read that fails for a passing reason (the server restarting behind its proxy, a dropped network, a timeout) is tried again, less often each time; after thirty minutes the command stops waiting. Whichever way it ends, it names the survey&#39;s id, for <code>teanode agent background show &lt;id&gt;</code>; <code>--no-wait</code> prints the id and returns, and stopping the command leaves it running. <code>--json</code> for the finished work, with the report and the runs</td>
+</tr>
+<tr>
+<td><code>teanode agent background list|show|stop</code></td>
+<td>the surveys and subagents your agent started without waiting for them, and the surveys <code>agent survey</code> started: <code>list</code> says what is queued, running or finished lately, newest first; <code>show &lt;id&gt;</code> prints one&#39;s report or answer, and on standard error how it stands and the runs it made; <code>stop &lt;id&gt;</code> stops one that is queued or running, which then wakes nothing</td>
+</tr>
+<tr>
+<td><code>teanode agent memory evaluate &lt;file&gt;</code></td>
+<td>replay a set of questions through recall and say, per question, whether the facts it needs would have been carried: one row a question — <code>direct 03 hit</code>, <code>changed 12 miss: carried people/alice-chen saying &quot;berlin&quot;</code> — then totals per kind and overall, and a non-zero exit when anything missed. No model is asked anything and nothing in the graph is marked as used, so the same graph answers the same twice and the set can be run before and after a dream to see what the dream was worth. <code>--mode planned</code> follows the plan each question carries (see <code>memory plan</code>), as a live turn would. The file&#39;s shape, and a starter set to replace with questions from your own graph, are in <code>docs/evaluation/</code></td>
+</tr>
+<tr>
+<td><code>teanode agent memory answers &lt;file&gt;</code></td>
+<td>answer each question of a set that has an <code>expectedAnswer</code>, from memory, from the sources or from both (<code>--from memory,sources,both</code>; <code>memory@planned</code> and <code>both@planned</code> follow each question&#39;s <code>plan</code>), and grade each answer against the expected one: a line a question and source — <code>memory changed-01 stale gave the old address</code> — then a score, the verdicts, the cost and the time an answer took, per source. Two model calls a question and source, as runs of kind <code>evaluate</code>; nothing is written to a conversation or the graph. <code>--json</code> for every answer. See <code>docs/evaluation/</code></td>
+</tr>
+<tr>
+<td><code>teanode agent memory plan &lt;file&gt;</code></td>
+<td>ask the depth judgement what retrieval plan a live turn would follow for each question, and with <code>--output &lt;file&gt;</code> write the question set back with each question&#39;s <code>plan</code>, for <code>evaluate --mode planned</code> and <code>answers --from memory@planned</code>. One call to the fast model a question, as runs of kind <code>evaluate</code>. <code>--stored</code> plans the memory check&#39;s confirmed and corrected questions instead of a file&#39;s</td>
+</tr>
+<tr>
+<td><code>teanode agent knowledge list|add|set|pause|resume|sync|remove</code></td>
+<td>the places your agent reads: <code>add &quot;work&quot; ~/work --computer laptop --under work</code>, <code>set work --cron &quot;0 4 * * *&quot; --under projects</code> changes a source that already exists — its name, its path, where what it finds is filed, how often it is read, the format, the mailbox, whether every checkout under it is read — leaving everything you do not give alone, so correcting the hour does not cost you what removing and adding it again would, <code>--read-every-checkout</code> reads the files of every checkout under the path — by default a checkout that is barely any of your work is kept to its profile, so the page says what it is and where it lives and its source is not indexed, and the source&#39;s row says how many checkouts that was and how many files, <code>--own-commits-at-least</code> says how many commits of your own a checkout needs before its files are read, however long its history (leave it alone and the program works it out: two commits, or a fiftieth of the log, whichever is more, up to twenty-five — and never more than the whole history, so a repository you committed to once and nobody else ever is yours; <code>1</code> is the older rule, any commit at all), <code>--commits-per-pass</code> says how much of the history one pass over the tree carries, shared among the checkouts in it, newest first (the program&#39;s own pace is two thousand), <code>sync</code> reads one again now, <code>pause</code> keeps what it found, and <code>remove</code> forgets everything it found and so asks first, <code>--force</code> skipping the question. <code>--format</code> says how to read what is there: <code>files</code> (a tree of files, git-aware), <code>journal</code> (dated notes), or <code>records</code> (a folder of JSON lines any script can write, with a <code>refresh</code> script beside them the daemon runs before each scan — ask your agent to write one)</td>
+</tr>
+<tr>
+<td><code>teanode agent knowledge search &quot;&lt;words&gt;&quot;</code></td>
+<td>find passages in what has been indexed — your code, your chat, your notes — without asking your agent to look for you. It is the same search your agent&#39;s knowledge tool runs, so what you see is what it sees: an identifier out of a log (<code>ComputeShippingQuote</code>) is looked up exactly and printed as the file and line that defines it, then the passages, each under the document it came from, with the identifier that reads that document back. <code>--first</code> how many, <code>--offset</code> how many of the ranking to pass over, <code>--source &lt;id-or-name&gt;</code> narrows it to one source, <code>--json</code> prints the rows as they came, each with its score. Where the deployment has no embedding model it says so — found by words alone, which misses a paraphrase that shares no word. A search that found more than it printed ends with how many more passages (&quot;at least&quot; where it stopped counting) and the <code>--offset</code> that prints the next page; pages read one after another show every passage once, in the order of the first. Over a tree of files it also says which directories the passages are in, the most first; <code>--directory &lt;one of them&gt;</code> (with <code>--computer</code> where several computers have that path) searches inside it, which is how a large tree is searched one part at a time</td>
+</tr>
+<tr>
+<td><code>teanode agent knowledge read &lt;document-id&gt;</code></td>
+<td>read one of those documents, by the identifier the search printed; the <code>&lt;id&gt;#&lt;passage&gt;</code> out of a citation is taken as well. <code>--from</code> is where in the text to start, counted in characters, and <code>--first</code> how many to print; a read that does not reach the end says how much is left and prints the command that carries on from where it stopped</td>
+</tr>
+<tr>
+<td><code>teanode agent source-type list|search|install|update|add-local|show|remove</code></td>
+<td>the kinds of knowledge source this server can read, installed from the signed source types registry: <code>search</code> says what the registry offers, <code>install rss</code> checks the signature before keeping it, <code>update</code> installs a newer version, <code>add-local &lt;source.md&gt;</code> adds a type of your own, unsigned and marked local, and <code>show</code> says what one runs and the settings it asks for. A source of a type is added with <code>teanode agent knowledge add &lt;name&gt; --type rss --setting url=https://example.com/feed.xml</code></td>
+</tr>
+<tr>
+<td><code>teanode agent knowledge secret list|set</code></td>
+<td>the secrets a source&#39;s type asks for, such as a token for a service: yours, one set for each source. <code>secret list &lt;source&gt;</code> says what it asks for and whether each is filled in; <code>secret set &lt;source&gt; &lt;key&gt;</code> with no value reads it without echoing</td>
+</tr>
+<tr>
+<td><code>teanode agent dream log|runs|now|bootstrap|reread</code></td>
+<td>the dreams: the runs that read, file and rehearse; <code>runs &lt;id&gt;</code> lists every model call one dream made, each a run <code>agent run show</code> opens; <code>now</code> starts one within the minute, whatever the agent&#39;s hours; <code>bootstrap on</code> keeps it running with wider limits until nothing waits to be read, for a first ingest; <code>reread --minutes 60</code> puts back what a night marked read in that window</td>
+</tr>
+<tr>
+<td><code>teanode agent schedule list|add|set|enable|disable|remove|run</code></td>
+<td>what it does on its own at set times: <code>add Morning &quot;0 8 * * 1-5&quot; &quot;what needs me today?&quot; --deliver mail</code>, a cron line in your zone; or a single moment, <code>&quot;@at 2026-09-12 09:00&quot;</code>, or a distance from now, <code>&quot;@in 20m&quot;</code>, which is stored as the moment it means and runs once. <code>set &lt;id&gt; --cron &quot;0 7 * * 1-5&quot;</code> changes one in place — <code>--name</code>, <code>--cron</code>, <code>--prompt</code> (<code>-</code> reads it from standard input) and <code>--deliver</code>, and only what you give changes — and <code>disable &lt;id&gt;</code> stops it running without taking it away, <code>enable &lt;id&gt;</code> starts it again</td>
+</tr>
+<tr>
+<td><code>teanode agent brief on|off|now</code></td>
+<td>a brief each morning, by mail: what the day holds, what is waiting for an answer, what is being held. <code>on --at 07:30 --days 1-5</code> says when; <code>now</code> sends one immediately. It writes an ordinary schedule called &quot;Daily brief&quot;, so <code>agent schedule list</code> shows it and anybody may rewrite what it asks for</td>
+</tr>
+<tr>
+<td><code>teanode agent feedback</code></td>
+<td>the corrections recorded from what you did, which the agent is shown as examples</td>
+</tr>
+<tr>
+<td><code>teanode agent channel list|set|unlink|remove</code></td>
+<td>the chat apps you talk to your agent from: your own Telegram or Discord bot. <code>set telegram --token -</code> reads the bot&#39;s token from standard input; <code>list</code> shows the code a chat sends the bot as <code>/link CODE</code> to become the linked one, and whether the bot runs; <code>unlink</code> draws a new code</td>
+</tr>
+<tr>
+<td><code>teanode contact list|show|add|edit|remove</code></td>
+<td>your address book: the people you keep, which your phone and your computer synchronize over CardDAV. <code>add --name &quot;Ada Lovelace&quot; --email ada@example.com</code> keeps one; <code>edit &lt;id&gt; --name &quot;Ada King&quot;</code> changes only what you give and leaves the rest of the card alone, so correcting a name does not throw away the photograph a phone put there; <code>--card -</code> reads a whole vCard from standard input</td>
+</tr>
+<tr>
+<td><code>teanode calendar list|show|add|edit|remove</code></td>
+<td>your calendar, which your phone and your computer synchronize over CalDAV. <code>list --from 2026-09-14 --until 2026-09-21</code> prints one line for every time something happens, a repeating event once per occurrence; <code>add --title Standup --starts 2026-09-14T09:30 --repeat FREQ=WEEKLY;BYDAY=MO</code> puts something in it; <code>--invite ada@example.com</code> sends the invitation by mail, and moving or removing the event tells everybody invited; <code>--all-day</code> belongs to the day rather than to a time, and its <code>--ends</code> is the last day it is on, so the same date at both ends is one day; <code>--file -</code> reads a whole iCalendar file from standard input. Times are read and written in the calendar&#39;s own zone unless they carry an offset</td>
+</tr>
+<tr>
+<td><code>teanode calendar free</code></td>
+<td>when you are free: the stretches of the working day nothing is booked in, day by day. <code>--earliest 08:00 --latest 18:00</code> moves the ends of the day; a whole-day entry does not make a day busy, and neither does anything cancelled. Worked out with the same two functions that answer a phone&#39;s free-busy request, so what this prints and what a colleague&#39;s client is told cannot disagree</td>
+</tr>
+<tr>
+<td><code>teanode calendar calendars|set</code></td>
+<td>the calendars themselves: what they are called, what a client paints them, the zone a new event is written in, and the day a week is drawn from — <code>set --timezone Europe/Berlin</code>, <code>set --week-start monday</code>. Weeks start on Sunday unless a calendar says otherwise; the five-day view is Monday to Friday either way, because that is what a working week is</td>
+</tr>
+<tr>
+<td><code>teanode reminder list|add|edit|done|reopen|remove</code></td>
+<td>your reminders list, the one beside your calendar that the Reminders app on a phone synchronizes over CalDAV. <code>add &quot;Buy stamps&quot; --due 2026-09-29</code> is due on that day, <code>--due 2026-09-29T15:00</code> at that time in the calendar&#39;s zone; <code>list --done</code> shows the ones ticked off and <code>list --all</code> both; <code>done</code> ticks one off and <code>reopen</code> puts it back</td>
+</tr>
+<tr>
+<td><code>teanode note list|show|add|edit|remove</code></td>
+<td>your notes: the ones a phone&#39;s Notes app keeps in your mail account, which it syncs over IMAP. <code>add &quot;Packing list&quot;</code> writes one whose first line is its title, <code>--file -</code> reads the text from standard input, and <code>edit &lt;id&gt;</code> replaces a note&#39;s text; the phone shows the change at its next sync. <code>--mailbox</code> picks the mailbox when you have more than one</td>
+</tr>
+<tr>
+<td><code>teanode calendar request &lt;request-id&gt;</code></td>
+<td>check whether a calendar save completed, even after its event or calendar was deleted. <code>add</code>, <code>edit</code> and <code>remove</code> print a request ID before changing an event; after an uncertain response, look it up here or retry the same operation and fields with <code>--request-id</code>. A retried removal checks completion before loading the deleted event. An absent receipt may mean the original request is still in progress. Changed fields require a new ID</td>
+</tr>
+<tr>
+<td><code>teanode calendar stop &lt;request-id&gt;</code></td>
+<td>resolve an uncertain request before discarding its fields. An uncommitted request is durably stopped; an already completed change is reported and is not undone. A failed stop response is still uncertain, so retry the same request ID</td>
+</tr>
+<tr>
+<td><code>teanode agent skill list|search|install|update|remove|enable|disable|scope|secret</code></td>
+<td>tools installed from the skill registry, for everyone on this server: <code>list</code> names each skill&#39;s tools and <code>list &lt;name&gt;</code> says what each of that skill&#39;s tools does, <code>search</code> says what there is, <code>install weather</code> checks the signature and the hash before keeping it, <code>update</code> with no name installs every newer version there is. `scope <name> operator</td>
+</tr>
+<tr>
+<td><code>teanode agent mcp list|connect|disconnect|serve</code></td>
+<td>the connected servers the operator declared and your connections to them; <code>connect tracker --credential -</code> reads your credential from standard input, and an authorizing server prints the address to open; <code>--loopback</code> brings the authorization back to this terminal instead, for a service that answers only to a loopback address; <code>serve</code> answers the protocol on this terminal, so a program on this machine can use your agent&#39;s tools with no token to paste — <code>claude mcp add teanode -- teanode agent mcp serve</code></td>
+</tr>
+<tr>
+<td><code>teanode app list|rename|disconnect</code></td>
+<td>the programs authorized to act as you through the agent tools, from approving one in your browser: <code>rename &lt;client-id&gt; &lt;name&gt;</code> keeps the name when it renews, <code>disconnect &lt;client-id&gt;</code> revokes every token it holds, so it has to be authorized again</td>
+</tr>
+<tr>
+<td><code>teanode agent settings show|set</code></td>
+<td>your agent: <code>set enabled=true name=Bertie instructions=-</code> reads the long value from standard input; keys are listed by <code>set --help</code>. <code>set alerts=false</code> stops it telling you about your mail unasked; <code>alert-quiet-start=22:00 alert-quiet-end=07:00</code> is the night in which only what cannot wait is said, and <code>alert-daily-most=5</code> the most a day. <code>unattended=outward,destructive</code> lets it do those kinds of thing, which otherwise wait for your word, when you are not there (<code>money</code>, <code>granting</code> and <code>listed</code> are the others; empty allows none)</td>
+</tr>
+<tr>
+<td><code>teanode agent alert list|mute|mutes|unmute</code></td>
+<td>what your agent told you unasked, and what you asked it not to: the same list as the Alerts card on the agent page. <code>list</code> shows each alert with the messages it was about; <code>mute &lt;alert-id&gt;</code> stops alerts about what it covered (the burst, or the sender of a single message), <code>--scope subjectKey</code>, <code>sender</code>, <code>domain</code> or <code>kind</code> on its subject, its senders, their domains or its kind (a burst, or a category such as <code>notification</code>), and <code>mute --target offers@shop.example.com</code> names one yourself, its scope read from it unless <code>--scope</code> says; <code>mutes</code> lists them and <code>unmute &lt;mute-id&gt;</code> takes one back</td>
+</tr>
+<tr>
+<td><code>teanode agent settings categories add|remove</code></td>
+<td>your own categories beside the fixed ones</td>
+</tr>
+<tr>
+<td><code>teanode agent settings forget</code></td>
+<td>delete the agent and everything it learned; asks first</td>
+</tr>
+<tr>
+<td><code>teanode agent source list|grant|revoke|set|allow|deny</code></td>
+<td>what the agent may reach and what it does in each: <code>set --mailbox work triage=true auto-reply=true auto-reply.scope=known</code> for a mailbox, <code>alerts=false</code> to hear nothing unasked about what arrives in it; <code>allow calendar</code> and <code>deny addressbook</code> for the other two kinds of source, which carry a switch and no policy. Nothing from a source you have not granted is ever sent to a model</td>
+</tr>
+<tr>
+<td><code>teanode agent usage [--since] [--by day|kind|mailbox|model]</code></td>
+<td>your tokens</td>
+</tr>
+<tr>
+<td><code>teanode agent draft &lt;item-id&gt; [--say &quot;…&quot;]</code></td>
+<td>have the agent write a reply to a message, printed for you to use; nothing is saved or sent</td>
+</tr>
+<tr>
+<td><code>teanode agent replies [--status held|sent|cancelled|refused|failed] [--mailbox]</code></td>
+<td>the replies the agent wrote for you and what became of each, with the reason when it left a message alone</td>
+</tr>
+<tr>
+<td><code>teanode agent replies cancel &lt;reply-id&gt;</code></td>
+<td>cancel a held reply; the draft goes and nothing is sent</td>
+</tr>
+<tr>
+<td><code>teanode agent admin usage|list|limit|disable|enable|dead-letters|retry</code></td>
+<td>everybody&#39;s agents, needing <code>agent:audit</code>: tokens by day, kind, mailbox, model or agent; each person&#39;s sources and today&#39;s spend; a per-person limit in tokens or, with <code>--cost</code>, in money; the switch-off; the jobs the worker gave up on</td>
+</tr>
+</tbody></table>
+<p>Every command sends the shell&#39;s time zone and language with the request,
+the way the dashboard sends the browser&#39;s, so a person who lives in the
+terminal is placed as well as one who lives in the browser.</p>
+<h3>teanode hook</h3>
+<p>What Claude Code and Codex run, so a coding session on this computer sees
+what your agent knows about the checkout it is in. <code>teanode hook install claude-code</code> adds the hooks to <code>~/.claude/settings.json</code>, and <code>teanode hook install codex</code> to <code>~/.codex/hooks.json</code>, keeping every other hook in the
+file; <code>uninstall</code> takes out only TeaNode&#39;s. The hooks run this program as it
+was installed, naming the saved profile it signed in with (a server reached
+with <code>--url</code> alone is refused: sign in first, so the hook does not depend on
+a token in the tool&#39;s environment), and the <code>--computer</code> it was given. A
+hook&#39;s own exit status is never passed on: one that fails shows nothing.</p>
+<table>
+<thead>
+<tr>
+<th>Event</th>
+<th>What the session gets</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>a session starts, resumes or is compacted</td>
+<td>the checkout&#39;s page and its liveliest facts, and the last session held there: its title, the person&#39;s last requests and the start of its last answer</td>
+</tr>
+<tr>
+<td>a prompt is typed</td>
+<td>what the prompt recalls, and the lessons it brings up, kept to the checkout&#39;s project, the pages under it and linked to it, and lessons (<code>--everywhere</code> on install for all of memory); a page shown in the last five prompts is not shown again, and a prompt of fewer than three words, or a slash command, recalls nothing</td>
+</tr>
+<tr>
+<td>an answer ends, the session is compacted or ends</td>
+<td>the computer&#39;s <code>claude-code</code> or <code>codex</code> source is asked to read again now, so the session is searchable within a minute and the next one knows where this stopped</td>
+</tr>
+</tbody></table>
+<p>A checkout this computer&#39;s sources never profiled is matched by its git
+remote, not its path, and the session is told where and at which commit
+memory read the project. A hook that cannot reach the server shows nothing
+and never stops the tool;
+what went wrong is in <code>hook.log</code> under the user&#39;s cache directory
+(<code>~/.cache/teanode/hooks</code> on Linux). Codex runs hooks only with <code>hooks = true</code>
+under <code>[features]</code> in <code>~/.codex/config.toml</code>, and asks you to trust a new hook
+before it first runs. <code>teanode agent memory checkout</code> prints what a session
+would be shown without starting one.</p>
+<h3>teanode finance</h3>
+<p>The institutions you linked, their accounts and transactions, net worth,
+spending categories, budgets and savings targets: the same operations as the
+dashboard&#39;s Finance page (and its setup on the agent page&#39;s Finance tab) and
+the agent&#39;s <code>finance</code> tool, and named after
+them (the tool&#39;s <code>spending_summary</code> is <code>teanode finance spending-summary</code>).
+Amounts are printed with their currency; <code>--json</code> keeps full precision.
+<a href="https://github.com/ziyan/teanode/blob/main/docs/subsystems/finance.md"><code>docs/subsystems/finance.md</code></a> says how it works.</p>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>teanode finance providers</code></td>
+<td>which providers this server offers, and how to link through each</td>
+</tr>
+<tr>
+<td><code>teanode finance link-plaid</code></td>
+<td>prints the address of the page that opens Plaid&#39;s window, for a browser, and waits until the new finance source appears; <code>--no-wait</code> returns at once</td>
+</tr>
+<tr>
+<td><code>teanode finance link-simplefin [&lt;setup-token&gt; | -]</code></td>
+<td>claims a setup token from the SimpleFIN Bridge; <code>-</code> or no argument reads it without echoing. A token can be claimed once</td>
+</tr>
+<tr>
+<td><code>teanode finance import-credential --provider plaid|simplefin [--institution-name NAME] [- | &lt;file&gt;]</code></td>
+<td>brings a connection made elsewhere in as a finance source instead of linking again: a Plaid access token of a link made with this server&#39;s Plaid keys (which saves a Plaid slot), or a SimpleFIN access URL already claimed. The credential is read from the file, from standard input, or at a prompt without echoing, never from the command line; the provider is asked before anything is made, and the first sync starts within the minute</td>
+</tr>
+<tr>
+<td><code>teanode finance import-statement &lt;file | -&gt;</code></td>
+<td>imports an OFX statement (<code>.ofx</code>, <code>.qfx</code> or <code>.qbo</code>), such as a card&#39;s exported transactions, into the finance source of imported statements; a transaction already imported (same account, same FITID) is updated rather than added again, so overlapping files add nothing twice. Prints the account and how many were added, updated and already there</td>
+</tr>
+<tr>
+<td><code>teanode finance import-transactions [--dry-run] &lt;file.json | -&gt;</code></td>
+<td>imports one account&#39;s transactions from a JSON object of rows instead of a file, such as rows read off screenshots: <code>financeAccountId</code> (an imported account the rows are of, from <code>teanode finance accounts</code>; the number may then be left out), <code>isNewAccount</code>, <code>institutionName</code>, <code>accountName</code>, <code>accountNumber</code> (the digits shown, masked ones as <code>****1234</code>), <code>statementAccountKind</code> (<code>bank</code>, <code>card</code> or <code>other</code>), <code>currencyCode</code>, <code>bankCode</code>, <code>ledgerBalanceAmount</code>, <code>ledgerBalanceOn</code>, <code>ledgerBalanceTimeZone</code>, <code>monthlyTotals</code> (<code>[{totalMonth, totalAmount}]</code>) and <code>transactionRows</code> (<code>[{postedOn, description, amount, transactionKind, runningBalanceAmount, totalMonth}]</code>), amounts signed with money out negative. Running balances must chain row by row and each month&#39;s rows must come to its total, or nothing is sent and the first row or month that does not add up is named. Without <code>financeAccountId</code> the rows go into the account their number keys, else the one account at the institution of that kind and currency whose last digits the number ends with; several such accounts, or an account at the institution whose digits do not match, are refused and named, unless <code>isNewAccount</code> is true. Only the rows the account does not hold already, matched by day and exact amount, are added. Prints what was imported and what was checked. <code>--dry-run</code> writes nothing and prints the account (existing with its id, and how it was found, or new), how many rows are new and how many already there, each new row, and what was checked</td>
+</tr>
+<tr>
+<td><code>teanode finance rename-statement-account [--account-number DIGITS] &lt;finance-account-id&gt; [name]</code></td>
+<td>gives an account of imported statements your own name, the last digits of its number, or both, which later imports keep; its asset takes the name too unless you renamed it. <code>--account-number</code> takes 4 to 8 digits, for statements that show a word or nothing in place of the number; it is shown as the account&#39;s number and matched against screenshots&#39; digits, and <code>--account-number &quot;&quot;</code> takes yours back so the statement&#39;s shows again</td>
+</tr>
+<tr>
+<td><code>teanode finance delete-statement-account &lt;finance-account-id&gt;</code></td>
+<td>deletes an account of imported statements with its transactions and the assets that value it (asks first); a provider&#39;s account is refused, since its next sync would bring it back</td>
+</tr>
+<tr>
+<td><code>teanode finance statement-import</code></td>
+<td>your statement import address (mailing an OFX file to it imports it) and what the last import did</td>
+</tr>
+<tr>
+<td><code>teanode finance regenerate-statement-import-address</code></td>
+<td>gives the import address a new token; the old address stops taking mail at once (asks first)</td>
+</tr>
+<tr>
+<td><code>teanode finance repair &lt;source-id&gt;</code></td>
+<td>the Plaid page again, to sign in to the same finance source when the institution asks; waits until it syncs again</td>
+</tr>
+<tr>
+<td><code>teanode finance sources|sync|disable-source|enable-source|delete-source</code></td>
+<td>your finance sources, one synced now, switched off or on, or deleted with everything it brought in (asks first); each refuses a source that is not a finance source</td>
+</tr>
+<tr>
+<td><code>teanode finance accounts|transactions|spending-summary</code></td>
+<td>finance accounts with their balances; transactions with <code>--from</code>, <code>--to</code>, <code>--since 30d</code>, <code>--month 2026-09</code>, <code>--text</code>, <code>--finance-account</code>, <code>--is-uncategorized</code> (those that need a spending category, shown as <code>(needs a category)</code>), <code>--duplicate-of &lt;id&gt;</code> (the mirrored copies of one transaction), <code>--is-duplicate-included</code> (the mirrored copies are left out otherwise, and a note says how many), and <code>--offset</code> or <code>--after</code> for the next page, a note saying which rows of how many are shown; a mirrored copy is marked <code>(duplicate of &lt;id&gt;, not counted)</code>; spending and income grouped by <code>--group-by spendingCategory|merchant|month|financeAccount|providerCategory</code></td>
+</tr>
+<tr>
+<td><code>teanode finance credit-usage</code></td>
+<td>what your credit cards owe against their credit limits: the total and the share used in the reporting currency, then each card, highest usage first, with what it owes, its limit, where the limit comes from (<code>provider</code>, or <code>derived</code> as what is owed plus the credit available, or <code>unknown</code>) and its share; the cards left out for want of a limit are counted with what they owe; <code>--currency</code> to convert into another currency</td>
+</tr>
+<tr>
+<td><code>teanode finance trades</code></td>
+<td>buys, sells and securities moved in or out of investment accounts, newest first, with the security, quantity, unit price, amount and fee; <code>--from</code>, <code>--to</code>, <code>--since</code>, <code>--month</code>, <code>--finance-account</code>, <code>--finance-security</code>, and <code>--offset</code> or <code>--after</code> for the next page, a note saying which rows of how many are shown. Trades are never spending; dividends, interest and fees are transactions</td>
+</tr>
+<tr>
+<td><code>teanode finance exchange-rate|convert-currency|reporting-currency|set-reporting-currency</code></td>
+<td>the ECB rate between two currencies on a day (the latest earlier one on a weekend, and it says which), an amount converted, and the currency your totals are shown in; <code>set-reporting-currency --clear</code> goes back to the default</td>
+</tr>
+<tr>
+<td><code>teanode finance net-worth|assets|asset-history|create-asset|update-asset|close-asset|delete-asset|record-valuation|delete-valuation</code></td>
+<td>net worth per day; everything you own or owe with its latest value, and for a holding its security, quantity, unit price and cost basis (in <code>asset-history</code> per day too); <code>create-asset &quot;Car&quot; --kind vehicle --currency USD --value 18000</code> adds one with a first value; <code>record-valuation &lt;asset-id&gt; 16500 --on 2026-09-30</code> records what it is worth; <code>--is-estimate-allowed</code> lets the agent estimate it from the web, which only you can allow</td>
+</tr>
+<tr>
+<td><code>teanode finance spending-categories|create-spending-category|update-spending-category|delete-spending-category</code></td>
+<td>your own list of what money goes on, and the built-in <code>transfer</code> and <code>other</code> categories (the <code>transfer</code> and <code>other</code> columns say which), which can be renamed or hidden but not deleted, made income or given a parent or children</td>
+</tr>
+<tr>
+<td><code>teanode finance spending-rules|create-spending-rule|update-spending-rule|delete-spending-rule</code></td>
+<td>rules that file transactions whose merchant or description contains some words; a new rule applies to earlier transactions too, except where you chose. <code>create-spending-rule &quot;online payment&quot; --spending-category transfer</code> marks what it matches as transfers</td>
+</tr>
+<tr>
+<td><code>teanode finance categorize-transaction &lt;transaction-id&gt;... &lt;spending-category&gt;</code></td>
+<td>change the spending category of one transaction, or of several at once (up to 500, all or none); <code>--create-spending-rule</code> files the merchant that way from now on, and for several saves exactly what <code>propose-spending-rules</code> lists, each placed ahead of the rule that would otherwise win, and prints what it saved and what was left out. <code>categorize-transaction &lt;id&gt; transfer</code> marks money moving between your own accounts as a transfer, neither spending nor income, and any other spending category takes that away. <code>categorize-transaction &lt;id&gt; other</code> files one that fits none of your spending categories under the built-in other category, whatever it is called; there is no <code>none</code>, since a transaction with no spending category is one still to be decided</td>
+</tr>
+<tr>
+<td><code>teanode finance propose-spending-rules &lt;transaction-id&gt;... &lt;spending-category&gt;</code></td>
+<td>the spending rules <code>categorize-transaction --create-spending-rule</code> would save for those transactions (up to 5000, at most 50 rules), saving nothing: one per merchant (or description) unless the rule tried first already files it there, with how many of them each matches, how many other transactions it would also change, and the existing rule it goes ahead of (<code>zoomly eats → Dining</code>); then how many were left out as too short or generic, or for holding a number that changes each time (a long number or a date)</td>
+</tr>
+<tr>
+<td><code>teanode finance count-transaction|undo-count-transaction &lt;transaction-id&gt;</code></td>
+<td>a mirrored copy is the same charge reported again on another investment account of the same Plaid connection (a brokerage&#39;s account-level fee reported on every account, say), listed but left out of every total; <code>count-transaction</code> says this one is a real charge of its own and counts it, and mirror detection leaves it alone from then on; <code>undo-count-transaction</code> takes that back, and detection decides again at once. Counting a transaction that is not a duplicate is refused</td>
+</tr>
+<tr>
+<td><code>teanode finance annotate-transaction &lt;transaction-id&gt; &lt;annotation&gt;</code></td>
+<td>writes what a transaction was for, or <code>--clear</code> takes it away; your agent replaces yours only when you ask it to in a conversation</td>
+</tr>
+<tr>
+<td><code>teanode finance receipts</code></td>
+<td>your receipts, the newest purchase first and those that print no day last, with each one&#39;s check and what it is matched to; <code>--from</code>, <code>--to</code>, <code>--since</code>, <code>--month</code>, <code>--finance-transaction</code>, <code>--is-unmatched</code>, <code>--is-undated</code> (only those that print no day; not with a range), <code>--limit</code>, and <code>--offset</code> or <code>--after</code> for the next page, a note saying which rows of how many are shown</td>
+</tr>
+<tr>
+<td><code>teanode finance budgets|set-budget|budget-status|spending-by-day|cash-flow</code></td>
+<td>monthly budgets per spending category, and on an income category the income you expect each month (<code>budgets</code> says which kind each is); <code>budget-status</code> is this month against each budget, with where the month is heading and its pace (under, on track, at risk, over), then each income category against what was expected by today (behind, on track, ahead), and with <code>--year 2026</code> a calendar year instead, each month at the budget it had then, with the budget to date, the months budgeted and where the year is heading; spending day by day against last month; income and spending by month</td>
+</tr>
+<tr>
+<td><code>teanode finance saving-summary</code></td>
+<td>the month&#39;s saving in the reporting currency: income budgets less spending budgets, against income less spending so far and where the month is heading, with the difference and its pace (behind, on track, ahead); <code>--month</code> for another month, <code>--year</code> for a calendar year (the year to date for this one), counting only the months with a budget and saying which, or with no budget that year its income, spending and what was left, <code>--currency</code> to convert into another currency</td>
+</tr>
+<tr>
+<td><code>teanode finance savings-targets|create-savings-target|update-savings-target|close-savings-target</code></td>
+<td>amounts to save by a day, with what they need a month from now on, measured by <code>--measure cash_flow</code> (money not spent, the default), <code>net_worth</code> (net worth gained since <code>--started-on</code>, recorded for you unless <code>--starting-amount</code> says otherwise) or <code>asset_value</code> (what <code>--finance-account</code> and <code>--asset</code> are worth; a whole finance account counts its cash and every holding, those bought later too)</td>
+</tr>
+</tbody></table>
+<h3>teanode computer</h3>
+<p>Your own computer, attached to your agent. While the program runs, the
+agent has two more tools — <code>shell</code>, which runs a command here, and
+<code>filesystem</code>, which reads, edits, writes, copies, lists, searches and greps your files —
+as you, anywhere on the machine, the way a terminal of yours would. A
+scheduled run, a goal and a dream use them too, with nobody watching; what
+would ask you first is refused then, unless you allowed that kind of thing
+for when you are away. The runs that read mail from strangers (sorting,
+drafting, research) only read and never see it. A command
+that changes the machine or reaches out of it (removing, moving,
+installing, sudo, pushing, ssh, and the graver shapes) asks you first, on
+the card in the drawer or on the terminal, and so do a file moved or
+deleted and a write into what the machine runs on its own (a shell&#39;s
+startup file, keys, autostart); nothing is refused on your behalf — your
+yes is the last word. The card is the server&#39;s: the program runs what
+the server sends, so it trusts the server the way a terminal trusts the
+person at it. The program signs in as you, with the active profile&#39;s
+token, never as the server. Several computers can be attached at once,
+told apart by name. A command runs under <code>/bin/sh -c</code> (<code>cmd /C</code> on
+Windows), not your login shell, so your aliases are not in scope. The
+program answers every request as it comes, however many are running.</p>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>teanode computer start [--name NAME]</code></td>
+<td>run the program in the background; <code>--name</code> is what to call this computer (the host name by default). Its log is <code>~/.config/teanode/computer.log</code></td>
+</tr>
+<tr>
+<td><code>teanode computer status</code></td>
+<td>whether the program runs here, and which computers of yours the server sees</td>
+</tr>
+<tr>
+<td><code>teanode computer stop</code></td>
+<td>end the program</td>
+</tr>
+<tr>
+<td><code>teanode computer daemon [--name NAME]</code></td>
+<td>the same program in the foreground, reconnecting when the connection drops, until interrupted — for a terminal, or a service manager</td>
+</tr>
+<tr>
+<td><code>teanode computer background list [--conversation ID]</code></td>
+<td>the commands the agent&#39;s shell left running in the background on your computers, and the ones that ended lately, newest first: one line each with its id, the computer, where it stands (<code>running</code>, <code>exit N</code>, <code>stopped</code>, or <code>stopped after 24 hours</code> when it ran as long as a background command may), when it started in your local time, and the command. <code>--conversation</code> keeps to the ones one conversation started</td>
+</tr>
+<tr>
+<td><code>teanode computer background read &lt;computer&gt; &lt;id&gt; [--tail BYTES]</code></td>
+<td>the last of what one of them wrote: its output on standard output, then its errors on standard error, with a line saying when either was cut and a last line saying where it stands. <code>--tail</code> is how much of the end of each stream to print, 64 KiB by default and 256 KiB at most</td>
+</tr>
+<tr>
+<td><code>teanode computer background stop &lt;computer&gt; &lt;id&gt;</code></td>
+<td>end one of them. The agent that started it hears that it ended, as it does of any ending it did not ask for</td>
+</tr>
+<tr>
+<td><code>teanode computer herdr list [--computer NAME]</code></td>
+<td>the Claude Code and Codex sessions in herdr on your computers: each pane&#39;s name as herdr shows it (the workspace, the tab when there are several, and the agent when a tab holds more than one, such as <code>website › review › Codex</code>), which every other command takes as <code>&lt;pane&gt;</code> as well as its id, then its state (<code>idle</code>, <code>working</code>, <code>asking</code>, <code>unknown</code>, as the program on the computer decides it), the directory and the title, then each question waiting with its fingerprint and numbered options</td>
+</tr>
+<tr>
+<td><code>teanode computer herdr read &lt;pane&gt; [--computer NAME] [--turns N]</code></td>
+<td>a session&#39;s last turns from its history file, 10 by default and 100 at most</td>
+</tr>
+<tr>
+<td><code>teanode computer herdr screen &lt;pane&gt; [--computer NAME] [--lines N]</code></td>
+<td>what the pane shows now, or its last <code>--lines</code> lines</td>
+</tr>
+<tr>
+<td><code>teanode computer herdr send &lt;pane&gt; &lt;text&gt; [--computer NAME]</code></td>
+<td>type the text into the pane and press enter; a session at work reads it as a message in its turn. Refused while the session asks a question</td>
+</tr>
+<tr>
+<td><code>teanode computer herdr wait &lt;pane&gt; [--computer NAME] [--seconds N]</code></td>
+<td>wait for the session to stop working, 30 seconds by default and 600 at most</td>
+</tr>
+<tr>
+<td><code>teanode computer herdr answer &lt;pane&gt; --fingerprint F --option N [--option N] [--text TEXT]</code></td>
+<td>answer the question the session waits on, with the options&#39; numbers, or <code>--text</code> for the option that takes text. Refused when the question is no longer the one with that fingerprint. Without <code>--fingerprint</code> it prints the question and its fingerprint</td>
+</tr>
+<tr>
+<td><code>teanode computer herdr watch &lt;pane&gt; --conversation ID</code></td>
+<td>wake that conversation when the session next finishes its turn</td>
+</tr>
+<tr>
+<td>`teanode computer herdr open &lt;claude</td>
+<td>codex&gt; <directory> [--computer NAME] [--name NAME] [--skip-permissions]`</td>
+</tr>
+<tr>
+<td><code>teanode computer herdr close &lt;pane&gt; [--computer NAME]</code></td>
+<td>end the session&#39;s coding agent and close its pane; refused while it works. What it said stays in its history</td>
+</tr>
+<tr>
+<td><code>teanode computer herdr setup [--computer NAME] [--remove]</code></td>
+<td>put TeaNode&#39;s reporting hooks into Claude Code&#39;s settings on that computer, beside the ones there, or take them out</td>
+</tr>
+</tbody></table>
+<p>The operator can keep computers off for the whole server with
+<code>agent.features.computer</code>.</p>
+<h2>Documentation</h2><h3>Getting started</h3><ul><li><a href="/doc/introduction">What is TeaNode</a>: Send and receive mail at your own domains: mailboxes read here or over IMAP, forwarding, what it does, and what you need to run it.</li><li><a href="/doc/quick-start">Quick start</a>: TeaNode running with docker compose in a few minutes: the assistant first, with no domain, then mail at your own domain if you want it.</li><li><a href="/doc/getting-started">Getting started</a>: Standing up a mail server for one domain, from nothing to mail arriving in a mailbox you can read in a mail program, including the DNS records and the port 25 problem.</li></ul><h3>Running it</h3><ul><li><a href="/doc/deploying">Deploying</a>: The container image and the compose file, what runs beside the server, how it upgrades itself, and what to back up.</li><li><a href="/doc/configuration">Configuration</a>: Where the settings live, the environment variables that say how to reach them, and every field an operator can set.</li><li><a href="/doc/agents">Agents</a>: The personal agent: what it needs, what it does with a mailbox, and what to weigh before turning it on.</li><li><a href="/doc/memory">Memory</a>: What your agent keeps between conversations: a graph of pages it writes without being asked, the places it reads from, and what it does with all of it in its dreams.</li><li><a href="/doc/voice">Voice</a>: Call your agent from the chat drawer: say what you want, hear the answer as it is written, and cut in when you like. On a laptop or a phone.</li><li><a href="/doc/coding-sessions">Coding sessions</a>: Your Claude Code and Codex sessions in herdr, on every computer you attached: your agent reads them, types into them where you can see, and brings you their questions to answer from anywhere.</li><li><a href="/doc/coding-memory">Memory in coding sessions</a>: Claude Code and Codex shown what your agent knows about the checkout they run in: the project page and the last session when one starts, recall kept to the project before each prompt, and the transcript read within a minute.</li><li><a href="/doc/mcp">Model Context Protocol</a>: TeaNode on both ends of the protocol: answering it, so your editor can use your agent's tools and ask it questions, and connecting out to servers of your own.</li><li><a href="/doc/finance">Finance</a>: Your banks, cards and brokerages linked through Plaid or SimpleFIN: transactions in your own categories, budgets that say where the month is heading, savings targets, net worth, and a tax year put together from your paystubs, W-2s, 1099s and 1098s, all kept in your own database.</li><li><a href="/doc/command-line">The command line</a>: The two programs: the server and the few things only its host can do, and the client that administers it from anywhere through the API.</li></ul><h3>Security</h3><ul><li><a href="/doc/security">Reporting a security problem</a>: Where to report something exploitable, what is in scope, and what is not.</li><li><a href="/doc/security-review">Security review</a>: A review of the whole program: what was examined, what was found, what was fixed, and what is still open.</li></ul><h3>Contributing</h3><ul><li><a href="/doc/contributing">Contributing</a>: Naming, comments, the invariants that bite, tests, commits and the changelog that cuts a release.</li><li><a href="/doc/local-development">Local development</a>: Getting a working build and a database to point it at, a development server that cannot send mail, and the optional scanners.</li><li><a href="/doc/project-structure">Project structure</a>: What each package is for and which way the dependencies point.</li></ul><p>Every document is also plain markdown, listed in <a href="/llms.txt">/llms.txt</a>.</p></div></div></body></html>

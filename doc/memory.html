@@ -20,4 +20,269 @@ window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-XD5JSLP4RH', {send_page_view: false});
-</script><script type="module" crossorigin src="/static/teanode.B4qXBTfP.js"></script></head><body><div id="teanode"></div></body></html>
+</script><script type="module" crossorigin src="/static/teanode.B4qXBTfP.js"></script></head><body><div id="teanode"><style>.teanode-static{max-width:760px;margin:0 auto;padding:24px 16px 48px;font:16px/1.6 system-ui,sans-serif;opacity:0;animation:teanode-static 0s 2s forwards}.teanode-static pre{overflow-x:auto}@keyframes teanode-static{to{opacity:1}}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .teanode-static{color:#e8e8ea}:root:not([data-theme=light]) .teanode-static a{color:#9ccc65}}:root[data-theme=dark] .teanode-static{color:#e8e8ea}:root[data-theme=dark] .teanode-static a{color:#9ccc65}</style><div class="teanode-static"><p><a href="/">TeaNode</a> · <a href="/doc">Documentation</a> · <a href="https://github.com/ziyan/teanode">Source</a></p><h1>Memory</h1><p>An agent that forgets you between conversations is a search box with
+manners. This page is what your agent keeps, how it gets there without you
+asking, where else it reads from, and what it does with all of it while
+nobody is talking to it.</p>
+<p>None of it happens until you turn your agent on and grant it something. What
+is written here describes a switch you threw.</p>
+<h2>The shape of it</h2>
+<p>What your agent knows is a <strong>graph of pages</strong>, not a list of notes.</p>
+<p>A <strong>page</strong> is something your life has a name for: a person, a project, an
+organization, a place, a thing, a topic, a stretch of time. It lives at a
+path — <code>people/alice-chen</code>, <code>projects/greenfinch</code>, <code>time/2026/09</code> — and that path is
+its address everywhere: in the prompt, in a citation, on the command line,
+and in the dashboard&#39;s own URL.</p>
+<p>A <strong>fact</strong> is one sentence on a page, numbered. <code>people/alice-chen#3</code> is the
+third thing your agent knows about Alice, and that is how it cites her in an
+answer and how you find the line again. Numbers are never reused, so striking
+#3 does not hand that number to the next thing written. Every fact carries
+the words it came from and what they came from — a conversation, a message, a
+file — so a line can be checked; the dashboard says which lines can and which
+cannot.</p>
+<p>A fact carries two dates, because they answer different questions: when it
+was true, and when your agent learned it. &quot;They moved to Rivermouth&quot; happened in
+2019 and was learned last Tuesday, and a question about 2019 wants the first.</p>
+<p>A <strong>link</strong> joins two pages and says how. Not &quot;related&quot;: <code>works_on</code>,
+<code>member_of</code>, <code>knows</code>, <code>owns</code>, <code>uses</code>, <code>located_in</code>, <code>decided_in</code>, <code>about</code>,
+<code>part_of</code>. Each reads both ways round — the link from Alice to a project
+says &quot;works on&quot; from her page and &quot;is worked on by&quot; from the project&#39;s — and
+a link nothing has touched in a long time is said in the past tense, which is
+the smallest honest way to show it may no longer be true.</p>
+<p>You read and correct all of it on <strong>Settings → Knowledge</strong>, and everything
+there is on the command line too:</p>
+<pre><code>teanode agent memory index                      # the top of the graph
+teanode agent memory get people/alice-chen
+teanode agent memory note projects/greenfinch &quot;Terms moved to ninety days&quot;
+teanode agent memory link people/alice-chen projects/greenfinch --relation works_on
+teanode agent memory move notes/marigold things
+teanode agent memory merge work/old-portal projects/greenfinch
+teanode agent memory history projects/greenfinch
+</code></pre>
+<p>A page also has <strong>other names</strong>. What you call a thing in conversation is
+rarely its heading — &quot;the portal&quot;, &quot;Greenfinch&quot;, &quot;the claims thing&quot; — and an
+alias is how your agent finds the page under the name you used. They sit
+beside the page&#39;s name on the Knowledge page and on <code>memory page --alias</code>.</p>
+<h2>It writes without being asked</h2>
+<p>The first version of this asked the model to write memory during a turn. Over
+456 turns on a real server it wrote two, and both were tests. Given a task
+and a memory tool, a model does the task.</p>
+<p>So writing is not in the turn. A job runs once a conversation goes quiet,
+reads what was said, and files what it taught: pages found or made, facts
+added with their quotes, links drawn. It knows where it got to, so it never
+reads the same exchange twice and never skips one. What you said on Tuesday
+is there on Wednesday.</p>
+<p>Nothing is filed twice under two names. Every writer goes through one
+resolver that looks for an existing page three ways before making one — by
+path, by name or alias among the pages under the same parent, and by meaning
+— because a graph&#39;s real failure is not forgetting, it is ending up with
+&quot;Portal&quot;, &quot;the portal&quot;, <code>projects/portal</code> and <code>work/portal</code> as four pages
+that each know a quarter of it.</p>
+<h2>Where else it reads from</h2>
+<p>Conversations are not where most of what you know lives. Point your agent at
+where it does, and it keeps a searchable, citable copy.</p>
+<p>Every source is of a <strong>type</strong>, and a type says how to read one kind of place.
+The signed registry has a folder on your computer (notes, documents, and git
+checkouts with their history), your dated notes, your own sent mail, a
+website, a news feed, your Gmail and your Google Drive, GitHub, and your
+Claude Code and Codex conversations. Most of them run a command line tool
+already signed in on the computer, so what they reach is what that tool
+reaches. A type that needs a token says so, and you fill it in for each
+source, from the dashboard or the command line, where it is sealed before it
+is stored. A type of your own can be added from a file as well; it is marked
+local, because nothing signed it.</p>
+<pre><code>teanode agent source-type search
+teanode agent source-type install rss
+teanode agent knowledge add &quot;releases&quot; --type rss --setting url=https://example.com/feed.xml
+teanode agent knowledge secret set releases token
+</code></pre>
+<p>A folder needs no install:</p>
+<pre><code>teanode agent knowledge add &quot;work&quot; ~/work --computer laptop --under work
+teanode agent knowledge sync work
+teanode agent knowledge pause work      # stop reading, keep what it found
+teanode agent knowledge set work --cron &quot;0 4 * * *&quot; --under projects
+</code></pre>
+<p><code>set</code> changes a source where it stands and leaves alone everything you did
+not mention. Before it existed, correcting the hour a source is read meant
+removing it and adding it again, which forgets every document it ever read
+and pays for the first pass twice. Edit, on the source&#39;s row in the
+dashboard, is the same thing.</p>
+<p>A <code>computer</code> source is read <strong>on the computer</strong>. The walking, the sniffing
+and the refusing all happen in the daemon you run on your own machine, and
+only text that passed the filter crosses the socket. Inside a repository the
+manifest is what git tracks, so a build tree nobody committed is never read.
+A file is text when it decodes as text, not when its extension says so. A
+file whose name looks like a key or an environment file is refused, and so is
+any passage that looks like a private key, a token or a credential — refused
+on the machine, counted, and named in the source&#39;s log, so a mistake in the
+server cannot widen it.</p>
+<p>A picture that came with a thread or a message is kept too. A dream looks
+first at what it can see for nothing — the file&#39;s name, its size, the thread
+it arrived in — and decides which are worth opening, because describing a
+picture costs money and most of them are avatars. What it opens, the model
+reads out: the error on the screen, the identifier, the timestamp, which
+becomes the file&#39;s text and is searchable and quotable like anything else.
+What it decides against keeps its bytes and carries the reason in plain
+words, and the source&#39;s page counts all three. A computer with <code>pdftoppm</code> and
+<code>tesseract</code> installed reads scanned PDFs, and office files made of pictures,
+the same way, in every language tesseract has there.</p>
+<p>Everything read from a source is data, never instructions. It reaches the
+model the way a fetched web page does.</p>
+<p>Which commits are <strong>yours</strong> is decided by the addresses on the contact card
+you have marked as yourself, so mark one: <code>teanode contact me &lt;id&gt;</code>. A source
+that finds commits by addresses it cannot place lists them and points you at
+the address book, rather than quietly attributing none of your work to you.</p>
+<h2>Searching it yourself</h2>
+<p>Until this, the only thing that could look through your own documents was
+your agent, which meant asking it and paying for the turn. Now you can ask
+directly:</p>
+<pre><code>teanode agent knowledge search &quot;the migration that failed&quot;
+teanode agent knowledge read &lt;document-id&gt; --from 4000
+</code></pre>
+<p>It is the search the agent&#39;s knowledge tool runs, over the same passages,
+ranked the same way. An identifier is looked up exactly before anything else:
+paste <code>ComputeShippingQuote</code> and the file and line that define it come
+back above the passages. Each passage sits under the document it came from,
+with the identifier that reads that document back. <code>read</code> takes that
+identifier, <code>--from</code> says where in the text to start, and a read that stops
+short prints the command that carries on.</p>
+<p>On the Knowledge page this is &quot;Search what it read&quot;. Read opens a document in
+place, Read on adds the next stretch.</p>
+<p>Ranking is by meaning as well as by words where the server has an embedding
+model. Where it has none the answer says so, and a paraphrase that shares no
+word with your question will not be found.</p>
+<h2>Why it did not know that</h2>
+<p>Something plainly written on a page can still never reach an answer, and from
+outside there is no telling whether recall missed it, a dream retired it, or
+it is worded so that nothing matches. Ask what a question would carry:</p>
+<pre><code>teanode agent memory recall &quot;when does the portal ship?&quot;
+</code></pre>
+<p>Back come the pages that turn would be handed, with the facts on each
+numbered as the page numbers them. It is the recall a real turn does, so the
+answer is the real one. Nothing is said to a model and nothing is marked as
+used, so you can run it as often as you like while you correct a page, and
+the same graph answers the same way twice. On the Knowledge page this is
+&quot;What would it recall?&quot;.</p>
+<p>Now and then the agent checks for itself: in your main conversation it asks
+you to confirm a few things it remembers, with the answers as buttons, and the
+Memory tab shows those questions and how it scored against them over time.
+Memory checks can be switched off in the agent&#39;s settings.</p>
+<p><code>teanode agent memory evaluate &lt;file&gt;</code> puts a whole set of questions through
+the same path and says, per question, whether the facts it needed were
+carried, with totals and a non-zero exit when any missed. Run it before and
+after a dream to see what the dream changed. <code>teanode agent memory answers &lt;file&gt;</code> goes one step further and grades the answers themselves against
+yours: from memory alone, from your sources alone, and from both.</p>
+<h2>The big picture</h2>
+<p>Facts answer questions a fact is close to. A question about a whole, such as
+what the strengths and weaknesses of the thing your repositories make up are,
+has no fact close to it, and recall used to answer it with a handful of
+scattered details. Four layers above the facts answer it now, each written
+from the one below.</p>
+<p><strong>Components and dependencies.</strong> For code, the computer reads each checkout&#39;s
+build files and sends its components and what it depends on. A component with
+a build file of its own becomes a page under the checkout&#39;s page, and each
+dependency becomes a link between them with the build file as its evidence.</p>
+<p><strong>Overviews.</strong> In its dreams the agent writes a short overview on each page that
+has something to say: what it is, its parts, how it relates to what it is
+linked to, what has been happening, what stands out. Deeper pages go first, so
+a page&#39;s overview reads its children&#39;s, and a page nothing touched is not
+written again.</p>
+<p><strong>Themes and reflections.</strong> Pages more linked to each other than to the rest
+are grouped into themes, and themes into larger ones. Each dream asks a few
+themes for what the overviews alone do not say: a pattern that repeats, a
+tension, a risk, a question nobody answered. Each observation has to cite at
+least two pages or facts it was shown, or it is dropped.</p>
+<p><strong>The survey.</strong> A broad question is put to every overview in scope at once,
+each run free to look things up but not to change anything, and the parts are
+combined into one report that keeps its citations. Ask your agent, and the
+conversation is woken with the report when it is ready; or from a terminal:</p>
+<pre><code>teanode agent survey &quot;what are the weak spots in the claims system?&quot;
+teanode agent memory overview projects/greenfinch
+</code></pre>
+<p>Overviews, reflections and a survey&#39;s parts run on the <code>synthesize</code> model, so
+the judgments can go to a better model than the bulk of a dream&#39;s reading.</p>
+<h2>What it does in its dreams</h2>
+<p>When you have been quiet for half an hour, inside hours you set, and not more
+than once every six, your agent works over its own graph. It has its own
+share of the day&#39;s budget — thirty per cent by default — so it never eats
+your day, and it never deletes anything.</p>
+<p>It reads what arrived, newest and most yours first: what you wrote, then what
+you took part in, then the rest. A chat archive is read only where you were
+in the thread; a quarter of a million other people&#39;s conversations is years
+of reading and none of your business, so they stay searchable and unread.</p>
+<p>It writes up the month. <code>time/2026/09</code> is a page like any other, built from a
+digest assembled without a model at all — commits by repository, the threads
+you took part in, your own notes, with the noise dropped — and then written
+up in your own words. That is one call a dream for the month in hand.</p>
+<p>It rewrites the pages that changed, merges facts that say the same thing, and
+divides a page that has outgrown itself into themed children. It reweighs the
+links: every link is downscaled a little, then any link whose both ends you
+used today rises, so a link used today ends the dream above where it started.
+Facts nothing has wanted in half a year stop arriving uninvited — they are
+still there when you search.</p>
+<p>Then it walks the graph from what matters, five steps, and asks whether two
+pages that are connected but not adjacent have a real relation. &quot;No&quot; is the
+ordinary answer. When it is &quot;yes&quot; a link is written with the sentence that
+justifies it, at half the weight of one you stated: it earns the rest by
+being useful. This is the only part that adds a relation nobody typed, and it
+is the whole reason to keep a graph rather than a list.</p>
+<p>Last, it writes down the questions you are most likely to ask tomorrow, tries
+each against its own memory, and records the ones it could not answer. Nobody
+reads the answers; the failures are the point. A gap found at three in the
+morning costs one model call. The same gap found mid-conversation is you
+watching your agent say it does not know. Gaps are written down and never
+filled — a run with nobody present inventing answers to its own questions is
+how a graph fills with fiction.</p>
+<pre><code>teanode agent dream log             # what the last ones did
+teanode agent dream now             # start one now, whatever its hours
+teanode agent dream bootstrap on    # read everything, as fast as it can
+</code></pre>
+<p>Every call a dream makes is an ordinary run you can open and read, and the
+sentence at the top of the agent page says what the last dream came to.</p>
+<h2>What it costs</h2>
+<p>A first ingest is years of record at once. Point <code>models.scan</code> at a model of
+your own — an OpenAI-compatible server such as Ollama, llama.cpp or vLLM,
+declared as a provider at zero price — and the reading costs nothing but the
+machine&#39;s time. On a metered service a dream is still bounded by its share
+of the daily budget, and by the caps your operator set.</p>
+<p>Searching by meaning uses the <code>pgvector</code> extension where the database has it,
+and where it does not, everything works as before over a bounded candidate
+set. The compose file ships an image that has it.</p>
+<h2>Nothing is deleted</h2>
+<p>Every change files a revision against the page: what changed, who changed it
+(you, the agent, the job that files conversations, a dream, a source being
+read) and what was there before. Without the &quot;before&quot; a history can be read
+but not undone, which is the half you want at the moment you go looking.
+Without the actor, a page a dream wrote and a page you wrote look
+identical.</p>
+<p>A page a dream retires is marked dormant, not deleted: out of the index,
+still findable by search. Deleting is yours to do, and deleting a page
+deletes what is under it.</p>
+<p>Every page and fact also carries the build that last wrote it, so a rule
+written today reaches a graph filled last month: the first thing a dream does
+is offer everything an older build wrote to the rules as they stand and strike
+what fails them, in the page&#39;s history, with the words it used to say.</p>
+<h2>Before you point it at something</h2>
+<p>Unless you are running the model yourself, it is a third party, and what your
+agent sends it is what left your server. Three things follow.</p>
+<p>Add one source and read what it made before adding the next. A source is a
+decision about everything under a path, and turning on search by meaning
+sends what is already there, not only what arrives next.</p>
+<p>If the material is sensitive, point the agent at an Ollama or a vLLM of your
+own. The same features run, the quality of the filing is down to the model,
+and nothing leaves the machine.</p>
+<p>Read <code>agent.features</code> before you open this to everybody. That is where an
+operator says what people may turn on — an operator who wants sorting but not
+knowledge sources should say so there, rather than relying on nobody
+finding the switch.</p>
+<h2>What to read next</h2>
+<ul>
+<li><a href="/doc/agents">Agents</a> is the rest of the personal agent: what it needs,
+what it does with a mailbox, and what an operator turns on.</li>
+<li><a href="/doc/configuration#agent">Configuration</a> records every key under <code>agent</code>,
+including <code>agent.limits</code>, the dream&#39;s share, and the scan model.</li>
+<li><a href="/doc/command-line#teanode-agent">The command line</a> covers <code>teanode agent memory</code>, <code>knowledge</code> and <code>dream</code> in full.</li>
+<li><a href="/doc/coding-memory">Memory in coding sessions</a> is how Claude Code and
+Codex are shown this memory as they work.</li>
+</ul>
+<h2>Documentation</h2><h3>Getting started</h3><ul><li><a href="/doc/introduction">What is TeaNode</a>: Send and receive mail at your own domains: mailboxes read here or over IMAP, forwarding, what it does, and what you need to run it.</li><li><a href="/doc/quick-start">Quick start</a>: TeaNode running with docker compose in a few minutes: the assistant first, with no domain, then mail at your own domain if you want it.</li><li><a href="/doc/getting-started">Getting started</a>: Standing up a mail server for one domain, from nothing to mail arriving in a mailbox you can read in a mail program, including the DNS records and the port 25 problem.</li></ul><h3>Running it</h3><ul><li><a href="/doc/deploying">Deploying</a>: The container image and the compose file, what runs beside the server, how it upgrades itself, and what to back up.</li><li><a href="/doc/configuration">Configuration</a>: Where the settings live, the environment variables that say how to reach them, and every field an operator can set.</li><li><a href="/doc/agents">Agents</a>: The personal agent: what it needs, what it does with a mailbox, and what to weigh before turning it on.</li><li><a href="/doc/memory">Memory</a>: What your agent keeps between conversations: a graph of pages it writes without being asked, the places it reads from, and what it does with all of it in its dreams.</li><li><a href="/doc/voice">Voice</a>: Call your agent from the chat drawer: say what you want, hear the answer as it is written, and cut in when you like. On a laptop or a phone.</li><li><a href="/doc/coding-sessions">Coding sessions</a>: Your Claude Code and Codex sessions in herdr, on every computer you attached: your agent reads them, types into them where you can see, and brings you their questions to answer from anywhere.</li><li><a href="/doc/coding-memory">Memory in coding sessions</a>: Claude Code and Codex shown what your agent knows about the checkout they run in: the project page and the last session when one starts, recall kept to the project before each prompt, and the transcript read within a minute.</li><li><a href="/doc/mcp">Model Context Protocol</a>: TeaNode on both ends of the protocol: answering it, so your editor can use your agent's tools and ask it questions, and connecting out to servers of your own.</li><li><a href="/doc/finance">Finance</a>: Your banks, cards and brokerages linked through Plaid or SimpleFIN: transactions in your own categories, budgets that say where the month is heading, savings targets, net worth, and a tax year put together from your paystubs, W-2s, 1099s and 1098s, all kept in your own database.</li><li><a href="/doc/command-line">The command line</a>: The two programs: the server and the few things only its host can do, and the client that administers it from anywhere through the API.</li></ul><h3>Security</h3><ul><li><a href="/doc/security">Reporting a security problem</a>: Where to report something exploitable, what is in scope, and what is not.</li><li><a href="/doc/security-review">Security review</a>: A review of the whole program: what was examined, what was found, what was fixed, and what is still open.</li></ul><h3>Contributing</h3><ul><li><a href="/doc/contributing">Contributing</a>: Naming, comments, the invariants that bite, tests, commits and the changelog that cuts a release.</li><li><a href="/doc/local-development">Local development</a>: Getting a working build and a database to point it at, a development server that cannot send mail, and the optional scanners.</li><li><a href="/doc/project-structure">Project structure</a>: What each package is for and which way the dependencies point.</li></ul><p>Every document is also plain markdown, listed in <a href="/llms.txt">/llms.txt</a>.</p></div></div></body></html>

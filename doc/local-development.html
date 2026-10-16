@@ -20,4 +20,136 @@ window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-XD5JSLP4RH', {send_page_view: false});
-</script><script type="module" crossorigin src="/static/teanode.B4qXBTfP.js"></script></head><body><div id="teanode"></div></body></html>
+</script><script type="module" crossorigin src="/static/teanode.B4qXBTfP.js"></script></head><body><div id="teanode"><style>.teanode-static{max-width:760px;margin:0 auto;padding:24px 16px 48px;font:16px/1.6 system-ui,sans-serif;opacity:0;animation:teanode-static 0s 2s forwards}.teanode-static pre{overflow-x:auto}@keyframes teanode-static{to{opacity:1}}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .teanode-static{color:#e8e8ea}:root:not([data-theme=light]) .teanode-static a{color:#9ccc65}}:root[data-theme=dark] .teanode-static{color:#e8e8ea}:root[data-theme=dark] .teanode-static a{color:#9ccc65}</style><div class="teanode-static"><p><a href="/">TeaNode</a> · <a href="/doc">Documentation</a> · <a href="https://github.com/ziyan/teanode">Source</a></p><h1>Local development</h1><p>How to get a working TeaNode build and a database to point it at. For what the
+pieces are and how they fit together, see <a href="https://github.com/ziyan/teanode/blob/main/AGENTS.md"><code>AGENTS.md</code></a> in the repository root. For
+the conventions your change has to follow, see <a href="https://github.com/ziyan/teanode/blob/main/docs/coding/coding-standards.md"><code>docs/coding/coding-standards.md</code></a>,
+and for the dashboard <a href="https://github.com/ziyan/teanode/blob/main/docs/coding/frontend-design.md"><code>docs/coding/frontend-design.md</code></a>.</p>
+<h2>Prerequisites</h2>
+<ul>
+<li>Go 1.25 or newer</li>
+<li>Node 20 or newer, for the dashboard</li>
+<li>Docker, for the PostgreSQL the tests use</li>
+<li>Optional: the local naming checks that <code>make lint</code> runs; <code>make lint</code> skips
+them, with a note, when they are not installed</li>
+</ul>
+<h2>Build and test</h2>
+<pre><code>make build          # build/teanode-server and build/teanode, the client
+make web            # build the dashboard into internal/frontend/static
+make                # format, build, test
+make test           # tests; starts a PostgreSQL container automatically
+make lint           # golangci-lint plus the local naming checks
+make lint-ci        # only what CI runs
+</code></pre>
+<p>To run one package&#39;s tests:</p>
+<pre><code>go test -mod=vendor -v ./internal/util/dkim -run TestVerify
+</code></pre>
+<p>Dependencies are vendored. After changing <code>go.mod</code>, run <code>go mod tidy &amp;&amp; go mod vendor</code> and commit the <code>vendor/</code> change with it.</p>
+<h2>The short way</h2>
+<pre><code>make dev
+</code></pre>
+<p>That starts PostgreSQL and MinIO, writes <code>dev/.env</code> if it is missing, sets the
+database up from it, generates a self-signed certificate, and runs the server.
+<code>make dev-frontend</code> runs the dashboard&#39;s own dev server beside it.</p>
+<p>Everything below is the same thing by hand.</p>
+<h2>PostgreSQL</h2>
+<p><code>make dev-up</code> starts one, and the tests start their own. A server you run
+entirely by hand needs one:</p>
+<pre><code>docker run --restart always --name teanode-postgres \
+  --env POSTGRES_DB=teanode \
+  --env POSTGRES_USER=teanode \
+  --env POSTGRES_PASSWORD=teanode \
+  --publish 127.0.0.1:5432:5432 \
+  -d postgres
+</code></pre>
+<p>A shell on it:</p>
+<pre><code>docker exec -it teanode-postgres psql -U teanode teanode
+</code></pre>
+<p>To wipe the schema and let the server rebuild it from migrations:</p>
+<pre><code>docker exec -it teanode-postgres psql -U teanode teanode \
+  -c &#39;DROP SCHEMA public CASCADE; CREATE SCHEMA public;&#39;
+</code></pre>
+<h2>Running a development server</h2>
+<p>Configuration lives in the database, and the environment says where that is.
+<code>scripts/dev-config.bash</code> writes a <code>dev/.env</code> that is safe on a laptop:</p>
+<ul>
+<li><code>TEANODE_LISTEN_SMTP_INCOMING=127.0.0.1:10025</code> and
+<code>TEANODE_LISTEN_SMTP_OUTGOING=127.0.0.1:10587</code>, so you do not need root to
+bind ports 25 and 587</li>
+<li><code>TEANODE_LISTEN_HTTP=127.0.0.1:10081</code>, <code>TEANODE_LISTEN_HTTPS=</code> (empty, which
+turns the HTTPS listener off)</li>
+<li><code>TEANODE_TLS_ACME_ENABLED=false</code>, since a development box has no public name</li>
+<li><code>TEANODE_SMTP_DISABLE_SEND=true</code>, so a mistake in an alias cannot mail a
+stranger</li>
+<li><code>TEANODE_S3_*</code> pointing at the MinIO <code>make dev-up</code> starts</li>
+</ul>
+<p>Those describe the server only on the first run against an empty database.
+After that the database holds the answer, and the server warns about any of
+them that disagree. To start over, <code>make dev-clean</code>.</p>
+<pre><code>set -a; . ./dev/.env; set +a
+./build/teanode-server config init
+./build/teanode-server tls self-signed
+./build/teanode-server run --log-level DEBUG
+</code></pre>
+<p>With that environment in your shell, the client reaches that server over
+loopback with nothing else set up: <code>teanode domain list</code>, <code>teanode dkim show example.com</code>, <code>teanode user list</code>. From another shell, sign in instead with
+<code>teanode auth login --url http://127.0.0.1:10081</code>.</p>
+<p>Send it a message with <code>swaks</code>:</p>
+<pre><code>swaks --to hello@example.com --from someone@webmail.example --server 127.0.0.1:10025
+</code></pre>
+<p>The sender has to be at a real domain that publishes mail servers and does
+not ask for failures to be refused: every reserved example domain now
+publishes a DMARC policy of <code>reject</code>, so a message &quot;from&quot; <code>someone@example.net</code>
+is turned away at the door, which is correct and unhelpful, and
+<code>webmail.example</code> above stands for a domain of your choosing. One with a
+policy of <code>none</code> — most large webmail providers — is scored and accepted.
+The server also refuses a sender whose domain has no MX record at all.</p>
+<p>To receive into a mailbox rather than forward, point an alias of kind
+&quot;mailbox&quot; at yours on the domain&#39;s Aliases tab, and send to that address.
+A second local account&#39;s mailbox is the easiest way to see a message land
+in both places: send from one to the other with <strong>New message</strong>.</p>
+<h2>Optional services</h2>
+<p>Both are off by default. Turn them on in the dashboard, or in an exported
+configuration loaded back with <code>teanode-server config import</code>, only when you are
+working on that code path.</p>
+<h3>SpamAssassin</h3>
+<pre><code>docker run --restart always --name spamassassin \
+  --publish 127.0.0.1:783:783 \
+  --env &#39;UPDATE_PERIOD=*/15 * * * *&#39; \
+  -d tiredofit/spamassassin
+</code></pre>
+<p>Score a message by hand, which is what <code>internal/util/spamc</code> does:</p>
+<pre><code>(echo -en &#39;SYMBOLS SPAMC/1.5\r\n\r\n&#39;; cat message.eml) | nc -q0 localhost 783
+
+SPAMD/1.1 0 EX_OK
+Content-length: 154
+Spam: False ; -0.2 / 5.0
+
+DKIM_SIGNED,DKIM_VALID,FREEMAIL_FROM,HTML_MESSAGE,SPF_PASS,URIBL_BLOCKED
+</code></pre>
+<p>Set <code>antispam.enabled: true</code> and a domain&#39;s <code>spamFilterScoreThreshold</code> to use
+it. Mail scoring at or above the threshold is rejected.</p>
+<h3>ClamAV</h3>
+<pre><code>docker run --restart always --name clamav \
+  --publish 127.0.0.1:3310:3310 \
+  --volume /var/lib/clamav \
+  -d clamav/clamav
+</code></pre>
+<p>Check it is alive, and feed it the EICAR test string, which every scanner
+reports as a virus without being one:</p>
+<pre><code>echo &#39;nSTATS&#39; | nc -q0 localhost 3310
+
+(echo -en &#39;nINSTREAM\n\0\0\0\x44&#39;; \
+ echo -n &#39;X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*&#39;; \
+ echo -en &#39;\0\0\0\0&#39;) | nc -q0 localhost 3310
+</code></pre>
+<p>Set <code>antivirus.enabled: true</code> to use it.</p>
+<h2>Binding the real mail ports without root</h2>
+<p>In production the compose file grants <code>CAP_NET_BIND_SERVICE</code>, so the server
+binds 25, 80, 443 and 587 as uid 65532 rather than as root. If you would rather run on
+high ports and redirect, this also works:</p>
+<pre><code>iptables  -t nat -A PREROUTING -i eth0 -p tcp --dport 25  -j REDIRECT --to-port 10025
+iptables  -t nat -A PREROUTING -i eth0 -p tcp --dport 587 -j REDIRECT --to-port 10587
+ip6tables -t nat -A PREROUTING -i eth0 -p tcp --dport 25  -j REDIRECT --to-port 10025
+ip6tables -t nat -A PREROUTING -i eth0 -p tcp --dport 587 -j REDIRECT --to-port 10587
+</code></pre>
+<h2>Documentation</h2><h3>Getting started</h3><ul><li><a href="/doc/introduction">What is TeaNode</a>: Send and receive mail at your own domains: mailboxes read here or over IMAP, forwarding, what it does, and what you need to run it.</li><li><a href="/doc/quick-start">Quick start</a>: TeaNode running with docker compose in a few minutes: the assistant first, with no domain, then mail at your own domain if you want it.</li><li><a href="/doc/getting-started">Getting started</a>: Standing up a mail server for one domain, from nothing to mail arriving in a mailbox you can read in a mail program, including the DNS records and the port 25 problem.</li></ul><h3>Running it</h3><ul><li><a href="/doc/deploying">Deploying</a>: The container image and the compose file, what runs beside the server, how it upgrades itself, and what to back up.</li><li><a href="/doc/configuration">Configuration</a>: Where the settings live, the environment variables that say how to reach them, and every field an operator can set.</li><li><a href="/doc/agents">Agents</a>: The personal agent: what it needs, what it does with a mailbox, and what to weigh before turning it on.</li><li><a href="/doc/memory">Memory</a>: What your agent keeps between conversations: a graph of pages it writes without being asked, the places it reads from, and what it does with all of it in its dreams.</li><li><a href="/doc/voice">Voice</a>: Call your agent from the chat drawer: say what you want, hear the answer as it is written, and cut in when you like. On a laptop or a phone.</li><li><a href="/doc/coding-sessions">Coding sessions</a>: Your Claude Code and Codex sessions in herdr, on every computer you attached: your agent reads them, types into them where you can see, and brings you their questions to answer from anywhere.</li><li><a href="/doc/coding-memory">Memory in coding sessions</a>: Claude Code and Codex shown what your agent knows about the checkout they run in: the project page and the last session when one starts, recall kept to the project before each prompt, and the transcript read within a minute.</li><li><a href="/doc/mcp">Model Context Protocol</a>: TeaNode on both ends of the protocol: answering it, so your editor can use your agent's tools and ask it questions, and connecting out to servers of your own.</li><li><a href="/doc/finance">Finance</a>: Your banks, cards and brokerages linked through Plaid or SimpleFIN: transactions in your own categories, budgets that say where the month is heading, savings targets, net worth, and a tax year put together from your paystubs, W-2s, 1099s and 1098s, all kept in your own database.</li><li><a href="/doc/command-line">The command line</a>: The two programs: the server and the few things only its host can do, and the client that administers it from anywhere through the API.</li></ul><h3>Security</h3><ul><li><a href="/doc/security">Reporting a security problem</a>: Where to report something exploitable, what is in scope, and what is not.</li><li><a href="/doc/security-review">Security review</a>: A review of the whole program: what was examined, what was found, what was fixed, and what is still open.</li></ul><h3>Contributing</h3><ul><li><a href="/doc/contributing">Contributing</a>: Naming, comments, the invariants that bite, tests, commits and the changelog that cuts a release.</li><li><a href="/doc/local-development">Local development</a>: Getting a working build and a database to point it at, a development server that cannot send mail, and the optional scanners.</li><li><a href="/doc/project-structure">Project structure</a>: What each package is for and which way the dependencies point.</li></ul><p>Every document is also plain markdown, listed in <a href="/llms.txt">/llms.txt</a>.</p></div></div></body></html>

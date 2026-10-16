@@ -20,4 +20,140 @@ window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-XD5JSLP4RH', {send_page_view: false});
-</script><script type="module" crossorigin src="/static/teanode.B4qXBTfP.js"></script></head><body><div id="teanode"></div></body></html>
+</script><script type="module" crossorigin src="/static/teanode.B4qXBTfP.js"></script></head><body><div id="teanode"><style>.teanode-static{max-width:760px;margin:0 auto;padding:24px 16px 48px;font:16px/1.6 system-ui,sans-serif;opacity:0;animation:teanode-static 0s 2s forwards}.teanode-static pre{overflow-x:auto}@keyframes teanode-static{to{opacity:1}}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .teanode-static{color:#e8e8ea}:root:not([data-theme=light]) .teanode-static a{color:#9ccc65}}:root[data-theme=dark] .teanode-static{color:#e8e8ea}:root[data-theme=dark] .teanode-static a{color:#9ccc65}</style><div class="teanode-static"><p><a href="/">TeaNode</a> · <a href="/doc">Documentation</a> · <a href="https://github.com/ziyan/teanode">Source</a></p><h1>Memory in coding sessions</h1><p>Claude Code and Codex start every session knowing nothing about the
+checkout they run in beyond its files. Your agent may know a great deal:
+what the project is, what was decided and why, what failed before, and
+where you left off yesterday. They could ask it over MCP, but a model
+rarely decides to call a tool for something it does not know it is
+missing. So TeaNode puts what it knows in front of them, through the hooks
+both tools run at points in a session&#39;s life.</p>
+<h2>Setting it up</h2>
+<p>On each computer you code on:</p>
+<ol>
+<li>Sign in with <code>teanode auth login</code>, so the hooks use your saved profile
+rather than a token in the tool&#39;s environment.</li>
+<li>Run <code>teanode hook install claude-code</code>, or <code>teanode hook install codex</code>,
+or both. The hooks are added to <code>~/.claude/settings.json</code> or
+<code>~/.codex/hooks.json</code>, beside every hook already there.</li>
+<li>For Codex, turn hooks on with <code>hooks = true</code> under <code>[features]</code> in
+<code>~/.codex/config.toml</code>. Codex asks you to trust a new hook before it
+first runs.</li>
+</ol>
+<p>What the sessions are shown comes from your agent&#39;s memory, so it is only
+as good as what memory has read about the checkout. Point a
+<a href="/doc/memory#where-else-it-reads-from">knowledge source</a> at the folder your
+checkouts are in, and add the Claude Code or Codex source on that computer
+too, so your past sessions are read as well.</p>
+<p><code>teanode hook uninstall claude-code</code> (or <code>codex</code>) takes out TeaNode&#39;s hooks
+and leaves the rest of the file alone.</p>
+<h2>What a session is shown</h2>
+<h3>When it starts</h3>
+<p>When a session starts, resumes, or is compacted, it is shown the checkout&#39;s
+project page: the summary, the facts on it most in use, and the same for any
+other project page the checkout is filed on. What the session can read from
+the files itself (the remotes, the languages, where the checkout is) is left
+out.</p>
+<p>It is also shown the last session held in that directory, or anywhere in the
+checkout: which tool, its title, when it was last active, your last three
+requests and the start of its last answer. No model writes this; it is what
+was said, read from the stored transcript, so it is there as soon as the
+transcript is read. A session you resume is not shown to itself.</p>
+<p>For an invented checkout, the start of a session looks like this:</p>
+<pre><code>&lt;teanode-memory&gt;
+TeaNode, the person&#39;s agent, remembers this about the checkout at
+~/src/greenfinch-site (page projects/greenfinch-site). Facts are cited
+as page#number; its memory tool reads a page whole.
+
+projects/greenfinch-site: The marketing site for Greenfinch, built
+with Astro and deployed from main.
+- projects/greenfinch-site#4 The pricing page must render without
+  JavaScript, because the partner portal embeds it.
+- projects/greenfinch-site#9 Images go through the CDN&#39;s resizer,
+  never into the repository.
+
+The last session in this directory (claude-code, &quot;Pricing table on
+phones&quot;, last active 2 hours ago):
+The person&#39;s last requests:
+- make the pricing table scroll sideways on a phone
+- keep the first column pinned
+Its last answer: The table now scrolls inside its card and the plan
+names stay in view…
+&lt;/teanode-memory&gt;
+</code></pre>
+<h3>Before each prompt</h3>
+<p>Each prompt you type gets the same recall a turn of your agent does, with
+one difference: what may be carried is kept to the checkout&#39;s project. That
+is the project page, the pages under it, the projects, things and folders
+it is linked to by a link somebody stated, and the topics it links to;
+never a person, a month, or a broad topic that merely mentions it. A
+question about the build therefore does not bring your mail, your money or
+your colleagues into a third party&#39;s model, and the pages left out do not
+spend the budget.</p>
+<p>Beside the pages come the lessons close to the prompt. A lesson is what
+your agent&#39;s own work taught (when it applies, what worked, what to avoid),
+and it is kept only when a command it names succeeded, so what the agent
+merely said about its work is never enough. Only a lesson near enough in
+meaning to the prompt is shown.</p>
+<p>Recall stays quiet when it has nothing to add:</p>
+<ul>
+<li>a page shown in the session&#39;s last five prompts is not shown again;</li>
+<li>a prompt of fewer than three words, a slash command, and text the tool
+sends on its own (such as a finished background task) recall nothing;</li>
+<li>a prompt that recalls nothing from the project shows nothing.</li>
+</ul>
+<p>Install with <code>--everywhere</code> to recall from all of memory instead.</p>
+<h3>After each answer</h3>
+<p>When an answer ends, the session is compacted, or it ends, the computer&#39;s
+Claude Code or Codex source is asked to read its transcripts again now
+instead of at its next scheduled time. It goes ahead of the other sources
+waiting for that computer, so the session is searchable within about a
+minute, and the next session in that directory knows where this one
+stopped. Without such a source on the computer, the next session still sees
+what was filed before.</p>
+<h2>Which checkout</h2>
+<p>A checkout&#39;s profile records where it is and on which computer, and the
+hook looks for the deepest checkout holding the session&#39;s directory on the
+computer it runs on.</p>
+<p>A checkout this computer&#39;s sources never read is matched by its git remote
+instead, since the same path on another computer proves nothing. The
+session is then told where and at which commit memory read the project, and
+on the computer it was read on but at another commit, that memory may be
+out of date. A directory outside any checkout memory knows is shown
+nothing.</p>
+<h2>Seeing what a session sees</h2>
+<p>Three places show exactly what a session would be shown, without starting
+one and without marking anything as used:</p>
+<ul>
+<li><code>teanode agent memory checkout [directory]</code> prints the session start;
+with <code>--prompt &quot;&lt;words&gt;&quot;</code> it prints what that prompt would recall, and
+<code>--everywhere</code> widens it.</li>
+<li>The Recall dialog on the Knowledge page has a checkout field that does
+the same.</li>
+<li>Your agent&#39;s <code>memory</code> tool has a <code>checkout</code> action, so you can ask it.</li>
+</ul>
+<h2>When it shows nothing</h2>
+<p>The hooks never get in the tool&#39;s way. A hook that cannot reach your
+server, or fails for any other reason, shows nothing and exits cleanly, and
+what went wrong is written to <code>hook.log</code> under your cache directory
+(<code>~/.cache/teanode/hooks</code> on Linux). If a session should have been shown
+something and was not, check that:</p>
+<ul>
+<li>the checkout has been read: <code>teanode agent memory checkout</code> in that
+directory says which page it found;</li>
+<li>you are signed in on that computer with the profile the hook names;</li>
+<li>for Codex, hooks are turned on and the hook is trusted.</li>
+</ul>
+<h2>What it costs</h2>
+<p>Every prompt costs one embedding and a few queries; a session start a few
+more. No model is asked to write anything, and nothing is marked as used,
+so a busy coding day does not shift what your agent thinks is important.</p>
+<h2>Next</h2>
+<ul>
+<li><a href="/doc/coding-sessions">Coding sessions</a> is the other direction: your
+agent seeing and prompting those sessions through herdr.</li>
+<li><a href="/doc/memory">Memory</a> is what the sessions are being shown.</li>
+<li><a href="/doc/command-line#teanode-hook">The command line</a> lists the <code>teanode hook</code> commands.</li>
+<li><a href="https://github.com/ziyan/teanode/blob/main/docs/subsystems/memory.md#in-the-persons-coding-sessions"><code>docs/subsystems/memory.md</code></a>
+says how it works in detail.</li>
+</ul>
+<h2>Documentation</h2><h3>Getting started</h3><ul><li><a href="/doc/introduction">What is TeaNode</a>: Send and receive mail at your own domains: mailboxes read here or over IMAP, forwarding, what it does, and what you need to run it.</li><li><a href="/doc/quick-start">Quick start</a>: TeaNode running with docker compose in a few minutes: the assistant first, with no domain, then mail at your own domain if you want it.</li><li><a href="/doc/getting-started">Getting started</a>: Standing up a mail server for one domain, from nothing to mail arriving in a mailbox you can read in a mail program, including the DNS records and the port 25 problem.</li></ul><h3>Running it</h3><ul><li><a href="/doc/deploying">Deploying</a>: The container image and the compose file, what runs beside the server, how it upgrades itself, and what to back up.</li><li><a href="/doc/configuration">Configuration</a>: Where the settings live, the environment variables that say how to reach them, and every field an operator can set.</li><li><a href="/doc/agents">Agents</a>: The personal agent: what it needs, what it does with a mailbox, and what to weigh before turning it on.</li><li><a href="/doc/memory">Memory</a>: What your agent keeps between conversations: a graph of pages it writes without being asked, the places it reads from, and what it does with all of it in its dreams.</li><li><a href="/doc/voice">Voice</a>: Call your agent from the chat drawer: say what you want, hear the answer as it is written, and cut in when you like. On a laptop or a phone.</li><li><a href="/doc/coding-sessions">Coding sessions</a>: Your Claude Code and Codex sessions in herdr, on every computer you attached: your agent reads them, types into them where you can see, and brings you their questions to answer from anywhere.</li><li><a href="/doc/coding-memory">Memory in coding sessions</a>: Claude Code and Codex shown what your agent knows about the checkout they run in: the project page and the last session when one starts, recall kept to the project before each prompt, and the transcript read within a minute.</li><li><a href="/doc/mcp">Model Context Protocol</a>: TeaNode on both ends of the protocol: answering it, so your editor can use your agent's tools and ask it questions, and connecting out to servers of your own.</li><li><a href="/doc/finance">Finance</a>: Your banks, cards and brokerages linked through Plaid or SimpleFIN: transactions in your own categories, budgets that say where the month is heading, savings targets, net worth, and a tax year put together from your paystubs, W-2s, 1099s and 1098s, all kept in your own database.</li><li><a href="/doc/command-line">The command line</a>: The two programs: the server and the few things only its host can do, and the client that administers it from anywhere through the API.</li></ul><h3>Security</h3><ul><li><a href="/doc/security">Reporting a security problem</a>: Where to report something exploitable, what is in scope, and what is not.</li><li><a href="/doc/security-review">Security review</a>: A review of the whole program: what was examined, what was found, what was fixed, and what is still open.</li></ul><h3>Contributing</h3><ul><li><a href="/doc/contributing">Contributing</a>: Naming, comments, the invariants that bite, tests, commits and the changelog that cuts a release.</li><li><a href="/doc/local-development">Local development</a>: Getting a working build and a database to point it at, a development server that cannot send mail, and the optional scanners.</li><li><a href="/doc/project-structure">Project structure</a>: What each package is for and which way the dependencies point.</li></ul><p>Every document is also plain markdown, listed in <a href="/llms.txt">/llms.txt</a>.</p></div></div></body></html>

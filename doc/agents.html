@@ -20,4 +20,159 @@ window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-XD5JSLP4RH', {send_page_view: false});
-</script><script type="module" crossorigin src="/static/teanode.B4qXBTfP.js"></script></head><body><div id="teanode"></div></body></html>
+</script><script type="module" crossorigin src="/static/teanode.B4qXBTfP.js"></script></head><body><div id="teanode"><style>.teanode-static{max-width:760px;margin:0 auto;padding:24px 16px 48px;font:16px/1.6 system-ui,sans-serif;opacity:0;animation:teanode-static 0s 2s forwards}.teanode-static pre{overflow-x:auto}@keyframes teanode-static{to{opacity:1}}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .teanode-static{color:#e8e8ea}:root:not([data-theme=light]) .teanode-static a{color:#9ccc65}}:root[data-theme=dark] .teanode-static{color:#e8e8ea}:root[data-theme=dark] .teanode-static a{color:#9ccc65}</style><div class="teanode-static"><p><a href="/">TeaNode</a> · <a href="/doc">Documentation</a> · <a href="https://github.com/ziyan/teanode">Source</a></p><h1>Agents</h1><p>Every account on a TeaNode server can have an agent of its own: something
+that reads the mail that arrives, sorts it, writes drafts, and answers
+questions about it. This page is what an operator turns on and what a person
+then does with it.</p>
+<p>Two switches stand between a model and anybody&#39;s mail, and both have to be
+thrown by hand. An operator configures a model service and turns the feature
+on, which by itself gives nobody an agent. Then each person turns their own
+on, and grants it each mailbox separately. Until both happen, nothing about a
+message is sent anywhere.</p>
+<h2>What it needs</h2>
+<p>A model service. TeaNode speaks to OpenAI, Anthropic, Gemini, and anything
+that answers the OpenAI API — which includes <a href="https://ollama.com/">Ollama</a> on
+the same machine, and that is the configuration where nothing leaves your
+server at all.</p>
+<p>Or a ChatGPT plan you already pay for, instead of an API key. Add a provider
+of kind <code>openai-codex</code>, choose Sign in with ChatGPT, and enter the one-time
+code it shows on OpenAI&#39;s page from any device. The agent&#39;s turns are then
+billed against the plan&#39;s allowance rather than API credits. Search by
+meaning still needs an embedding model from a provider with a key, or a local
+one.</p>
+<p>Nothing else. The agent runs inside the same binary as everything else, and
+the queue it works from is in the same PostgreSQL.</p>
+<h2>Turning it on</h2>
+<p>As the operator, on the <strong>Agents</strong> tab of the server page: add a provider —
+its kind, where it listens, and its key — and then say which model does which
+work. <code>default</code> is required, <code>fast</code> is what the cheap work uses, and
+<code>embedding</code> is what makes search by meaning possible. Test sits on the
+provider&#39;s row.</p>
+<pre><code>teanode settings set agent enabled=true
+teanode settings describe agent          # every key, with its type
+</code></pre>
+<p>The key is sealed with the server secret before it is stored, the way a
+domain&#39;s signing key is: a database dump holds ciphertext, and a server
+started with a different secret cannot read it and says so.</p>
+<p>Then, as a person, on <strong>Settings → Agent</strong>: turn your agent on, and grant it a
+mailbox. Granting is per mailbox, and so is everything below — you may want
+sorting on one address and nothing at all on another.</p>
+<h2>What it does</h2>
+<p><strong>Sorts what arrives.</strong> A category, a priority, whether somebody is waiting on
+an answer, a line of summary, and the things the message asks for. They show
+as chips on the row, and there is a Priority view beside Starred. Your mailbox
+rules can read what it decided — &quot;category is newsletter, move to Reading&quot; —
+and those rules run once the sorting is done rather than at delivery.</p>
+<p><strong>Summarizes and drafts.</strong> A conversation past three messages gets a summary
+folded above it, rewritten as the conversation grows. Replying, the composer
+offers to draft one: you say what the reply should do, and the text lands in
+the editor in your own voice and sign-off. Sending stays with you.</p>
+<p><strong>Answers, if you let it.</strong> A mailbox can let the agent reply on your behalf
+under a policy you write: who it may answer, which kinds of message, when, how
+long a reply waits, how many a day. Every reply is held in Drafts with a
+banner to cancel it or take it over — and editing it is a takeover. Before
+writing and again before sending it climbs the same ladder the out-of-office
+reply climbs: never to a mailing list, a bounce, an automatic message, spam,
+or a message not addressed to you.</p>
+<p><strong>Answers your questions.</strong> A drawer on every page of the dashboard, which
+you can also <a href="/doc/voice">call and talk to</a>, and <code>teanode agent ask</code> from a
+terminal. It works through the same operations the
+dashboard uses, as you, with exactly your permissions: it searches your mail,
+reads it, files it, drafts, keeps your folders and rules. Anything it cannot
+undo, and anything that leaves the server, stops at a card you approve or
+decline. In the drawer, swipe a message to the left to reply to it, so the
+agent knows which one you mean, or to the right to copy it. When it needs to
+know where you are, it asks the browser you are chatting in, which asks your
+permission the first time.</p>
+<p><strong>Reaches past the mailbox, if you let it.</strong> Your contacts, so it can look
+somebody up or keep somebody for you. Your own computer, attached with
+<code>teanode computer</code>, where it runs a command or reads and edits your files as
+you, asking first for anything that changes the machine. The Claude Code and
+Codex sessions you keep in herdr on those computers, which it reads, types
+into and brings you the questions of (see <a href="/doc/coding-sessions">Coding sessions</a>). Your own browser tab, through an extension,
+so it can act on a page only you can sign into while you watch. Your calendar,
+so it knows what your week already holds, and your reminders list beside it.
+The notes your phone&#39;s Notes app keeps in your mail account, which it can
+read and help write. Your finances, through banks and cards you link
+(see <a href="/doc/finance">Finance</a>). And the web, when a search provider is
+configured.</p>
+<p><strong>Remembers.</strong> Facts about you between conversations — who the accountant is,
+how you sign, what never to answer automatically. It learns from your hands
+too: a message you file somewhere other than where it sorted it becomes an
+example the next run is shown. And it learns from its own work: when a
+conversation where it ran commands got somewhere, it files what worked as a
+lesson, but only when a command it names actually succeeded, and the next
+time the same kind of work comes up it is shown the two nearest lessons.</p>
+<p><strong>Tells you what cannot wait.</strong> When the mail it sorts shows something you
+should know now (a notice from your child&#39;s school, a run of sign-in codes you
+did not ask for), it says so in the conversation drawer and in the chat app
+you linked, unasked. Several messages about one thing make one alert. It
+sends five a day at most, nothing between 22:00 and 07:00 unless it cannot
+wait, and never the same thing twice in a week. Say &quot;don&#39;t tell me about
+these&quot; and that sender, domain or kind is muted; the Alerts tab lists what it
+said and what you muted, and each of the limits can be changed there or with
+<code>teanode agent settings set</code>. The skills the operator installed can be
+watched the same way: new Gmail, new GitHub notifications, new transactions
+at a payment service, judged like mail and said only when they matter.</p>
+<p><strong>Offers, and keeps at it.</strong> In its dreams it looks through your mail for
+work it could do for you and writes each as an offer on the Ideas tab: what
+it would do, where it stops to ask, and what in your mail prompted it.
+Nothing happens until you start one. A goal (&quot;keep the newsletters out of
+my inbox&quot;, &quot;chase the refund until it arrives&quot;) runs in the background, in a
+conversation of its own, for days if it needs to. Your chat hears from it
+only when it needs you; the Goals tab says what each goal is doing, what it
+did, and what it made along the way.</p>
+<p><strong>Works while you are away, as far as you let it.</strong> Schedules, goals and
+dreams run with nobody watching, and they reach your computers too. A call
+that would ask you first is refused then, and the run says what it would
+have done, unless you chose to allow that kind of thing for when you are not
+there: speaking for you, spending or moving money, what cannot be undone,
+giving somebody access, or the tools on your own &quot;ask me first&quot; list. Each is
+off until you turn it on, on your agent&#39;s settings. The operator&#39;s own
+confirm list can never be allowed this way, and the runs that read mail from
+strangers never use the allowance.</p>
+<h2>What it costs, and how to cap it</h2>
+<p>Every run is counted, and an operator can cap it in tokens or in money.
+<code>agent.limits</code> holds <code>dailyTokensPerAgent</code> and <code>monthlyTokensPerServer</code>, and
+<code>dailyCostPerAgent</code> and <code>monthlyCostPerServer</code> beside them; one person can be
+given their own:</p>
+<pre><code>teanode agent admin limit alice --cost 5
+</code></pre>
+<p>A money budget is priced at the prices each provider is configured with, per
+model, so a deployment running a small model and a large one is charged
+properly for each. Where both kinds of budget are set, whichever runs out
+first stops the day. <code>agent.currency</code> says which three-letter code the amounts
+are written in; it labels and formats rather than converts.</p>
+<p>A person sees their own day as a ring in the head of the chat window, and the
+operator sees use by day, kind, mailbox and model on the Agents tab of the
+server page.</p>
+<h2>What to think about before turning it on</h2>
+<p>A language model is a third party unless you are running one yourself. Mail
+that reaches it is mail that has left your server, and the point of running
+your own mail server is usually that it does not. Three things follow.</p>
+<p>Grant it one mailbox first, and read what it does before granting another. A
+grant is a decision about a whole mailbox, and switching search by meaning on
+sends what is already there to be embedded as well as what arrives next.</p>
+<p>Point it at an Ollama if the mail is sensitive. The same features work, the
+quality of the sorting depends on the model you run, and nothing leaves the
+machine.</p>
+<p>Read <code>agent.features</code> before opening it to everybody. It says what people may
+turn on at all, and an operator who wants sorting but not automatic replies
+says so there rather than trusting everyone to leave a switch alone.</p>
+<h2>Further reading</h2>
+<ul>
+<li><a href="/doc/memory">Memory</a> is what it keeps between conversations: a graph of
+pages it writes without being asked, the places it reads from, and what it
+does with all of it in its dreams.</li>
+<li><a href="/doc/finance">Finance</a> is the banks, cards and brokerages it can read, and
+the budgets and net worth built on them.</li>
+<li><a href="/doc/voice">Voice</a> is calling your agent from the drawer.</li>
+<li><a href="/doc/coding-sessions">Coding sessions</a> is your Claude Code and Codex
+sessions, which it works in beside you.</li>
+<li><a href="/doc/configuration#agent">Configuration</a> documents every setting in the
+<code>agent</code> section: providers, models, features, limits, retention, search,
+tools, the browser, and connected servers.</li>
+<li><a href="/doc/command-line#teanode-agent">The command line</a> covers <code>teanode agent</code>,
+which reaches all of it from a terminal.</li>
+</ul>
+<h2>Documentation</h2><h3>Getting started</h3><ul><li><a href="/doc/introduction">What is TeaNode</a>: Send and receive mail at your own domains: mailboxes read here or over IMAP, forwarding, what it does, and what you need to run it.</li><li><a href="/doc/quick-start">Quick start</a>: TeaNode running with docker compose in a few minutes: the assistant first, with no domain, then mail at your own domain if you want it.</li><li><a href="/doc/getting-started">Getting started</a>: Standing up a mail server for one domain, from nothing to mail arriving in a mailbox you can read in a mail program, including the DNS records and the port 25 problem.</li></ul><h3>Running it</h3><ul><li><a href="/doc/deploying">Deploying</a>: The container image and the compose file, what runs beside the server, how it upgrades itself, and what to back up.</li><li><a href="/doc/configuration">Configuration</a>: Where the settings live, the environment variables that say how to reach them, and every field an operator can set.</li><li><a href="/doc/agents">Agents</a>: The personal agent: what it needs, what it does with a mailbox, and what to weigh before turning it on.</li><li><a href="/doc/memory">Memory</a>: What your agent keeps between conversations: a graph of pages it writes without being asked, the places it reads from, and what it does with all of it in its dreams.</li><li><a href="/doc/voice">Voice</a>: Call your agent from the chat drawer: say what you want, hear the answer as it is written, and cut in when you like. On a laptop or a phone.</li><li><a href="/doc/coding-sessions">Coding sessions</a>: Your Claude Code and Codex sessions in herdr, on every computer you attached: your agent reads them, types into them where you can see, and brings you their questions to answer from anywhere.</li><li><a href="/doc/coding-memory">Memory in coding sessions</a>: Claude Code and Codex shown what your agent knows about the checkout they run in: the project page and the last session when one starts, recall kept to the project before each prompt, and the transcript read within a minute.</li><li><a href="/doc/mcp">Model Context Protocol</a>: TeaNode on both ends of the protocol: answering it, so your editor can use your agent's tools and ask it questions, and connecting out to servers of your own.</li><li><a href="/doc/finance">Finance</a>: Your banks, cards and brokerages linked through Plaid or SimpleFIN: transactions in your own categories, budgets that say where the month is heading, savings targets, net worth, and a tax year put together from your paystubs, W-2s, 1099s and 1098s, all kept in your own database.</li><li><a href="/doc/command-line">The command line</a>: The two programs: the server and the few things only its host can do, and the client that administers it from anywhere through the API.</li></ul><h3>Security</h3><ul><li><a href="/doc/security">Reporting a security problem</a>: Where to report something exploitable, what is in scope, and what is not.</li><li><a href="/doc/security-review">Security review</a>: A review of the whole program: what was examined, what was found, what was fixed, and what is still open.</li></ul><h3>Contributing</h3><ul><li><a href="/doc/contributing">Contributing</a>: Naming, comments, the invariants that bite, tests, commits and the changelog that cuts a release.</li><li><a href="/doc/local-development">Local development</a>: Getting a working build and a database to point it at, a development server that cannot send mail, and the optional scanners.</li><li><a href="/doc/project-structure">Project structure</a>: What each package is for and which way the dependencies point.</li></ul><p>Every document is also plain markdown, listed in <a href="/llms.txt">/llms.txt</a>.</p></div></div></body></html>

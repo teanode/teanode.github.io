@@ -20,4 +20,151 @@ window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-XD5JSLP4RH', {send_page_view: false});
-</script><script type="module" crossorigin src="/static/teanode.B4qXBTfP.js"></script></head><body><div id="teanode"></div></body></html>
+</script><script type="module" crossorigin src="/static/teanode.B4qXBTfP.js"></script></head><body><div id="teanode"><style>.teanode-static{max-width:760px;margin:0 auto;padding:24px 16px 48px;font:16px/1.6 system-ui,sans-serif;opacity:0;animation:teanode-static 0s 2s forwards}.teanode-static pre{overflow-x:auto}@keyframes teanode-static{to{opacity:1}}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .teanode-static{color:#e8e8ea}:root:not([data-theme=light]) .teanode-static a{color:#9ccc65}}:root[data-theme=dark] .teanode-static{color:#e8e8ea}:root[data-theme=dark] .teanode-static a{color:#9ccc65}</style><div class="teanode-static"><p><a href="/">TeaNode</a> · <a href="/doc">Documentation</a> · <a href="https://github.com/ziyan/teanode">Source</a></p><h1>Model Context Protocol</h1><p>The Model Context Protocol is how programs tell each other &quot;here are the
+things I can do, call them by name&quot;. TeaNode is on both ends of it, and the
+two directions share a wire format and almost nothing else.</p>
+<p><strong>Outward</strong>, your agent connects to servers you have, so their tools become
+its tools. <strong>Inward</strong>, TeaNode answers the protocol itself, so a coding
+harness, an editor, or a chat assistant such as ChatGPT or Grok can use your
+agent&#39;s tools, and can put a question to your agent in words.</p>
+<h2>Answering it: your tools, from your editor</h2>
+<pre><code>POST /api/v1/mcp
+</code></pre>
+<p>Every request carries a token. The one thing kept between requests is the
+rest of a long answer (see below), in memory, so a restart loses only that.
+There are three ways to give a program one.</p>
+<pre><code># point it at the address, then approve it in your browser
+claude mcp add --transport http teanode https://mail.example.com/api/v1/mcp
+
+# on a machine your command line is signed in on
+claude mcp add teanode -- teanode agent mcp serve
+
+# or hand it an API token yourself
+claude mcp add --transport http teanode \
+    https://mail.example.com/api/v1/mcp \
+    --header &quot;Authorization: Bearer tnt_...&quot;
+</code></pre>
+<p>The first needs nothing copied anywhere. Refused without a token, the program
+is told where to register and where to send you; you sign in to the
+dashboard if you are not already, see which program is asking, and allow it.
+It registers without a secret, because a program on somebody&#39;s machine cannot
+keep one, and proves it is the program that asked when it collects the token.</p>
+<p>The token it gets is narrower than an API token: it is good for the agent
+tools and refused by the GraphQL API and everything else. It is replaced every
+time it is refreshed, so these tokens are listed by program rather than beside
+your API tokens. Settings, then Apps, renames a program or disconnects it,
+which revokes every token it holds, and so does <code>teanode app</code>.</p>
+<p>Some hosted assistants do not register themselves and ask you for a client
+identifier instead. Register one for that assistant&#39;s own callback address. It
+has to be that exact address: an approval is only ever sent to an address the
+program registered.</p>
+<p>The second is a pipe rather than a second implementation. <code>teanode agent mcp serve</code> posts each message to the same endpoint with the profile you are
+already signed in with, so whatever the server offers it offers.</p>
+<p>The third is for a program that does neither. An API token carries its
+account&#39;s whole permissions, so it is the operator&#39;s to hand out and yours to
+keep.</p>
+<p>What programs did through the agent tools is on the agent&#39;s Activity tab,
+each tool called and each question asked, under the kind <code>mcp</code>.</p>
+<h3>What a caller is offered</h3>
+<p>Your whole catalogue, filtered the way a conversation&#39;s is: what your
+permissions allow, less whatever the operator switched off, plus the tools of
+the servers you have connected and the skills the operator installed.
+Somebody who may not read mail is not offered the mail search, because it is
+not in their catalogue to begin with. Every tool comes with its annotations,
+read-only or destructive, so the program can tell a look from a change the
+way the agent does.</p>
+<p>None of this grants anything the token did not already allow. A program
+approved in the browser is held to the agent tools; one given an API token
+could already reach every operation that account&#39;s permissions allow through
+the GraphQL API beside this endpoint. What changes is the shape of the
+request, not what may be asked.</p>
+<p>A <code>tools/call</code> runs the tool. It does not start a conversation in which a
+model decides to run it. You already knew what you wanted, and a model in
+the middle would cost money, take seconds, and answer differently each time.
+Every call is executed and audited as you.</p>
+<p>Calls arrive marked as confirmed. Your harness asks you before it runs a
+tool, and there is no card this server could show that would reach you; the
+credential you handed the harness is what says you meant it. Anything a tool
+marks untrusted is wrapped before it goes back, the same way the agent&#39;s own
+loop wraps it, because the harness hands it to a model of its own, which needs
+telling as much as ours does.</p>
+<h3>Asking the agent, rather than driving it</h3>
+<p><code>teanode_ask</code> takes a question in words and returns your agent&#39;s answer, with
+the whole of its kit and its memory of you behind it. A harness that would
+otherwise orchestrate six calls asks once.</p>
+<p>It is bounded by what a harness will wait for rather than by what a turn
+takes. Most give a tool call about a minute. After 55 seconds this one
+returns whatever has been said so far and names the conversation; the turn
+carries on, and calling again with that conversation and no question collects
+the rest. A turn that finished in the meantime is handed back and replays
+what it said, so coming back late still hears the answer. Ten minutes after a
+run ends the conversation itself is where the answer is.</p>
+<p>A turn that stops to raise a confirmation card cannot be answered from a
+harness. The answer says so, and says the card is waiting in the dashboard,
+rather than looking like an answer that simply stopped.</p>
+<h3>Long answers</h3>
+<p>Clients cut a long tool answer themselves, somewhere past twelve thousand
+characters and without saying where, so the model on the other end cannot
+read on. A tool called over MCP is given a smaller budget, so the tools that
+page themselves (a search, a file read) fit. Anything still longer is sent a
+part at a time: the first part ends with a line naming <code>result_more</code> and
+where to go on from, and calling it returns the next part. The rest is held
+for thirty minutes.</p>
+<h3>From your phone</h3>
+<p>Connect a chat assistant that speaks MCP (ChatGPT, Grok, and others) to the
+same address, approve it in your browser, and your mail, calendar, memory
+and finances are reachable from that assistant&#39;s app, by voice if it has a
+voice mode. So are the <a href="/doc/coding-sessions">coding sessions</a> on your
+computers: ask what each one is doing, answer the one that is waiting, tell
+another what to do next. The tool that reaches them tells these clients it
+is read-only, at your word, so they run it without asking each time.</p>
+<h3>Two tools are left out</h3>
+<p><code>ask_user</code> exists to put a question in front of somebody who is watching.
+There is a person at the far end of a call, but they are looking at their
+harness, and this server cannot draw on it. A tool that reaches for it gets
+an error saying so rather than a guessed answer.</p>
+<p><code>tool_search</code> exists to keep a long catalogue out of a model&#39;s request until
+it is wanted. A harness lists the tools once and keeps the list, so it is
+better served by the list.</p>
+<h2>Connecting out: servers your agent uses</h2>
+<p>The other direction. An operator declares a server: a name, an address, and
+how people authenticate with it: nothing, a shared credential, each person&#39;s
+own, or OAuth. You then connect your own credential, or authorize in a
+browser for a server using OAuth. Credentials are sealed with the server
+secret before they are stored.</p>
+<pre><code>teanode agent mcp list
+teanode agent mcp connect tracker --credential -
+teanode agent mcp disconnect tracker
+</code></pre>
+<p>What comes back is namespaced by the server&#39;s name and joined into your
+catalogue. Each server&#39;s tool list is held for five minutes, and three
+failures in a row withdraw a server&#39;s tools until the next interval, so one
+service being down does not take your agent&#39;s whole kit with it.</p>
+<p>Each tool arrives with the annotations its server gave it, such as read-only
+or destructive. A read-only tool runs without asking, and so does one the
+operator listed as read-only; a destructive one asks. Every other call is
+judged by the fast model and asks only where it acts for you toward other
+people, moves money, places or cancels an order, or deletes something. A card
+for every look at an account teaches people to approve without reading, which
+is worse than no card. Everything such a server returns is data. It never
+instructs.</p>
+<p>Some services send an authorization only to a loopback address, the way
+meant for a program on your own machine. A server declared that way is
+authorized through your attached computer instead: finish it in a browser on
+that computer and the dashboard completes the connection.</p>
+<h2>Pointing it at itself</h2>
+<p>Nothing stops an operator declaring this server&#39;s own endpoint as one of the
+agent&#39;s connected servers, which would give the agent a namespaced copy of
+its own catalogue and a call that comes straight back out. The handshake
+refuses a client that says it is TeaNode, which is what our own client says,
+and <code>teanode_ask</code> is never in the agent&#39;s own catalogue, so even a loop past
+the first guard cannot recurse through it.</p>
+<h2>What to read next</h2>
+<ul>
+<li><a href="/doc/agents">Agents</a> is the personal agent itself: what it needs, what it
+does with a mailbox, and what an operator turns on.</li>
+<li><a href="/doc/memory">Memory</a> is what it knows about you, which is what stands
+behind <code>teanode_ask</code>.</li>
+<li><a href="/doc/command-line#teanode-agent">The command line</a> covers <code>teanode agent mcp</code> and the rest.</li>
+</ul>
+<h2>Documentation</h2><h3>Getting started</h3><ul><li><a href="/doc/introduction">What is TeaNode</a>: Send and receive mail at your own domains: mailboxes read here or over IMAP, forwarding, what it does, and what you need to run it.</li><li><a href="/doc/quick-start">Quick start</a>: TeaNode running with docker compose in a few minutes: the assistant first, with no domain, then mail at your own domain if you want it.</li><li><a href="/doc/getting-started">Getting started</a>: Standing up a mail server for one domain, from nothing to mail arriving in a mailbox you can read in a mail program, including the DNS records and the port 25 problem.</li></ul><h3>Running it</h3><ul><li><a href="/doc/deploying">Deploying</a>: The container image and the compose file, what runs beside the server, how it upgrades itself, and what to back up.</li><li><a href="/doc/configuration">Configuration</a>: Where the settings live, the environment variables that say how to reach them, and every field an operator can set.</li><li><a href="/doc/agents">Agents</a>: The personal agent: what it needs, what it does with a mailbox, and what to weigh before turning it on.</li><li><a href="/doc/memory">Memory</a>: What your agent keeps between conversations: a graph of pages it writes without being asked, the places it reads from, and what it does with all of it in its dreams.</li><li><a href="/doc/voice">Voice</a>: Call your agent from the chat drawer: say what you want, hear the answer as it is written, and cut in when you like. On a laptop or a phone.</li><li><a href="/doc/coding-sessions">Coding sessions</a>: Your Claude Code and Codex sessions in herdr, on every computer you attached: your agent reads them, types into them where you can see, and brings you their questions to answer from anywhere.</li><li><a href="/doc/coding-memory">Memory in coding sessions</a>: Claude Code and Codex shown what your agent knows about the checkout they run in: the project page and the last session when one starts, recall kept to the project before each prompt, and the transcript read within a minute.</li><li><a href="/doc/mcp">Model Context Protocol</a>: TeaNode on both ends of the protocol: answering it, so your editor can use your agent's tools and ask it questions, and connecting out to servers of your own.</li><li><a href="/doc/finance">Finance</a>: Your banks, cards and brokerages linked through Plaid or SimpleFIN: transactions in your own categories, budgets that say where the month is heading, savings targets, net worth, and a tax year put together from your paystubs, W-2s, 1099s and 1098s, all kept in your own database.</li><li><a href="/doc/command-line">The command line</a>: The two programs: the server and the few things only its host can do, and the client that administers it from anywhere through the API.</li></ul><h3>Security</h3><ul><li><a href="/doc/security">Reporting a security problem</a>: Where to report something exploitable, what is in scope, and what is not.</li><li><a href="/doc/security-review">Security review</a>: A review of the whole program: what was examined, what was found, what was fixed, and what is still open.</li></ul><h3>Contributing</h3><ul><li><a href="/doc/contributing">Contributing</a>: Naming, comments, the invariants that bite, tests, commits and the changelog that cuts a release.</li><li><a href="/doc/local-development">Local development</a>: Getting a working build and a database to point it at, a development server that cannot send mail, and the optional scanners.</li><li><a href="/doc/project-structure">Project structure</a>: What each package is for and which way the dependencies point.</li></ul><p>Every document is also plain markdown, listed in <a href="/llms.txt">/llms.txt</a>.</p></div></div></body></html>

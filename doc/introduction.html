@@ -20,4 +20,162 @@ window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-XD5JSLP4RH', {send_page_view: false});
-</script><script type="module" crossorigin src="/static/teanode.B4qXBTfP.js"></script></head><body><div id="teanode"></div></body></html>
+</script><script type="module" crossorigin src="/static/teanode.B4qXBTfP.js"></script></head><body><div id="teanode"><style>.teanode-static{max-width:760px;margin:0 auto;padding:24px 16px 48px;font:16px/1.6 system-ui,sans-serif;opacity:0;animation:teanode-static 0s 2s forwards}.teanode-static pre{overflow-x:auto}@keyframes teanode-static{to{opacity:1}}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .teanode-static{color:#e8e8ea}:root:not([data-theme=light]) .teanode-static a{color:#9ccc65}}:root[data-theme=dark] .teanode-static{color:#e8e8ea}:root[data-theme=dark] .teanode-static a{color:#9ccc65}</style><div class="teanode-static"><p><a href="/">TeaNode</a> · <a href="/doc">Documentation</a> · <a href="https://github.com/ziyan/teanode">Source</a></p><h1>What is TeaNode</h1><p>TeaNode is a self-hosted agentic mailbox: real addresses at your own domains,
+and a personal assistant for each person that never leaves your server.</p>
+<p>The mail half is a small mail server. It receives mail for all of your
+domains over SMTP, checks that it is genuine (SPF, DKIM, DMARC, ARC),
+optionally scans it for viruses and spam, and then either files it in a
+mailbox here or hands it on — to an inbox you already read, to a webhook, or
+to another mail server. It also lets you reply and send from those addresses,
+signed with the domain&#39;s key so the mail arrives rather than landing in spam.</p>
+<p>A mailbox is read in the dashboard or in any mail program over IMAP. An
+address that should not have a mailbox forwards instead, and one domain can
+do both.</p>
+<p>The assistant is the other half, and it is off until somebody turns it on.
+Given a mailbox, it sorts what arrives, drafts in your voice and answers
+questions about your mail with exactly your permissions; given more, it
+reaches your contacts, your calendar, your own computer, your own browser
+tab and the web.
+Point it at an Ollama or a vLLM on the same machine and nothing about any of
+it leaves your hardware. <a href="/doc/agents">Agents</a> is the whole story.</p>
+<h2>Why</h2>
+<p>Running mail for a domain usually means either handing it to a provider, or
+assembling Postfix, Dovecot, OpenDKIM, OpenDMARC, SpamAssassin and a policy
+daemon and keeping them in agreement. This is one executable and a PostgreSQL
+database, with the authentication that decides whether your mail is trusted
+built in rather than bolted on.</p>
+<h2>What it looks like</h2>
+<p>The dashboard is compiled into the binary; there is nothing else to deploy.
+It opens on your mailbox, and the pages that run the server are a mode behind
+<strong>Manage</strong>, which shows only what your permissions allow.</p>
+<figure>
+<figcaption>A mailbox, with a message open.</figcaption>
+</figure><p>On the management side, every message this server has handled, what it decided
+about each one, and — for mail sent from a template — whether the recipient&#39;s
+mail program fetched the pictures in it. Clicking a row shows the
+authentication verdicts with the evidence behind them, every delivery attempt
+and why any of them failed, and the message itself with scripts stripped.</p>
+<h2>What you need</h2>
+<ul>
+<li>A domain, and the ability to edit its DNS</li>
+<li>A host with a stable address, reachable on ports 25, 80, 443 and 587, and
+on 993 if mail programs are to read the mailboxes</li>
+<li>PostgreSQL, for the configuration, the mailboxes and the mail it has handled</li>
+</ul>
+<p>Nothing else. No AWS account. Certificates are obtained
+automatically over HTTP-01, so there is no DNS API to configure. An
+S3-compatible object store is optional, and only worth having if you run more
+than one instance: it is what lets them share the stored messages.</p>
+<h2>What it does</h2>
+<p><strong>Mailboxes.</strong> Every account has one. Folders nest to any depth and can be
+renamed, moved and pinned; search covers one folder or the whole mailbox,
+with sender, recipient, subject, date and attachment filters; rules file mail
+as it arrives, and can be run over mail already filed. There are drafts whose
+attachments upload once, a signature, contacts kept from whoever you write
+to, and an out-of-office reply that knows not to answer machines, mailing
+lists or another mailbox that is also away. A message is stored once however
+many folders hold it, and kept for as long as one of them does.</p>
+<p><strong>IMAP.</strong> Port 993, and STARTTLS on 143, so a mail program reads the same
+mailbox. Each device gets an app password of its own, which signs in to IMAP
+and sends through the submission port on 587 as any of the mailbox&#39;s
+addresses.</p>
+<p><strong>A personal agent, if the operator offers one.</strong> Point the server at a model
+service — OpenAI, Anthropic, Gemini, or an Ollama on the same machine — and
+each person may turn on an agent of their own. It sorts what arrives, writes
+drafts in your voice, answers questions about your mail with exactly your
+permissions, and, under a policy you write, can answer for you. Off until
+somebody turns it on and blind to every mailbox until granted one; nothing
+reaches a model while mail is being delivered. <a href="/doc/agents">Agents</a> says what
+it needs and what to weigh first.</p>
+<p><strong>Subscriptions.</strong> Every mailing list a mailbox receives, on a page of its own,
+with the way out of each read from the headers the sender wrote. Leaving is
+requested by this server rather than by the browser, so it does not tell the
+sender which address opened which message at what moment. Muting is the other
+answer, and often the better one: the list keeps arriving, filed in the Archive
+and already read. A newsletter whose unsubscribe was stripped in transit is
+still grouped as a list, and the page says why it cannot offer a way out rather
+than leaving it looking like the sender withheld one.</p>
+<p><strong>Marks.</strong> The logo a sending domain publishes for its mail, shown beside the
+subscription it sends, and only for mail that passed DMARC — a mark is a claim
+about who sent something, and one on unproven mail helps whoever is pretending
+to be them. A domain&#39;s own mark can be published from here too: upload the
+file, and the DNS tab says what to publish and what would stop it working,
+most often a DMARC policy of none.</p>
+<p><strong>Authenticates everything.</strong> SPF, DKIM, DMARC and ARC on the way in, with the
+results shown per message. Your outbound mail is DKIM signed, and forwarded
+mail keeps an ARC chain so it still passes at the far end.</p>
+<p><strong>Forwards flexibly.</strong> Aliases match the address with a regular expression and
+deliver into a mailbox, or send the message to an address, an HTTP endpoint,
+or another mail server. An empty pattern is a catch-all, which receives
+whatever nothing else matched.</p>
+<p><strong>Relays your outbound mail.</strong> Per-device SMTP credentials on the submission
+port, each optionally restricted to one sender address.</p>
+<p><strong>People, groups and roles.</strong> Permissions decide what each person sees:
+Administrator, Operator and Member come seeded and all of it is editable, and
+a group can be tied to a domain so its permissions reach only that far.
+Single sign-on through an OpenID Connect provider follows a group in your own
+directory. Every change to a user, group, role, domain, alias, credential or
+mailbox is in the audit log.</p>
+<p><strong>Shows you the mail.</strong> The dashboard renders a message as a message: the
+authentication verdicts, the delivery attempts and why any of them failed, and
+the body itself with scripts stripped and remote images blocked until you ask
+for them.</p>
+<p><strong>Sends mail you write.</strong> Templates with variables and translations, a layout
+around them, pictures served from your own domain, and a record of whether the
+recipient&#39;s mail program fetched them.</p>
+<p><strong>Reports on your domains.</strong> Incoming DMARC aggregate reports are parsed and
+kept, which is how you find out somebody is forging your domain.</p>
+<p><strong>Scores spam without a second program.</strong> The filter inside the server reads
+what it already established about a message — the SPF, DKIM, DMARC and ARC
+results, the sending host&#39;s confirmed reverse DNS name, the name it gave in
+HELO — consults public block lists over DNS, and applies a classifier trained
+on the mail you mark in the dashboard. An external SpamAssassin daemon is
+still supported for deployments that want one.</p>
+<p><strong>Optional extras, all off by default.</strong> ClamAV, GeoIP, an S3 mirror of stored
+messages, an outbound SOCKS5 proxy for hosts whose address has a poor
+reputation, and DNS-01 certificates if you need a wildcard.</p>
+<h2>How a message gets through it</h2>
+<ol>
+<li>The SMTP listener speaks the protocol, optionally does STARTTLS and
+authentication, and produces an envelope.</li>
+<li>The envelope picks one of four paths: a signed bounce or report address
+means a delivery status notification or a DMARC aggregate report; a
+credential means outbound submission; anything else is inbound mail.</li>
+<li>Inbound mail is checked — SPF, DKIM, DMARC and ARC in parallel, then the
+optional virus and spam scans — and recorded with what each check decided.
+The recipient&#39;s local part is matched against that domain&#39;s aliases, and
+one delivery is created per match: a mailbox, an address elsewhere, a
+webhook, or another mail server.</li>
+<li>A mailbox delivery files a reference to the stored message, applies the
+mailbox&#39;s rules, and updates the unread counts. A delivery elsewhere is
+signed with the domain&#39;s key and relayed; one that fails is retried on a
+fixed backoff ladder, and the queue page says why in the remote server&#39;s
+own words.</li>
+</ol>
+<p>Every step is a place the dashboard can show you what happened, which is the
+point of recording it.</p>
+<h2>Configuration</h2>
+<p>Settings live in the database, so several instances share one answer and a
+change made in the dashboard reaches all of them. Domains, aliases,
+credentials and accounts are rows, managed one at a time. The environment
+says only where that database is; everything else is stored.</p>
+<pre><code>teanode domain create example.com
+teanode alias create example.com --pattern &#39;^you<div id="teanode"></div>#39; --kind mailbox --mailbox &lt;mailbox id&gt;
+teanode alias create example.com --pattern &#39;^hello<div id="teanode"></div>#39; --kind email --email you@example.net
+</code></pre>
+<p><a href="/doc/command-line">The command line</a> reaches the whole API, and
+<a href="/doc/configuration">Configuration</a> documents every setting.</p>
+<h2>Where to go next</h2>
+<ul>
+<li><a href="/doc/getting-started">Getting started</a> walks through one domain, from
+nothing to mail arriving in a mailbox you can read in a mail program,
+including the DNS records and the reality that many providers block
+outbound port 25.</li>
+<li><a href="/doc/deploying">Deploying</a> covers the container image and the compose
+file.</li>
+<li><a href="/doc/command-line">The command line</a> reaches the whole API, and is the
+better tool for anything repetitive.</li>
+<li>The source is on <a href="https://github.com/ziyan/teanode">GitHub</a>, under the MIT
+licence.</li>
+</ul>
+<h2>Documentation</h2><h3>Getting started</h3><ul><li><a href="/doc/introduction">What is TeaNode</a>: Send and receive mail at your own domains: mailboxes read here or over IMAP, forwarding, what it does, and what you need to run it.</li><li><a href="/doc/quick-start">Quick start</a>: TeaNode running with docker compose in a few minutes: the assistant first, with no domain, then mail at your own domain if you want it.</li><li><a href="/doc/getting-started">Getting started</a>: Standing up a mail server for one domain, from nothing to mail arriving in a mailbox you can read in a mail program, including the DNS records and the port 25 problem.</li></ul><h3>Running it</h3><ul><li><a href="/doc/deploying">Deploying</a>: The container image and the compose file, what runs beside the server, how it upgrades itself, and what to back up.</li><li><a href="/doc/configuration">Configuration</a>: Where the settings live, the environment variables that say how to reach them, and every field an operator can set.</li><li><a href="/doc/agents">Agents</a>: The personal agent: what it needs, what it does with a mailbox, and what to weigh before turning it on.</li><li><a href="/doc/memory">Memory</a>: What your agent keeps between conversations: a graph of pages it writes without being asked, the places it reads from, and what it does with all of it in its dreams.</li><li><a href="/doc/voice">Voice</a>: Call your agent from the chat drawer: say what you want, hear the answer as it is written, and cut in when you like. On a laptop or a phone.</li><li><a href="/doc/coding-sessions">Coding sessions</a>: Your Claude Code and Codex sessions in herdr, on every computer you attached: your agent reads them, types into them where you can see, and brings you their questions to answer from anywhere.</li><li><a href="/doc/coding-memory">Memory in coding sessions</a>: Claude Code and Codex shown what your agent knows about the checkout they run in: the project page and the last session when one starts, recall kept to the project before each prompt, and the transcript read within a minute.</li><li><a href="/doc/mcp">Model Context Protocol</a>: TeaNode on both ends of the protocol: answering it, so your editor can use your agent's tools and ask it questions, and connecting out to servers of your own.</li><li><a href="/doc/finance">Finance</a>: Your banks, cards and brokerages linked through Plaid or SimpleFIN: transactions in your own categories, budgets that say where the month is heading, savings targets, net worth, and a tax year put together from your paystubs, W-2s, 1099s and 1098s, all kept in your own database.</li><li><a href="/doc/command-line">The command line</a>: The two programs: the server and the few things only its host can do, and the client that administers it from anywhere through the API.</li></ul><h3>Security</h3><ul><li><a href="/doc/security">Reporting a security problem</a>: Where to report something exploitable, what is in scope, and what is not.</li><li><a href="/doc/security-review">Security review</a>: A review of the whole program: what was examined, what was found, what was fixed, and what is still open.</li></ul><h3>Contributing</h3><ul><li><a href="/doc/contributing">Contributing</a>: Naming, comments, the invariants that bite, tests, commits and the changelog that cuts a release.</li><li><a href="/doc/local-development">Local development</a>: Getting a working build and a database to point it at, a development server that cannot send mail, and the optional scanners.</li><li><a href="/doc/project-structure">Project structure</a>: What each package is for and which way the dependencies point.</li></ul><p>Every document is also plain markdown, listed in <a href="/llms.txt">/llms.txt</a>.</p></div></div></body></html>
