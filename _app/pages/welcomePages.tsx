@@ -72,6 +72,7 @@ import { Release } from '../components/release'
 import { pageWidth, PublicShell } from '../components/shell'
 import { Conversation } from '../components/conversation'
 import { Knowledge } from '../components/knowledge'
+import { installCommand } from './startPages'
 import { StackComparison } from '../components/stack'
 import { T, useTranslate } from '../i18n'
 import { brand, monospaceFamily } from '../theme'
@@ -224,15 +225,9 @@ const comparisonRows = ['receive', 'mailbox', 'send', 'domains', 'webhook', 'ass
 
 const questions = ['mailserver', 'app', 'model', 'port25', 'mailprogram', 'forwarding', 'outbound', 'team', 'stored']
 
-// The assistant alone: no domain and no mail ports, one compose file and a
-// database password. The same steps are in the repository's deployment
-// guide; keep the two the same.
-const installAssistant = `mkdir -p /opt/teanode && cd /opt/teanode
-curl -LO https://raw.githubusercontent.com/\\
-ziyan/teanode/main/deploy/docker-compose.assistant.yml
-echo "POSTGRES_PASSWORD=$(openssl rand -hex 24)" > .env
-chmod 600 .env
-docker compose -f docker-compose.assistant.yml up -d`
+// The assistant alone: no domain and no mail ports, one command. The get
+// started page has it too, with every step after it.
+const installAssistant = installCommand
 
 // The whole installation with mail, with docker compose. The same commands
 // are in the quick start document; keep the two the same. Broken across
@@ -255,7 +250,6 @@ claude mcp add --transport http teanode \\
 # or, on a machine your command line is signed in on
 claude mcp add teanode -- teanode agent mcp serve`
 
-const assistantGuide = 'https://github.com/ziyan/teanode/blob/main/docs/reference/deployment.md#assistant-without-hosted-mail'
 
 export const WelcomePage = () => {
   const translate = useTranslate()
@@ -301,7 +295,7 @@ export const WelcomePage = () => {
                 </Typography>
               </Box>
               <Stack direction='row' sx={{ flexWrap: 'wrap', gap: 1.5 }}>
-                <Button href='#start' variant='contained' size='large'>
+                <Button component={NavLink} to={routes.startPath} variant='contained' size='large'>
                   <T id='welcome.getStarted'/>
                 </Button>
                 <Button href='#iphone' variant='outlined' size='large' startIcon={<PhoneIphoneOutlinedIcon/>}>
@@ -625,7 +619,7 @@ export const WelcomePage = () => {
             <InstallRow
               which='assistant'
               snippet={assistantSnippet.html}
-              after={<Link href={assistantGuide} target='_blank' rel='noopener' color='text.primary'><T id='welcome.start.assistant.guide'/></Link>}
+              after={<Link component={NavLink} to={routes.startPath} color='text.primary'><T id='welcome.startSteps'/></Link>}
             />
             <InstallRow
               which='mail'
@@ -675,6 +669,23 @@ export const WelcomePage = () => {
               </Accordion>
             ))}
           </Box>
+        </Section>
+
+        {/* The end of the page, for whoever read all of it: the same way in
+            as at the top. */}
+        <Section sx={{ textAlign: 'center', py: { xs: 6, md: 9 } }}>
+          <Stack sx={{ alignItems: 'center', gap: 2 }}>
+            <Mark size={48}/>
+            <Typography component='h2' sx={{ fontWeight: 650, fontSize: { xs: 26, md: 32 }, lineHeight: 1.15 }}>
+              <T id='welcome.closingHeading'/>
+            </Typography>
+            <Typography sx={{ maxWidth: measure, fontSize: 17, color: 'text.secondary' }}>
+              <T id='welcome.closingLead'/>
+            </Typography>
+            <Button component={NavLink} to={routes.startPath} variant='contained' size='large' sx={{ mt: 1 }}>
+              <T id='welcome.getStarted'/>
+            </Button>
+          </Stack>
         </Section>
       </PublicShell>
     </div>

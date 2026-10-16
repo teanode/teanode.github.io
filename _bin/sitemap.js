@@ -19,6 +19,7 @@ const docs = JSON.parse(fs.readFileSync(path.join(ROOT, 'data', 'docs.json'), 'u
 
 const addresses = [
   `${SITE}/`,
+  `${SITE}/start`,
   ...docs.map((doc) => `${SITE}/doc/${doc.slug}`),
 ]
 

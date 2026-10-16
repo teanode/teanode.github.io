@@ -9,6 +9,7 @@ import routes from './routes'
 
 import { DocPage } from './pages/docPages'
 import { NotFoundPage } from './pages/notFoundPages'
+import { StartPage } from './pages/startPages'
 import { WelcomePage } from './pages/welcomePages'
 
 // Before anything renders, so the page does not paint in one theme and then
@@ -27,6 +28,7 @@ createRoot(container).render(
       <App>
         <Routes>
           <Route path={routes.welcomePath} element={<WelcomePage/>}/>
+          <Route path={routes.startPath} element={<StartPage/>}/>
           <Route path={routes.docsPath} element={<DocPage/>}/>
           <Route path={routes.docPath} element={<DocPage/>}/>
           <Route path='*' element={<NotFoundPage/>}/>

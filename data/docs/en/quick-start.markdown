@@ -3,14 +3,23 @@ Mail at your own domain can be added later without losing anything.
 
 ## What you need
 
-- A computer that stays on, with Docker and the compose plugin. The compose
-  file starts PostgreSQL for you.
+- A computer that stays on: a Linux server, a spare PC, or a Mac with Docker
+  Desktop. On Linux the install command adds Docker if it is missing, and
+  PostgreSQL comes with it.
 - A model to think with: an API key from OpenAI, Anthropic or Gemini, a
   ChatGPT plan you already pay for, or an Ollama or vLLM of your own.
 - For the iPhone app, or to use it away from that computer, an HTTPS address
   in front of it, from any reverse proxy.
 
 ## 1. Start the server
+
+    curl -fsSL https://teanode.com/install.sh | sh
+
+It puts the compose file and a fresh database password in `/opt/teanode`
+(`~/teanode` when you are not root), starts the containers and waits for the
+dashboard. Running it again keeps the password and the data. To read it
+first, open [teanode.com/install.sh](https://teanode.com/install.sh). The same
+by hand:
 
     mkdir -p /opt/teanode && cd /opt/teanode
     curl -LO https://raw.githubusercontent.com/ziyan/teanode/main/deploy/docker-compose.assistant.yml
@@ -37,7 +46,7 @@ Once the account is made, TeaNode asks one thing: the model service your
 assistant thinks with. Choose OpenAI, Anthropic or Gemini and paste its API
 key, or choose **Your own server** and give the address of your Ollama or
 vLLM as the server reaches it. Press **Start my assistant**. It checks the
-key, chooses a model (on OpenAI, `gpt-5-mini`), restarts itself and opens
+key, chooses a model (on OpenAI, the newest `sol`, with `luna` for quick answers), restarts itself and opens
 your conversation, where the assistant introduces itself.
 
 What it chose can be changed under **Manage → Agents → Models**; mail,

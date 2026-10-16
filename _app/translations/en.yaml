@@ -552,13 +552,12 @@ welcome:
     socks5: SOCKS5 proxy
     dns01: DNS-01 certificates
   startHeading: Getting started
-  startLead: One compose file either way. Start with just the assistant, and add your own mail when you want it.
+  startLead: One command for just the assistant, and add your own mail when you want it.
   start:
     assistant:
       title: Just the assistant
       note: No domain and no mail ports. It listens on 127.0.0.1:8080; put an HTTPS proxy in front of it to reach it from your phone.
-      after: Open the dashboard, claim the account, choose a model and turn the assistant on.
-      guide: Running the assistant alone
+      after: Open the dashboard, create the account and paste a model key.
     mail:
       title: With your own mail
       note: Mail at your domains, with the assistant and everything above.
@@ -566,9 +565,12 @@ welcome:
         The first visitor to the dashboard creates the account. Add your domain
         there, and it lists the DNS records to publish.
   startWalkthrough: The quick start
+  closingHeading: Ready when you are
+  closingLead: One command, an account and a model key. About a minute on a fresh server.
+  startSteps: Every step, with pictures
   needHeading: What you need
   needs:
-    host: A computer that stays on, with Docker and compose. PostgreSQL comes with the compose file.
+    host: A computer that stays on. The install command brings Docker on Linux, and PostgreSQL with it.
     model: A model to think with. An API key, a ChatGPT plan you already pay for, or an Ollama or vLLM of your own.
     https: For the iPhone app and for away from home, an HTTPS address in front of it, from any reverse proxy.
     mail: For your own mail, a domain whose DNS you can edit and ports 25, 80, 443, 587 and 993 open.
@@ -635,6 +637,60 @@ welcome:
         On your host, in your PostgreSQL database, with the raw message on
         disk or in an object store you choose. A message is stored once
         however many folders hold it, and kept for as long as one does.
+start:
+  title: Get started
+  headline: Your own assistant, running in about a minute.
+  lead: >-
+    One command on a computer that stays on, an account, and a key from a
+    model service. The video shows all of it on a fresh server; the steps
+    below are the same, one at a time.
+  videoLabel: TeaNode installed on a fresh server, from the command to the assistant's first answer
+  steps:
+    install:
+      title: Run one command
+      body: >-
+        On the computer TeaNode will live on: a Linux server, a spare PC, or a
+        Mac with Docker Desktop. It installs Docker on Linux if it is missing,
+        starts TeaNode and its database, and waits until the dashboard answers.
+      note: >-
+        It puts everything in /opt/teanode (~/teanode when you are not root)
+        and listens only on 127.0.0.1:8080. Read the script first at
+        teanode.com/install.sh if you like; running it again keeps your data.
+      picture: The terminal after the install command, saying TeaNode is running
+    account:
+      title: Create your account
+      body: >-
+        Open http://127.0.0.1:8080 in a browser and choose a username and a
+        password. The first visitor becomes the administrator, so do it right
+        away.
+      note: >-
+        TeaNode on a server rather than the computer in front of you? Run the
+        tunnel above on your own computer first, then open the same address.
+      picture: The dashboard's account form, with a username and password filled in
+    key:
+      title: Paste a model key
+      body: >-
+        Choose OpenAI, Anthropic or Gemini and paste an API key from it, or
+        choose Your own server for an Ollama or vLLM. Press Start my assistant:
+        it checks the key, picks a good model and starts the assistant.
+      note: >-
+        Each service has a Get a key link. The key stays on your server. A
+        ChatGPT plan you already pay for is signed in to under Manage instead.
+      picture: The welcome card with OpenAI chosen, a key pasted, and the Start my assistant button
+    hello:
+      title: Say hello
+      body: >-
+        Your conversation opens and the assistant introduces itself. Ask it
+        anything; it learns about you as you go.
+      note: >-
+        Mail, calendars and contacts are under Manage, Server, Setup whenever
+        you want them.
+      picture: The chat panel with the assistant's first message
+  nextHeading: Next
+  next:
+    phone: Reach it from your iPhone, with an HTTPS address in front of it
+    mail: Add mail at your own domain
+    docs: Read the documentation
 footer:
   licence: Open source under the MIT licence.
   security: Reporting a security problem

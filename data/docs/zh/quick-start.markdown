@@ -2,11 +2,15 @@
 
 ## 你需要什么
 
-- 一台一直开着、装了 Docker 和 compose 插件的电脑。compose 文件会替你启动 PostgreSQL。
+- 一台一直开着的电脑：Linux 服务器、闲置的电脑，或装了 Docker Desktop 的 Mac。在 Linux 上缺 Docker 时安装命令会替你装上，PostgreSQL 也一起带上。
 - 一个用来思考的模型：OpenAI、Anthropic 或 Gemini 的 API 密钥，一个你已经在付费的 ChatGPT 套餐，或者你自己的 Ollama 或 vLLM。
 - 要用 iPhone 应用，或者离开那台电脑时使用，需要在它前面放一个 HTTPS 地址，任何反向代理都行。
 
 ## 1. 启动服务器
+
+    curl -fsSL https://teanode.com/install.sh | sh
+
+它把 compose 文件和新生成的数据库密码放在 `/opt/teanode`（不是 root 时放在 `~/teanode`），启动容器，等仪表盘能打开为止。再运行一次会保留密码和数据。想先看看脚本，打开 [teanode.com/install.sh](https://teanode.com/install.sh)。手动做是这样：
 
     mkdir -p /opt/teanode && cd /opt/teanode
     curl -LO https://raw.githubusercontent.com/ziyan/teanode/main/deploy/docker-compose.assistant.yml
@@ -26,7 +30,7 @@
 
 ## 3. 启动助手
 
-账户创建好后，TeaNode 只问一件事：你的助手用来思考的模型服务。选择 OpenAI、Anthropic 或 Gemini 并粘贴它的 API 密钥，或者选择**你自己的服务器**，填上这台服务器访问你的 Ollama 或 vLLM 所用的地址。按**启动我的助手**。它会检查密钥、选好模型（OpenAI 上是 `gpt-5-mini`）、自己重启，然后打开你的对话，助手会先介绍自己。
+账户创建好后，TeaNode 只问一件事：你的助手用来思考的模型服务。选择 OpenAI、Anthropic 或 Gemini 并粘贴它的 API 密钥，或者选择**你自己的服务器**，填上这台服务器访问你的 Ollama 或 vLLM 所用的地址。按**启动我的助手**。它会检查密钥、选好模型（OpenAI 上是最新的 `sol`，快速回答用 `luna`）、自己重启，然后打开你的对话，助手会先介绍自己。
 
 它选的东西可以在**管理 → 助手 → 模型**里更改；邮件、日历和联系人在**管理 → 服务器 → 初始设置**里。服务器上的其他人在**设置项 → 你的助手**里开启自己的助手。
 

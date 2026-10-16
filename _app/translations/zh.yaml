@@ -469,21 +469,23 @@ welcome:
     socks5: SOCKS5 代理
     dns01: DNS-01 证书
   startHeading: 开始使用
-  startLead: 两种方式都只用一个 compose 文件。先只装助手，想要自己的邮件时再加上。
+  startLead: 只要助手的话一条命令就够了，想要自己的邮件时再加上。
   start:
     assistant:
       title: 只要助手
       note: 不需要域名，也不需要邮件端口。它监听 127.0.0.1:8080；要从手机访问，在它前面放一个 HTTPS 反向代理。
-      after: 打开仪表盘，认领账户，选一个模型，然后打开助手。
-      guide: 单独运行助手
+      after: 打开仪表盘，创建账户，再粘贴一个模型密钥。
     mail:
       title: 带上你自己的邮件
       note: 在你的域名上收发邮件，助手和上面的一切也都在。
       after: 第一个访问仪表盘的人创建账户。在那里添加你的域名，它会列出要发布的 DNS 记录。
   startWalkthrough: 快速开始
+  closingHeading: 准备好了就开始
+  closingLead: 一条命令、一个账户、一个模型密钥。在全新的服务器上大约一分钟。
+  startSteps: 每一步，配图说明
   needHeading: 你需要什么
   needs:
-    host: 一台一直开着、装了 Docker 和 compose 的电脑。PostgreSQL 随 compose 文件一起。
+    host: 一台一直开着的电脑。在 Linux 上安装命令会带上 Docker，PostgreSQL 也一起装好。
     model: 一个用来思考的模型。一个 API 密钥、一个你已经在付费的 ChatGPT 套餐，或者你自己的 Ollama 或 vLLM。
     https: 为了 iPhone 应用和出门在外时使用，在它前面放一个 HTTPS 地址，任何反向代理都行。
     mail: 如果要自己的邮件，还需要一个你能编辑 DNS 的域名，并开放 25、80、443、587 和 993 端口。
@@ -517,6 +519,46 @@ welcome:
     stored:
       question: 我的邮件存放在哪里？
       answer: 在你的主机上，在你的 PostgreSQL 数据库里，原始邮件放在磁盘上或你选择的对象存储里。一封邮件只存一份，无论有多少个文件夹放着它，只要还有一个放着就一直保留。
+start:
+  title: 开始使用
+  headline: 你自己的助手，大约一分钟就能跑起来。
+  lead: >-
+    在一台一直开着的电脑上运行一条命令，创建一个账户，再填一个模型服务的密钥。视频在一台全新的服务器上演示了全过程；下面是同样的步骤，一步一步来。
+  videoLabel: 在一台全新的服务器上安装 TeaNode，从命令到助手的第一句回答
+  steps:
+    install:
+      title: 运行一条命令
+      body: >-
+        在要运行 TeaNode 的电脑上：一台 Linux 服务器、一台闲置的电脑，或装了 Docker Desktop 的 Mac。在 Linux 上缺 Docker 时它会先装上，然后启动 TeaNode 和它的数据库，等到仪表盘能打开为止。
+      note: >-
+        所有东西都放在 /opt/teanode（不是 root 时放在 ~/teanode），只监听 127.0.0.1:8080。想先看看脚本，可以打开 teanode.com/install.sh；再运行一次不会丢数据。
+      picture: 安装命令运行完的终端，显示 TeaNode 已在运行
+    account:
+      title: 创建你的账户
+      body: >-
+        在浏览器里打开 http://127.0.0.1:8080，选一个用户名和密码。第一个访问的人就是管理员，所以马上去做。
+      note: >-
+        TeaNode 在服务器上，而不是你面前这台电脑？先在你自己的电脑上运行上面的隧道命令，再打开同一个地址。
+      picture: 仪表盘的创建账户表单，填好了用户名和密码
+    key:
+      title: 粘贴模型密钥
+      body: >-
+        选 OpenAI、Anthropic 或 Gemini，粘贴它的 API 密钥；或者选“你自己的服务器”，用你的 Ollama 或 vLLM。按“启动我的助手”：它会检查密钥、选一个好模型，然后启动助手。
+      note: >-
+        每个服务旁边都有获取密钥的链接。密钥只留在你的服务器上。已经付费的 ChatGPT 套餐则在“管理”里登录。
+      picture: 欢迎页选了 OpenAI、粘贴了密钥，以及“启动我的助手”按钮
+    hello:
+      title: 打个招呼
+      body: >-
+        对话会自动打开，助手先做自我介绍。问它什么都行，它会边聊边了解你。
+      note: >-
+        邮件、日历和联系人随时可以在“管理 → 服务器 → 设置”里加上。
+      picture: 聊天面板里助手的第一条消息
+  nextHeading: 接下来
+  next:
+    phone: 在前面放一个 HTTPS 地址，用 iPhone 访问它
+    mail: 加上你自己域名的邮件
+    docs: 阅读文档
 footer:
   licence: 以 MIT 许可证开源。
   security: 报告安全问题

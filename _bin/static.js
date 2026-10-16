@@ -98,13 +98,25 @@ const main = async () => {
     `<h2>${escape(welcome.startHeading)}</h2><p>${escape(welcome.startLead)}</p><ul>` +
     `<li><strong>${escape(welcome.start.assistant.title)}.</strong> ${escape(welcome.start.assistant.note)}</li>` +
     `<li><strong>${escape(welcome.start.mail.title)}.</strong> ${escape(welcome.start.mail.note)}</li>` +
-    `</ul><p>The commands for both are in the <a href="/doc/quick-start">Quick start</a>.</p>` +
+    `</ul><p><a href="/start">Get started</a> installs the assistant with one command, <code>curl -fsSL https://teanode.com/install.sh | sh</code>; the commands for both are in the <a href="/doc/quick-start">Quick start</a>.</p>` +
     `<h2>${escape(welcome.needHeading)}</h2><ul>` +
     Object.values(welcome.needs).map((need) => `<li>${escape(need)}</li>`).join('') +
     '</ul>' + index
   for (const name of ['index.html', '404.html']) {
     fill(path.join(ROOT, name), front)
   }
+
+  // The get started page: the steps in words, since the video and the
+  // pictures need the application.
+  const start = words.start
+  fill(path.join(ROOT, 'start.html'), home +
+    `<h1>${escape(start.headline)}</h1><p>${escape(start.lead)}</p><ol>` +
+    Object.entries(start.steps).map(([key, step]) =>
+      `<li><strong>${escape(step.title)}.</strong> ${escape(step.body)}` +
+      (key === 'install' ? '<pre><code>curl -fsSL https://teanode.com/install.sh | sh</code></pre>' : '') +
+      (key === 'account' ? '<pre><code>ssh -L 8080:127.0.0.1:8080 you@your-server</code></pre>' : '') +
+      ` ${escape(step.note)}</li>`).join('') +
+    '</ol>' + index)
 
   const llms = [
     '# TeaNode',
@@ -113,7 +125,7 @@ const main = async () => {
     '',
     welcome.lead,
     '',
-    `To install it, follow the [Quick start](${SITE}/data/docs/en/quick-start.markdown). The pages under ${SITE}/doc/ show the same documents once JavaScript runs; the links below are the markdown itself.`,
+    `To install the assistant, run \`curl -fsSL ${SITE}/install.sh | sh\` on the computer it will live on, then follow the [Quick start](${SITE}/data/docs/en/quick-start.markdown) from step 2. The pages under ${SITE}/doc/ show the same documents once JavaScript runs; the links below are the markdown itself.`,
     '',
     ...groups.flatMap((group) => [
       `## ${group.name}`,

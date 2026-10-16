@@ -4,7 +4,7 @@
 
 It reads your mail, keeps your calendar, files your receipts and tax forms, writes up your meetings and keeps an eye on your coding sessions, and it remembers what it learns about you. Talk to it from the iPhone app, a browser or a call. One program and one PostgreSQL on your hardware; point it at an Ollama or a vLLM of your own and nothing leaves the machine.
 
-To install it, follow the [Quick start](https://teanode.com/data/docs/en/quick-start.markdown). The pages under https://teanode.com/doc/ show the same documents once JavaScript runs; the links below are the markdown itself.
+To install the assistant, run `curl -fsSL https://teanode.com/install.sh | sh` on the computer it will live on, then follow the [Quick start](https://teanode.com/data/docs/en/quick-start.markdown) from step 2. The pages under https://teanode.com/doc/ show the same documents once JavaScript runs; the links below are the markdown itself.
 
 ## Getting started
 

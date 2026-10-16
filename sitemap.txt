@@ -1,4 +1,5 @@
 https://teanode.com/
+https://teanode.com/start
 https://teanode.com/doc/introduction
 https://teanode.com/doc/quick-start
 https://teanode.com/doc/getting-started

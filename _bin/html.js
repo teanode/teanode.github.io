@@ -21,7 +21,8 @@
 // CloudFront distribution that answers any 404 from the origin with / as a
 // 200, so there the file is never reached.
 //
-// The documents get a page each: doc.html for /doc, and doc/<slug>.html for
+// The get started page gets start.html, and the documents get a page each:
+// doc.html for /doc, and doc/<slug>.html for
 // /doc/<slug>, which GitHub Pages serves at the address without the extension.
 // Each is the same page again with the title, description and address of that
 // document in the head, in English. The application ignores the head and
@@ -142,6 +143,13 @@ for (const output of OUTPUTS) {
 
 const docs = JSON.parse(fs.readFileSync(DOCS, 'utf8'))
 const pages = [
+  {
+    output: path.join(ROOT, 'start.html'),
+    title: 'Get started - TeaNode',
+    description: 'Install TeaNode with one command, create your account, paste a model key and say hello: a video and every step with pictures.',
+    url: `${SITE}/start`,
+    type: 'website',
+  },
   {
     output: path.join(ROOT, 'doc.html'),
     title: 'Documentation - TeaNode',

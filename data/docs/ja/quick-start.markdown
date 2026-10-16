@@ -2,11 +2,15 @@
 
 ## 必要なもの
 
-- 動かしっぱなしのコンピューターと、compose プラグイン付きの Docker。compose ファイルが PostgreSQL を起動します。
+- 動かしっぱなしのコンピューター。Linux のサーバー、余っている PC、Docker Desktop を入れた Mac など。Linux で Docker がなければインストールのコマンドが入れ、PostgreSQL もいっしょに入ります。
 - 考えるためのモデル。OpenAI、Anthropic、Gemini の API キー、すでに払っている ChatGPT のプラン、あるいは自分の Ollama か vLLM。
 - iPhone のアプリや、そのコンピューターから離れたところで使うには、前に置く HTTPS のアドレス。リバースプロキシならなんでも。
 
 ## 1. サーバーを起動する
+
+    curl -fsSL https://teanode.com/install.sh | sh
+
+compose ファイルと新しいデータベースのパスワードを `/opt/teanode`（root でなければ `~/teanode`）に置き、コンテナーを起動して、ダッシュボードが応答するまで待ちます。もう一度実行してもパスワードとデータは残ります。先に中身を見るなら [teanode.com/install.sh](https://teanode.com/install.sh) を開いてください。手で行うなら次のとおりです。
 
     mkdir -p /opt/teanode && cd /opt/teanode
     curl -LO https://raw.githubusercontent.com/ziyan/teanode/main/deploy/docker-compose.assistant.yml
@@ -26,7 +30,7 @@ http://127.0.0.1:8080/ を開きます。TeaNode が目の前のコンピュー�
 
 ## 3. アシスタントを始める
 
-アカウントを作ると、TeaNode が尋ねるのはひとつだけです：アシスタントが考えるのに使うモデルのサービス。OpenAI、Anthropic、Gemini のどれかを選んで API キーを貼り付けるか、**自分のサーバー**を選んで、このサーバーから届く Ollama や vLLM のアドレスを入れます。**アシスタントを始める**を押すと、キーを確かめ、モデルを選び（OpenAI なら `gpt-5-mini`）、自分で再起動して会話を開きます。アシスタントがまず自己紹介をします。
+アカウントを作ると、TeaNode が尋ねるのはひとつだけです：アシスタントが考えるのに使うモデルのサービス。OpenAI、Anthropic、Gemini のどれかを選んで API キーを貼り付けるか、**自分のサーバー**を選んで、このサーバーから届く Ollama や vLLM のアドレスを入れます。**アシスタントを始める**を押すと、キーを確かめ、モデルを選び（OpenAI なら最新の `sol`、すばやい返事には `luna`）、自分で再起動して会話を開きます。アシスタントがまず自己紹介をします。
 
 選ばれたものは**管理 → エージェント → モデル**で変えられます。メール、カレンダー、連絡先は**管理 → サーバー → セットアップ**にあります。サーバーのほかの利用者は**設定 → あなたのエージェント**で自分のエージェントをオンにします。
 

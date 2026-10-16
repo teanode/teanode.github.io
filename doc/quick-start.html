@@ -20,18 +20,26 @@ window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-XD5JSLP4RH', {send_page_view: false});
-</script><script type="module" crossorigin src="/static/teanode.B4qXBTfP.js"></script></head><body><div id="teanode"><style>.teanode-static{max-width:760px;margin:0 auto;padding:24px 16px 48px;font:16px/1.6 system-ui,sans-serif;opacity:0;animation:teanode-static 0s 2s forwards}.teanode-static pre{overflow-x:auto}@keyframes teanode-static{to{opacity:1}}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .teanode-static{color:#e8e8ea}:root:not([data-theme=light]) .teanode-static a{color:#9ccc65}}:root[data-theme=dark] .teanode-static{color:#e8e8ea}:root[data-theme=dark] .teanode-static a{color:#9ccc65}</style><div class="teanode-static"><p><a href="/">TeaNode</a> · <a href="/doc">Documentation</a> · <a href="https://github.com/ziyan/teanode">Source</a></p><h1>Quick start</h1><p>Start with the assistant alone, which needs no domain and no mail ports.
+</script><script type="module" crossorigin src="/static/teanode.C5n7ktF_.js"></script></head><body><div id="teanode"><style>.teanode-static{max-width:760px;margin:0 auto;padding:24px 16px 48px;font:16px/1.6 system-ui,sans-serif;opacity:0;animation:teanode-static 0s 2s forwards}.teanode-static pre{overflow-x:auto}@keyframes teanode-static{to{opacity:1}}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .teanode-static{color:#e8e8ea}:root:not([data-theme=light]) .teanode-static a{color:#9ccc65}}:root[data-theme=dark] .teanode-static{color:#e8e8ea}:root[data-theme=dark] .teanode-static a{color:#9ccc65}</style><div class="teanode-static"><p><a href="/">TeaNode</a> · <a href="/doc">Documentation</a> · <a href="https://github.com/ziyan/teanode">Source</a></p><h1>Quick start</h1><p>Start with the assistant alone, which needs no domain and no mail ports.
 Mail at your own domain can be added later without losing anything.</p>
 <h2>What you need</h2>
 <ul>
-<li>A computer that stays on, with Docker and the compose plugin. The compose
-file starts PostgreSQL for you.</li>
+<li>A computer that stays on: a Linux server, a spare PC, or a Mac with Docker
+Desktop. On Linux the install command adds Docker if it is missing, and
+PostgreSQL comes with it.</li>
 <li>A model to think with: an API key from OpenAI, Anthropic or Gemini, a
 ChatGPT plan you already pay for, or an Ollama or vLLM of your own.</li>
 <li>For the iPhone app, or to use it away from that computer, an HTTPS address
 in front of it, from any reverse proxy.</li>
 </ul>
 <h2>1. Start the server</h2>
+<pre><code>curl -fsSL https://teanode.com/install.sh | sh
+</code></pre>
+<p>It puts the compose file and a fresh database password in <code>/opt/teanode</code>
+(<code>~/teanode</code> when you are not root), starts the containers and waits for the
+dashboard. Running it again keeps the password and the data. To read it
+first, open <a href="https://teanode.com/install.sh">teanode.com/install.sh</a>. The same
+by hand:</p>
 <pre><code>mkdir -p /opt/teanode &amp;&amp; cd /opt/teanode
 curl -LO https://raw.githubusercontent.com/ziyan/teanode/main/deploy/docker-compose.assistant.yml
 echo &quot;POSTGRES_PASSWORD=$(openssl rand -hex 24)&quot; &gt; .env
@@ -52,7 +60,7 @@ right away.</p>
 assistant thinks with. Choose OpenAI, Anthropic or Gemini and paste its API
 key, or choose <strong>Your own server</strong> and give the address of your Ollama or
 vLLM as the server reaches it. Press <strong>Start my assistant</strong>. It checks the
-key, chooses a model (on OpenAI, <code>gpt-5-mini</code>), restarts itself and opens
+key, chooses a model (on OpenAI, the newest <code>sol</code>, with <code>luna</code> for quick answers), restarts itself and opens
 your conversation, where the assistant introduces itself.</p>
 <p>What it chose can be changed under <strong>Manage → Agents → Models</strong>; mail,
 calendars and contacts are under <strong>Manage → Server → Setup</strong>. Somebody

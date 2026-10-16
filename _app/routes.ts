@@ -1,5 +1,6 @@
 export default {
   welcomePath: '/',
+  startPath: '/start',
   docsPath: '/doc',
   docPath: '/doc/:docId',
 }
