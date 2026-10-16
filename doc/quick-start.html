@@ -47,31 +47,17 @@ computer in front of you, reach it through an SSH tunnel first:</p>
 </code></pre>
 <p>The first visitor creates the only account, an administrator, so do this
 right away.</p>
-<h2>3. Turn the assistant on</h2>
-<p>Open <strong>Manage → Server → Setup</strong>. The card at the top already has
-<strong>Personal assistant</strong> chosen, so leave it. Under it is what is left, in
-order, with which steps are done:</p>
-<ol>
-<li><strong>Connect a model provider and test it.</strong> On <strong>Manage → Agents →
-Models</strong>, <strong>Add a provider</strong>: any <strong>Name</strong> (such as <code>openai</code>), your key
-in <strong>API key</strong>, or the address of your own Ollama or vLLM, and nothing
-else; <strong>Billing key</strong> is for something else. Save it and press
-<strong>Test</strong>. Then choose the <strong>Default</strong> model and
-save: a small, inexpensive model from your provider is a good start (on
-OpenAI, <code>gpt-5-mini</code>); type part of a name to narrow the list. An
-<strong>Embedding</strong> model (on OpenAI, <code>text-embedding-3-small</code>) is optional and
-lets memory be searched by meaning.</li>
-<li><strong>Enable the assistant.</strong> On <strong>Manage → Agents → General</strong>, turn on
-<strong>Enabled</strong> and save. Each of these saves says it waits for a restart;
-restart once, at the next step.</li>
-<li><strong>Restart this instance.</strong> The provider, the models and Enabled are read
-when the server starts. Press <strong>Restart now</strong> on this step, or use
-<strong>Manage → Server → About</strong>.</li>
-<li><strong>Turn on your own agent.</strong> Each person turns on their own, under
-<strong>Settings → Your agent</strong>; the setup page has a button for yours.</li>
-</ol>
-<p>Then say hello: press <strong>Open your personal assistant</strong> at the end of the
-list, or the round chat button in the bottom corner of any page.</p>
+<h2>3. Start the assistant</h2>
+<p>Once the account is made, TeaNode asks one thing: the model service your
+assistant thinks with. Choose OpenAI, Anthropic or Gemini and paste its API
+key, or choose <strong>Your own server</strong> and give the address of your Ollama or
+vLLM as the server reaches it. Press <strong>Start my assistant</strong>. It checks the
+key, chooses a model (on OpenAI, <code>gpt-5-mini</code>), restarts itself and opens
+your conversation, where the assistant introduces itself.</p>
+<p>What it chose can be changed under <strong>Manage → Agents → Models</strong>; mail,
+calendars and contacts are under <strong>Manage → Server → Setup</strong>. Somebody
+else on the server turns on their own agent under <strong>Settings → Your
+agent</strong>.</p>
 <h2>4. Reach it from your phone</h2>
 <p>Put port 8080 behind a reverse proxy with an HTTPS address, add the proxy&#39;s
 address to the trusted proxies in the server&#39;s settings, and open the

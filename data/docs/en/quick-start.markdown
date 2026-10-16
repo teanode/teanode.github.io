@@ -31,32 +31,19 @@ computer in front of you, reach it through an SSH tunnel first:
 The first visitor creates the only account, an administrator, so do this
 right away.
 
-## 3. Turn the assistant on
+## 3. Start the assistant
 
-Open **Manage → Server → Setup**. The card at the top already has
-**Personal assistant** chosen, so leave it. Under it is what is left, in
-order, with which steps are done:
+Once the account is made, TeaNode asks one thing: the model service your
+assistant thinks with. Choose OpenAI, Anthropic or Gemini and paste its API
+key, or choose **Your own server** and give the address of your Ollama or
+vLLM as the server reaches it. Press **Start my assistant**. It checks the
+key, chooses a model (on OpenAI, `gpt-5-mini`), restarts itself and opens
+your conversation, where the assistant introduces itself.
 
-1. **Connect a model provider and test it.** On **Manage → Agents →
-   Models**, **Add a provider**: any **Name** (such as `openai`), your key
-   in **API key**, or the address of your own Ollama or vLLM, and nothing
-   else; **Billing key** is for something else. Save it and press
-   **Test**. Then choose the **Default** model and
-   save: a small, inexpensive model from your provider is a good start (on
-   OpenAI, `gpt-5-mini`); type part of a name to narrow the list. An
-   **Embedding** model (on OpenAI, `text-embedding-3-small`) is optional and
-   lets memory be searched by meaning.
-2. **Enable the assistant.** On **Manage → Agents → General**, turn on
-   **Enabled** and save. Each of these saves says it waits for a restart;
-   restart once, at the next step.
-3. **Restart this instance.** The provider, the models and Enabled are read
-   when the server starts. Press **Restart now** on this step, or use
-   **Manage → Server → About**.
-4. **Turn on your own agent.** Each person turns on their own, under
-   **Settings → Your agent**; the setup page has a button for yours.
-
-Then say hello: press **Open your personal assistant** at the end of the
-list, or the round chat button in the bottom corner of any page.
+What it chose can be changed under **Manage → Agents → Models**; mail,
+calendars and contacts are under **Manage → Server → Setup**. Somebody
+else on the server turns on their own agent under **Settings → Your
+agent**.
 
 ## 4. Reach it from your phone
 
