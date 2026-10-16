@@ -33,12 +33,15 @@ right away.
 
 ## 3. Turn the assistant on
 
-Open **Manage → Server → Setup**. It lists what is left, in order, and says
-which steps are done:
+Open **Manage → Server → Setup**. The card at the top already has
+**Personal assistant** chosen, so leave it. Under it is what is left, in
+order, with which steps are done:
 
 1. **Connect a model provider and test it.** On **Manage → Agents →
-   Models**, add a provider with your API key, or the address of your own
-   Ollama or vLLM, and press **Test**. Then choose the **Default** model and
+   Models**, **Add a provider**: any **Name** (such as `openai`), your key
+   in **API key**, or the address of your own Ollama or vLLM, and nothing
+   else; **Billing key** is for something else. Save it and press
+   **Test**. Then choose the **Default** model and
    save: a small, inexpensive model from your provider is a good start (on
    OpenAI, `gpt-5-mini`); type part of a name to narrow the list. An
    **Embedding** model (on OpenAI, `text-embedding-3-small`) is optional and
