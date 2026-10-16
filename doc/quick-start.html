@@ -54,17 +54,17 @@ which steps are done:</p>
 <li><strong>Connect a model provider and test it.</strong> On <strong>Manage → Agents →
 Models</strong>, add a provider with your API key, or the address of your own
 Ollama or vLLM, and press <strong>Test</strong>. Then choose the <strong>Default</strong> model and
-save: a small, inexpensive model from your provider is a good start, and
-the list has a box to narrow it.</li>
+save: a small, inexpensive model from your provider is a good start (on
+OpenAI, <code>gpt-5-mini</code>), and the list has a box to narrow it.</li>
 <li><strong>Enable the assistant.</strong> On <strong>Manage → Agents → General</strong>, turn on
 <strong>Enabled</strong> and save.</li>
 <li><strong>Restart this instance.</strong> The provider, the models and Enabled are read
-when the server starts. The message after saving them has a <strong>Restart…</strong>
-button, or use <strong>Manage → Server → About</strong>.</li>
+when the server starts. Press <strong>Restart now</strong> on this step, or use
+<strong>Manage → Server → About</strong>.</li>
 <li><strong>Turn on your own agent.</strong> Each person turns on their own, under
 <strong>Settings → Your agent</strong>; the setup page has a button for yours.</li>
 </ol>
-<p>Then open your assistant and say hello. It introduces itself first.</p>
+<p>Then open your assistant and say hello.</p>
 <h2>4. Reach it from your phone</h2>
 <p>Put port 8080 behind a reverse proxy with an HTTPS address, add the proxy&#39;s
 address to the trusted proxies in the server&#39;s settings, and open the
