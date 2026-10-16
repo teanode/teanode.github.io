@@ -8,9 +8,9 @@
 
 ## 1. 启动服务器
 
-    curl -fsSL https://teanode.com/install.sh | sh
+    curl -fsSL https://teanode.com/get.sh | sh
 
-它把 compose 文件和新生成的数据库密码放在 `/opt/teanode`（不是 root 时放在 `~/teanode`），启动容器，等仪表盘能打开为止。再运行一次会保留密码和数据。想先看看脚本，打开 [teanode.com/install.sh](https://teanode.com/install.sh)。手动做是这样：
+它把 compose 文件和新生成的数据库密码放在 `/opt/teanode`（不是 root 时放在 `~/teanode`），启动容器，等仪表盘能打开为止。再运行一次会保留密码和数据。想先看看脚本，打开 [teanode.com/get.sh](https://teanode.com/get.sh)。手动做是这样：
 
     mkdir -p /opt/teanode && cd /opt/teanode
     curl -LO https://raw.githubusercontent.com/ziyan/teanode/main/deploy/docker-compose.assistant.yml

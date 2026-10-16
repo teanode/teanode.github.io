@@ -655,7 +655,7 @@ start:
       note: >-
         It puts everything in /opt/teanode (~/teanode when you are not root)
         and listens only on 127.0.0.1:8080. Read the script first at
-        teanode.com/install.sh if you like; running it again keeps your data.
+        teanode.com/get.sh if you like; running it again keeps your data.
       picture: The terminal after the install command, saying TeaNode is running
     account:
       title: Create your account

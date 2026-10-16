@@ -8,9 +8,9 @@
 
 ## 1. サーバーを起動する
 
-    curl -fsSL https://teanode.com/install.sh | sh
+    curl -fsSL https://teanode.com/get.sh | sh
 
-compose ファイルと新しいデータベースのパスワードを `/opt/teanode`（root でなければ `~/teanode`）に置き、コンテナーを起動して、ダッシュボードが応答するまで待ちます。もう一度実行してもパスワードとデータは残ります。先に中身を見るなら [teanode.com/install.sh](https://teanode.com/install.sh) を開いてください。手で行うなら次のとおりです。
+compose ファイルと新しいデータベースのパスワードを `/opt/teanode`（root でなければ `~/teanode`）に置き、コンテナーを起動して、ダッシュボードが応答するまで待ちます。もう一度実行してもパスワードとデータは残ります。先に中身を見るなら [teanode.com/get.sh](https://teanode.com/get.sh) を開いてください。手で行うなら次のとおりです。
 
     mkdir -p /opt/teanode && cd /opt/teanode
     curl -LO https://raw.githubusercontent.com/ziyan/teanode/main/deploy/docker-compose.assistant.yml

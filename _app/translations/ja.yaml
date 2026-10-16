@@ -531,7 +531,7 @@ start:
       body: >-
         TeaNode を置くコンピューターで実行します。Linux のサーバー、余っている PC、Docker Desktop を入れた Mac など。Linux で Docker がなければ先に入れ、TeaNode とデータベースを起動し、ダッシュボードが応答するまで待ちます。
       note: >-
-        すべて /opt/teanode（root でなければ ~/teanode）に置き、127.0.0.1:8080 だけで待ち受けます。先に中身を見たければ teanode.com/install.sh を開いてください。もう一度実行してもデータは消えません。
+        すべて /opt/teanode（root でなければ ~/teanode）に置き、127.0.0.1:8080 だけで待ち受けます。先に中身を見たければ teanode.com/get.sh を開いてください。もう一度実行してもデータは消えません。
       picture: インストールのコマンドのあとのターミナル。TeaNode が動いていると表示
     account:
       title: アカウントを作る

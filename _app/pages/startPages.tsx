@@ -26,7 +26,7 @@ const poster = asset('poster.jpg')
 // needs nothing but a computer and a key; mail is a link at the end.
 //
 
-export const installCommand = 'curl -fsSL https://teanode.com/install.sh | sh'
+export const installCommand = 'curl -fsSL https://teanode.com/get.sh | sh'
 const tunnelCommand = 'ssh -L 8080:127.0.0.1:8080 you@your-server'
 
 // The pictures were taken at twice their size on the page.

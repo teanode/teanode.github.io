@@ -13,12 +13,12 @@ Mail at your own domain can be added later without losing anything.
 
 ## 1. Start the server
 
-    curl -fsSL https://teanode.com/install.sh | sh
+    curl -fsSL https://teanode.com/get.sh | sh
 
 It puts the compose file and a fresh database password in `/opt/teanode`
 (`~/teanode` when you are not root), starts the containers and waits for the
 dashboard. Running it again keeps the password and the data. To read it
-first, open [teanode.com/install.sh](https://teanode.com/install.sh). The same
+first, open [teanode.com/get.sh](https://teanode.com/get.sh). The same
 by hand:
 
     mkdir -p /opt/teanode && cd /opt/teanode

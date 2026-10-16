@@ -31,7 +31,7 @@ served site:
 | `index.html`, `404.html`, `favicon.*`, `robots.txt`, `sitemap.txt` | yes |
 | `doc.html`, `doc/` | yes: the application again, one page per document |
 | `start.html` | yes: the application again, for /start |
-| `install.sh` | yes: a copy of `deploy/install.sh` in the server repository, which is the one to edit; copy it here after it merges |
+| `get.sh` | yes: a copy of `deploy/get.sh` in the server repository, which is the one to edit; copy it here after it merges |
 | `static/`, `data/` | yes, including every document |
 | `_app/`, `_bin/`, `.github/` | no |
 

@@ -531,7 +531,7 @@ start:
       body: >-
         在要运行 TeaNode 的电脑上：一台 Linux 服务器、一台闲置的电脑，或装了 Docker Desktop 的 Mac。在 Linux 上缺 Docker 时它会先装上，然后启动 TeaNode 和它的数据库，等到仪表盘能打开为止。
       note: >-
-        所有东西都放在 /opt/teanode（不是 root 时放在 ~/teanode），只监听 127.0.0.1:8080。想先看看脚本，可以打开 teanode.com/install.sh；再运行一次不会丢数据。
+        所有东西都放在 /opt/teanode（不是 root 时放在 ~/teanode），只监听 127.0.0.1:8080。想先看看脚本，可以打开 teanode.com/get.sh；再运行一次不会丢数据。
       picture: 安装命令运行完的终端，显示 TeaNode 已在运行
     account:
       title: 创建你的账户
