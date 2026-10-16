@@ -42,14 +42,16 @@ which steps are done:
    save: a small, inexpensive model from your provider is a good start (on
    OpenAI, `gpt-5-mini`), and the list has a box to narrow it.
 2. **Enable the assistant.** On **Manage → Agents → General**, turn on
-   **Enabled** and save.
+   **Enabled** and save. Each of these saves says it waits for a restart;
+   restart once, at the next step.
 3. **Restart this instance.** The provider, the models and Enabled are read
    when the server starts. Press **Restart now** on this step, or use
    **Manage → Server → About**.
 4. **Turn on your own agent.** Each person turns on their own, under
    **Settings → Your agent**; the setup page has a button for yours.
 
-Then open your assistant and say hello.
+Then say hello: press **Open your personal assistant** at the end of the
+list, or the round chat button in the bottom corner of any page.
 
 ## 4. Reach it from your phone
 
