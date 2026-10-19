@@ -19,12 +19,26 @@
 <body>
 <svg class="leaf" viewBox="0 0 64 64" aria-hidden="true"><path fill="#729d39" d="M56 8C30 8 10 20 10 40c0 6 3 11 7 14 2-14 10-24 22-30-9 7-15 16-17 28 3 1 6 2 10 2 20 0 26-22 24-46z"/></svg>
 <h1>TeaNode app privacy policy</h1>
-<p class="muted">Last updated October 11, 2026.</p>
+<p class="muted">Last updated October 18, 2026.</p>
 
 <p>The TeaNode app is a client for a TeaNode server: a mail server and personal agent that you, or someone you trust, runs. The app talks to the server you connect it to and to nothing else of ours, except the notification relay described below. We do not collect, sell or share your data, we show no ads, and the app contains no analytics or tracking code.</p>
 
 <h2>What goes to your server</h2>
-<p>Everything you do in the app is sent to the TeaNode server you connected it to, over HTTPS, so that the server can do it: the messages you write and the pictures, files and links you send or share to the app; your voice while you are on a call with your agent; your location, when your agent asks for it to answer something and you allow it; and what you read and change in your mail, calendar, contacts, finance and the agent's memory. That server keeps it as its operator configures it. Its privacy is between you and whoever runs it.</p>
+<p>Everything you do in the app is sent to the TeaNode server you connected it to, over HTTPS, so that the server can do it: the messages you write and the pictures, files and links you send or share to the app; your voice while you are on a call with your agent; your location, when your agent asks for it to answer something and you allow it, or all the time if you turn on Location (below); and what you read and change in your mail, calendar, contacts, finance and the agent's memory. That server keeps it as its operator configures it. Its privacy is between you and whoever runs it.</p>
+<h2>Location</h2>
+<p>If you turn on Location in the app, it records where you go: the places you visit and when, and your position when you move a long way, also while the app is closed. It sends them to your server, and keeps them on the phone only until your server has them. Your server names the places it has not seen before by asking its place provider, OpenStreetMap's by default, with the position of that place only. You can share where you are with the people in your circles on that server, and you choose who and how much. Turning Location off stops the recording; erasing your history on the dashboard or in the app removes it from your server.</p>
+
+<h2>Photos</h2>
+<p>If you turn on photo backup, the app copies the photos and videos you choose from your iPhone's library to your server, with the date, place and other details stored in them. Nothing is copied anywhere else.</p>
+
+<h2>Health</h2>
+<p>If you turn on Health in the app, it reads the kinds of Apple Health data you allow in Apple's permission sheet (for example steps, heart rate, sleep, workouts and their routes, and body measurements), never your clinical records, and copies them to your own TeaNode server, and nowhere else. It keeps no copy of them on the phone and never stores them in iCloud. Your server keeps them until you erase them, which you can do for one kind or for everything, on the dashboard or in the app; erasing also stops the app sending more until you turn Health on again.</p>
+<ul>
+<li>Your agent reads your Health data only after you turn on "Let the agent read Health data". What it reads to answer you is then sent to the AI model provider your server uses, as everything the agent reads is; the switch names that provider. It is off until you turn it on, and you can turn it off at any time.</li>
+<li>You can share some of it with people in your circles on the same server, by category (for example Activity or Sleep). They see the day by day totals of the categories you chose, never your individual readings, routes or other details.</li>
+<li>Health data is never used for advertising or marketing, never sold, and never given to anyone else.</li>
+</ul>
+
 <p>The app keeps its sign-in in the iPhone's keychain, and a key for decrypting notifications. Removing the phone on your dashboard, or signing out in the app, ends the sign-in.</p>
 
 <h2>Notifications</h2>
