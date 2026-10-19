@@ -25,21 +25,22 @@
 
 <h2>What goes to your server</h2>
 <p>Everything you do in the app is sent to the TeaNode server you connected it to, over HTTPS, so that the server can do it: the messages you write and the pictures, files and links you send or share to the app; your voice while you are on a call with your agent; your location, when your agent asks for it to answer something and you allow it, or all the time if you turn on Location (below); and what you read and change in your mail, calendar, contacts, finance and the agent's memory. That server keeps it as its operator configures it. Its privacy is between you and whoever runs it.</p>
+<p>The app keeps its sign-in in the iPhone's keychain, and a key for decrypting notifications. Removing the phone on your dashboard, or signing out in the app, ends the sign-in.</p>
+
 <h2>Location</h2>
-<p>If you turn on Location in the app, it records where you go: the places you visit and when, and your position when you move a long way, also while the app is closed. It sends them to your server, and keeps them on the phone only until your server has them. Your server names the places it has not seen before by asking its place provider, OpenStreetMap's by default, with the position of that place only. You can share where you are with the people in your circles on that server, and you choose who and how much. Turning Location off stops the recording; erasing your history on the dashboard or in the app removes it from your server.</p>
+<p>If you turn on Location in the app, it records where you go: the places you visit and when, and your position when you move a long way, also while the app is closed. It sends them to your server, and keeps them on the phone only until your server has them. Your server names the places it has not seen before by asking its place provider, OpenStreetMap's by default, with the position of that place only. The app draws its maps with Apple Maps, so Apple serves the map of the area on screen. You can share where you are with the people in your circles on that server, and you choose who and how much.</p>
+<p>Your agent reads your location to answer you, and what it reads is sent to the AI model provider your server uses, as everything the agent reads is. Turning Location off stops the recording. Erasing your history on the dashboard or in the app removes it from your server; what your agent already wrote in its memory from those days stays there until you remove it, and the app says so when you erase.</p>
 
 <h2>Photos</h2>
-<p>If you turn on photo backup, the app copies the photos and videos you choose from your iPhone's library to your server, with the date, place and other details stored in them. Nothing is copied anywhere else.</p>
+<p>If you turn on photo backup, the app copies the photos and videos you choose from your iPhone's library to your server, with the date, place and other details stored in them. Faces are found and grouped on your server itself, and a group has a name only when you give it one. You can share an album with people in your circles on that server, and you choose whether it includes where the photos were taken. Your agent looks at a photo only when you ask it to or point it at one, and that photo is then sent to the AI model provider your server uses. Nothing is copied anywhere else.</p>
 
 <h2>Health</h2>
 <p>If you turn on Health in the app, it reads the kinds of Apple Health data you allow in Apple's permission sheet (for example steps, heart rate, sleep, workouts and their routes, and body measurements), never your clinical records, and copies them to your own TeaNode server, and nowhere else. It keeps no copy of them on the phone and never stores them in iCloud. Your server keeps them until you erase them, which you can do for one kind or for everything, on the dashboard or in the app; erasing also stops the app sending more until you turn Health on again.</p>
 <ul>
 <li>Your agent reads your Health data only after you turn on "Let the agent read Health data". What it reads to answer you is then sent to the AI model provider your server uses, as everything the agent reads is; the switch names that provider. It is off until you turn it on, and you can turn it off at any time.</li>
 <li>You can share some of it with people in your circles on the same server, by category (for example Activity or Sleep). They see the day by day totals of the categories you chose, never your individual readings, routes or other details.</li>
-<li>Health data is never used for advertising or marketing, never sold, and never given to anyone else.</li>
+<li>Health data is never used for advertising or marketing, never sold, and never given to anyone beyond what is described here.</li>
 </ul>
-
-<p>The app keeps its sign-in in the iPhone's keychain, and a key for decrypting notifications. Removing the phone on your dashboard, or signing out in the app, ends the sign-in.</p>
 
 <h2>Notifications</h2>
 <p>Notifications reach your phone through Apple's push service and a relay that holds the app's Apple push key. What a notification says is encrypted on your server with a key only your phone has, and decrypted on the phone before it is shown, so neither Apple nor the relay can read it. The app gives the relay your phone's push token once, and the relay hands it back sealed, for your server to keep. When your server sends a notification, the relay sees that token and the server's address; it stores neither, and holds them in memory only to deliver the notification and to limit how often one phone is sent to.</p>
