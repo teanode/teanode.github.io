@@ -20,7 +20,40 @@ window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-XD5JSLP4RH', {send_page_view: false});
-</script><script type="module" crossorigin src="/static/teanode.BCItjk9M.js"></script></head><body><div id="teanode"><style>.teanode-static{max-width:760px;margin:0 auto;padding:24px 16px 48px;font:16px/1.6 system-ui,sans-serif;opacity:0;animation:teanode-static 0s 2s forwards}.teanode-static pre{overflow-x:auto}@keyframes teanode-static{to{opacity:1}}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .teanode-static{color:#e8e8ea}:root:not([data-theme=light]) .teanode-static a{color:#9ccc65}}:root[data-theme=dark] .teanode-static{color:#e8e8ea}:root[data-theme=dark] .teanode-static a{color:#9ccc65}</style><div class="teanode-static"><p><a href="/">TeaNode</a> · <a href="/doc">Documentation</a> · <a href="https://github.com/ziyan/teanode">Source</a></p><h1>Configuration</h1><p>Everything an operator sets lives in the database, alongside the mail. The
+</script><script type="module" crossorigin src="/static/teanode.DR1xKAUf.js"></script></head><body><div id="teanode"><style>.teanode-static{max-width:760px;margin:0 auto;padding:24px 16px 48px;font:16px/1.6 system-ui,sans-serif;opacity:0;animation:teanode-static 0s 2s forwards}.teanode-static pre{overflow-x:auto}@keyframes teanode-static{to{opacity:1}}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .teanode-static{color:#e8e8ea}:root:not([data-theme=light]) .teanode-static a{color:#9ccc65}}:root[data-theme=dark] .teanode-static{color:#e8e8ea}:root[data-theme=dark] .teanode-static a{color:#9ccc65}</style><div class="teanode-static"><p><a href="/">TeaNode</a> · <a href="/doc">Documentation</a> · <a href="https://github.com/ziyan/teanode">Source</a></p><h1>Configuration</h1><h3><code>services</code></h3>
+<p>Deployment-wide hosted services. Omitted switches preserve existing installations;
+new assistant seeds write explicit false values for mail routing, mailboxes,
+calendar, reminders and contacts, and leave Photos on. Disabling preserves data, roles,
+agent grants and credentials, and refuses new operations immediately. Enabling
+requires a restart. The dashboard reports selected and running services.</p>
+<ul>
+<li><strong><code>mailRouting</code></strong>: SMTP, forwarding, hosted sending, domains, delivery queues
+and mail DNS diagnostics.</li>
+<li><strong><code>mailboxes</code></strong>: stored mail, IMAP, mailbox API and mailbox agent jobs.
+Requires routing. Forwarding can run without mailboxes.</li>
+<li><strong><code>calendar</code></strong>: events and CalDAV event collections. Local events need no mail;
+mail invitations require an available hosted mailbox and sender.</li>
+<li><strong><code>reminders</code></strong>: reminders and their CalDAV collections, independently of
+event calendars. Assistant schedules are independent of this choice.</li>
+<li><strong><code>contacts</code></strong>: address books and CardDAV collections.</li>
+<li><strong><code>photos</code></strong>: the photo and video library, its uploads and the iPhone app&#39;s
+backup. Its limits are in the <code>photos</code> section below.</li>
+<li><strong><code>isEnabled</code></strong>: nullable boolean inside each service. Omitted means enabled
+for compatibility; false makes the service unavailable. <code>photos</code> stays on
+for an assistant-only server too, since it needs no mail.</li>
+<li><strong><code>hasCompletedSetup</code></strong>: whether the operator completed service setup.
+Legacy configurations without switches do not require this step.</li>
+</ul>
+<p>The existing <code>agent.enabled</code> setting controls the assistant independently.
+Authenticated clients use <code>GetServiceCapabilities</code>. <code>teanode services get</code>
+reports availability; <code>teanode services set --contacts=true</code> changes a choice.</p>
+<p><code>TEANODE_SERVICE_PRESET</code> seeds only an empty database: <code>assistant</code> disables mail
+routing, mailboxes, calendar, reminders and contacts, and leaves Photos on,
+<code>mail</code> enables routing and mailboxes, and <code>legacy</code> retains
+historical defaults. Without a preset, seeds with a mail hostname or domain
+retain historical behavior. Change a configured installation in the dashboard
+or through configuration import, rather than changing its seed environment.</p>
+<p>Everything an operator sets lives in the database, alongside the mail. The
 server reads it at startup and re-reads it every few seconds, so a change made
 in the dashboard — or by another instance — takes effect without a restart.</p>
 <p>There is no configuration file. A server used to be described by
@@ -294,8 +327,10 @@ when sending, for example &quot;mail.example.com&quot;. It must resolve to this 
 its reverse DNS should match, or receiving servers will distrust mail from
 here.</p>
 <p><strong><code>dataDirectory</code></strong> — DataDirectory holds everything the server writes that is
-not in the database: keys, certificates, the message spool and the secret.
-Relative paths elsewhere in this file resolve against it.</p>
+not in the database: keys, certificates, the message spool and the secret, and,
+in photo-work, the temporary copies of videos while previews are made of them,
+which are emptied when the server starts. Relative paths elsewhere in this file
+resolve against it.</p>
 <p><strong><code>logLevel</code></strong> — LogLevel is one of DEBUG, INFO, NOTICE, WARNING, ERROR,
 CRITICAL.</p>
 <p><strong><code>secret</code></strong> — Secret signs the bounce return path on outgoing mail and the
@@ -833,6 +868,37 @@ that published rule data when you enable it and load it.</p>
 <h3><code>geoip</code></h3>
 <p><strong><code>enabled</code></strong> — See the field above; the two are set together.</p>
 <p><strong><code>databaseFile</code></strong> — DatabaseFile is a MaxMind .mmdb file.</p>
+<h3><code>places</code></h3>
+<p>Where the names of the places a person goes to come from, and the map they are
+drawn on. <strong>Place names come from OpenStreetMap: your server sends the position
+of each new place to the place provider to look up its name.</strong> A place is named
+once, right after the report that made it is stored, and the name is kept, so a
+server with a handful of people asks very little of the provider. The position
+sent is the place&#39;s own, to six decimals, which for a person&#39;s home is their
+home. Nothing else about the person goes with it: the request carries only the
+server&#39;s User-Agent, which names this server.</p>
+<p><strong><code>providerKind</code></strong>: <code>nominatim</code> (the default) or <code>photon</code>. Empty turns the
+provider off: a place is then named after its city from a table built into the
+server, nothing is sent anywhere, and a person can still name it themselves.
+The same provider answers the check-in list and the agent&#39;s place search. It is
+on by default because the names are what make a list of visits readable; an
+operator who does not want positions to leave the server sets it empty.</p>
+<p><strong><code>providerUrl</code></strong>: The provider&#39;s address, without a trailing path. The
+default is the OpenStreetMap Foundation&#39;s public Nominatim server, whose usage
+policy allows light use from an application that identifies itself and asks for
+each place once. This server sends at most one request a second whichever
+provider is set, and the limit is for each instance: two instances sharing one
+database send up to two a second, so give a server with several instances a
+provider of your own. A caller that would wait more than a few seconds is told
+the provider is busy instead. Photon is for a server you run yourself. The
+address must be https; plain http is accepted only for localhost and private
+addresses.</p>
+<p><strong><code>mapStyleUrl</code></strong>: The address of the map style the dashboard draws its maps
+from, fetched through the server so that a viewer&#39;s browser talks to nothing
+else; the map host sees this server&#39;s address and the tiles it asks for, never
+a person. The default is OpenFreeMap&#39;s <code>liberty</code> style. The same address rules
+apply. Only accounts that may use Location are served, up to 600 files a minute
+each.</p>
 <h3><code>storage</code></h3>
 <p><strong><code>mode</code></strong>: <code>local</code> requires a directory and treats S3 as a best-effort mirror.
 <code>shared</code> requires enabled S3 and an empty directory; object-store errors are
@@ -872,6 +938,29 @@ leak.</p>
 <p><strong><code>secretAccessKey</code></strong> — See the field above; the two are set together.</p>
 <p><strong><code>credentialsFile</code></strong> — CredentialsFile is an AWS shared credentials file, as
 an alternative to the two fields above.</p>
+<h3><code>photos</code></h3>
+<p>The photo library&#39;s limits. The library itself is switched on in <code>services</code>.
+A photo&#39;s bytes are kept in the storage above, named by their SHA-256, and
+everything known about it is in the database; a backup of the database alone
+is not a backup of the library.</p>
+<p><strong><code>maxFileBytes</code></strong>: MaxFileBytes bounds one uploaded file: a picture, a video,
+or the video of a Live Photo. The upload endpoint tells a phone this before it
+sends anything, so a file over it is never started. A few minutes of video at
+high quality runs to gigabytes, which is why the default, 8 GiB, is large.</p>
+<p><strong><code>maxAccountBytes</code></strong>: MaxAccountBytes bounds everything one person&#39;s library
+holds, counting each file of each photo including those in the trash, and the
+bytes of uploads that have not finished. Zero, the default, is no limit beyond
+the disk; set it when several people share a disk.</p>
+<p><strong><code>trashRetention</code></strong>: TrashRetention is how long a photo stays in the trash
+before it is deleted for good, 30 days by default. Its bytes go a little later,
+in the periodic cleanup, once nothing else refers to them.</p>
+<p><strong><code>isFaceRecognitionEnabled</code></strong>: IsFaceRecognitionEnabled is the operator&#39;s
+switch for finding faces in photos, on by default. A person can turn faces off
+for themselves; this turns them off for everybody. Faces need the
+<code>teanode-faces</code> program and its models, which the container image carries.</p>
+<p>Places are named from a table of cities bundled with the server, made from
+GeoNames data (<a href="https://www.geonames.org">https://www.geonames.org</a>), licensed CC BY 4.0. No place is ever
+looked up online.</p>
 <h3><code>passkey</code></h3>
 <p><strong><code>enabled</code></strong> — Enabled offers passkeys on the sign-in form and in the
 account&#39;s settings. Off by default: a server reached over plain HTTP, or on a
@@ -1019,6 +1108,11 @@ or <code>gemini</code>.</p>
 endpoint; a local server is <code>http://ollama:11434/v1</code>.</p>
 <p><strong><code>apiKey</code></strong> — Authenticates this server to the service. A secret; shown
 redacted, kept when a settings update leaves it blank.</p>
+<p><strong><code>billingApiKey</code></strong> — An OpenAI organization admin key that reads the
+organization&#39;s cost and usage reports, so the prices can follow what was
+billed. Only a provider of kind <code>openai</code> takes one. A secret; shown redacted,
+kept when a settings update leaves it blank. It is never sent with a model
+call.</p>
 <p><strong><code>refreshToken</code></strong> — Authenticates a provider that is signed in to rather
 than keyed, which at present means <code>openai-codex</code>. A secret, shown redacted
 and kept when a settings update leaves it blank.</p>
@@ -1043,18 +1137,20 @@ matches file names (<code>qwen*</code>). Empty allow means everything; deny is a
 after allow. Only admitted models may be assigned work.</p>
 <p><strong><code>allow</code></strong>, <strong><code>deny</code></strong> — The two lists of the filter.</p>
 <p><strong><code>pricing</code></strong> — What the service charges, per million tokens, with
-<code>input</code>, <code>output</code>, <code>cacheRead</code> and <code>cacheWrite</code>. Optional; it lets the usage view show
+<code>input</code>, <code>output</code>, <code>cacheRead</code>, <code>cacheWrite</code> and <code>audioInput</code>. Optional; it lets the usage view show
 money beside tokens, which is the number an operator budgets.</p>
-<p><strong><code>input</code></strong>, <strong><code>output</code></strong>, <strong><code>cacheRead</code></strong>, <strong><code>cacheWrite</code></strong> — The four
+<p><strong><code>input</code></strong>, <strong><code>output</code></strong>, <strong><code>cacheRead</code></strong>, <strong><code>cacheWrite</code></strong>, <strong><code>audioInput</code></strong> — The five
 prices. <code>cacheWrite</code> is what putting a prompt into the cache costs, which some
 services bill above the input price and report apart from it; left unset it
 costs nothing, which is right for a service that does not charge for it and
-wrong for one that does.</p>
+wrong for one that does. <code>audioInput</code> is what a million audio input tokens
+cost, which a transcription model bills apart from text input; left unset,
+audio is priced as text input, at <code>input</code>.</p>
 <p><strong><code>model</code></strong> — Which model a <code>modelPricing</code> entry prices: the name after
 the provider&#39;s, matched the way <code>allow</code> and <code>deny</code> are.</p>
 <p><strong><code>modelPricing</code></strong> — Prices for particular models of this provider, since
 one service&#39;s models rarely cost alike: a small model and a large one behind
-the same key are priced apart. Each entry has a <code>model</code> and the same four
+the same key are priced apart. Each entry has a <code>model</code> and the same five
 prices. The <code>model</code> is the name after the provider&#39;s, matched the way <code>allow</code>
 and <code>deny</code> are, so <code>gpt-5*</code> prices a family; the first entry that matches a
 model is the one used, so exact names belong above the patterns that would
@@ -1067,12 +1163,27 @@ also catch them. A model no entry matches costs what <code>pricing</code> above 
       - { model: gpt-5.6-luna, input: 0.2, output: 1.2, cacheRead: 0.02 }
 </code></pre>
 <h3><code>agent.models</code></h3>
+<p><strong><code>transcription</code></strong> selects an explicit <code>provider:model</code> for passive file
+transcription with speaker labels and timestamps. Empty disables processing;
+chat and realtime voice models are never a fallback. The model must advertise
+the required file-transcription capabilities through the provider registry.</p>
 <p>Every value is written <code>provider:model</code>, and the provider must be declared,
 enabled, and admit the model.</p>
 <p><strong><code>default</code></strong> — The model for anything not named below. Required when the
 agent is enabled.</p>
 <p><strong><code>fast</code></strong> — The model for the cheap kinds of work — sorting, summaries,
 compaction — unless one of them is overridden. Empty means <code>default</code>.</p>
+<p><strong><code>quick</code></strong>: The model a person&#39;s typed turn starts on, in the dashboard,
+the browser extension, the iPhone app and the chat apps. It answers quick
+things itself (a greeting, a fact, a lookup, a simple action) and, for
+anything that needs reasoning, calls <code>think_harder</code>, which hands the rest of
+the turn to the <code>ask</code> model with the same conversation and tools. A large
+reasoning model takes seconds to answer even &quot;hi&quot;, so this keeps it for the
+questions that need it. Empty: typed turns start on the <code>ask</code> model, as
+before. It is not used by the command line, the API, mail, schedules, goals,
+subagents or background work, by a turn whose person chose their own model, or
+by a turn that is to dig (high effort), and it is skipped when it names the
+model the turn would use anyway.</p>
 <p><strong><code>embedding</code></strong> — The model that turns text into vectors, which enables
 search by meaning. Empty means no search by meaning. Changing it marks
 existing vectors stale, and the two kinds catch up differently: a person&#39;s
@@ -1193,9 +1304,21 @@ prices are in euros enters them in euros and says <code>EUR</code> here.</p>
 <h3><code>agent.limits</code></h3>
 <p><strong><code>maxBodyCharacters</code></strong> — How much of a message a model is given; the rest
 is cut with a marker.</p>
+<p><strong><code>maxRecordingMediaBytes</code></strong> bounds one original recording audio/video file,
+including all resumable transport parts. Zero resolves to 2GB.</p>
+<p><strong><code>maxRecordingAccountBytes</code></strong> bounds the total reserved original media for one
+account. Incomplete uploads and recordings awaiting blob deletion count against
+this limit. Zero resolves to 64GB. Neither limit changes conversation attachments.</p>
 <p><strong><code>maxAttachmentBytes</code></strong> — The most one upload to a conversation may carry,
 across its files; <code>25MB</code> by default. A picture is shown to the model, a
 text file is read to it, and anything else is named.</p>
+<p><strong><code>maxChatAttachmentAccountBytes</code></strong> bounds the files one person may keep of those
+they have sent in chats; <code>1GB</code> when it is not set. A message with files stays
+until somebody deletes it, and everybody in the chat reads them, so these
+are not swept the way a file handed to the agent is. A send that would take a
+person past it is refused, with how much they keep and what to do: delete old
+messages with files to make room. Not to be confused with <code>maxAttachmentBytes</code>
+above, which bounds one upload.</p>
 <p><strong><code>maxScannedAttachmentBytes</code></strong> — The largest file a knowledge source
 carries off a person&#39;s machine: a picture or a document that a record in a
 <code>records</code> folder said it came with, kept in object storage so that
@@ -1334,6 +1457,31 @@ optionally <code>investments</code> for brokerage holdings and <code>liabilities
 is owed on loans and cards. Must include <code>transactions</code> when set. Empty
 means <code>transactions</code> alone. Plaid charges a monthly fee per finance source
 for each product on paid plans, which is why the operator chooses.</p>
+<h3><code>agent.push</code></h3>
+<p>Notifications on people&#39;s phones, through the TeaNode app. Apple delivers
+notifications to an app only from a key of the developer account that
+publishes it, so every server sends through a relay: a TeaNode server whose
+operator holds that key. What a server sends is already encrypted for the
+phone, so the relay passes it on without being able to read it.</p>
+<p><strong><code>enabled</code></strong>: Whether this server sends notifications to phones. Unset
+means on; nothing is sent until somebody connects a phone.</p>
+<p><strong><code>relayUrl</code></strong>: The relay this server sends through, an https address with
+no path. Empty means <code>https://mail.teanode.com</code>, the relay for the published
+app. A server that is itself the relay sends to itself without the network.</p>
+<h3><code>agent.push.relay</code></h3>
+<p>Makes this server a relay for every TeaNode server&#39;s phones. Only for the
+operator who holds the TeaNode app&#39;s Apple push key; everybody else leaves it
+off.</p>
+<p><strong><code>enabled</code></strong>: Serves the relay&#39;s two endpoints, <code>/api/v1/push/registrations</code>
+and <code>/api/v1/push/notifications</code>. Off by default, and they answer 404.</p>
+<p><strong><code>apnsKeyId</code></strong>: The ten-character identifier Apple shows beside the key.</p>
+<p><strong><code>apnsTeamId</code></strong>: The Apple developer account&#39;s team identifier.</p>
+<p><strong><code>apnsKey</code></strong>: The key, the whole <code>.p8</code> file Apple lets you download once,
+or the base64 between its first and last lines on one line, which is how
+<code>teanode settings set</code> reads it from a pipe. A secret. It also seals the registrations phones hand their servers, so after
+it is replaced each phone is sent nothing until the app next starts and
+registers again.</p>
+<p><strong><code>apnsTopic</code></strong>: The app&#39;s bundle identifier. Empty means <code>com.teanode.app</code>.</p>
 <h3><code>agent.tools</code></h3>
 <p>Risk classes are the floor; this can only make the agent more cautious.
 Both lists take family names — <code>mailbox</code>, <code>domains</code>, <code>audit</code>, <code>people</code>,
@@ -1377,14 +1525,18 @@ one that detects speech itself; <code>gpt-live-transcribe</code> and
 <code>gpt-realtime-whisper</code> need the application to end each turn and are refused.
 Empty is <code>gpt-4o-transcribe</code>.</p>
 <p><strong><code>silenceMS</code></strong> — How long a pause ends what somebody is saying, in
-milliseconds, up to 5000. Zero is 500. Longer lets a person think in the
-middle of a sentence; shorter answers sooner. A pause longer than this in the
+milliseconds, up to 5000. Zero, the default, lets the provider judge from
+what was said whether the person has finished, so a pause after the agent&#39;s
+name or in the middle of a thought does not end the turn. A number ends every
+turn after a pause that long instead: longer lets a person think in the
+middle of a sentence, shorter answers sooner. A pause longer than this in the
 middle of one request sends it as two turns, the second reaching the agent
 while it works on the first, as a typed follow-up would.</p>
 <p><strong><code>speechModel</code></strong> — The text-to-speech model the answers are spoken with,
 through the same provider. Empty is <code>gpt-4o-mini-tts</code>.</p>
 <p><strong><code>askModel</code></strong> — The model a spoken turn is answered with, as
-<code>provider:model</code>; empty is the one a typed turn uses. A call wants the first
+<code>provider:model</code>; empty is the one a typed turn uses (see <code>agent.models.quick</code>
+for a small model that typed turns start on). A call wants the first
 words soon, and on a long conversation a smaller model starts speaking a second
 or more before a larger one, even though it reads the conversation uncached
 the first time. When this model differs from the typed one, it is given
@@ -1393,6 +1545,27 @@ the turn to the typed model, with the same conversation and tools.</p>
 <p><strong><code>speechVoice</code></strong> — The provider&#39;s voice the answers are spoken in, such as
 <code>marin</code>, <code>cedar</code>, <code>alloy</code> or <code>coral</code>. Empty is <code>marin</code>. Each person may choose
 their own on their agent&#39;s settings, which this is the default for.</p>
+<h3><code>agent.recording</code></h3>
+<p>What the server does for a recording while it is still being captured.</p>
+<p><strong><code>isLiveTranscriptionEnabled</code></strong>. Whether a phone or browser that is
+capturing a recording may stream its audio through this server for words as
+they are spoken. This is a second transcription beside the speaker-separated
+one made of the saved audio, billed by the minute to the person&#39;s agent like
+voice, and it uses the provider and realtime model of <code>agent.voice</code> (the
+first provider of kind <code>openai</code> when <code>agent.voice.provider</code> is empty), whether
+or not voice itself is on. The words are kept only until the saved audio has
+been transcribed. On by default.</p>
+<p><strong><code>isAccurateWordsEnabled</code></strong>. Whether each speaker&#39;s turn, as found by the
+speaker-separating model, is transcribed a second time by the plain
+transcription model of <code>agent.voice</code> (<code>transcriptionModel</code>, <code>gpt-4o-transcribe</code>
+when empty, through the first provider of kind <code>openai</code> unless
+<code>agent.voice.provider</code> names one). That model takes a prompt, so it is given the
+names and terms the person&#39;s own data suggests and the end of the turn before,
+and spells them better than the speaker-separating model, which takes none.
+Speakers and times stay the first pass&#39;s, a person&#39;s correction still wins over
+the new words, and the glossary pass starts from them. It is a second charge
+for the same audio, recorded in the agent&#39;s usage, and a turn whose second pass
+fails keeps the first pass&#39;s words. On by default.</p>
 <h3><code>agent.mcp</code></h3>
 <p><strong><code>servers</code></strong> — The declared servers, one entry each.</p>
 <h3><code>agent.mcp.servers[]</code></h3>
@@ -1463,4 +1636,4 @@ unlike a password, it cannot be guessed.</p>
 <p><strong><code>created</code></strong> — Created records when it was issued, for the operator&#39;s
 benefit.</p>
 <p><strong><code>expires</code></strong> — Expires, when set, is when it stops working.</p>
-<h2>Documentation</h2><h3>Getting started</h3><ul><li><a href="/doc/introduction">What is TeaNode</a>: Send and receive mail at your own domains: mailboxes read here or over IMAP, forwarding, what it does, and what you need to run it.</li><li><a href="/doc/quick-start">Quick start</a>: TeaNode running with docker compose in a few minutes: the assistant first, with no domain, then mail at your own domain if you want it.</li><li><a href="/doc/getting-started">Getting started</a>: Standing up a mail server for one domain, from nothing to mail arriving in a mailbox you can read in a mail program, including the DNS records and the port 25 problem.</li></ul><h3>Running it</h3><ul><li><a href="/doc/deploying">Deploying</a>: The container image and the compose file, what runs beside the server, how it upgrades itself, and what to back up.</li><li><a href="/doc/configuration">Configuration</a>: Where the settings live, the environment variables that say how to reach them, and every field an operator can set.</li><li><a href="/doc/agents">Agents</a>: The personal agent: what it needs, what it does with a mailbox, and what to weigh before turning it on.</li><li><a href="/doc/memory">Memory</a>: What your agent keeps between conversations: a graph of pages it writes without being asked, the places it reads from, and what it does with all of it in its dreams.</li><li><a href="/doc/voice">Voice</a>: Call your agent from the chat drawer: say what you want, hear the answer as it is written, and cut in when you like. On a laptop or a phone.</li><li><a href="/doc/coding-sessions">Coding sessions</a>: Your Claude Code and Codex sessions in herdr, on every computer you attached: your agent reads them, types into them where you can see, and brings you their questions to answer from anywhere.</li><li><a href="/doc/coding-memory">Memory in coding sessions</a>: Claude Code and Codex shown what your agent knows about the checkout they run in: the project page and the last session when one starts, recall kept to the project before each prompt, and the transcript read within a minute.</li><li><a href="/doc/mcp">Model Context Protocol</a>: TeaNode on both ends of the protocol: answering it, so your editor can use your agent's tools and ask it questions, and connecting out to servers of your own.</li><li><a href="/doc/finance">Finance</a>: Your banks, cards and brokerages linked through Plaid or SimpleFIN: transactions in your own categories, budgets that say where the month is heading, savings targets, net worth, and a tax year put together from your paystubs, W-2s, 1099s and 1098s, all kept in your own database.</li><li><a href="/doc/command-line">The command line</a>: The two programs: the server and the few things only its host can do, and the client that administers it from anywhere through the API.</li></ul><h3>Security</h3><ul><li><a href="/doc/security">Reporting a security problem</a>: Where to report something exploitable, what is in scope, and what is not.</li><li><a href="/doc/security-review">Security review</a>: A review of the whole program: what was examined, what was found, what was fixed, and what is still open.</li></ul><h3>Contributing</h3><ul><li><a href="/doc/contributing">Contributing</a>: Naming, comments, the invariants that bite, tests, commits and the changelog that cuts a release.</li><li><a href="/doc/local-development">Local development</a>: Getting a working build and a database to point it at, a development server that cannot send mail, and the optional scanners.</li><li><a href="/doc/project-structure">Project structure</a>: What each package is for and which way the dependencies point.</li></ul><p>Every document is also plain markdown, listed in <a href="/llms.txt">/llms.txt</a>.</p></div></div></body></html>
+<h2>Documentation</h2><h3>Getting started</h3><ul><li><a href="/doc/introduction">What is TeaNode</a>: Send and receive mail at your own domains: mailboxes read here or over IMAP, forwarding, what it does, and what you need to run it.</li><li><a href="/doc/quick-start">Quick start</a>: TeaNode running with docker compose in a few minutes: the assistant first, with no domain, then mail at your own domain if you want it.</li><li><a href="/doc/getting-started">Getting started</a>: Standing up a mail server for one domain, from nothing to mail arriving in a mailbox you can read in a mail program, including the DNS records and the port 25 problem.</li></ul><h3>Running it</h3><ul><li><a href="/doc/deploying">Deploying</a>: The container image and the compose file, what runs beside the server, how it upgrades itself, and what to back up.</li><li><a href="/doc/configuration">Configuration</a>: Where the settings live, the environment variables that say how to reach them, and every field an operator can set.</li><li><a href="/doc/agents">Agents</a>: The personal agent: what it needs, what it does with a mailbox, and what to weigh before turning it on.</li><li><a href="/doc/memory">Memory</a>: What your agent keeps between conversations: a graph of pages it writes without being asked, the places it reads from, and what it does with all of it in its dreams.</li><li><a href="/doc/voice">Voice</a>: Call your agent from the chat drawer: say what you want, hear the answer as it is written, and cut in when you like. On a laptop or a phone.</li><li><a href="/doc/coding-sessions">Coding sessions</a>: Your Claude Code and Codex sessions in herdr, on every computer you attached: your agent reads them, types into them where you can see, and brings you their questions to answer from anywhere.</li><li><a href="/doc/coding-memory">Memory in coding sessions</a>: Claude Code and Codex shown what your agent knows about the checkout they run in: the project page and the last session when one starts, recall kept to the project before each prompt, and the transcript read within a minute.</li><li><a href="/doc/mcp">Model Context Protocol</a>: TeaNode on both ends of the protocol: answering it, so your editor can use your agent's tools and ask it questions, and connecting out to servers of your own.</li><li><a href="/doc/finance">Finance</a>: Your banks, cards and brokerages linked through Plaid or SimpleFIN: transactions in your own categories, budgets that say where the month is heading, savings targets, net worth, and a tax year put together from your paystubs, W-2s, 1099s and 1098s, all kept in your own database.</li><li><a href="/doc/circles">Circles and chats</a>: The people on one server in circles: chats with each other in the drawer and the app, with or without their agents, and calendars, albums, memory pages, skills and location shared at the level each owner picks.</li><li><a href="/doc/photos">Photos</a>: Photos and videos on your own server: backed up from the iPhone in the background, found by place, date or what is in them, faces grouped into people you name, and albums shared with your circle.</li><li><a href="/doc/location">Location</a>: Visits to named places recorded by the iPhone app, a map of your day, where you are shared with the people in your circle, and what leaves the server to name a place.</li><li><a href="/doc/command-line">The command line</a>: The two programs: the server and the few things only its host can do, and the client that administers it from anywhere through the API.</li></ul><h3>Security</h3><ul><li><a href="/doc/security">Reporting a security problem</a>: Where to report something exploitable, what is in scope, and what is not.</li><li><a href="/doc/security-review">Security review</a>: A review of the whole program: what was examined, what was found, what was fixed, and what is still open.</li></ul><h3>Contributing</h3><ul><li><a href="/doc/contributing">Contributing</a>: Naming, comments, the invariants that bite, tests, commits and the changelog that cuts a release.</li><li><a href="/doc/local-development">Local development</a>: Getting a working build and a database to point it at, a development server that cannot send mail, and the optional scanners.</li><li><a href="/doc/project-structure">Project structure</a>: What each package is for and which way the dependencies point.</li></ul><p>Every document is also plain markdown, listed in <a href="/llms.txt">/llms.txt</a>.</p></div></div></body></html>

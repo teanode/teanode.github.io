@@ -25,9 +25,11 @@ for (const [path, url] of Object.entries(files)) {
   byKey.set(path.split('/').pop()!.replace(/\.jpg$/, ''), url)
 }
 
-// The screens, in the order the gallery shows them: talking to it first,
-// then what it looks after.
-export const phoneScreens = ['conversation', 'mail', 'calendar', 'finance', 'recording', 'knowledge', 'contacts'] as const
+// The screens, in the order the gallery shows them: talking to it and to
+// the people it lives with first, then what it looks after.
+export const phoneScreens = [
+  'conversation', 'chats', 'mail', 'followups', 'calendar', 'contacts', 'photos', 'location', 'health', 'coding', 'knowledge', 'recording', 'finance', 'payment',
+] as const
 export type PhoneScreen = typeof phoneScreens[number]
 
 // One phone: a rounded frame, the island, a status bar, and the screen.

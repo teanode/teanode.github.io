@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState, type KeyboardEvent, type MouseEvent, type TouchEvent } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent, type MouseEvent, type TouchEvent } from 'react'
 import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
 import Modal from '@mui/material/Modal'
@@ -10,7 +10,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import CloseIcon from '@mui/icons-material/Close'
 
 import { useLanguageCode, useTranslate } from '../i18n'
-import { screenshot, screenshotHeight, screenshotPages, screenshotPaths, screenshotWidth, type ScreenshotPage } from '../screenshots'
+import { screenshot, screenshotHeight, screenshotPaths, screenshotWidth, type ScreenshotPage } from '../screenshots'
 import { brand } from '../theme'
 
 // The dashboard, one page at a time.
@@ -27,6 +27,10 @@ import { brand } from '../theme'
 //
 // The picture is the one for the theme being read in and the reader's
 // language, so the dashboard looks the way it would look to them.
+//
+// Each part of the front page has one of its own, of the pages that part is
+// about. A page with no picture yet is left out, and a carousel of one page
+// is a still picture: no arrows, no dots and nothing turning.
 
 // How long a page stays before the next one, while nobody has touched it.
 const dwell = 5000
@@ -34,11 +38,13 @@ const dwell = 5000
 // How long the fade between two pages takes.
 const fade = 600
 
-export const Carousel = () => {
+export const Carousel = ({ pages: wanted, label }: { pages: readonly ScreenshotPage[], label: string }) => {
   const theme = useTheme()
   const translate = useTranslate()
   const language = useLanguageCode()
   const mode = theme.palette.mode === 'dark' ? 'dark' : 'light'
+  const screenshotPages = useMemo(() => wanted.filter((one) => screenshot(one, mode, language)), [wanted, mode, language])
+  const isTurnable = screenshotPages.length > 1
   // Where it is, and where it was a moment ago: the page before stays as the
   // floor the new one fades in on.
   const [position, setPosition] = useState<{ index: number, previous: number | null }>({ index: 0, previous: null })
@@ -51,7 +57,7 @@ export const Carousel = () => {
   const [visible, setVisible] = useState(false)
   const frame = useRef<HTMLDivElement>(null)
   const count = screenshotPages.length
-  const page: ScreenshotPage = screenshotPages[index]
+  const page: ScreenshotPage | undefined = screenshotPages[index]
 
   const show = useCallback((to: (current: number) => number) => {
     setPosition((current) => ({ index: to(current.index), previous: current.index }))
@@ -77,38 +83,44 @@ export const Carousel = () => {
   }, [])
 
   useEffect(() => {
-    if (!turning || !visible || open) {
+    if (!turning || !visible || open || !isTurnable) {
       return
     }
     const timer = window.setInterval(() => go(1), dwell)
     return () => window.clearInterval(timer)
-  }, [turning, visible, open, go])
+  }, [turning, visible, open, isTurnable, go])
 
   // The neighbours are fetched ahead, so a turn shows a picture rather than
   // a blank slot filling in.
   useEffect(() => {
+    if (count < 2) {
+      return
+    }
     for (const step of [1, -1]) {
       const source = screenshot(screenshotPages[(index + step + count) % count], mode, language)
       if (source) {
         new Image().src = source
       }
     }
-  }, [index, count, mode, language])
+  }, [index, count, mode, language, screenshotPages])
 
   const onKeyDown = (event: KeyboardEvent) => {
-    if (event.key === 'ArrowLeft') { touched(); go(-1); event.preventDefault() }
-    if (event.key === 'ArrowRight') { touched(); go(1); event.preventDefault() }
+    if (event.key === 'ArrowLeft' && isTurnable) { touched(); go(-1); event.preventDefault() }
+    if (event.key === 'ArrowRight' && isTurnable) { touched(); go(1); event.preventDefault() }
     if (event.key === 'Enter' && !open) { touched(); setOpen(true); event.preventDefault() }
   }
 
   const [touchStart, setTouchStart] = useState<number | null>(null)
+  if (!page) {
+    return null
+  }
   const onTouchStart = (event: TouchEvent) => setTouchStart(event.touches[0].clientX)
   const onTouchEnd = (event: TouchEvent) => {
     if (touchStart === null) {
       return
     }
     const moved = event.changedTouches[0].clientX - touchStart
-    if (Math.abs(moved) > 40) {
+    if (isTurnable && Math.abs(moved) > 40) {
       touched()
       go(moved < 0 ? 1 : -1)
     }
@@ -116,7 +128,8 @@ export const Carousel = () => {
   }
 
   const source = screenshot(page, mode, language)
-  const previousSource = previous === null ? undefined : screenshot(screenshotPages[previous], mode, language)
+  const previousPage = previous === null ? undefined : screenshotPages[previous]
+  const previousSource = previousPage && screenshot(previousPage, mode, language)
   const caption = translate(`welcome.screenshots.${page}`)
   const reduced = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
@@ -139,7 +152,7 @@ export const Carousel = () => {
     />
   )
 
-  const dots = (
+  const dots = isTurnable && (
     <Stack direction='row' sx={{ gap: 0.75 }} role='tablist'>
       {screenshotPages.map((one, at) => (
         <Box
@@ -167,7 +180,7 @@ export const Carousel = () => {
         ref={frame}
         role='region'
         aria-roledescription='carousel'
-        aria-label={translate('welcome.screenshotsHeading')}
+        aria-label={label}
         tabIndex={0}
         onKeyDown={onKeyDown}
         onTouchStart={onTouchStart}
@@ -229,8 +242,8 @@ export const Carousel = () => {
               <Box component='img' src={previousSource} alt='' aria-hidden='true' sx={{ position: 'absolute', inset: 0, display: 'block', width: '100%', height: '100%', objectFit: 'cover' }}/>
             ) }
             {picture('cover')}
-            <Arrow side='left' onClick={(event) => { event.stopPropagation(); touched(); go(-1) }} label={translate('welcome.previous')}/>
-            <Arrow side='right' onClick={(event) => { event.stopPropagation(); touched(); go(1) }} label={translate('welcome.next')}/>
+            {isTurnable && <Arrow side='left' onClick={(event) => { event.stopPropagation(); touched(); go(-1) }} label={translate('welcome.previous')}/>}
+            {isTurnable && <Arrow side='right' onClick={(event) => { event.stopPropagation(); touched(); go(1) }} label={translate('welcome.next')}/>}
           </Box>
           <Stack
             component='figcaption'
@@ -267,8 +280,8 @@ export const Carousel = () => {
                 {picture('contain')}
               </Box>
             </Box>
-            <Arrow side='left' large onClick={(event) => { event.stopPropagation(); go(-1) }} label={translate('welcome.previous')}/>
-            <Arrow side='right' large onClick={(event) => { event.stopPropagation(); go(1) }} label={translate('welcome.next')}/>
+            {isTurnable && <Arrow side='left' large onClick={(event) => { event.stopPropagation(); go(-1) }} label={translate('welcome.previous')}/>}
+            {isTurnable && <Arrow side='right' large onClick={(event) => { event.stopPropagation(); go(1) }} label={translate('welcome.next')}/>}
           </Box>
           <Stack direction='row' sx={{ p: 2, justifyContent: 'center' }}>{dots}</Stack>
         </Box>

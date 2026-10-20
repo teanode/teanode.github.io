@@ -1,3 +1,39 @@
+### `services`
+
+Deployment-wide hosted services. Omitted switches preserve existing installations;
+new assistant seeds write explicit false values for mail routing, mailboxes,
+calendar, reminders and contacts, and leave Photos on. Disabling preserves data, roles,
+agent grants and credentials, and refuses new operations immediately. Enabling
+requires a restart. The dashboard reports selected and running services.
+
+- **`mailRouting`**: SMTP, forwarding, hosted sending, domains, delivery queues
+  and mail DNS diagnostics.
+- **`mailboxes`**: stored mail, IMAP, mailbox API and mailbox agent jobs.
+  Requires routing. Forwarding can run without mailboxes.
+- **`calendar`**: events and CalDAV event collections. Local events need no mail;
+  mail invitations require an available hosted mailbox and sender.
+- **`reminders`**: reminders and their CalDAV collections, independently of
+  event calendars. Assistant schedules are independent of this choice.
+- **`contacts`**: address books and CardDAV collections.
+- **`photos`**: the photo and video library, its uploads and the iPhone app's
+  backup. Its limits are in the `photos` section below.
+- **`isEnabled`**: nullable boolean inside each service. Omitted means enabled
+  for compatibility; false makes the service unavailable. `photos` stays on
+  for an assistant-only server too, since it needs no mail.
+- **`hasCompletedSetup`**: whether the operator completed service setup.
+  Legacy configurations without switches do not require this step.
+
+The existing `agent.enabled` setting controls the assistant independently.
+Authenticated clients use `GetServiceCapabilities`. `teanode services get`
+reports availability; `teanode services set --contacts=true` changes a choice.
+
+`TEANODE_SERVICE_PRESET` seeds only an empty database: `assistant` disables mail
+routing, mailboxes, calendar, reminders and contacts, and leaves Photos on,
+`mail` enables routing and mailboxes, and `legacy` retains
+historical defaults. Without a preset, seeds with a mail hostname or domain
+retain historical behavior. Change a configured installation in the dashboard
+or through configuration import, rather than changing its seed environment.
+
 Everything an operator sets lives in the database, alongside the mail. The
 server reads it at startup and re-reads it every few seconds, so a change made
 in the dashboard — or by another instance — takes effect without a restart.
@@ -226,8 +262,10 @@ its reverse DNS should match, or receiving servers will distrust mail from
 here.
 
 **`dataDirectory`** — DataDirectory holds everything the server writes that is
-not in the database: keys, certificates, the message spool and the secret.
-Relative paths elsewhere in this file resolve against it.
+not in the database: keys, certificates, the message spool and the secret, and,
+in photo-work, the temporary copies of videos while previews are made of them,
+which are emptied when the server starts. Relative paths elsewhere in this file
+resolve against it.
 
 **`logLevel`** — LogLevel is one of DEBUG, INFO, NOTICE, WARNING, ERROR,
 CRITICAL.
@@ -916,6 +954,42 @@ that published rule data when you enable it and load it.
 
 **`databaseFile`** — DatabaseFile is a MaxMind .mmdb file.
 
+### `places`
+
+Where the names of the places a person goes to come from, and the map they are
+drawn on. **Place names come from OpenStreetMap: your server sends the position
+of each new place to the place provider to look up its name.** A place is named
+once, right after the report that made it is stored, and the name is kept, so a
+server with a handful of people asks very little of the provider. The position
+sent is the place's own, to six decimals, which for a person's home is their
+home. Nothing else about the person goes with it: the request carries only the
+server's User-Agent, which names this server.
+
+**`providerKind`**: `nominatim` (the default) or `photon`. Empty turns the
+provider off: a place is then named after its city from a table built into the
+server, nothing is sent anywhere, and a person can still name it themselves.
+The same provider answers the check-in list and the agent's place search. It is
+on by default because the names are what make a list of visits readable; an
+operator who does not want positions to leave the server sets it empty.
+
+**`providerUrl`**: The provider's address, without a trailing path. The
+default is the OpenStreetMap Foundation's public Nominatim server, whose usage
+policy allows light use from an application that identifies itself and asks for
+each place once. This server sends at most one request a second whichever
+provider is set, and the limit is for each instance: two instances sharing one
+database send up to two a second, so give a server with several instances a
+provider of your own. A caller that would wait more than a few seconds is told
+the provider is busy instead. Photon is for a server you run yourself. The
+address must be https; plain http is accepted only for localhost and private
+addresses.
+
+**`mapStyleUrl`**: The address of the map style the dashboard draws its maps
+from, fetched through the server so that a viewer's browser talks to nothing
+else; the map host sees this server's address and the tiles it asks for, never
+a person. The default is OpenFreeMap's `liberty` style. The same address rules
+apply. Only accounts that may use Location are served, up to 600 files a minute
+each.
+
 ### `storage`
 
 **`mode`**: `local` requires a directory and treats S3 as a best-effort mirror.
@@ -969,6 +1043,36 @@ leak.
 
 **`credentialsFile`** — CredentialsFile is an AWS shared credentials file, as
 an alternative to the two fields above.
+
+### `photos`
+
+The photo library's limits. The library itself is switched on in `services`.
+A photo's bytes are kept in the storage above, named by their SHA-256, and
+everything known about it is in the database; a backup of the database alone
+is not a backup of the library.
+
+**`maxFileBytes`**: MaxFileBytes bounds one uploaded file: a picture, a video,
+or the video of a Live Photo. The upload endpoint tells a phone this before it
+sends anything, so a file over it is never started. A few minutes of video at
+high quality runs to gigabytes, which is why the default, 8 GiB, is large.
+
+**`maxAccountBytes`**: MaxAccountBytes bounds everything one person's library
+holds, counting each file of each photo including those in the trash, and the
+bytes of uploads that have not finished. Zero, the default, is no limit beyond
+the disk; set it when several people share a disk.
+
+**`trashRetention`**: TrashRetention is how long a photo stays in the trash
+before it is deleted for good, 30 days by default. Its bytes go a little later,
+in the periodic cleanup, once nothing else refers to them.
+
+**`isFaceRecognitionEnabled`**: IsFaceRecognitionEnabled is the operator's
+switch for finding faces in photos, on by default. A person can turn faces off
+for themselves; this turns them off for everybody. Faces need the
+`teanode-faces` program and its models, which the container image carries.
+
+Places are named from a table of cities bundled with the server, made from
+GeoNames data (https://www.geonames.org), licensed CC BY 4.0. No place is ever
+looked up online.
 
 ### `passkey`
 
@@ -1164,6 +1268,12 @@ endpoint; a local server is `http://ollama:11434/v1`.
 **`apiKey`** — Authenticates this server to the service. A secret; shown
 redacted, kept when a settings update leaves it blank.
 
+**`billingApiKey`** — An OpenAI organization admin key that reads the
+organization's cost and usage reports, so the prices can follow what was
+billed. Only a provider of kind `openai` takes one. A secret; shown redacted,
+kept when a settings update leaves it blank. It is never sent with a model
+call.
+
 **`refreshToken`** — Authenticates a provider that is signed in to rather
 than keyed, which at present means `openai-codex`. A secret, shown redacted
 and kept when a settings update leaves it blank.
@@ -1195,21 +1305,23 @@ after allow. Only admitted models may be assigned work.
 **`allow`**, **`deny`** — The two lists of the filter.
 
 **`pricing`** — What the service charges, per million tokens, with
-`input`, `output`, `cacheRead` and `cacheWrite`. Optional; it lets the usage view show
+`input`, `output`, `cacheRead`, `cacheWrite` and `audioInput`. Optional; it lets the usage view show
 money beside tokens, which is the number an operator budgets.
 
-**`input`**, **`output`**, **`cacheRead`**, **`cacheWrite`** — The four
+**`input`**, **`output`**, **`cacheRead`**, **`cacheWrite`**, **`audioInput`** — The five
 prices. `cacheWrite` is what putting a prompt into the cache costs, which some
 services bill above the input price and report apart from it; left unset it
 costs nothing, which is right for a service that does not charge for it and
-wrong for one that does.
+wrong for one that does. `audioInput` is what a million audio input tokens
+cost, which a transcription model bills apart from text input; left unset,
+audio is priced as text input, at `input`.
 
 **`model`** — Which model a `modelPricing` entry prices: the name after
 the provider's, matched the way `allow` and `deny` are.
 
 **`modelPricing`** — Prices for particular models of this provider, since
 one service's models rarely cost alike: a small model and a large one behind
-the same key are priced apart. Each entry has a `model` and the same four
+the same key are priced apart. Each entry has a `model` and the same five
 prices. The `model` is the name after the provider's, matched the way `allow`
 and `deny` are, so `gpt-5*` prices a family; the first entry that matches a
 model is the one used, so exact names belong above the patterns that would
@@ -1224,6 +1336,11 @@ also catch them. A model no entry matches costs what `pricing` above says.
 
 ### `agent.models`
 
+**`transcription`** selects an explicit `provider:model` for passive file
+transcription with speaker labels and timestamps. Empty disables processing;
+chat and realtime voice models are never a fallback. The model must advertise
+the required file-transcription capabilities through the provider registry.
+
 Every value is written `provider:model`, and the provider must be declared,
 enabled, and admit the model.
 
@@ -1232,6 +1349,18 @@ agent is enabled.
 
 **`fast`** — The model for the cheap kinds of work — sorting, summaries,
 compaction — unless one of them is overridden. Empty means `default`.
+
+**`quick`**: The model a person's typed turn starts on, in the dashboard,
+the browser extension, the iPhone app and the chat apps. It answers quick
+things itself (a greeting, a fact, a lookup, a simple action) and, for
+anything that needs reasoning, calls `think_harder`, which hands the rest of
+the turn to the `ask` model with the same conversation and tools. A large
+reasoning model takes seconds to answer even "hi", so this keeps it for the
+questions that need it. Empty: typed turns start on the `ask` model, as
+before. It is not used by the command line, the API, mail, schedules, goals,
+subagents or background work, by a turn whose person chose their own model, or
+by a turn that is to dig (high effort), and it is skipped when it names the
+model the turn would use anyway.
 
 **`embedding`** — The model that turns text into vectors, which enables
 search by meaning. Empty means no search by meaning. Changing it marks
@@ -1395,9 +1524,24 @@ prices are in euros enters them in euros and says `EUR` here.
 **`maxBodyCharacters`** — How much of a message a model is given; the rest
 is cut with a marker.
 
+**`maxRecordingMediaBytes`** bounds one original recording audio/video file,
+including all resumable transport parts. Zero resolves to 2GB.
+
+**`maxRecordingAccountBytes`** bounds the total reserved original media for one
+account. Incomplete uploads and recordings awaiting blob deletion count against
+this limit. Zero resolves to 64GB. Neither limit changes conversation attachments.
+
 **`maxAttachmentBytes`** — The most one upload to a conversation may carry,
 across its files; `25MB` by default. A picture is shown to the model, a
 text file is read to it, and anything else is named.
+
+**`maxChatAttachmentAccountBytes`** bounds the files one person may keep of those
+they have sent in chats; `1GB` when it is not set. A message with files stays
+until somebody deletes it, and everybody in the chat reads them, so these
+are not swept the way a file handed to the agent is. A send that would take a
+person past it is refused, with how much they keep and what to do: delete old
+messages with files to make room. Not to be confused with `maxAttachmentBytes`
+above, which bounds one upload.
 
 **`maxScannedAttachmentBytes`** — The largest file a knowledge source
 carries off a person's machine: a picture or a document that a record in a
@@ -1578,6 +1722,42 @@ is owed on loans and cards. Must include `transactions` when set. Empty
 means `transactions` alone. Plaid charges a monthly fee per finance source
 for each product on paid plans, which is why the operator chooses.
 
+### `agent.push`
+
+Notifications on people's phones, through the TeaNode app. Apple delivers
+notifications to an app only from a key of the developer account that
+publishes it, so every server sends through a relay: a TeaNode server whose
+operator holds that key. What a server sends is already encrypted for the
+phone, so the relay passes it on without being able to read it.
+
+**`enabled`**: Whether this server sends notifications to phones. Unset
+means on; nothing is sent until somebody connects a phone.
+
+**`relayUrl`**: The relay this server sends through, an https address with
+no path. Empty means `https://mail.teanode.com`, the relay for the published
+app. A server that is itself the relay sends to itself without the network.
+
+### `agent.push.relay`
+
+Makes this server a relay for every TeaNode server's phones. Only for the
+operator who holds the TeaNode app's Apple push key; everybody else leaves it
+off.
+
+**`enabled`**: Serves the relay's two endpoints, `/api/v1/push/registrations`
+and `/api/v1/push/notifications`. Off by default, and they answer 404.
+
+**`apnsKeyId`**: The ten-character identifier Apple shows beside the key.
+
+**`apnsTeamId`**: The Apple developer account's team identifier.
+
+**`apnsKey`**: The key, the whole `.p8` file Apple lets you download once,
+or the base64 between its first and last lines on one line, which is how
+`teanode settings set` reads it from a pipe. A secret. It also seals the registrations phones hand their servers, so after
+it is replaced each phone is sent nothing until the app next starts and
+registers again.
+
+**`apnsTopic`**: The app's bundle identifier. Empty means `com.teanode.app`.
+
 ### `agent.tools`
 
 Risk classes are the floor; this can only make the agent more cautious.
@@ -1638,8 +1818,11 @@ one that detects speech itself; `gpt-live-transcribe` and
 Empty is `gpt-4o-transcribe`.
 
 **`silenceMS`** — How long a pause ends what somebody is saying, in
-milliseconds, up to 5000. Zero is 500. Longer lets a person think in the
-middle of a sentence; shorter answers sooner. A pause longer than this in the
+milliseconds, up to 5000. Zero, the default, lets the provider judge from
+what was said whether the person has finished, so a pause after the agent's
+name or in the middle of a thought does not end the turn. A number ends every
+turn after a pause that long instead: longer lets a person think in the
+middle of a sentence, shorter answers sooner. A pause longer than this in the
 middle of one request sends it as two turns, the second reaching the agent
 while it works on the first, as a typed follow-up would.
 
@@ -1647,7 +1830,8 @@ while it works on the first, as a typed follow-up would.
 through the same provider. Empty is `gpt-4o-mini-tts`.
 
 **`askModel`** — The model a spoken turn is answered with, as
-`provider:model`; empty is the one a typed turn uses. A call wants the first
+`provider:model`; empty is the one a typed turn uses (see `agent.models.quick`
+for a small model that typed turns start on). A call wants the first
 words soon, and on a long conversation a smaller model starts speaking a second
 or more before a larger one, even though it reads the conversation uncached
 the first time. When this model differs from the typed one, it is given
@@ -1657,6 +1841,31 @@ the turn to the typed model, with the same conversation and tools.
 **`speechVoice`** — The provider's voice the answers are spoken in, such as
 `marin`, `cedar`, `alloy` or `coral`. Empty is `marin`. Each person may choose
 their own on their agent's settings, which this is the default for.
+
+### `agent.recording`
+
+What the server does for a recording while it is still being captured.
+
+**`isLiveTranscriptionEnabled`**. Whether a phone or browser that is
+capturing a recording may stream its audio through this server for words as
+they are spoken. This is a second transcription beside the speaker-separated
+one made of the saved audio, billed by the minute to the person's agent like
+voice, and it uses the provider and realtime model of `agent.voice` (the
+first provider of kind `openai` when `agent.voice.provider` is empty), whether
+or not voice itself is on. The words are kept only until the saved audio has
+been transcribed. On by default.
+
+**`isAccurateWordsEnabled`**. Whether each speaker's turn, as found by the
+speaker-separating model, is transcribed a second time by the plain
+transcription model of `agent.voice` (`transcriptionModel`, `gpt-4o-transcribe`
+when empty, through the first provider of kind `openai` unless
+`agent.voice.provider` names one). That model takes a prompt, so it is given the
+names and terms the person's own data suggests and the end of the turn before,
+and spells them better than the speaker-separating model, which takes none.
+Speakers and times stay the first pass's, a person's correction still wins over
+the new words, and the glossary pass starts from them. It is a second charge
+for the same audio, recorded in the agent's usage, and a turn whose second pass
+fails keeps the first pass's words. On by default.
 
 ### `agent.mcp`
 

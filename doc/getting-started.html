@@ -20,7 +20,7 @@ window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-XD5JSLP4RH', {send_page_view: false});
-</script><script type="module" crossorigin src="/static/teanode.BCItjk9M.js"></script></head><body><div id="teanode"><style>.teanode-static{max-width:760px;margin:0 auto;padding:24px 16px 48px;font:16px/1.6 system-ui,sans-serif;opacity:0;animation:teanode-static 0s 2s forwards}.teanode-static pre{overflow-x:auto}@keyframes teanode-static{to{opacity:1}}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .teanode-static{color:#e8e8ea}:root:not([data-theme=light]) .teanode-static a{color:#9ccc65}}:root[data-theme=dark] .teanode-static{color:#e8e8ea}:root[data-theme=dark] .teanode-static a{color:#9ccc65}</style><div class="teanode-static"><p><a href="/">TeaNode</a> · <a href="/doc">Documentation</a> · <a href="https://github.com/ziyan/teanode">Source</a></p><h1>Getting started</h1><p>This walks through standing up a mail server for one domain, from nothing to
+</script><script type="module" crossorigin src="/static/teanode.DR1xKAUf.js"></script></head><body><div id="teanode"><style>.teanode-static{max-width:760px;margin:0 auto;padding:24px 16px 48px;font:16px/1.6 system-ui,sans-serif;opacity:0;animation:teanode-static 0s 2s forwards}.teanode-static pre{overflow-x:auto}@keyframes teanode-static{to{opacity:1}}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .teanode-static{color:#e8e8ea}:root:not([data-theme=light]) .teanode-static a{color:#9ccc65}}:root[data-theme=dark] .teanode-static{color:#e8e8ea}:root[data-theme=dark] .teanode-static a{color:#9ccc65}</style><div class="teanode-static"><p><a href="/">TeaNode</a> · <a href="/doc">Documentation</a> · <a href="https://github.com/ziyan/teanode">Source</a></p><h1>Getting started</h1><p>This walks through standing up a mail server for one domain, from nothing to
 mail arriving and being forwarded. It takes about twenty minutes, most of it
 waiting for DNS.</p>
 <h2>Before you begin</h2>
@@ -199,14 +199,15 @@ that state.</p>
 called Personal. The web UI opens on it: the folders in the rail, a
 folder&#39;s messages beside the one being read. The management pages — every
 message the server handled, the queue, reports, domains, the server itself —
-are behind <strong>Manage</strong> at the foot of the rail, and <strong>Back to mailbox</strong> at the
-top brings you back.</p>
+are under <code>/manage</code>, behind <strong>Manage</strong> at the foot of the rail, and <strong>Back to
+mailbox</strong> at the top brings you back. Your own settings, the mailbox&#39;s among
+them, are under <code>/settings</code>, behind your name at the foot of the rail.</p>
 <p>The Inbox and <strong>Starred</strong>, every flagged message wherever it sits, stay at
 the top of the rail; hover any other folder for a pin that puts it up beside
 them. The search box looks in the open folder, or in the whole mailbox with
 sender, recipient, subject, date and attachment filters behind <strong>More</strong>.
 Contacts, kept from whoever you write to, have a page of their own in the
-rail, above Mailbox settings.</p>
+rail, beside the calendar, what your agent knows and your finances.</p>
 <h2>6. Give the mailbox an address</h2>
 <p>A mailbox receives nothing until an address points at it. On the domain&#39;s
 <strong>Aliases</strong> tab, add one with the kind <strong>Deliver into a mailbox</strong> and pick
@@ -239,6 +240,25 @@ type the password shown into the program. It is shown once. The same tab
 lists what the program will ask for — the incoming server, the outgoing
 server on port 587, and the username — and most programs find those on their
 own from the address.</p>
+<h2>9. Bring the people you share it with</h2>
+<p>If others use this server, a household or a few friends, put them in a
+<strong>circle</strong>. Open <strong>Circles</strong> from the account menu at the foot of the rail,
+make one called what it is (Family, say), and add the people. Someone who
+already has an account is invited by username and joins when they accept.
+Someone who has none is added with <strong>Make an account for someone</strong>: give a
+username, a name and a first password, and they are in the circle at once,
+with nothing to accept. They sign in with that username and password and can
+change the password themselves under <strong>Settings → Change password</strong>. On the
+command line a circle is made with <code>teanode circle create --kind family Family</code> (<code>--kind</code> is required: <code>family</code>, <code>friends</code> or <code>colleagues</code>), and the
+account is one step: <code>teanode user create --circle &lt;circle-id&gt; personb</code>
+prompts for the first password, and <code>--stdin</code> reads it from standard input
+instead (<code>teanode user create --stdin --circle &lt;circle-id&gt; personb</code>). That
+command takes only a username; the name other people see is set afterwards
+with <code>teanode user update personb --name &quot;Person B&quot;</code>, and until then they see
+the username.</p>
+<p>Once you share a circle with someone you can message each other. Chats are
+in the agent&#39;s drawer: start one with <strong>New conversation</strong>, beside its search
+box, then <strong>Message someone</strong>. Every circle has a chat of its own.</p>
 <h2>Where to go next</h2>
 <ul>
 <li><strong>More addresses.</strong> Aliases match with a regular expression, so
@@ -258,6 +278,23 @@ follows the directory, and people arrive with the roles it says.</li>
 addresses through port 587. A credential — on the domain&#39;s settings page,
 optionally restricted to one sender address — is for programs and scripts
 that send as the domain rather than as a person.</li>
+<li><strong>Photos.</strong> On from the first start, with nothing to choose: each person has
+a Photos page in the rail. Upload from the dashboard or with
+<code>teanode photo upload &lt;folder&gt;</code>, or turn on <strong>Photo backup</strong> in the iPhone
+app&#39;s settings to send the phone&#39;s whole library in the background. The
+iPhone app only signs in over https (plain http is accepted only for
+loopback, which a phone cannot reach), so a server reached at
+<code>http://localhost</code> or a local address needs a TLS address first (see
+&quot;Photos and the iPhone app&quot; in <code>reference/deployment.md</code>). Deleting a photo
+on the phone leaves it here. A photo with no place, or the wrong one, is
+given a city with <strong>Change location</strong> in its details on the dashboard or
+the iPhone, for one photo or several chosen at once. The cities come with
+the server, so there is no map service to set up. A library is large: put
+the storage
+(<code>storage.directory</code>, or the S3 bucket) on a disk with room for it, and back
+it up with the database. <strong>Manage → Server → Setup</strong> turns it off, or turns
+on Calendar, Contacts and the rest; the page says what starts after a
+restart and has a <strong>Restart now</strong> button.</li>
 <li><strong>More domains.</strong> Each gets its own signing key by default. If you would
 rather they all shared one, point <code>&lt;selector&gt;._domainkey</code> at the primary
 domain with a CNAME and the dashboard will show you the record to publish.</li>
@@ -268,4 +305,4 @@ which reaches the whole schema and is the better tool for anything repetitive.</
 run from the compose file, with upgrades, backups and what to do when it
 will not start.</li>
 </ul>
-<h2>Documentation</h2><h3>Getting started</h3><ul><li><a href="/doc/introduction">What is TeaNode</a>: Send and receive mail at your own domains: mailboxes read here or over IMAP, forwarding, what it does, and what you need to run it.</li><li><a href="/doc/quick-start">Quick start</a>: TeaNode running with docker compose in a few minutes: the assistant first, with no domain, then mail at your own domain if you want it.</li><li><a href="/doc/getting-started">Getting started</a>: Standing up a mail server for one domain, from nothing to mail arriving in a mailbox you can read in a mail program, including the DNS records and the port 25 problem.</li></ul><h3>Running it</h3><ul><li><a href="/doc/deploying">Deploying</a>: The container image and the compose file, what runs beside the server, how it upgrades itself, and what to back up.</li><li><a href="/doc/configuration">Configuration</a>: Where the settings live, the environment variables that say how to reach them, and every field an operator can set.</li><li><a href="/doc/agents">Agents</a>: The personal agent: what it needs, what it does with a mailbox, and what to weigh before turning it on.</li><li><a href="/doc/memory">Memory</a>: What your agent keeps between conversations: a graph of pages it writes without being asked, the places it reads from, and what it does with all of it in its dreams.</li><li><a href="/doc/voice">Voice</a>: Call your agent from the chat drawer: say what you want, hear the answer as it is written, and cut in when you like. On a laptop or a phone.</li><li><a href="/doc/coding-sessions">Coding sessions</a>: Your Claude Code and Codex sessions in herdr, on every computer you attached: your agent reads them, types into them where you can see, and brings you their questions to answer from anywhere.</li><li><a href="/doc/coding-memory">Memory in coding sessions</a>: Claude Code and Codex shown what your agent knows about the checkout they run in: the project page and the last session when one starts, recall kept to the project before each prompt, and the transcript read within a minute.</li><li><a href="/doc/mcp">Model Context Protocol</a>: TeaNode on both ends of the protocol: answering it, so your editor can use your agent's tools and ask it questions, and connecting out to servers of your own.</li><li><a href="/doc/finance">Finance</a>: Your banks, cards and brokerages linked through Plaid or SimpleFIN: transactions in your own categories, budgets that say where the month is heading, savings targets, net worth, and a tax year put together from your paystubs, W-2s, 1099s and 1098s, all kept in your own database.</li><li><a href="/doc/command-line">The command line</a>: The two programs: the server and the few things only its host can do, and the client that administers it from anywhere through the API.</li></ul><h3>Security</h3><ul><li><a href="/doc/security">Reporting a security problem</a>: Where to report something exploitable, what is in scope, and what is not.</li><li><a href="/doc/security-review">Security review</a>: A review of the whole program: what was examined, what was found, what was fixed, and what is still open.</li></ul><h3>Contributing</h3><ul><li><a href="/doc/contributing">Contributing</a>: Naming, comments, the invariants that bite, tests, commits and the changelog that cuts a release.</li><li><a href="/doc/local-development">Local development</a>: Getting a working build and a database to point it at, a development server that cannot send mail, and the optional scanners.</li><li><a href="/doc/project-structure">Project structure</a>: What each package is for and which way the dependencies point.</li></ul><p>Every document is also plain markdown, listed in <a href="/llms.txt">/llms.txt</a>.</p></div></div></body></html>
+<h2>Documentation</h2><h3>Getting started</h3><ul><li><a href="/doc/introduction">What is TeaNode</a>: Send and receive mail at your own domains: mailboxes read here or over IMAP, forwarding, what it does, and what you need to run it.</li><li><a href="/doc/quick-start">Quick start</a>: TeaNode running with docker compose in a few minutes: the assistant first, with no domain, then mail at your own domain if you want it.</li><li><a href="/doc/getting-started">Getting started</a>: Standing up a mail server for one domain, from nothing to mail arriving in a mailbox you can read in a mail program, including the DNS records and the port 25 problem.</li></ul><h3>Running it</h3><ul><li><a href="/doc/deploying">Deploying</a>: The container image and the compose file, what runs beside the server, how it upgrades itself, and what to back up.</li><li><a href="/doc/configuration">Configuration</a>: Where the settings live, the environment variables that say how to reach them, and every field an operator can set.</li><li><a href="/doc/agents">Agents</a>: The personal agent: what it needs, what it does with a mailbox, and what to weigh before turning it on.</li><li><a href="/doc/memory">Memory</a>: What your agent keeps between conversations: a graph of pages it writes without being asked, the places it reads from, and what it does with all of it in its dreams.</li><li><a href="/doc/voice">Voice</a>: Call your agent from the chat drawer: say what you want, hear the answer as it is written, and cut in when you like. On a laptop or a phone.</li><li><a href="/doc/coding-sessions">Coding sessions</a>: Your Claude Code and Codex sessions in herdr, on every computer you attached: your agent reads them, types into them where you can see, and brings you their questions to answer from anywhere.</li><li><a href="/doc/coding-memory">Memory in coding sessions</a>: Claude Code and Codex shown what your agent knows about the checkout they run in: the project page and the last session when one starts, recall kept to the project before each prompt, and the transcript read within a minute.</li><li><a href="/doc/mcp">Model Context Protocol</a>: TeaNode on both ends of the protocol: answering it, so your editor can use your agent's tools and ask it questions, and connecting out to servers of your own.</li><li><a href="/doc/finance">Finance</a>: Your banks, cards and brokerages linked through Plaid or SimpleFIN: transactions in your own categories, budgets that say where the month is heading, savings targets, net worth, and a tax year put together from your paystubs, W-2s, 1099s and 1098s, all kept in your own database.</li><li><a href="/doc/circles">Circles and chats</a>: The people on one server in circles: chats with each other in the drawer and the app, with or without their agents, and calendars, albums, memory pages, skills and location shared at the level each owner picks.</li><li><a href="/doc/photos">Photos</a>: Photos and videos on your own server: backed up from the iPhone in the background, found by place, date or what is in them, faces grouped into people you name, and albums shared with your circle.</li><li><a href="/doc/location">Location</a>: Visits to named places recorded by the iPhone app, a map of your day, where you are shared with the people in your circle, and what leaves the server to name a place.</li><li><a href="/doc/command-line">The command line</a>: The two programs: the server and the few things only its host can do, and the client that administers it from anywhere through the API.</li></ul><h3>Security</h3><ul><li><a href="/doc/security">Reporting a security problem</a>: Where to report something exploitable, what is in scope, and what is not.</li><li><a href="/doc/security-review">Security review</a>: A review of the whole program: what was examined, what was found, what was fixed, and what is still open.</li></ul><h3>Contributing</h3><ul><li><a href="/doc/contributing">Contributing</a>: Naming, comments, the invariants that bite, tests, commits and the changelog that cuts a release.</li><li><a href="/doc/local-development">Local development</a>: Getting a working build and a database to point it at, a development server that cannot send mail, and the optional scanners.</li><li><a href="/doc/project-structure">Project structure</a>: What each package is for and which way the dependencies point.</li></ul><p>Every document is also plain markdown, listed in <a href="/llms.txt">/llms.txt</a>.</p></div></div></body></html>

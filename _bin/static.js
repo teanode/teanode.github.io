@@ -91,8 +91,11 @@ const main = async () => {
 
   const front = home +
     `<h1>TeaNode</h1><p><strong>${escape(welcome.headline)}</strong></p><p>${escape(welcome.lead)}</p>` +
-    `<h2>${escape(welcome.lifeHeading)}</h2><ul>` +
-    Object.values(welcome.life).map((area) => `<li><strong>${escape(area.title)}.</strong> ${escape(area.body)}</li>`).join('') +
+    `<h2>${escape(welcome.coreHeading)}</h2><ul>` +
+    Object.values(welcome.core).map((feature) => `<li><strong>${escape(feature.name)}.</strong> ${escape(feature.title)}. ${escape(feature.body)}</li>`).join('') +
+    '</ul>' +
+    `<h2>${escape(welcome.yours.heading)}</h2><p>${escape(welcome.yours.lead)}</p><ul>` +
+    Object.values(welcome.yours.points).map((point) => `<li><strong>${escape(point.title)}.</strong> ${escape(point.body)}</li>`).join('') +
     '</ul>' +
     `<h2>${escape(welcome.phone.heading)}</h2><p>${escape(welcome.phone.body)}</p><p>${escape(welcome.phone.availability)}.</p>` +
     `<h2>${escape(welcome.startHeading)}</h2><p>${escape(welcome.startLead)}</p><ul>` +

@@ -110,6 +110,18 @@ said and what you muted, and each of the limits can be changed there or with
 watched the same way: new Gmail, new GitHub notifications, new transactions
 at a payment service, judged like mail and said only when they matter.
 
+**Follows things through.** A bill with no payment yet, a parcel on its
+way, a form due on Friday, next week's school concert: the mail it sorts adds
+each to a list it keeps, one row for one situation however many messages it
+takes. Later mail and your linked accounts close them (a payment that matches
+the bill, a delivery notice), and once a day it looks over what is left and
+tells you about what is due, overdue or has gone quiet, within the same limits
+and mutes as everything else it says unasked. Coming events go into one
+roundup a week. Once a week it also looks up what is on in your town (it asks
+which town once, and never wants a street address) and adds the markets,
+events and things to do to that roundup. The list is on the Alerts tab, under
+Following, and `teanode agent follow list` reads it too.
+
 **Offers, and keeps at it.** In its dreams it looks through your mail for
 work it could do for you and writes each as an offer on the Ideas tab: what
 it would do, where it stops to ask, and what in your mail prompted it.

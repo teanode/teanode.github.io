@@ -1,8 +1,8 @@
 # TeaNode
 
-> A personal assistant on a server of your own, with an iPhone app. It looks after your mail, your days, your money and your taxes, and nothing leaves your hardware.
+> A personal agent for every part of your life, on a server you own, with an iPhone app. Mail, calendar, contacts, photos, location, health, coding, memory, meetings, money and payments in one place, stored on your hardware and nowhere else.
 
-It reads your mail, keeps your calendar, files your receipts and tax forms, writes up your meetings and keeps an eye on your coding sessions, and it remembers what it learns about you. Talk to it from the iPhone app, a browser or a call. One program and one PostgreSQL on your hardware; point it at an Ollama or a vLLM of your own and nothing leaves the machine.
+Your mail, calendar and contacts, your photos and where you have been, your health, your coding sessions, your meetings and your money, joined up in one agent that sees how they connect. It all runs on your own hardware, one program and one PostgreSQL, so your life is stored with you and nowhere else. You choose the model, you choose what it may reach, and you can take any of it back. Point it at an Ollama or a vLLM of your own and nothing leaves the machine at all.
 
 To install the assistant, run `curl -fsSL https://teanode.com/get.sh | sh` on the computer it will live on, then follow the [Quick start](https://teanode.com/data/docs/en/quick-start.markdown) from step 2. The pages under https://teanode.com/doc/ show the same documents once JavaScript runs; the links below are the markdown itself.
 
@@ -23,6 +23,9 @@ To install the assistant, run `curl -fsSL https://teanode.com/get.sh | sh` on th
 - [Memory in coding sessions](https://teanode.com/data/docs/en/coding-memory.markdown): Claude Code and Codex shown what your agent knows about the checkout they run in: the project page and the last session when one starts, recall kept to the project before each prompt, and the transcript read within a minute.
 - [Model Context Protocol](https://teanode.com/data/docs/en/mcp.markdown): TeaNode on both ends of the protocol: answering it, so your editor can use your agent's tools and ask it questions, and connecting out to servers of your own.
 - [Finance](https://teanode.com/data/docs/en/finance.markdown): Your banks, cards and brokerages linked through Plaid or SimpleFIN: transactions in your own categories, budgets that say where the month is heading, savings targets, net worth, and a tax year put together from your paystubs, W-2s, 1099s and 1098s, all kept in your own database.
+- [Circles and chats](https://teanode.com/data/docs/en/circles.markdown): The people on one server in circles: chats with each other in the drawer and the app, with or without their agents, and calendars, albums, memory pages, skills and location shared at the level each owner picks.
+- [Photos](https://teanode.com/data/docs/en/photos.markdown): Photos and videos on your own server: backed up from the iPhone in the background, found by place, date or what is in them, faces grouped into people you name, and albums shared with your circle.
+- [Location](https://teanode.com/data/docs/en/location.markdown): Visits to named places recorded by the iPhone app, a map of your day, where you are shared with the people in your circle, and what leaves the server to name a place.
 - [The command line](https://teanode.com/data/docs/en/command-line.markdown): The two programs: the server and the few things only its host can do, and the client that administers it from anywhere through the API.
 
 ## Security

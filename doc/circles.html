@@ -1,0 +1,94 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Circles and chats - TeaNode</title><meta name="description" content="The people on one server in circles: chats with each other in the drawer and the app, with or without their agents, and calendars, albums, memory pages, skills and location shared at the level each owner picks."><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><link rel="canonical" href="https://teanode.com/doc/circles"><meta property="og:type" content="article"><meta property="og:site_name" content="TeaNode"><meta property="og:locale" content="en_US"><meta property="og:locale:alternate" content="zh_CN"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:url" content="https://teanode.com/doc/circles"><meta property="og:title" content="Circles and chats - TeaNode"><meta property="og:description" content="The people on one server in circles: chats with each other in the drawer and the app, with or without their agents, and calendars, albums, memory pages, skills and location shared at the level each owner picks."><meta property="og:image" content="https://teanode.com/static/og.4USaP8AH.png"><meta property="og:image:type" content="image/png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="TeaNode: a personal assistant that lives on your own server, beside its iPhone app."><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Circles and chats - TeaNode"><meta name="twitter:description" content="The people on one server in circles: chats with each other in the drawer and the app, with or without their agents, and calendars, albums, memory pages, skills and location shared at the level each owner picks."><meta name="twitter:image" content="https://teanode.com/static/og.4USaP8AH.png"><meta name="twitter:image:alt" content="TeaNode: a personal assistant that lives on your own server, beside its iPhone app."><meta name="color-scheme" content="light dark"><link rel="icon" href="/static/favicon.B_wSAv8O.svg" type="image/svg+xml"><link rel="alternate icon" href="/favicon.ico"><link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.Umm5t7C-.png"><meta name="theme-color" content="#ffffff"><script>
+(function () {
+try {
+var stored = window.localStorage.getItem('teanode.theme');
+if (stored === 'light' || stored === 'dark') {
+document.documentElement.setAttribute('data-theme', stored);
+}
+var dark = stored === 'dark' || (stored !== 'light' &&
+window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+if (dark) {
+document.documentElement.style.background = '#141416';
+document.querySelector('meta[name="theme-color"]').setAttribute('content', '#141416');
+}
+} catch (error) {
+// Site data blocked. The default theme is correct either way.
+}
+})();
+</script><script async src="https://www.googletagmanager.com/gtag/js?id=G-XD5JSLP4RH"></script><script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XD5JSLP4RH', {send_page_view: false});
+</script><script type="module" crossorigin src="/static/teanode.DR1xKAUf.js"></script></head><body><div id="teanode"><style>.teanode-static{max-width:760px;margin:0 auto;padding:24px 16px 48px;font:16px/1.6 system-ui,sans-serif;opacity:0;animation:teanode-static 0s 2s forwards}.teanode-static pre{overflow-x:auto}@keyframes teanode-static{to{opacity:1}}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .teanode-static{color:#e8e8ea}:root:not([data-theme=light]) .teanode-static a{color:#9ccc65}}:root[data-theme=dark] .teanode-static{color:#e8e8ea}:root[data-theme=dark] .teanode-static a{color:#9ccc65}</style><div class="teanode-static"><p><a href="/">TeaNode</a> · <a href="/doc">Documentation</a> · <a href="https://github.com/ziyan/teanode">Source</a></p><h1>Circles and chats</h1><p>A server usually has people on it who know each other: a household, a few
+friends, a team. A <strong>circle</strong> says who belongs together. On its own it shares
+nothing; it is the list that chats, calendars, albums, memory, skills and
+location ask when somebody wants to share with &quot;my family&quot;.</p>
+<p>Everyone keeps their own account, their own mailbox and their own agent. A
+circle never lets one person read another&#39;s mail or conversations, an
+operator included. What crosses between people is only what its owner chose
+to share, and leaving a circle ends every share that depended on it at once.</p>
+<h2>Making a circle</h2>
+<p>Open <strong>Circles</strong> from the account menu at the foot of the rail, or in the
+iPhone app&#39;s side menu, and make one with a name and a kind: family, friends
+or colleagues. The kind is only how screens describe it.</p>
+<ul>
+<li><strong>Somebody with an account</strong> is invited by username, and joins when they
+accept. The invitation waits on their Circles page, in their agent&#39;s
+conversation and on their phone, and expires after thirty days.</li>
+<li><strong>Somebody with no account yet</strong> is added with <strong>Make an account for
+someone</strong>, by an operator: a username, a name and a first password, and they
+are in the circle at once.</li>
+</ul>
+<p>Each member is an admin or a member. Admins rename the circle, invite and
+remove people, and decide who else is an admin; a circle always keeps one.
+Anybody may leave. A role never decides what anybody sees of anybody else:
+that is always the owner&#39;s choice.</p>
+<p>From the command line:</p>
+<pre><code class="language-bash">teanode circle create --kind family Family
+teanode circle invite &lt;circle-id&gt; sam
+teanode user create --circle &lt;circle-id&gt; alex
+</code></pre>
+<h2>Chats</h2>
+<p>Once two people share a circle they can message each other. Chats live in the
+same drawer as your agent, and in the iPhone app&#39;s Chats: start one with
+<strong>New conversation</strong>, then <strong>Message someone</strong> or <strong>New group</strong>. Every circle
+also has a chat of its own, whose members follow the circle&#39;s.</p>
+<p>A chat works with no model at all: messages, pictures and files, replies,
+reactions, read marks and notifications on the phone. Agents join only when
+somebody asks:</p>
+<ul>
+<li><strong>Your own agent</strong> answers in a chat when you mention it with <code>@</code> or reply
+to something it said. What it reads and does there is shown only to you.</li>
+<li><strong>Somebody else&#39;s agent</strong> answers you only if its owner allowed it in that
+chat, and then only from the chat and the web, never from its owner&#39;s mail,
+calendar or memory.</li>
+</ul>
+<h2>Sharing</h2>
+<p>Each kind of thing is shared with one person in a circle, or with a whole
+circle, at a level its owner picks.</p>
+<ul>
+<li><strong>Calendars</strong>, at busy, titles, details or edit. A circle can also keep a
+calendar of its own, and <strong>Find a time</strong> looks across everyone&#39;s. An event
+marked private stays busy whatever the level.</li>
+<li><strong>Albums</strong>, to look at or to add to, with or without where the photos were
+taken. See <a href="/doc/photos">Photos</a>.</li>
+<li><strong>Where you are</strong>, now or now and where you have been. See
+<a href="/doc/location">Location</a>.</li>
+<li><strong>Pages of memory</strong>, read only, with or without the words each fact came
+from.</li>
+<li><strong>A skill that costs money</strong>, with a limit per payment and per month;
+anything above the limit waits for the owner, who approves it on the
+dashboard or in the iPhone app.</li>
+</ul>
+<h2>Who is who</h2>
+<p>In a circle you can say what somebody is to you: Sam is my father. Sam sees
+the other side at once (you are Sam&#39;s son, daughter or child) and is told.
+Either of you can change it or take it away, and only the two of you see it.
+On your profile you can say how you are described, he, she or they; until you
+do, the words for you are neutral.</p>
+<p>Your agent knows these, so &quot;ask my father whether Sunday works&quot; or &quot;where is
+my wife&quot; reaches the right account, and it never guesses a relationship or a
+pronoun. On the command line they are <code>teanode circle relate</code>,
+<code>teanode circle unrelate</code> and <code>teanode user update --pronoun</code>.</p>
+<h2>Documentation</h2><h3>Getting started</h3><ul><li><a href="/doc/introduction">What is TeaNode</a>: Send and receive mail at your own domains: mailboxes read here or over IMAP, forwarding, what it does, and what you need to run it.</li><li><a href="/doc/quick-start">Quick start</a>: TeaNode running with docker compose in a few minutes: the assistant first, with no domain, then mail at your own domain if you want it.</li><li><a href="/doc/getting-started">Getting started</a>: Standing up a mail server for one domain, from nothing to mail arriving in a mailbox you can read in a mail program, including the DNS records and the port 25 problem.</li></ul><h3>Running it</h3><ul><li><a href="/doc/deploying">Deploying</a>: The container image and the compose file, what runs beside the server, how it upgrades itself, and what to back up.</li><li><a href="/doc/configuration">Configuration</a>: Where the settings live, the environment variables that say how to reach them, and every field an operator can set.</li><li><a href="/doc/agents">Agents</a>: The personal agent: what it needs, what it does with a mailbox, and what to weigh before turning it on.</li><li><a href="/doc/memory">Memory</a>: What your agent keeps between conversations: a graph of pages it writes without being asked, the places it reads from, and what it does with all of it in its dreams.</li><li><a href="/doc/voice">Voice</a>: Call your agent from the chat drawer: say what you want, hear the answer as it is written, and cut in when you like. On a laptop or a phone.</li><li><a href="/doc/coding-sessions">Coding sessions</a>: Your Claude Code and Codex sessions in herdr, on every computer you attached: your agent reads them, types into them where you can see, and brings you their questions to answer from anywhere.</li><li><a href="/doc/coding-memory">Memory in coding sessions</a>: Claude Code and Codex shown what your agent knows about the checkout they run in: the project page and the last session when one starts, recall kept to the project before each prompt, and the transcript read within a minute.</li><li><a href="/doc/mcp">Model Context Protocol</a>: TeaNode on both ends of the protocol: answering it, so your editor can use your agent's tools and ask it questions, and connecting out to servers of your own.</li><li><a href="/doc/finance">Finance</a>: Your banks, cards and brokerages linked through Plaid or SimpleFIN: transactions in your own categories, budgets that say where the month is heading, savings targets, net worth, and a tax year put together from your paystubs, W-2s, 1099s and 1098s, all kept in your own database.</li><li><a href="/doc/circles">Circles and chats</a>: The people on one server in circles: chats with each other in the drawer and the app, with or without their agents, and calendars, albums, memory pages, skills and location shared at the level each owner picks.</li><li><a href="/doc/photos">Photos</a>: Photos and videos on your own server: backed up from the iPhone in the background, found by place, date or what is in them, faces grouped into people you name, and albums shared with your circle.</li><li><a href="/doc/location">Location</a>: Visits to named places recorded by the iPhone app, a map of your day, where you are shared with the people in your circle, and what leaves the server to name a place.</li><li><a href="/doc/command-line">The command line</a>: The two programs: the server and the few things only its host can do, and the client that administers it from anywhere through the API.</li></ul><h3>Security</h3><ul><li><a href="/doc/security">Reporting a security problem</a>: Where to report something exploitable, what is in scope, and what is not.</li><li><a href="/doc/security-review">Security review</a>: A review of the whole program: what was examined, what was found, what was fixed, and what is still open.</li></ul><h3>Contributing</h3><ul><li><a href="/doc/contributing">Contributing</a>: Naming, comments, the invariants that bite, tests, commits and the changelog that cuts a release.</li><li><a href="/doc/local-development">Local development</a>: Getting a working build and a database to point it at, a development server that cannot send mail, and the optional scanners.</li><li><a href="/doc/project-structure">Project structure</a>: What each package is for and which way the dependencies point.</li></ul><p>Every document is also plain markdown, listed in <a href="/llms.txt">/llms.txt</a>.</p></div></div></body></html>

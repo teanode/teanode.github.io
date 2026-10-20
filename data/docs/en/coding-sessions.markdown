@@ -51,6 +51,15 @@ conversation you asked in is woken when that session finishes its turn, so
 in a new tab of the workspace named after it, or with its permission prompts
 off when you ask. A session is closed only when it is not working.
 
+**Shows them on a page of their own.** The Coding page on the dashboard and
+the Coding section of the iPhone app list every session by computer and
+workspace. Open one to read its transcript as it happens, or its screen in the
+terminal's own colors, and write the next prompt in the box under it, with a
+pasted picture or a file. A tool call opens to show what it was given and what
+it answered, and a question the session asks is answered right there. On the
+dashboard a strip of tabs moves between the workspace's tabs, and the plus
+opens a new Claude Code or Codex tab beside the one you are reading.
+
 ## From anywhere
 
 Every one of these actions is on the agent's `herdr` tool, so anything that

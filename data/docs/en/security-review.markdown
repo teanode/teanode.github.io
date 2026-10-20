@@ -270,7 +270,7 @@ deployment test's failures unreadable.
 
 ### SEC-11 — Mailboxes, app passwords, IMAP and single sign-on (Informational)
 
-Added with the mailbox program ([`docs/planning/active/20260906-mailboxes.md`](https://github.com/ziyan/teanode/blob/main/docs/planning/active/20260906-mailboxes.md))
+Added with the mailbox program (`the decision that introduced it`)
 and reviewed as it was built rather than after:
 
 - Every mailbox, folder and item operation in the API resolves the row and
@@ -383,6 +383,11 @@ parsed `Address` is used, so the display name cannot smuggle anything either.
 - SMTP credentials: derived by HMAC-SHA256 from the server secret, so the
   configuration holds no password to steal — but the secret is equivalent to
   all of them.
+- Stored keys: every secret setting (provider keys, the session key, the
+  certificate and ACME keys, storage keys, an identity provider's client
+  secret) and every domain's DKIM key is sealed with a box derived from the
+  server secret. Kept in a file (`--secret-file`), the secret is not in the
+  database, and a dump of it is ciphertext and hashes.
 - The GraphQL layer redacts anything tagged `secret:"true"`, which covers the
   server secret, AWS credentials, token hashes and password hashes.
 
@@ -393,6 +398,27 @@ TLS (subject to SEC-7). Its value is an HMAC over username and expiry,
 verified in constant time. `SameSite=Lax` is what stands between the GraphQL
 endpoint and cross-site request forgery, since a cross-site POST does not
 carry the cookie.
+
+### 5.5.1 Signing in as somebody else
+
+An operator who may manage accounts can sign in as another account, to
+help them (`StartImpersonation`;
+[`docs/planning/impersonation-execplan.md`](https://github.com/ziyan/teanode/blob/main/docs/planning/impersonation-execplan.md)). It is a separate session row
+belonging to the person, naming the operator and the operator's own session;
+the operator's own cookie is kept aside in `teanode_session_return` and put
+back when it ends. Every request in it is the person's, with the person's
+permissions and none of the operator's, so the operator can do exactly what
+the person can. It is refused unless the operator holds every permission the
+person holds, the same rule as setting their password, checked again on every
+request, and refused from a token, from the console and from inside another
+impersonation. It stops working the moment the operator's own session ends,
+their account is disabled, or a new sign-in happens in the same browser.
+Every audit row written by it, by an agent turn asked for in it, through the
+MCP endpoint or an upload, carries `impersonator_user_id`.
+The person sees the session, named as the operator's, in their own list and
+can end it. What the page reports on its own about the person being present
+is not sent, and their time zone and language are not taken from the
+operator's browser.
 
 ### 5.6 Rendered mail
 
@@ -406,7 +432,10 @@ stripped.
 
 - **The server secret is a single point of total failure for submission.**
   Every SMTP credential derives from it. There is no rotation path that does
-  not invalidate every credential at once.
+  not invalidate every credential at once. It no longer has to travel with
+  the database: started with `--secret-file`, the server reads it from a file
+  and the database keeps only a check, so a copy of the database opens none
+  of the keys sealed in it.
 - **An administrator can reach the internal network** through webhook aliases
   and forwarding targets. Single-tenant software; the administrator is
   trusted.
@@ -1371,3 +1400,679 @@ exercised. And the reviewers were told what is deliberate — the computer
 daemon is unconfined on the owner's own machine, app passwords authenticate
 over Basic, the administrator is trusted — so nothing below those lines was
 examined.
+
+# Fourth pass — the subsystems the third pass predates
+
+- Date: 2026-09-15
+- Reviewed at: `main`, commit `53eb79e`
+- Scope: what landed after the third pass was written — subagents, the object
+  store as the whole of storage, sessions on an attached computer, connected
+  servers running there, and the skills runner. The third pass names none of
+  them, which is why they were the whole of this one.
+
+## Summary
+
+Three findings, all fixed. One of them matters: a skill that signs in before
+it does anything was handing the token it got back to the model.
+
+The rest of what was looked at held. The guards on the newest surfaces are in
+place and were read rather than assumed: a subagent is depth-limited, carries
+its parent's permissions and read-only flag, and answers its confirmations
+through the parent; the terminal tool resolves its computer through the same
+gate every other computer tool does, which refuses a run with nobody present. (Since 2026-10-06 that gate admits a run with nobody present too; see
+[`docs/decisions/20261006-the-agent-uses-the-persons-devices-whoever-is-present.md`](https://github.com/ziyan/teanode/blob/main/docs/decisions/20261006-the-agent-uses-the-persons-devices-whoever-is-present.md).)
+
+## Findings
+
+### SEC-75 — A skill's sign-in token went back to the model (High, fixed)
+
+A tool with more than one step answered with every step's result, "so that
+the model sees the working and not only the end of it". The working is worth
+seeing. A credential is not part of it.
+
+Four of the tools in the Homebridge skill, and the shape is the common one:
+sign in, select `token` from the answer, put it in the `Authorization` header
+of the step that follows. That token went back as part of the tool's answer —
+into the request to the model provider, into the stored conversation, and
+onto the dashboard where the run is shown. It was observed happening on a
+running server, not inferred.
+
+A step may now say `quiet: true`: its answer still feeds the steps after it
+and no longer goes back. That fixes a skill once its author republishes it,
+and an installed skill keeps running as it was written — so a selected field
+with a credential's name (`token`, `access_token`, `password`, `secret`,
+`api_key` and the rest) is kept back from the answer whether the step asked or
+not, while the steps after it go on using the real value. Both are asserted by
+tests that fail if a token appears anywhere in what a tool answers.
+
+The registry's own skills should say `quiet` on their sign-in steps rather
+than leaning on the field names; that is a change to the skills repository,
+not to this one.
+
+### SEC-76 — A value inside a script would have been read as code (Low, fixed)
+
+Every part of a skill's command is quoted before it runs, so a value cannot
+become a second command. That holds exactly as long as no part of the command
+is itself a script: `sh -c "curl {{url}}"` quotes the whole script as one
+argument, and the `sh` that receives it then parses whatever the value
+carried. Where the value comes from a tool argument, the model chooses it;
+where it comes from a message, a stranger does.
+
+No published skill is written that way, and none ever was — this is a latent
+footgun rather than a live hole, found by asking what the quoting depends on.
+It is refused at parse time now, for the shells and for `python`, `ruby`,
+`perl` and `node`, naming the safe form instead: pass the value as an
+argument after the script and let the script name it positionally.
+
+### SEC-77 — An accepted message could lose its content (Medium, functional, fixed)
+
+Storage used to be a local directory. It can now be an object store and
+nothing else, which is a service across a network — and the delivery's row is
+committed before the content is written. Failing to write could not refuse the
+message, because the sender would then send it again and it would be delivered
+twice; so the failure was logged at warning and the message stayed in the
+mailbox with nothing behind it. Nothing retried, and nothing repaired it: the
+reader, IMAP and the agent all just fail to find the content, permanently.
+
+The object client retries what it judges transient. What was missing was
+anything for the rest, so the write is now attempted four times over about
+three and a half seconds — nothing against the minutes a sending server
+allows — and a failure after that is logged at error saying plainly that a
+message was accepted and cannot be read.
+
+Storing before the row is committed would close the window rather than narrow
+it, at the cost of an orphaned object whenever a transaction rolls back. That
+is the right shape and it is a change to the delivery path, which wants more
+than an audit pass behind it.
+
+## Controls verified this time
+
+Named so nobody repeats the work:
+
+- **DAV bodies** are bounded at the mount, before authentication and before
+  any handler, so the `io.ReadAll` calls inside the report paths read from an
+  already-limited reader. This was a suspected finding and is not one.
+- **Usage aggregation** builds its one interpolated query from a whitelist of
+  column expressions and fixed predicates with placeholders; no caller string
+  reaches SQL.
+- **Subagents**: depth capped at one and the tool withheld inside one, tools
+  restricted to the parent's own set less itself, `ReadOnly` and the
+  permission set inherited, confirmations answered through the parent, rounds
+  bounded, usage recorded under its own kind.
+- **The terminal on an attached computer** resolves through the same gate as
+  every other computer tool: refused for a run with nobody present (admitted
+  since 2026-10-06, see the decision record of that date), refused
+  when the operator has not allowed computers, refused when the feature is
+  off.
+- **Self-upgrade** builds its client without a timeout, which is correct: both
+  callers bound their own requests with a context deadline, thirty seconds for
+  the release check and ten minutes for the download.
+- No `math/rand` anywhere a value needs to be unguessable; no
+  `dangerouslySetInnerHTML` in the dashboard.
+
+## What this review did not do
+
+No fuzzing, no penetration test, no run against a live model. The reading
+followed the newest code and the paths that reach it; the subsystems the
+third pass covered were not read again.
+
+# Fifth pass — a coverage-led run over the whole repository
+
+- Date: 2026-09-15
+- Reviewed at: `main`, commit `6c13a89`
+- Method: a coverage ledger of fourteen units across the whole repository, one
+  wave of seven independent hunters, and a fresh adversarial verifier for every
+  candidate. Bounded local checks ran in an OS sandbox — empty environment, no
+  network, the target read-only, writes confined to a scratch directory, with
+  CPU, memory, process, file-size and wall-clock limits.
+
+## Summary
+
+Nineteen findings confirmed — three high, nine medium, seven low — and one
+claim rejected. Verification moved six results: one rejected outright, two
+downgraded from high because no shipped role reaches their precondition, one
+downgraded to low by a direct disproof, one promoted up from needs-validation,
+and two whose scope grew.
+
+Three shapes account for most of it. **A control applied to one field, one call
+site or one sibling path but not its twin**: the grant bound exists on every
+update path and neither create path; the strip for forged authentication
+headers is called from the incoming handler and not the bounce handler; the
+write-path classifier reads one argument and misses the one action whose
+written path is another. **Work done for a stranger before anyone asks who they
+are**: the subscription websocket read an unbounded message for an unbounded
+time before authentication, while the POST half of the same endpoint capped at
+a megabyte. And **a boundary the code argues for and then does not apply**:
+`fenced()` neutralises a closing tag on every tool-result path and its comment
+names the attack, while the five automatic mail prompts did the bare join it
+warns about.
+
+## Fixed in this pass
+
+### SEC-75 — A stranger's message could close the block it was quoted in (High, fixed)
+
+The triage, reply, research, extract and summarize prompts interpolated a
+sender-controlled message into plain `<message>` tags with `text/template`,
+which escapes nothing. A body carrying the closing tag ended the block, and
+what followed arrived beside the prompt's own instructions. `fenced()` has
+protected every tool result from exactly this since it was written; the job
+prompts were the one path a stranger reaches unsolicited, with nobody present,
+and they were the one path it was not applied to. Triage runs by itself on
+delivered mail, and the run it can steer into existence holds `web_fetch` —
+classed read, so it passes the read-only filter and never raises a card — in
+the same context as `mail_read` and `mail_search`.
+
+Fixed in `render`, which every job prompt passes through, rather than at the
+dozen places that set one of these fields: a control that has to be remembered
+is a control that will be forgotten. Both shapes the prompts are given, a map
+and a struct, are covered.
+
+### SEC-76 — The websocket read an unbounded message before authentication (High, fixed)
+
+`GET /api/v1/graphql` is public and a handshake with no `Origin` is admitted on
+purpose, and the loop read a whole message before `connection_init` said who
+the caller was. The library applies a size limit only when given one, and it
+was never given one; the upgrade also clears the server's read deadline, so the
+read was unbounded in time as well. An anonymous caller made a fixture built
+from the same vendored library buffer 320 MiB into 795 MiB of heap before
+authentication. Both limits are now set, and the deadline is lifted only after
+the connection is acknowledged. The two device sockets gained the size limit
+they were also missing.
+
+### SEC-77 — A copy was judged by the file it read (High, fixed)
+
+`PathAsks` puts a write onto a card when it lands where the machine reads on
+its own. It was applied to the call's `path`, which for every action but one is
+the path written; for a copy the written path is the destination. Copying a
+harmless file over `~/.ssh/authorized_keys` asked nothing, while writing the
+same bytes to the same place asked. The shell rule had the same blind spot —
+`cp`, `install`, `ln -sf` and `tee` all classified as ordinary — so both were
+fixed; fixing one alone would have left the route open.
+
+### SEC-78 — The create paths handed out what the caller did not hold (Medium, fixed)
+
+SEC-68 established that nobody hands out more than they hold and guarded four
+call sites, all of them update paths. `CreateUser` accepted `groupIds`
+unbounded and set a password in the same request, so the account could be made
+and signed into without the `Covers` check ever being asked; `CreateGroup`
+accepted roles and members unbounded. A further defect was found during
+verification: `mayHandOut` asks what a group carries *before* the change, so a
+single update carrying both roles and members passed on a group that carried
+nothing yet. The bound is now computed over the permission set the group
+*would* carry.
+
+No shipped role reaches this — Administrator holds everything and Operator
+excludes user, group and role management — so it is reachable only where an
+operator has hand-built a limited role, which is the configuration SEC-68 was
+fixed to make safe.
+
+### SEC-79 — A password reset left the account's API tokens working (Medium, fixed)
+
+The resolver revoked sessions and said in its own comment that whoever was
+signed in is signed out. A token is checked before the cookie, never reads the
+password, carries the whole account with no scopes, and can mint a fresh
+non-expiring successor. Deleting an account takes its tokens by cascade and
+disabling one stops them being accepted; a reset was the outlier.
+`RevokeTokensByUser` already existed in the database layer with no caller.
+
+### SEC-80 — A connected server could aim this server's OAuth posts anywhere (Medium, fixed)
+
+`oauth.go` draws the boundary itself: the plain client for the address the
+operator typed, the guarded one for an address the far end's document chose.
+The registration endpoint was checked by neither and posted to with the plain
+client, returning up to 4 KB of the answer in its error; the token endpoint's
+loopback exception was not conditioned on the server having been declared
+privately, so a server out on the internet could name an address inside the
+operator's host. Both now go through the guarded client, the registration
+endpoint is checked like the other two, and the loopback exception applies only
+where the server itself is private. Demonstrated before the fix by reaching a
+loopback listener and reading its body back out of the error.
+
+### SEC-81 — A bounce return path was a reusable bearer token (Medium, fixed)
+
+The signed address is handed to every recipient in the `Return-Path` of every
+message sent. The handler accepted it any number of times, each replay
+rewriting the delivery's status from text the sender wrote, clearing the error
+when the report carried no status part at all, growing an uncapped array, and
+posting another bounce into the sender's mailbox. A notification now settles a
+delivery once, within a seven-day window, with the stored statuses capped.
+
+### SEC-82 — An unrestricted credential could name any domain in From (Medium, fixed)
+
+An alias-restricted credential was held to its domain in the envelope *and* the
+From header, and the function's comment explains why: a client writes its own
+From line. A credential with no alias returned early, before From was looked
+at, so the ordinary credential handed to a service could put any domain in the
+line the recipient reads. External recipients are protected by DMARC
+misalignment; the gain was an internal recipient, where the loopback delivery
+evaluates nothing.
+
+### SEC-83 — The bounce path was missing three of its sibling's controls (Low, fixed)
+
+`handleDsn` reaches a mailbox by the same door as `handleIncoming` but applied
+neither the forged-header strip, nor the exactly-one-From rule, nor any sender
+authentication. The first two are now applied. The third is left as it was:
+a bounce is generated by a foreign server and routinely fails alignment
+legitimately, which is why the checks were omitted.
+
+### SEC-84 — A forged verdict could hide in a comment or in quotes (Low, fixed)
+
+The strip compares an identifier against this server's own names. The grammar
+allows that identifier to carry parenthesised comments and to be quoted, and
+the parser handled neither — its own note said so — so three of six tested
+forms parsed to nothing, matched nothing, and were kept. The parser now removes
+comments and unquotes, and the strip drops any such header it cannot read: a
+header it cannot read is exactly a header it cannot clear.
+
+### SEC-85 — Other bounded things (Low, fixed)
+
+The templated-send endpoint decoded its body with no limit, the only one of
+eight body-reading handlers that did not. The periodic helper handed every job
+a context nothing could cancel, so a blocked job made shutdown wait for ever;
+the drop-list fetch then used a client with no timeout and read without a
+ceiling. And the settings card, which shows field names and never values by
+design, now names a command a change would have this server run — the command
+is not a secret, and the card is the only place the person can see what they
+are approving.
+
+## Confirmed and deliberately not fixed here
+
+- **An unauthenticated GraphQL document is parsed and validated inside a
+  database transaction** with no depth or complexity limit (Medium). Measured
+  at about one CPU-second and half a gigabyte of allocation per megabyte, with
+  a connection held throughout and no maximum on the pool. Growth is linear and
+  the superlinear shapes do not fire. The fix is a complexity gate plus moving
+  parse and validation outside the transaction, which is a design change rather
+  than a patch.
+- **Risk is classed from a call's arguments, not from the object it would
+  produce** (Medium). An update naming only conditions keeps a stored
+  forwarding or deleting action and is classed an ordinary write, so no card is
+  shown. Classifying correctly means resolving the stored rule at
+  classification time, which the classifier cannot do as written.
+- **Releases are verified by checksum, not by signature** (Medium, and SEC-31).
+  Every local control is careful and not one is independent of the distribution
+  channel, which is why none substitutes for a signature. This needs a key held
+  outside the build platform — an operator decision, not a patch.
+- **IMAP `APPEND` files a client's message as domain-scoped outgoing mail**
+  (Low), and **revoking the write permission does not reach an already-selected
+  folder** (Low). The first changes what the Sent folder means; the second is
+  best fixed by ending the selection, since the protocol reports read-only-ness
+  once and gives no way to change it mid-selection. Both want more than a patch.
+
+## Rejected
+
+A claim that the terminal and coding tools reach the attached computer's shell
+without classification was **rejected**. Every fact in it held, but the
+classifier it says is evaded is an advisory heuristic the shell tool itself
+fails open on: an interpreter invocation that removes a directory tree, a
+script file, and reading a private key all classify as allowed and run with no
+card. An agent wanting uncarded execution needs one shell call — one card fewer
+than the terminal path, which always asks when it opens a session. The
+behaviour is a recorded decision, and the path is refused entirely in a run
+with nobody present.
+
+What that rejection surfaced is worth more than the claim: **`Classify` is
+trivially evadable**, and that is a weakness in the existing control rather
+than in the session layer. It deserves its own pass.
+
+**Resolved by removal, 2026-09-18.** The owner reached the same conclusion
+from the other end and asked for the rule to go: a list of shapes will never
+name everything dangerous, and carrying one costs the codebase its weight
+while telling everybody who reads it that the dangerous cases are covered.
+`internal/computer/policy.go` and every use of it are gone. A shell command
+now runs as it was written. The filesystem still asks before a move or a
+delete, judged by the action the call names rather than by a guess about the
+path. What bounds a computer is what it always bounded: the directories the
+person allowed, enforced on their own machine, and their yes.
+
+## What this pass did not do
+
+No fuzzing, no penetration test, no run against a live model, and nothing
+against the deployed server. Whether a model obeys text that appears outside
+its block could not be established and is the open question under SEC-75.
+Database-backed packages skip without a test database and starting one was
+prohibited, so evidence in `internal/db`, `internal/mx`, `internal/agent`,
+`internal/dav`, `internal/scheduling` and the GraphQL package is source-derived
+or built from overlaid unit tests. Seven further surfaces were discovered
+during hunting and recorded as deferred rather than assigned, because this was
+a bounded pass over coarsened units and not an exhaustive one.
+
+# Sixth pass — finance sources, net worth and budgets
+
+- Date: 2026-09-30
+- Reviewed at: branch `bank-accounts`, before it merged
+- Scope: what the finance feature adds: provider clients for Plaid and
+  SimpleFIN, the credential each finance source keeps, the ECB exchange rate
+  fetch, the finance tables, the `finance` tool, the `teanode finance`
+  command group, the Finance tab and the `/finance/link` page. How it works
+  is in [`docs/subsystems/finance.md`](https://github.com/ziyan/teanode/blob/main/docs/subsystems/finance.md).
+
+## Summary
+
+Four findings, all fixed before the feature merged. None let one person reach
+another's data or a secret leave the server; the worst let the agent grant
+itself a permission that belongs to the person.
+
+## Findings
+
+### SEC-86 — The agent could allow web estimates for an asset (Medium, fixed)
+
+The tool's `update_asset` passed `is_estimate_allowed` through, behind a
+confirmation that said only "change an asset". Allowing an estimate sends the
+asset's description, often a home address, to a search provider and to web
+pages, which is the person's choice. Text in a transaction description could
+have asked for it. The tool no longer takes that argument or the description
+it searches with; only the dashboard and the command line set them.
+
+### SEC-87 — The command line's finance source commands acted on any source (Medium, fixed)
+
+`teanode finance sync`, `disable-source`, `enable-source` and `delete-source`
+passed any source id to the generic source operations, so a pasted id of a
+files or mail source was deleted under a prompt that called it a finance
+source. They now look the id up among the person's finance sources first, as
+the tool always did.
+
+### SEC-88 — A refused categorization still wrote (Low, fixed)
+
+`CategorizeTransaction` recorded the person's choice before checking the
+option to make a spending rule, and a refusal that was not a database error
+left that write committed, marking the transaction as decided by the person
+with no category. Everything is checked before the first write now.
+
+### SEC-89 — A Plaid link could outlive a failed commit (Low, fixed)
+
+The credential was removed at Plaid only when the resolver itself failed; a
+failure at commit left a billed link at Plaid with no source to delete it
+from. The source and its credential are now written in a transaction of their
+own inside the resolver, and the link is removed when that fails.
+
+## Controls verified this time
+
+- **Per-person isolation.** Every finance resolver begins with
+  `requireAgentPerson`, and every row is read and written by agent and id;
+  references to a spending category, finance account or asset are checked
+  against the same agent, and transfer pairing joins on the agent.
+- **Credentials.** The Plaid secret is a sealed setting that no read returns.
+  A finance source's credential is a sealed source secret, opened only in
+  memory to call the provider; neither it nor the SimpleFIN URL's userinfo
+  reaches a log line, an error or a model. With the server secret kept in a
+  file, a database dump opens neither.
+- **Outbound requests.** A SimpleFIN setup token decodes to a URL the person
+  chose, so the claim and every fetch go through `safefetch`, which refuses
+  anything but public addresses over https. Plaid's and the ECB's hosts are
+  constants.
+- **The security policy.** Only `/finance/link` may load Plaid's script, frame
+  Plaid's page and reach Plaid's API; every other page's policy is unchanged,
+  and a test says so.
+- **Credentials brought in.** A credential of a connection made elsewhere
+  (`ImportFinanceCredential`) is taken only from a file, standard input or a
+  prompt without echo on the command line, or a password field in the
+  dashboard; the command line refuses one given as an argument, and the tool
+  refuses it in conversation. It is proved against the provider before
+  anything is made, never repeated in an answer or an error (tests check),
+  and a SimpleFIN URL passes safefetch's checks (https, no private address)
+  before it is fetched.
+- **What reaches a model.** The tool returns normalized fields, never provider
+  metadata; text written by providers and merchants is marked untrusted; a
+  SimpleFIN setup token is refused in conversation; the categorize model is
+  sent a merchant, description, amount, currency, account kind and provider
+  category and nothing else.
+
+## What this pass did not do
+
+No fuzzing and no penetration test. Plaid was exercised through tests with a
+fake server and a manual link outside the server, not yet end to end through
+the server; SimpleFIN against its public demo and a real bridge connection;
+the ECB against its live files.
+
+# Seventh pass: signing a phone in
+
+Two adversarial reviews, on 2026-10-10, of the sign-in the TeaNode phone app
+uses (#379): the scope "api", which gives a token for everything a person
+can do, and the ways a phone gets one.
+
+## Summary
+
+The first design was phishable, and was replaced before it merged. Six
+smaller findings were fixed with it. The second review found no remaining way
+for anybody but the person to end up with a token for their server.
+
+## Findings
+
+### SEC-90: Pairing handed a full token to whoever started it (High, fixed by redesign)
+
+The first version used RFC 8628's device flow: the app showed a short code
+and the person approved it on the dashboard. The token goes to whoever polls
+with the device code, and the server cannot tell the real app from a stranger
+who registered under its name. A stranger could start a pairing as "TeaNode on
+Ana's iPhone", email the person a link to `/connect` on their own server, and
+collect a 30-day, refreshable full-API token from one press of Approve.
+
+Replaced by connect codes, which go the other way: a one-time secret made for
+the person where they are signed in, shown as a QR code, and scanned by their
+own phone (`internal/api/v1api/apigraph/oauth_connect.go`,
+`internal/api/v1api/apioauth/connect.go`). The device flow, its endpoint, its
+operations and its table were removed.
+
+### SEC-91: The consent page could grant the whole API (Low, fixed)
+
+The scope "api" was allowed on the authorization-code flow for any client
+whose return addresses were all an app's own scheme. Registration is open and
+such a scheme proves nothing about who registered it, so it was the same
+phishing shape as SEC-90 with a narrower reach. The consent page now grants
+the agent tools only; "api" comes only from a connect code.
+
+### SEC-92: Smaller findings (Low, fixed)
+
+- A connect code is not made while an operator is signed in as somebody, so
+  every phone belongs to whoever connected it.
+- A connect code is not made over plain http except on the server's own
+  machine, since the link carries it.
+- A disabled account's code issues nothing.
+- The Connect page shows the "open the app" link only on a phone, so a code
+  does not land in a computer's browser history.
+- A client that connects is marked approved, so it is not swept after a day.
+- Names a program or a device gives itself lose control and invisible
+  formatting characters (`api.DisplayName`), so a right-to-left override
+  cannot disguise one.
+
+## Controls verified
+
+- A connect code is 40 random characters, stored only as a hash, spent in one
+  `DELETE ... RETURNING`, and good for ten minutes.
+- The link carries the server and the code after the "#", which no browser
+  sends; `Referrer-Policy: no-referrer` is set; logs carry no code or token.
+- A token limited to the agent tools cannot reach GraphQL, so it cannot make
+  a code. Refreshing keeps a token's resource.
+- Cross-site requests cannot make a code and read it: cookies are SameSite=Lax,
+  GraphQL takes only `application/json`, and no CORS headers are sent.
+- The QR image is built from integers and shown as an image.
+
+## Left for the app (Milestone 5 of the iPhone app plan)
+
+A link names the server the phone connects to, so a doctored link could point
+a phone at somebody else's server with a code for somebody else's account.
+That reaches nothing on the person's own server, but the phone would then
+talk to the wrong one. The app asks "Connect to <server> as <account>?" before
+using a code, and refuses plain http to anything but its own machine. The page
+on teanode.com that a link opens without the app must clear the fragment and
+load no other site's scripts.
+
+# Eighth pass: notifications on phones
+
+An adversarial review, on 2026-10-10, of the push relay and the phones that
+register with it (#380): the two public relay endpoints, the sealed
+registrations, what a notification carries, and how a phone is tied to its
+sign-in.
+
+## Summary
+
+No critical finding. A removed phone could stay signed in once its token had
+been renewed, and the relay passed on whatever payload a server wrote. Both
+are fixed, with six smaller findings. One is accepted as designed.
+
+## Findings
+
+### SEC-93: A phone outlived its sign-in (Medium, fixed)
+
+A phone was keyed on the token it registered with, and a refresh replaces
+that token every 30 days. Removing the phone then revoked a token that was
+already retired, the renewed one kept working, and a phone whose token was
+revoked some other way was still listed and notified. A phone is now keyed on
+the OAuth client the app registered as. Removing it revokes every token that
+client holds, and a phone is listed and notified only while its client holds
+a token that works or can be renewed.
+
+### SEC-94: The relay passed on what a server wrote (Medium, fixed)
+
+A server holding a registration, or anybody who copied one out of a database
+or a backup, could send a plain alert in the app's name, and leaving out
+`mutable-content` showed it as written. The relay now writes everything Apple
+shows itself, and takes from a server only the sealed content and two hashed
+identifiers. Registrations expire after 180 days; the app registers again
+each time it starts.
+
+### SEC-95: Smaller findings (Low, fixed)
+
+- The per-phone limit was keyed on the registration's text, which base64 lets
+  a caller spell many ways. It is now keyed on the device token, after the
+  registration is opened.
+- IPv6 callers are limited per /64, and both endpoints have a limit across all
+  callers, so Apple does not see a flood under the relay's key.
+- An error reaching Apple carried the request's address, which ends in the
+  device token, into logs, the answer and the dashboard. It no longer does,
+  and the relay answers an unreachable Apple without detail.
+- An approval's notification carried the card's line, which can quote what a
+  tool was given. It now names only the tool; the card in the app shows the
+  rest.
+- Registrations were sealed with a key from the server secret, so rotating it
+  broke every phone and the failure looked permanent. They are sealed with a
+  key made from the relay's APNs key, with its identifier in front, and one
+  under a replaced key is answered as gone so the phone registers again.
+- The thread and collapse identifiers Apple sees are hashed with the phone's
+  key, so Apple and the relay do not see conversation or card identifiers.
+- The APNs signing token is made again only when Apple says it expired, and a
+  notification expires after an hour by default rather than being tried once.
+
+### Accepted: a turn reaches a phone at most once
+
+The cursor over the agent's own turns moves before the notification is sent,
+so a failed send is not retried, and a turn written more than a few seconds
+after its timestamp can be stepped past. A lost notification is the better
+failure than a second copy; the turn is still in the conversation.
+
+## Left for the app (Milestone 6 of the iPhone app plan)
+
+The Approve and Deny actions on a notification require the phone to be
+unlocked, and the notification shows no preview on a locked phone unless the
+person chooses otherwise.
+
+# Ninth pass: circles, chats and what people share
+
+Two adversarial reviews, on 2026-10-17, of circles and chats between people on
+one server: circle membership and invitations, chats and the agents in them,
+calendars, memory pages and paying skills shared between people, and
+pictures. Each finding was fixed with a test that failed before the fix. The
+second review read the first one's fixes.
+
+## Summary
+
+Nobody reaches another person's data without a share they made, and every
+share ends when the two people stop sharing a circle. The serious findings
+were about what an agent could do as the person it serves: approve a call that
+spends the person's money, or carry what one person shared into a room of
+others. Both are now enforced by the server, not by words in a prompt.
+
+## Findings
+
+### SEC-96: An agent could approve a call that spends money (High, fixed)
+
+Approving a waiting call on a shared paying skill was an ordinary operation,
+and an agent can drive the person's own command line through the shell,
+terminal and coding tools, with the person's saved sign-in. A check on the
+words of a command is not a guard against that. Approving a call, sharing a
+skill, raising a share's limits and turning off "ask every time" are now
+accepted only from a dashboard session or from the iPhone app's own sign-in,
+which marks its token (`token.client_kind`). The command line's `approve` is
+gone. Declining, unsharing and lowering limits only take money away and work
+from anywhere. The iPhone app asks for Face ID before it approves.
+
+### SEC-97: A shared page's overview could name what was not shared (High, fixed)
+
+A page's overview is written by a model from the page's links, children and
+quotes, so it can name pages that were never shared and copy quotes the owner
+kept back. A reader no longer sees the overview or a page's edge notes. A
+summary that carries a quote (straight or curly, single or double) is withheld
+unless quotes were shared, and one that quotes a chat is withheld always.
+Search matches only the text the reader is shown.
+
+### SEC-98: A member's turn read the chat from before they joined (Medium, fixed)
+
+A turn somebody else starts with an owner's agent read the chat from the
+owner's join time, so a person who joined late could ask for what was said
+before them. A member turn now reads only messages every current member can
+read. Quoted replies to messages older than the reader's join time drop the
+quoted text, and edits and reactions go only to members who can read the
+message.
+
+### SEC-99: A member's turn had more than the chat (Medium, fixed)
+
+A member turn now gets the chat and the web only: no shared calendars or
+memory, because the owner's shares were made to particular people, not to the
+room. It needs the asker to hold `agent:use`, runs at the default effort, and
+the agent's memory refuses a note drawn from pages others shared.
+
+### SEC-100: Shares outlived the reason for them (Medium, fixed)
+
+Deleting a circle, or removing its last member, did not leave its group chats,
+and the "Shared with you" lines sat in the cached prompt for up to half an
+hour after a share ended. Every membership change now ends the calendar, page
+and skill shares that no longer have a circle behind them, in the same
+transaction and under one lock, and the shared lines are read fresh every
+turn. A disabled owner's shares stop reaching readers, and a disabled owner's
+skills stop running for others.
+
+### SEC-101: The invitation limit named which usernames exist (Medium, fixed)
+
+The hourly invitation limit was counted from stored invitations, so it was not
+reached for a username that does not exist, and deleting the circle reset it.
+Every invite call is now counted in a table that outlives circles, before any
+check on the username, and the answer is the same either way.
+
+### SEC-102: Ending a share erased the owner's record of calls (Medium, fixed)
+
+A call's row was deleted with its share. Calls now outlive their shares and
+carry the owner, grantee, skill and tool themselves, and the month's total
+for a new share between the same two people counts them. A call that failed
+counts toward the total, because a failure after the command acted cannot be
+told apart from one before.
+
+### SEC-103: Smaller findings (Low, fixed)
+
+- Limits: 20 circles made per person, 30 invitations per hour, 50 members in a
+  group chat, 20 group chats started per day, and 1 GiB of chat attachments
+  per person (`maxChatAttachmentAccountBytes`).
+- A picture is served to its owner, people with `user:manage`, circle-mates
+  and members of a chat together, and nobody else.
+- A replaced picture's file is deleted only after the transaction commits.
+- A private event (`CLASS:PRIVATE` or `CONFIDENTIAL`) is busy to everybody
+  else at every level, and nobody else can change it.
+- Reacting to a message in somebody else's chat conversation answers not
+  found, as reading does.
+- Names other people typed (an asker, an owner, a chat's title) reach the
+  model quoted, and what others shared is fenced as data.
+
+## Controls verified
+
+- Joining a circle is by invitation only, and the invite answer does not say
+  whether the account exists.
+- Calendars below the edit level are read-only over CalDAV as well as the API.
+- An agent's message never starts a turn, and at most four agents are
+  addressed by one message, so agents cannot answer each other in a loop.
+- Every operation this branch added is in `TestEveryOperationAuthorizes`.
+
+## What this pass did not do
+
+It did not review circles across servers, which are out of scope, or the
+paying skills' own registry, whose declarations of what a call costs belong to
+each skill.

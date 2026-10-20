@@ -1,7 +1,7 @@
 ---
 language: English
 title: TeaNode
-tagline: A personal assistant on a server of your own, with an iPhone app. It looks after your mail, your days, your money and your taxes, and nothing leaves your hardware.
+tagline: A personal agent for every part of your life, on a server you own, with an iPhone app. Mail, calendar, contacts, photos, location, health, coding, memory, meetings, money and payments in one place, stored on your hardware and nowhere else.
 nav:
   docs: Documentation
   github: GitHub
@@ -32,41 +32,212 @@ notFound:
   toHome: Go to the front page
   toDocs: Read the documentation
 welcome:
-  headline: A personal assistant that lives on your own server.
+  headline: A personal agent for your whole life, on a server you own.
   lead: >-
-    It reads your mail, keeps your calendar, files your receipts and tax
-    forms, writes up your meetings and keeps an eye on your coding sessions,
-    and it remembers what it learns about you. Talk to it from the iPhone app,
-    a browser or a call. One program and one PostgreSQL on your hardware;
-    point it at an Ollama or a vLLM of your own and nothing leaves the machine.
+    Your mail, calendar and contacts, your photos and where you have been, your
+    health, your coding sessions, your meetings and your money, joined up in one
+    agent that sees how they connect. It all runs on your own hardware, one
+    program and one PostgreSQL, so your life is stored with you and nowhere
+    else. You choose the model, you choose what it may reach, and you can take
+    any of it back. Point it at an Ollama or a vLLM of your own and nothing
+    leaves the machine at all.
   getStarted: Get started
   iphoneButton: The iPhone app
-  lifeHeading: What it looks after
-  life:
+  coreHeading: Everything it looks after
+  core:
+    chat:
+      name: Chat
+      tile: Your agent, and the people you live with, in one conversation list.
+      title: Talk to your agent, and to your people
+      body: >-
+        One conversation with your agent on every page of the dashboard, in the
+        iPhone app and on a call, with your family's and friends' chats beside
+        it. Bring your agent into any of them with an @.
+      more: How the agent works
+      points:
+        call:
+          title: Call it
+          body: Press the telephone in the drawer or the app and talk. The answer is read back as it is written, and you can cut in whenever you like.
     mail:
-      title: Your mail
-      body: Sorts what arrives, says what is waiting on you, and drafts the answer in your voice. Sending stays with you.
-    days:
-      title: Your days
-      body: A calendar, reminders, notes and an address book your phone keeps in step, and invitations answered from the conversation.
-    money:
-      title: Your money
-      body: Banks, cards and brokerages linked or imported, spending filed your way, budgets that look ahead, and receipts matched to their charges.
-    taxes:
-      title: Your taxes
-      body: Paystubs, W-2s, 1099s and 1098s read from a PDF or a photo, and the year added up into what you are likely to owe or get back.
-    meetings:
-      title: Your meetings
-      body: Record on your iPhone, and get a transcript as it happens, the speakers by name, and a summary filed where it belongs.
-    memory:
-      title: What you told it
-      body: A memory of the people, projects and places in your life, which it writes as you talk, cites when it answers, and tidies in its dreams.
+      name: Mail
+      tile: Sorted, summarized and followed through, with replies drafted in your voice.
+      title: Mail that sorts itself, and follows through
+      body: >-
+        Your agent reads what arrives, marks what matters and what is waiting on
+        you, keeps track of the bills, parcels and deadlines in it, and writes
+        the replies for you to send. It is a whole mail server for your own
+        domain, read here, in the app or in any mail program.
+      more: Run it as your mail server
+    calendar:
+      name: Calendar
+      tile: Calendars and reminders, in step with your phone and shared as you choose.
+      title: A calendar that keeps up with you
+      body: >-
+        Calendars and reminders on your server, in step with every device.
+        Invitations that arrive as mail become events, your agent answers "am I
+        free Thursday" and books the time, and a family calendar sits beside
+        your own.
+      points:
+        sync:
+          title: On every device
+          body: CalDAV keeps the iPhone's own Calendar and Reminders, and any other calendar app, in step with the server.
+        invites:
+          title: Invitations, answered
+          body: An invitation that arrives as mail becomes an event you can accept from the conversation, and your agent makes one when you ask.
+    contacts:
+      name: Contacts
+      tile: One address book, in step with your phone, that knows who is who.
+      title: An address book that knows who is who
+      body: >-
+        The people you keep, with photographs, birthdays and addresses, in step
+        with your phone and known to your agent, so "ask my father" or "Sam's
+        new number" reaches the right person.
+      more: How circles work
+      points:
+        sync:
+          title: In step with your phone
+          body: CardDAV keeps the iPhone's Contacts in step, photographs and birthdays included, and your phone's address book can come in from the app.
+        circles:
+          title: The people you live with
+          body: A circle joins the accounts of a family or friends, and a contact who has an account on the server is linked to it, so a chat or a share is a tap away.
+        agent:
+          title: Your agent knows them
+          body: It looks people up when it writes, schedules or files, and keeps a page in memory for each person who matters.
+    photos:
+      name: Photos
+      tile: Your library, backed up from the phone and found by what is in it.
+      title: Your photo library, on your own server
+      body: >-
+        Your iPhone backs its library up in the background, and the Photos page,
+        the app and your agent all read the same library: by month, by album, by
+        place and by the people in it. The faces are found on your server
+        itself, never by a service elsewhere.
+      more: How photos work
+    location:
+      name: Location
+      tile: Where you have been, on a map of your day, shared only if you say so.
+      title: Where you have been, kept by you
+      body: >-
+        The iPhone app keeps your visits to places, also while it is closed, and
+        your server names them and draws your day on a map. Share where you are
+        with the people you choose, and ask your agent when you last went
+        somewhere.
+      more: How location works
+      points:
+        visits:
+          title: Every visit, on a map
+          body: Arrivals and departures from the iPhone's own visit detection, with how long each lasted. A day offline arrives whole when the network is back.
+        places:
+          title: Places you name
+          body: Home, work, school or the gym. A name you give is never replaced, and arriving at one can tell the people you share with.
+        agent:
+          title: It learns your routine
+          body: Ask when you last went to the dentist, or whether Sam is home yet. Erase a day, a range or all of it whenever you like.
+    health:
+      name: Health
+      tile: Your Apple Health data, charted on your server and shared by category.
+      title: Your health, on your server
+      body: >-
+        The iPhone app copies your Apple Health data to your own server: steps,
+        sleep, heart rate, workouts and the rest. The dashboard and the app
+        chart it, and nobody else sees any of it unless you share it.
+      more: The app's privacy policy
+      points:
+        copied:
+          title: Copied from Apple Health
+          body: Everything HealthKit lets an app read, except clinical records, sent as it is saved. The phone keeps no copy of its own.
+        charts:
+          title: By day, week and year
+          body: Steps, sleep stages, heart rate, weight and workouts with their routes, on the dashboard, in the app and from the command line.
+        sharing:
+          title: Shared by category
+          body: Share Activity or Sleep with your circle and they see day summaries, such as seven hours slept, never the readings or your routes.
+        agent:
+          title: Your agent reads it only if you let it
+          body: Off until you turn it on, and only ever your own. Erase a range or all of it at any time.
     coding:
-      title: Your coding sessions
-      body: Claude Code and Codex on every computer. Their questions come to you, and they start knowing what your agent knows.
-    computer:
-      title: Your computer and browser
-      body: Files, a terminal and a browser on the machines you attach, with your word asked before anything it cannot undo.
+      name: Coding
+      tile: Claude Code and Codex on every computer, with their questions sent to you.
+      title: Your coding sessions, from anywhere
+      body: >-
+        Keep your Claude Code and Codex sessions in herdr, and your agent sees
+        every one of them on every computer you attached. Their questions come to
+        you wherever you are, and each session starts knowing what your agent
+        knows.
+      more: How coding sessions work
+    knowledge:
+      name: Knowledge
+      tile: A graph of the people, projects and places in your life, kept on your server.
+      title: A memory that learns you
+      body: >-
+        What your agent knows is a graph of pages, people, projects, places and
+        things, joined by links that say how. Every fact is numbered, carries the
+        words it came from and can be cited in an answer, and every change says
+        who made it, so you can put it back.
+      more: How memory works
+    recordings:
+      name: Recordings
+      tile: Meetings recorded on the phone, transcribed by speaker and summarized.
+      title: Meetings, written up for you
+      body: >-
+        Record a meeting on your iPhone and your agent writes it up: a transcript
+        as it happens, the speakers by name, a summary of what was decided, and
+        what it taught filed in memory. The original stays on your server.
+    finance:
+      name: Finance
+      tile: Accounts, spending, budgets, receipts, net worth and the tax year.
+      title: Your money, and your taxes
+      body: >-
+        Link your banks, cards and brokerages through Plaid or SimpleFIN, or
+        import a statement, and see where the money went, where the month is
+        heading and what it all adds up to. The rows are kept in your own
+        database, and your agent reads the same rows, so you can just ask.
+      more: How finance works
+      points:
+        taxes:
+          title: The tax year, put together
+          body: Paystubs, W-2s, 1099s and 1098s read from a PDF or a photo, checked against each other, and the year added up into what you are likely to owe or get back.
+    payments:
+      name: Payments
+      tile: Your agent pays for you, within limits you set, and only with your word.
+      title: Payments, with your word on each one
+      body: >-
+        Your agent pays through a payment skill running on your own computer,
+        such as Link, and never sees a card number. Lend it to somebody in your
+        household with limits, and anything above them waits for you.
+      more: How sharing works
+      points:
+        agent:
+          title: It pays, you confirm
+          body: The skill runs on your computer, signed in as you, and each payment still waits in the payment app for your word.
+        share:
+          title: Shared with your household
+          body: Lend the paying tool to somebody in your circle. Their agent pays with it on your computer, and never reads your balances or transactions.
+        limits:
+          title: Limits you set
+          body: The most one payment may be and the most a month. Anything above them, or with a price the server cannot read, waits for you.
+        approve:
+          title: Approve from anywhere
+          body: A card in your drawer and a notification on your phone, with the amount and the note their agent wrote. Ask me every time is there for a child.
+  yours:
+    heading: Yours, and only yours
+    lead: >-
+      An agent that reaches every part of your life is only worth having if
+      that life stays yours. TeaNode runs on hardware you own, keeps everything
+      in your own database, and does nothing you have not turned on.
+    points:
+      hardware:
+        title: On your hardware
+        body: One program and one PostgreSQL on a machine you own. Your mail, photos, health and money are stored there, and there is no account with us at all.
+      model:
+        title: Your choice of model
+        body: A hosted model is sent only what a turn needs. Point it at an Ollama or a vLLM of your own and nothing leaves the machine at all.
+      say:
+        title: Nothing without your say
+        body: Every part is off until you turn it on, the agent reaches only what you grant, and it stops for your word before anything it cannot undo.
+      open:
+        title: Open, and yours to keep
+        body: MIT licensed, every line on GitHub. Back it up, export it, erase any of it, or switch it off.
   phone:
     heading: TeaNode for iPhone
     lead: Your assistant, in your pocket.
@@ -74,7 +245,7 @@ welcome:
       Chat with it, call it, answer it from a notification, and hand it what
       you are looking at from any app. One app for every TeaNode server: scan the code your dashboard shows and
       it connects as you, with nothing to type. It carries what the dashboard
-      does, from mail and the calendar to finance and knowledge, drawn in the
+      does, from mail and the calendar to photos, finance and knowledge, drawn in the
       system's own controls and at your text size.
     availability: In TestFlight now, and on its way to the App Store
     privacy: The app's privacy policy
@@ -95,17 +266,30 @@ welcome:
       record:
         title: Record a meeting
         body: The phone records, the server transcribes as it goes, and an upload the network cut off carries on where it stopped.
+      photos:
+        title: Your photos, backed up
+        body: The library goes to your server in the background and carries on where the network cut it off. A photo you delete on the phone stays on TeaNode.
+      location:
+        title: Where you have been
+        body: Visits to your places are kept while the app is closed, on a map of your day, and shared only with the people you choose.
       setup:
         title: Mail, calendars and contacts too
         body: One profile adds your mailbox, calendars and contacts to the iPhone's own apps, and your address book can come in from the phone.
     captions:
       conversation: "The conversation: a mail drafted, a coding session's question, and a reply waiting for your word."
+      chats: A family circle's chat, where Sam asked Sam's agent a question and the answer came back to everyone.
       mail: The inbox, with what is important and what needs a reply marked.
+      followups: "What your agent is following from your mail: a parcel that stalled, a bill overdue, a form due Friday."
+      photos: Your photos, month by month, backed up from the phone.
+      location: A day of visits, on the map and in order, with how long each one took.
+      coding: A Claude Code session on your laptop, stopped to ask which way to go.
       calendar: The month, with your reminders a tap away.
       finance: Where the money went, month by month.
       recording: "A recorded meeting: the summary, then the transcript, speaker by speaker."
-      knowledge: A person's page in memory, with the mail, the event and the receipt it is linked to.
+      knowledge: "A page of memory Sam shared: a recipe, with the facts it holds."
       contacts: The address book, kept in step with the server.
+      payment: Sam's agent asked to pay with Robin's grocery skill, above the limit, so Robin decides.
+      health: Sleep over the last month, stage by stage, copied from Apple Health.
   readDocs: Read the documentation
   viewSource: View the source
   release:
@@ -120,25 +304,36 @@ welcome:
     webhook: A webhook
     reply: Replies and mail you send go out signed as your domain.
     agent: Your assistant sorts what lands in the mailbox, and drafts what you answer.
-  screenshotsHeading: And in a browser
-  screenshotsLead: The same assistant in the dashboard, with the chat drawer on every page.
+  screenshotsHeading: Setting it up
+  screenshotsLead: "The pages you visit once: your agent's settings, who may do what, a password for each mail program, and your domains."
   previous: Previous page
   next: Next page
   openPicture: Open the picture full screen
   closePicture: Close
   screenshots:
     mailbox: The mailbox. Folders that nest, search across all of it, and the message shown as a mail program would show it.
+    payments: A payment skill lent to somebody in the circle, with its limits, and every call made through it.
+    drawerPayment: Sam's agent asked to pay more than the limit Robin set, so it waits for Robin, with the amount and Sam's note.
+    recording: "A recorded meeting: the summary of what was decided, then the transcript, speaker by speaker."
+    coding: The Coding page. A session's transcript as it happens, with a box for the next prompt.
+    health: Health. Steps, sleep, heart rate and workouts from the iPhone, a day at a time or across the year.
+    photoAlbums: Albums, made by hand or from the trips the server suggests, and the ones shared with your circle.
+    followups: "What your agent is following from your mail: bills, parcels and deadlines, each closed when it is paid, delivered or done."
+    chatAgent: "Chats: your agent and the people in your circle in one list, with the agent's conversation open beside it. What it looked at is listed above each answer."
     priority: >-
       Priority: what the agent thinks is waiting on you, beside Starred. The
       chips on a row are its category, its priority, and whether somebody needs
       an answer.
     calendar: The calendar, as a week, with the reminders list a tab away. Your phone keeps both in step over CalDAV, and an invitation that arrives as mail becomes an event you can answer.
-    drawerMail: The chat drawer, on every page. Asked what needs you today, the agent searches your mail and answers from what it found.
-    drawerCalendar: The same conversation, a question later. It looks up the calendar tool, reads Thursday, and answers.
-    drawerVoice: The same conversation as a call. The bars follow your voice, the words heard so far sit beside them, and the answer is read aloud as it is written.
+    drawerMail: The chat drawer, on every page. Asked about parcels and school, the agent searches your mail and answers with links to the messages it read.
+    drawerCalendar: The same conversation, a question later. It reads both calendars and the school's message, offers times that suit you and Sam, and asks before writing anything.
+    photos: Photos. The library by month or all at once, backed up from the phone, uploaded here or kept from a conversation, with albums and the people in it a click away.
+    photoViewer: One photo, with when and where it was taken and on what. The place can be changed or removed, and your agent can be asked what is in it.
+    location: Location. A day of visits at named places, on a map drawn through your own server, with each visit and how long it lasted under it.
+    circleChat: A family circle's chat. Its members write to each other, and an agent answers when somebody asks it.
+    circles: A circle and its people, each with what they are to you, and a way to invite somebody or make them an account.
     drawerHerdr: A Claude Code session on your computer stopped to ask something. The question comes to you, with its options as buttons, wherever you are talking to your agent.
-    herdr: The coding sessions in herdr on your computers, with which one is working, which is idle, and which is waiting on you.
-    contacts: The address book. The people you keep, synchronized to your phone over CardDAV (photographs, birthdays and all) rather than a list of everyone who has ever written.
+    contacts: "The address book, with one contact open: phones, addresses and a note, synchronized to your phone over CardDAV."
     financeSpending: Finance. Income and spending across twelve months, with what was left over; money moved between your own accounts is left out.
     financeCategories: A month by spending category, under its budgets. Each budget says how far it has gone and whether the month is on track.
     financeReceipt: A charge with its receipt, read from a photo line by line, checked against its printed total and matched to the charge on its own.
@@ -270,6 +465,12 @@ welcome:
       asks:
         title: Answers your questions
         body: A drawer on every page, and teanode agent ask in a terminal. It searches, files and drafts as you, and stops for your word before anything it cannot undo.
+      follows:
+        title: Follows it through
+        body: A bill with no payment, a parcel that never came, a form due Friday. It keeps them on a list, closes each when the payment or the delivery shows up, and tells you when one needs you.
+      nearby:
+        title: What is on near you
+        body: Once a week it looks up events, markets and things to do in your town, and sends them with the coming week's school and family events in one roundup.
     reachLead: What it reaches, once you grant it
     reach:
       mail: Your mail
@@ -281,6 +482,8 @@ welcome:
       reminders: Your reminders
       notes: Your notes
       finances: Your finances
+      photos: Your photos
+      location: Where you are
       codingSessions: Your coding sessions
     conversation:
       pick: Choose a conversation
@@ -352,14 +555,6 @@ welcome:
         title: The key stays on the server
         body: The drawer talks to your server and your server talks to the provider. Calls count against the same daily limits.
   coding:
-    heading: Your coding sessions, from anywhere
-    lead: Keep your Claude Code and Codex sessions in herdr, and your agent sees every one of them, on every computer you attached.
-    body: >-
-      It reads what each session did, types an instruction into one where you
-      can see it, and brings you the questions they stop to ask. Ask it from
-      ChatGPT or Grok on your phone, by voice in the car, what your sessions
-      are up to, and answer the one that is waiting.
-    more: How coding sessions work
     points:
       sees:
         title: Every session, every computer
@@ -370,6 +565,9 @@ welcome:
       asks:
         title: Their questions come to you
         body: In the drawer with the options as buttons, and in your chat app. Whoever answers first wins, and a stale answer is refused.
+      page:
+        title: A page of their own
+        body: The Coding page and the iPhone app show each session's transcript as it happens or its screen, with a box for the next prompt and a new tab beside it.
       remembers:
         title: They know what your agent knows
         body: With teanode hook installed, a session starts with the project's page and where the last one there stopped, and each prompt brings what it recalls from that project alone.
@@ -387,15 +585,38 @@ welcome:
       alone. Settings, then Apps, disconnects it. Ask it a question in words and
       the answer has its memory of you behind it, rather than six calls of your
       own.
+  people:
+    points:
+      chats:
+        title: Chats, with or without agents
+        body: Direct and group chats live beside your agent's conversation, with pictures, replies and reactions. Somebody else's agent answers you only if its owner allows it.
+      calendars:
+        title: A calendar for everyone
+        body: Share yours at busy, titles, details or edit, keep a calendar for the circle, and find a time that suits everyone. A private event stays busy.
+      location:
+        title: Where everyone is
+        body: Share where you are now, or that and where you have been, and hear when somebody arrives home. The people you share with see you on a live map.
+      relationships:
+        title: Who is who
+        body: Say Sam is your father and Sam sees you as their child. Only the two of you see it, and your agent knows that ask my father means Sam.
+  photos:
+    points:
+      backup:
+        title: Backed up in the background
+        body: Over Wi-Fi unless you allow mobile data, Live Photos and edits included, carrying on where the network cut it off. A photo you delete on the phone stays on TeaNode.
+      find:
+        title: Found by what is in them
+        body: Search by place, date or camera, or ask your agent for the pictures from the lake last summer. It looks at a photo when it needs to and remembers what it saw.
+      people:
+        title: People you name
+        body: Faces grouped on your own server and named from your address book. Your agent never names a face by guessing.
+      albums:
+        title: Albums you share
+        body: With somebody in your circle or the whole circle, to look at or to add to, and with or without where the photos were taken.
+      places:
+        title: The place, corrected
+        body: Change or remove where one photo or five hundred were taken, from a list of cities kept on the server, with no map service to ask.
   finance:
-    heading: Your money
-    lead: Link your banks, cards and brokerages through Plaid or SimpleFIN, and the Finance page shows where the money went, where the month is heading, and what it all adds up to.
-    body: >-
-      The rows are kept in your own database, beside your mail, and the
-      credentials are sealed with the server's secret. Your agent reads the
-      same rows, so you can ask how much went on eating out in September, or
-      whether the emergency fund is on track.
-    more: How finance works
     points:
       linked:
         title: Linked, or imported
@@ -412,45 +633,7 @@ welcome:
       netWorth:
         title: Net worth
         body: Accounts, holdings, a house and a car, in any currency, with the agent estimating what you let it.
-  taxes:
-    heading: Your taxes
-    lead: >-
-      Hand it your paystubs, W-2s, 1099s and 1098s, as a PDF, a photo, a file
-      shared from your phone or a forwarded mail, and it puts the tax year
-      together: what you earned, what was withheld, and what you are likely to
-      owe or get back.
-    body: >-
-      Each form is read into its boxes and checked against itself, each
-      paystub against the one before it, and each W-2 against the year's last
-      paystub. Only the last four digits of a taxpayer number are ever kept,
-      and the file is kept without its text. It is an estimate to start a
-      return from, not the return.
-    more: How taxes work
-    anchor: taxes
-    points:
-      documents:
-        title: Every form, read for you
-        body: Paystubs line by line, W-2s box by box, 1099-INT, DIV and B, and 1098s, mailed to an address of your own or shared from the phone.
-      checks:
-        title: Checked as they come
-        body: Social Security and Medicare worked out from the wages, a missing paystub or a W-2 that disagrees pointed out, and tax withheld past the year's maximum noticed.
-      projection:
-        title: The year, carried to December
-        body: Pay projected at your own cadence, retirement contributions stopping at the year's limit, and interest and dividends previewed from your accounts before the 1099s arrive.
-      estimate:
-        title: An estimate, with the deductions
-        body: The federal brackets, itemizing when it beats the standard deduction, gains at their own rates, and the child and dependent care credits, set beside what was withheld.
   meetings:
-    heading: Your meetings
-    lead: >-
-      Record a meeting on your iPhone and your agent writes it up: a
-      transcript as it happens, the speakers by name, and a summary of what
-      was decided.
-    body: >-
-      The original stays on your server. Correct a line it misheard or name a
-      speaker, and it summarizes again with what you fixed; what the meeting
-      taught goes on the pages of the people and projects involved, with a
-      link back to the moment it was said.
     points:
       live:
         title: Transcribed as you go
@@ -465,19 +648,6 @@ welcome:
         title: Into memory
         body: Decisions, dates and promises land on the pages they belong to, cited to the recording.
   memory:
-    heading: A memory that learns you
-    lead: >-
-      What your agent knows is a graph of pages, not a list of notes. A page is
-      a person, a project, a place, a thing or a stretch of time; it lives at a
-      path like projects/greenfinch, and every fact on it is numbered, carries the words
-      it came from, and can be cited in an answer. Pages are joined by links that
-      say how: who works on what, who knows whom, what a decision belongs to.
-    body: >-
-      Nothing is ever deleted. A fact nothing has wanted in months stops arriving
-      uninvited and is still there when you search for it, and every change to
-      every page says who made it (you, the agent, a dream, a source
-      being read) and what was there before, so you can put it back. It is all
-      on the Knowledge page, and all on the command line.
     sourcesLead: Where it reads from, once you point it at something
     sources:
       checkout: A checkout on your computer
@@ -496,22 +666,6 @@ welcome:
       dreams:
         title: It tidies while you sleep
         body: In hours you set, after you have been quiet a while, it reads what arrived, writes up the month, rewrites the pages that changed, divides one that has outgrown itself, and walks the graph for connections nobody wrote down. Then it asks itself the questions you are likely to ask tomorrow and writes down the ones it could not answer.
-    page:
-      label: A page from the agent's memory, and the link a dream drew across it
-      connections: Connections
-      opening: Greenfinch, the claims system Osborne & Sons file through. Ours to run, and the thing most of this quarter went into.
-      facts:
-        leads: Grace Hopper has led the controls work since March.
-        readme: Its readme says it is a claims portal for wholesale customers.
-        terms: Payment terms moved from sixty days to ninety in September.
-        member: Grace Hopper works at Osborne & Sons.
-      from:
-        conversation: You said so · 4 March
-        file: README.md · on your laptop
-        thread: The contract thread · 12 September
-        night: Drawn in the last dream, from two pages nothing had joined
-      lastNight: Read 42 messages and 6 files · filed 9 facts on 5 pages · merged 2
-      dreaming: Walking the graph for connections nobody wrote down…
   featuresHeading: What it does
   features:
     mailbox:
@@ -580,6 +734,13 @@ welcome:
     server's address and a payload it cannot read.
   questionsHeading: Questions
   questions:
+    family:
+      question: Can my family use it too?
+      answer: >-
+        Yes. Each person gets an account on the same server, with a mailbox and
+        an agent of their own if they want them. Put them in a circle to chat,
+        share calendars and albums and see where everyone is, each sharing only
+        what they choose. See [circles and chats](/doc/circles).
     mailserver:
       question: Do I have to run a mail server?
       answer: >-

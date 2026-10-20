@@ -12,6 +12,9 @@ https://teanode.com/doc/coding-sessions
 https://teanode.com/doc/coding-memory
 https://teanode.com/doc/mcp
 https://teanode.com/doc/finance
+https://teanode.com/doc/circles
+https://teanode.com/doc/photos
+https://teanode.com/doc/location
 https://teanode.com/doc/command-line
 https://teanode.com/doc/security
 https://teanode.com/doc/security-review

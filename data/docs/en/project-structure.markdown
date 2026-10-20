@@ -41,11 +41,22 @@ read from storage when asked for, and an idling session is woken by the
 database's `folder_changed` notification. Nothing is held in memory that
 another instance would need.
 
+**`internal/addressbook`** implements authorized contact save and delete commands.
+It merges fields through the vCard package and keeps contact writes on the
+caller's transaction, with ownership checks and rollback scopes.
+
 **`internal/contacts`** — the vCard format, and nothing else: parsing a card,
 writing one out, and naming a version of one with an ETag. It writes cards
 itself rather than through the vendored encoder, which does not quote a
 parameter value that needs quoting and does not fold; what it writes is a
 fixed point, which is what lets the ETag be taken over the stored text.
+
+**`internal/avatar`**: a person's picture, and nothing else: whatever PNG or
+JPEG somebody uploads is decoded, turned upright, cropped to a square and
+encoded again as a 512 pixel PNG, and a smaller one on request. Encoding again
+from the decoded pixels is what leaves every metadata block behind, a photo's
+location included; the decoder refuses a file whose declared size would take
+too much memory before it reads a pixel.
 
 **`internal/calendar`** — the iCalendar format, and nothing else: parsing an
 event, writing one out, expanding a recurrence into the times it happens, and
@@ -53,6 +64,11 @@ describing a time zone as the offsets themselves rather than as a name. Unlike
 the vCard side it uses the vendored encoder as it stands, which was measured
 against the cases that destroy a vCard and survives them; what it adds is line
 folding, which the library does not do.
+
+**`internal/calendar/commands`** owns authorized calendar metadata and event
+changes with command rollback. It preserves agent sharing during metadata
+changes and joins event persistence to notification acceptance. Format handling
+stays in the parent calendar package.
 
 **`internal/dav`** — a person's address book and their calendar to their phone
 and their desktop, over CardDAV and CalDAV. Signs in with a mailbox address and
@@ -195,6 +211,17 @@ the prompt's layers, compaction, the event feed and what crosses instances,
 memory and its vectors, the budgets — is written down in
 `docs/subsystems/`.
 
+**`internal/chat`**: what happens in a chat, carried to the people in it. The
+hub (`hub.go`) is the feed of every member's chat conversation: it publishes an
+event to the members who are in the chat, relays it to the other instances of
+the server through the database, and tells the phones of those who are not
+looking (`notify.go`). `agents.go` decides which agents a message starts: no
+database, only the author, the addressed agents and who is in the room. It
+exists whatever the agent configuration is, so a household with no language
+model still has live chats; the agent publishes into the same hub when it takes
+part in one. The chat's storage is in `internal/db`, and the operations are
+`internal/api/v1api/apigraph/chat.go`; see [`docs/subsystems/conversations.md`](https://github.com/ziyan/teanode/blob/main/docs/subsystems/conversations.md).
+
 **`internal/skills`** — skills: a file of declarations fetched from a registry
 that signs what it publishes, read here and carried out here. `registry.go`
 checks an entry's Ed25519 signature against a key embedded from `keys/` and
@@ -214,11 +241,11 @@ data. Tests speak to in-process servers.
 **`internal/computer`** — the person's own computer as their agent reaches
 it: the program `teanode computer` runs there, which signs in with the
 person's token, keeps a websocket to the server and answers the shell and
-filesystem tools' requests as that person, anywhere on the machine; and the
-rule the server applies, which asks the person first for what changes the
-machine or reaches off it and refuses nothing outright. The rule is the
-server's alone: the program runs what it is sent, the way a terminal does
-what the person at it types. It is their own
+filesystem tools' requests as that person, anywhere on the machine; The server applies no rule over what a
+command looks like: a list of dangerous-looking shapes was tried here and
+removed, because it could not name everything dangerous and read as a
+promise that it did. The program runs what it is sent, the way a terminal
+does what the person at it types. It is their own
 assistant on their own computer, so it is not confined to a sandbox; the
 guard is the card they answer, not a directory. Tests speak to a fake
 connection. [`docs/subsystems/devices.md`](https://github.com/ziyan/teanode/blob/main/docs/subsystems/devices.md) has the protocol and the rules.
@@ -249,6 +276,7 @@ free of project-specific assumptions:
     clamav      optional virus scanning
     spamc       optional SpamAssassin scoring
     geoip       optional sender geolocation
+    place       names for the places people go to, from OpenStreetMap or the cities table
     dropper     connection drop list
     graphapi    GraphQL schema generation from Go types
     atomicfile  write-to-temp-then-rename, used for every sensitive file

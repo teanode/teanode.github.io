@@ -23,39 +23,59 @@ export type ScreenshotTheme = 'light' | 'dark'
 export const screenshot = (page: string, theme: ScreenshotTheme, language: string): string | undefined =>
   byKey.get(`${page}.${theme}.${language}`) ?? byKey.get(`${page}.${theme}.en`)
 
-// The pages there are pictures of, in the order the front page shows them.
-// It opens on the mailbox, which is what the dashboard opens on and the thing
-// most people are deciding about, and works outwards from there.
-export const screenshotPages = [
-  'mailbox', 'drawerMail', 'priority', 'calendar', 'drawerCalendar', 'drawerVoice', 'contacts',
-  'financeSpending', 'financeCategories', 'financeReceipt', 'financeNetWorth', 'agent',
-  'drawerHerdr', 'herdr', 'knowledge', 'graph',
-  'subscriptions', 'programs', 'access', 'aliases', 'dns', 'agents',
-] as const
-export type ScreenshotPage = typeof screenshotPages[number]
+// The pages there are pictures of, by the part of the front page that shows
+// them, in the order each part shows them.
+export const screenshotGroups = {
+  chat: ['chatAgent', 'drawerMail', 'circleChat'],
+  mail: ['mailbox', 'priority', 'followups', 'subscriptions'],
+  calendar: ['calendar', 'drawerCalendar'],
+  contacts: ['contacts', 'circles'],
+  photos: ['photos', 'photoViewer', 'photoAlbums'],
+  location: ['location'],
+  health: ['health'],
+  coding: ['coding', 'drawerHerdr'],
+  knowledge: ['knowledge', 'graph'],
+  recordings: ['recording'],
+  finance: ['financeSpending', 'financeCategories', 'financeReceipt', 'financeNetWorth'],
+  payments: ['drawerPayment', 'payments'],
+  setup: ['agent', 'agents', 'access', 'programs', 'aliases', 'dns'],
+} as const
+export type ScreenshotGroup = keyof typeof screenshotGroups
+export type ScreenshotPage = typeof screenshotGroups[ScreenshotGroup][number]
 
 // Where each picture was taken, for the address bar drawn over it.
 export const screenshotPaths: Record<ScreenshotPage, string> = {
-  mailbox: '/mailbox/inbox',
+  chatAgent: '/chat',
   drawerMail: '/mailbox/inbox',
-  drawerCalendar: '/mailbox/calendar',
-  drawerVoice: '/mailbox/calendar',
-  drawerHerdr: '/mailbox/inbox',
-  herdr: '/settings/agent/connections',
-  financeReceipt: '/finance/transactions',
+  circleChat: '/chat',
+  mailbox: '/mailbox/inbox',
   priority: '/mailbox/priority',
-  calendar: '/mailbox/calendar',
-  contacts: '/mailbox/contacts',
+  followups: '/mailbox/inbox',
+  subscriptions: '/mailbox/subscriptions',
+  calendar: '/calendar',
+  drawerCalendar: '/calendar',
+  contacts: '/contacts',
+  circles: '/circles',
+  photos: '/photos',
+  photoViewer: '/photos',
+  photoAlbums: '/photos/albums',
+  location: '/location',
+  health: '/health',
+  coding: '/coding',
+  drawerHerdr: '/coding',
+  knowledge: '/knowledge/projects/garden-shed',
+  graph: '/knowledge/explore',
+  recording: '/recordings',
   financeSpending: '/finance/spending',
   financeCategories: '/finance/spending',
+  financeReceipt: '/finance/transactions',
   financeNetWorth: '/finance/net-worth',
+  drawerPayment: '/chat',
+  payments: '/settings/agent/skills',
   agent: '/settings/agent',
-  knowledge: '/knowledge/projects/greenfinch',
-  graph: '/knowledge/explore',
   agents: '/manage/agent',
-  subscriptions: '/mailbox/subscriptions',
-  programs: '/settings/mailbox/devices',
   access: '/manage/access',
+  programs: '/settings/mailbox/devices',
   aliases: '/manage/domains/example.com/aliases',
   dns: '/manage/domains/example.com/settings',
 }

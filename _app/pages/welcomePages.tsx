@@ -9,41 +9,53 @@ import Chip from '@mui/material/Chip'
 import Link from '@mui/material/Link'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
+import { useTheme } from '@mui/material/styles'
 import type { SvgIconComponent } from '@mui/icons-material'
 import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined'
 import AccountBalanceOutlinedIcon from '@mui/icons-material/AccountBalanceOutlined'
 import AccountTreeOutlinedIcon from '@mui/icons-material/AccountTreeOutlined'
+import BackupOutlinedIcon from '@mui/icons-material/BackupOutlined'
 import BedtimeOutlinedIcon from '@mui/icons-material/BedtimeOutlined'
-import CalculateOutlinedIcon from '@mui/icons-material/CalculateOutlined'
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined'
 import CallSplitIcon from '@mui/icons-material/CallSplit'
 import CheckIcon from '@mui/icons-material/Check'
-import ComputerOutlinedIcon from '@mui/icons-material/ComputerOutlined'
+import ContactsOutlinedIcon from '@mui/icons-material/ContactsOutlined'
 import ConfirmationNumberOutlinedIcon from '@mui/icons-material/ConfirmationNumberOutlined'
 import DevicesOutlinedIcon from '@mui/icons-material/DevicesOutlined'
+import Diversity3OutlinedIcon from '@mui/icons-material/Diversity3Outlined'
 import DirectionsCarOutlinedIcon from '@mui/icons-material/DirectionsCarOutlined'
 import DnsOutlinedIcon from '@mui/icons-material/DnsOutlined'
+import EditLocationAltOutlinedIcon from '@mui/icons-material/EditLocationAltOutlined'
 import EditNoteOutlinedIcon from '@mui/icons-material/EditNoteOutlined'
+import EventAvailableOutlinedIcon from '@mui/icons-material/EventAvailableOutlined'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import FactCheckOutlinedIcon from '@mui/icons-material/FactCheckOutlined'
+import ExploreOutlinedIcon from '@mui/icons-material/ExploreOutlined'
+import FaceOutlinedIcon from '@mui/icons-material/FaceOutlined'
+import FamilyRestroomOutlinedIcon from '@mui/icons-material/FamilyRestroomOutlined'
+import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined'
+import ForumOutlinedIcon from '@mui/icons-material/ForumOutlined'
 import GitHubIcon from '@mui/icons-material/GitHub'
 import GraphicEqOutlinedIcon from '@mui/icons-material/GraphicEqOutlined'
 import GroupsOutlinedIcon from '@mui/icons-material/GroupsOutlined'
 import HearingOutlinedIcon from '@mui/icons-material/HearingOutlined'
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined'
+import ImageSearchOutlinedIcon from '@mui/icons-material/ImageSearchOutlined'
 import InboxOutlinedIcon from '@mui/icons-material/InboxOutlined'
 import IosShareOutlinedIcon from '@mui/icons-material/IosShareOutlined'
 import KeyOutlinedIcon from '@mui/icons-material/KeyOutlined'
-import KeyboardOutlinedIcon from '@mui/icons-material/KeyboardOutlined'
 import LabelOutlinedIcon from '@mui/icons-material/LabelOutlined'
 import LibraryBooksOutlinedIcon from '@mui/icons-material/LibraryBooksOutlined'
 import MailOutlineIcon from '@mui/icons-material/EmailOutlined'
 import MicNoneOutlinedIcon from '@mui/icons-material/MicNoneOutlined'
 import NewspaperOutlinedIcon from '@mui/icons-material/NewspaperOutlined'
 import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined'
+import PaymentsOutlinedIcon from '@mui/icons-material/PaymentsOutlined'
 import PeopleOutlineOutlinedIcon from '@mui/icons-material/PeopleOutlineOutlined'
 import PhoneInTalkOutlinedIcon from '@mui/icons-material/PhoneInTalkOutlined'
 import PhoneIphoneOutlinedIcon from '@mui/icons-material/PhoneIphoneOutlined'
+import PhotoLibraryOutlinedIcon from '@mui/icons-material/PhotoLibraryOutlined'
+import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined'
+import PriceCheckOutlinedIcon from '@mui/icons-material/PriceCheckOutlined'
 import PsychologyOutlinedIcon from '@mui/icons-material/PsychologyOutlined'
 import RecordVoiceOverOutlinedIcon from '@mui/icons-material/RecordVoiceOverOutlined'
 import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined'
@@ -55,11 +67,12 @@ import SavingsOutlinedIcon from '@mui/icons-material/SavingsOutlined'
 import ShowChartOutlinedIcon from '@mui/icons-material/ShowChartOutlined'
 import SmartphoneOutlinedIcon from '@mui/icons-material/SmartphoneOutlined'
 import SortOutlinedIcon from '@mui/icons-material/SortOutlined'
+import TaskAltOutlinedIcon from '@mui/icons-material/TaskAltOutlined'
 import TerminalOutlinedIcon from '@mui/icons-material/TerminalOutlined'
-import TrendingUpOutlinedIcon from '@mui/icons-material/TrendingUpOutlined'
 import VerifiedUserOutlinedIcon from '@mui/icons-material/VerifiedUserOutlined'
 import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutlineOutlined'
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined'
+import WebOutlinedIcon from '@mui/icons-material/WebOutlined'
 import WidgetsOutlinedIcon from '@mui/icons-material/WidgetsOutlined'
 
 import { Carousel } from '../components/carousel'
@@ -67,14 +80,14 @@ import { Route, Steam } from '../components/decoration'
 import { Flow } from '../components/flow'
 import { Markdown, renderMarkdown } from '../components/markdown'
 import { Mark } from '../components/logo'
-import { Phone, PhoneGallery } from '../components/phone'
+import { Phone, PhoneGallery, type PhoneScreen } from '../components/phone'
 import { Release } from '../components/release'
 import { pageWidth, PublicShell } from '../components/shell'
 import { Conversation } from '../components/conversation'
-import { Knowledge } from '../components/knowledge'
 import { installCommand } from './startPages'
+import { screenshot, screenshotGroups, type ScreenshotGroup } from '../screenshots'
 import { StackComparison } from '../components/stack'
-import { T, useTranslate } from '../i18n'
+import { T, useLanguageCode, useTranslate } from '../i18n'
 import { brand, monospaceFamily } from '../theme'
 import routes, { links } from '../routes'
 
@@ -89,27 +102,157 @@ import routes, { links } from '../routes'
 
 const measure = '60ch'
 
-// What it looks after, one card each, in the order somebody's day meets
-// them. Each card jumps to the part of the page that says more.
-const lifeAreas: { key: string, Icon: SvgIconComponent, anchor: string }[] = [
-  { key: 'mail', Icon: InboxOutlinedIcon, anchor: 'assistant' },
-  { key: 'days', Icon: CalendarMonthOutlinedIcon, anchor: 'assistant' },
-  { key: 'money', Icon: AccountBalanceOutlinedIcon, anchor: 'money' },
-  { key: 'taxes', Icon: RequestQuoteOutlinedIcon, anchor: 'taxes' },
-  { key: 'meetings', Icon: MicNoneOutlinedIcon, anchor: 'meetings' },
-  { key: 'memory', Icon: PsychologyOutlinedIcon, anchor: 'memory' },
-  { key: 'coding', Icon: TerminalOutlinedIcon, anchor: 'coding' },
-  { key: 'computer', Icon: ComputerOutlinedIcon, anchor: 'assistant' },
+// The core of it, one section each, in the order the index shows them: the
+// conversation first, since everything else is reached through it, then the
+// things a day meets, then the things a year does. Each says which of the
+// dashboard's pictures it shows, which of the app's screens stands beside
+// them, its points, and where to read more.
+type CorePoint = { id: string, Icon: SvgIconComponent }
+type CoreFeature = {
+  key: ScreenshotGroup
+  Icon: SvgIconComponent
+  phone: PhoneScreen
+  points: CorePoint[]
+  docId?: string
+  href?: string
+  chips?: { lead: string, ids: string[] }
+}
+
+const coreFeatures: CoreFeature[] = [
+  {
+    key: 'chat', Icon: ForumOutlinedIcon, phone: 'conversation', docId: 'agents',
+    points: [
+      { id: 'welcome.agent.points.asks', Icon: ChatBubbleOutlineOutlinedIcon },
+      { id: 'welcome.people.points.chats', Icon: ForumOutlinedIcon },
+      { id: 'welcome.core.chat.points.call', Icon: PhoneInTalkOutlinedIcon },
+      { id: 'welcome.phone.points.notify', Icon: NotificationsActiveOutlinedIcon },
+    ],
+  },
+  {
+    key: 'mail', Icon: InboxOutlinedIcon, phone: 'followups', href: '#mail',
+    points: [
+      { id: 'welcome.agent.points.sorts', Icon: SortOutlinedIcon },
+      { id: 'welcome.agent.points.drafts', Icon: ReplyOutlinedIcon },
+      { id: 'welcome.agent.points.follows', Icon: TaskAltOutlinedIcon },
+      { id: 'welcome.agent.points.answers', Icon: AutoAwesomeOutlinedIcon },
+    ],
+  },
+  {
+    key: 'calendar', Icon: CalendarMonthOutlinedIcon, phone: 'calendar',
+    points: [
+      { id: 'welcome.core.calendar.points.sync', Icon: DevicesOutlinedIcon },
+      { id: 'welcome.core.calendar.points.invites', Icon: EventAvailableOutlinedIcon },
+      { id: 'welcome.people.points.calendars', Icon: GroupsOutlinedIcon },
+      { id: 'welcome.agent.points.nearby', Icon: ExploreOutlinedIcon },
+    ],
+  },
+  {
+    key: 'contacts', Icon: ContactsOutlinedIcon, phone: 'contacts', docId: 'circles',
+    points: [
+      { id: 'welcome.core.contacts.points.sync', Icon: DevicesOutlinedIcon },
+      { id: 'welcome.core.contacts.points.circles', Icon: Diversity3OutlinedIcon },
+      { id: 'welcome.people.points.relationships', Icon: FamilyRestroomOutlinedIcon },
+      { id: 'welcome.core.contacts.points.agent', Icon: AutoAwesomeOutlinedIcon },
+    ],
+  },
+  {
+    key: 'photos', Icon: PhotoLibraryOutlinedIcon, phone: 'photos', docId: 'photos',
+    points: [
+      { id: 'welcome.photos.points.backup', Icon: BackupOutlinedIcon },
+      { id: 'welcome.photos.points.find', Icon: ImageSearchOutlinedIcon },
+      { id: 'welcome.photos.points.people', Icon: FaceOutlinedIcon },
+      { id: 'welcome.photos.points.albums', Icon: PhotoLibraryOutlinedIcon },
+      { id: 'welcome.photos.points.places', Icon: EditLocationAltOutlinedIcon },
+    ],
+  },
+  {
+    key: 'location', Icon: PlaceOutlinedIcon, phone: 'location', docId: 'location',
+    points: [
+      { id: 'welcome.core.location.points.visits', Icon: PlaceOutlinedIcon },
+      { id: 'welcome.core.location.points.places', Icon: EditLocationAltOutlinedIcon },
+      { id: 'welcome.people.points.location', Icon: Diversity3OutlinedIcon },
+      { id: 'welcome.core.location.points.agent', Icon: AutoAwesomeOutlinedIcon },
+    ],
+  },
+  {
+    key: 'health', Icon: FavoriteBorderOutlinedIcon, phone: 'health', href: '/app/privacy.html',
+    points: [
+      { id: 'welcome.core.health.points.copied', Icon: BackupOutlinedIcon },
+      { id: 'welcome.core.health.points.charts', Icon: ShowChartOutlinedIcon },
+      { id: 'welcome.core.health.points.sharing', Icon: Diversity3OutlinedIcon },
+      { id: 'welcome.core.health.points.agent', Icon: VerifiedUserOutlinedIcon },
+    ],
+  },
+  {
+    key: 'coding', Icon: TerminalOutlinedIcon, phone: 'coding', docId: 'coding-sessions',
+    points: [
+      { id: 'welcome.coding.points.sees', Icon: TerminalOutlinedIcon },
+      { id: 'welcome.coding.points.page', Icon: WebOutlinedIcon },
+      { id: 'welcome.coding.points.asks', Icon: HelpOutlineOutlinedIcon },
+      { id: 'welcome.coding.points.remembers', Icon: AccountTreeOutlinedIcon },
+      { id: 'welcome.coding.points.anywhere', Icon: DirectionsCarOutlinedIcon },
+    ],
+  },
+  {
+    key: 'knowledge', Icon: PsychologyOutlinedIcon, phone: 'knowledge', docId: 'memory',
+    points: [
+      { id: 'welcome.memory.points.writes', Icon: AccountTreeOutlinedIcon },
+      { id: 'welcome.memory.points.reads', Icon: LibraryBooksOutlinedIcon },
+      { id: 'welcome.memory.points.dreams', Icon: BedtimeOutlinedIcon },
+    ],
+    chips: { lead: 'welcome.memory.sourcesLead', ids: ['checkout', 'archive', 'notes', 'wiki', 'web', 'sent'].map((key) => `welcome.memory.sources.${key}`) },
+  },
+  {
+    key: 'recordings', Icon: MicNoneOutlinedIcon, phone: 'recording',
+    points: [
+      { id: 'welcome.meetings.points.live', Icon: GraphicEqOutlinedIcon },
+      { id: 'welcome.meetings.points.speakers', Icon: PeopleOutlineOutlinedIcon },
+      { id: 'welcome.meetings.points.corrections', Icon: EditNoteOutlinedIcon },
+      { id: 'welcome.meetings.points.memory', Icon: AccountTreeOutlinedIcon },
+    ],
+  },
+  {
+    key: 'finance', Icon: AccountBalanceOutlinedIcon, phone: 'finance', docId: 'finance',
+    points: [
+      { id: 'welcome.finance.points.linked', Icon: AccountBalanceOutlinedIcon },
+      { id: 'welcome.finance.points.categories', Icon: LabelOutlinedIcon },
+      { id: 'welcome.finance.points.receipts', Icon: ReceiptLongOutlinedIcon },
+      { id: 'welcome.finance.points.budgets', Icon: SavingsOutlinedIcon },
+      { id: 'welcome.finance.points.netWorth', Icon: ShowChartOutlinedIcon },
+      { id: 'welcome.core.finance.points.taxes', Icon: RequestQuoteOutlinedIcon },
+    ],
+  },
+  {
+    key: 'payments', Icon: PaymentsOutlinedIcon, phone: 'payment', docId: 'circles',
+    points: [
+      { id: 'welcome.core.payments.points.agent', Icon: PaymentsOutlinedIcon },
+      { id: 'welcome.core.payments.points.share', Icon: Diversity3OutlinedIcon },
+      { id: 'welcome.core.payments.points.limits', Icon: PriceCheckOutlinedIcon },
+      { id: 'welcome.core.payments.points.approve', Icon: NotificationsActiveOutlinedIcon },
+    ],
+  },
+]
+
+// What makes it safe to give an agent all of that: where it runs, which
+// model it talks to, what it may do, and whose it is.
+const yoursPoints: { key: string, Icon: SvgIconComponent }[] = [
+  { key: 'hardware', Icon: DnsOutlinedIcon },
+  { key: 'model', Icon: AutoAwesomeOutlinedIcon },
+  { key: 'say', Icon: VerifiedUserOutlinedIcon },
+  { key: 'open', Icon: GitHubIcon },
 ]
 
 // The iPhone app: talking to it, hearing from it, calling it, handing it
-// things, recording with it, and the phone's own apps it fills in.
+// things, recording with it, what it keeps from the phone (its photos and
+// where it has been), and the phone's own apps it fills in.
 const phonePoints: { key: string, Icon: SvgIconComponent }[] = [
   { key: 'chat', Icon: ChatBubbleOutlineOutlinedIcon },
   { key: 'notify', Icon: NotificationsActiveOutlinedIcon },
   { key: 'call', Icon: PhoneInTalkOutlinedIcon },
   { key: 'share', Icon: IosShareOutlinedIcon },
   { key: 'record', Icon: MicNoneOutlinedIcon },
+  { key: 'photos', Icon: BackupOutlinedIcon },
+  { key: 'location', Icon: PlaceOutlinedIcon },
   { key: 'setup', Icon: SmartphoneOutlinedIcon },
 ]
 
@@ -130,34 +273,7 @@ const features: { key: string, Icon: SvgIconComponent }[] = [
 const extras = ['templates', 'cli', 'clamav', 'spamd', 'geoip', 's3', 'socks5', 'dns01']
 
 // What the assistant can be given, in the order somebody would grant it.
-const agentReach = ['mail', 'contacts', 'calendar', 'reminders', 'notes', 'finances', 'computer', 'codingSessions', 'browser', 'web']
-
-// What linking a bank gives a person, in the order the Finance page shows
-// it: where the money went, where the month is heading, and what it adds up to.
-const financePoints: { key: string, Icon: SvgIconComponent }[] = [
-  { key: 'linked', Icon: AccountBalanceOutlinedIcon },
-  { key: 'categories', Icon: LabelOutlinedIcon },
-  { key: 'receipts', Icon: ReceiptLongOutlinedIcon },
-  { key: 'budgets', Icon: SavingsOutlinedIcon },
-  { key: 'netWorth', Icon: ShowChartOutlinedIcon },
-]
-
-// The tax year, in the order it is put together: the forms come in, they are
-// checked, the year is carried to December, and the tax is worked out.
-const taxPoints: { key: string, Icon: SvgIconComponent }[] = [
-  { key: 'documents', Icon: ReceiptLongOutlinedIcon },
-  { key: 'checks', Icon: FactCheckOutlinedIcon },
-  { key: 'projection', Icon: TrendingUpOutlinedIcon },
-  { key: 'estimate', Icon: CalculateOutlinedIcon },
-]
-
-// A recorded meeting, in the order it is written up.
-const meetingPoints: { key: string, Icon: SvgIconComponent }[] = [
-  { key: 'live', Icon: GraphicEqOutlinedIcon },
-  { key: 'speakers', Icon: PeopleOutlineOutlinedIcon },
-  { key: 'corrections', Icon: EditNoteOutlinedIcon },
-  { key: 'memory', Icon: AccountTreeOutlinedIcon },
-]
+const agentReach = ['mail', 'contacts', 'calendar', 'reminders', 'notes', 'photos', 'location', 'finances', 'computer', 'codingSessions', 'browser', 'web']
 
 // A call with the agent: what it is like, in the order somebody notices it
 // on their first call, then where the key is, which an operator asks.
@@ -166,36 +282,6 @@ const voicePoints: { key: string, Icon: SvgIconComponent }[] = [
   { key: 'ear', Icon: HearingOutlinedIcon },
   { key: 'cutIn', Icon: RecordVoiceOverOutlinedIcon },
   { key: 'key', Icon: KeyOutlinedIcon },
-]
-
-// The coding sessions on the person's computers: seeing them, typing into
-// them, their questions coming to the person, and from where.
-const codingPoints: { key: string, Icon: SvgIconComponent }[] = [
-  { key: 'sees', Icon: TerminalOutlinedIcon },
-  { key: 'types', Icon: KeyboardOutlinedIcon },
-  { key: 'asks', Icon: HelpOutlineOutlinedIcon },
-  { key: 'remembers', Icon: AccountTreeOutlinedIcon },
-  { key: 'anywhere', Icon: DirectionsCarOutlinedIcon },
-]
-
-// What the agent's memory does, which is three things and not one: it writes
-// itself, it reads what the person already has, and it tidies while nobody is
-// there. The order is the order they happen in.
-const memoryPoints: { key: string, Icon: SvgIconComponent }[] = [
-  { key: 'writes', Icon: AccountTreeOutlinedIcon },
-  { key: 'reads', Icon: LibraryBooksOutlinedIcon },
-  { key: 'dreams', Icon: BedtimeOutlinedIcon },
-]
-
-// Where it will read from, named rather than described: somebody deciding
-// wants to see their own thing on the list.
-const memorySources = ['checkout', 'archive', 'notes', 'wiki', 'web', 'sent']
-
-const agentPoints: { key: string, Icon: SvgIconComponent }[] = [
-  { key: 'sorts', Icon: SortOutlinedIcon },
-  { key: 'drafts', Icon: ReplyOutlinedIcon },
-  { key: 'answers', Icon: AutoAwesomeOutlinedIcon },
-  { key: 'asks', Icon: ChatBubbleOutlineOutlinedIcon },
 ]
 
 // Three addresses and where each one goes, which is the whole idea in the
@@ -223,7 +309,7 @@ const needs: { key: string, Icon: SvgIconComponent }[] = [
 const comparisonColumns = ['teanode', 'cloudflare', 'improvmx', 'provider']
 const comparisonRows = ['receive', 'mailbox', 'send', 'domains', 'webhook', 'assistant', 'yours', 'price']
 
-const questions = ['mailserver', 'app', 'model', 'port25', 'mailprogram', 'forwarding', 'outbound', 'team', 'stored']
+const questions = ['mailserver', 'app', 'family', 'model', 'port25', 'mailprogram', 'forwarding', 'outbound', 'team', 'stored']
 
 // The assistant alone: no domain and no mail ports, one command. The get
 // started page has it too, with every step after it.
@@ -311,39 +397,115 @@ export const WelcomePage = () => {
           </Box>
         </Section>
 
-        {/* What it looks after: a life in eight cards, each one a jump to
-            the part of the page that says more. This is the claim the rest
-            of the page backs up. */}
+        {/* The index: each core feature on a card, which jumps to the
+            section that shows it. This is the claim the rest of the page
+            backs up. */}
         <Section band>
-          <Overline><T id='welcome.lifeHeading'/></Overline>
-          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' }, gap: 1.5 }}>
-            {lifeAreas.map(({ key, Icon, anchor }) => (
+          <Overline><T id='welcome.coreHeading'/></Overline>
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)', lg: 'repeat(4, 1fr)' }, gap: 1.5 }}>
+            {coreFeatures.map(({ key, Icon }) => (
               <Box
                 key={key}
                 component='a'
-                href={`#${anchor}`}
+                href={`#${key}`}
                 sx={{
-                  display: 'block', p: 2, border: 1, borderColor: 'divider', borderRadius: '12px', bgcolor: 'background.paper',
+                  display: 'flex', gap: 1.5, alignItems: 'flex-start', p: 2, border: 1, borderColor: 'divider', borderRadius: '12px', bgcolor: 'background.paper',
                   color: 'inherit', textDecoration: 'none', transition: 'border-color 120ms',
                   '&:hover': { borderColor: brand.leaf },
                   '&:focus-visible': { outline: 2, outlineColor: brand.leaf, outlineOffset: 2 },
                 }}
               >
-                <Tile><Icon sx={{ fontSize: 22 }}/></Tile>
-                <Typography sx={{ fontWeight: 600, fontSize: 14.5, mb: 0.5 }}>
-                  <T id={`welcome.life.${key}.title`}/>
-                </Typography>
-                <Typography variant='body2' color='text.secondary' sx={{ lineHeight: 1.5 }}>
-                  <T id={`welcome.life.${key}.body`}/>
-                </Typography>
+                <Tile sx={{ mb: 0, flexShrink: 0 }}><Icon sx={{ fontSize: 22 }}/></Tile>
+                <Box sx={{ minWidth: 0 }}>
+                  <Typography sx={{ fontWeight: 600, fontSize: 14.5, mb: 0.25 }}>
+                    <T id={`welcome.core.${key}.name`}/>
+                  </Typography>
+                  <Typography variant='body2' color='text.secondary' sx={{ lineHeight: 1.5 }}>
+                    <T id={`welcome.core.${key}.tile`}/>
+                  </Typography>
+                </Box>
               </Box>
             ))}
           </Box>
         </Section>
 
-        {/* The iPhone app: the words and its six points, then every screen
+        {/* Why an agent that reaches all of that is safe to have: it is
+            yours. Said once, plainly, before the parts it reaches. */}
+        <Section>
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 0.9fr) minmax(0, 1.1fr)' }, gap: { xs: 3, md: 6 }, alignItems: 'start' }}>
+            <Box sx={{ minWidth: 0 }}>
+              <Overline><T id='welcome.yours.heading'/></Overline>
+              <Typography sx={{ fontSize: { xs: 18, md: 20 }, fontWeight: 600, lineHeight: 1.45, maxWidth: measure }}>
+                <T id='welcome.yours.lead'/>
+              </Typography>
+            </Box>
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' }, gap: 2.25 }}>
+              {yoursPoints.map(({ key, Icon }) => (
+                <Point key={key} Icon={Icon} id={`welcome.yours.points.${key}`}/>
+              ))}
+            </Box>
+          </Box>
+        </Section>
+
+        {/* One section for each, the same shape every time, on alternate
+            bands so they read as so many things rather than one long one. */}
+        {coreFeatures.map((feature, at) => (
+          <FeatureSection key={feature.key} feature={feature} band={at % 2 === 0}/>
+        ))}
+
+        {/* The agent behind all of it. The words on the left, the thing
+            itself on the right: a recording of the drawer, drawn the way
+            the dashboard draws it. Then calling it, and reaching it from
+            outside TeaNode's own apps. */}
+        <Section id='assistant' band={coreFeatures.length % 2 === 0}>
+          <Overline><T id='welcome.agent.heading'/></Overline>
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr auto' }, gap: { xs: 4, md: 6 }, alignItems: 'start' }}>
+            <Box sx={{ minWidth: 0 }}>
+              <Typography sx={{ mb: 2 }}><T id='welcome.agent.lead'/></Typography>
+              <Typography variant='body2' color='text.secondary' sx={{ lineHeight: 1.6, mb: 2.5 }}>
+                <T id='welcome.agent.privacy'/>
+              </Typography>
+              <Typography variant='body2' color='text.secondary' sx={{ mb: 1 }}>
+                <T id='welcome.agent.reachLead'/>
+              </Typography>
+              <Stack direction='row' sx={{ flexWrap: 'wrap', gap: 0.75 }}>
+                {agentReach.map((key) => (
+                  <Chip key={key} variant='outlined' label={translate(`welcome.agent.reach.${key}`)} sx={{ height: 26, fontSize: 12.5 }}/>
+                ))}
+              </Stack>
+            </Box>
+            <Box sx={{ minWidth: 0, justifySelf: { xs: 'center', md: 'end' }, width: '100%', maxWidth: 440 }}>
+              <Conversation/>
+            </Box>
+          </Box>
+
+          <PointsBlock section='voice' docId='voice' points={voicePoints}/>
+
+          {/* The same kit reached from outside TeaNode's own apps, which is
+              a different claim and reads badly folded into another. */}
+          <Box
+            sx={{
+              display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 1fr) minmax(0, 1fr)' },
+              gap: { xs: 2.5, md: 5 }, alignItems: 'start',
+              mt: { xs: 4, md: 5 }, pt: { xs: 3, md: 4 }, borderTop: 1, borderColor: 'divider',
+            }}
+          >
+            <Box sx={{ minWidth: 0 }}>
+              <Overline><T id='welcome.mcp.heading'/></Overline>
+              <Typography sx={{ maxWidth: measure, mb: 1.5 }}><T id='welcome.mcp.lead'/></Typography>
+              <Typography variant='body2' color='text.secondary' sx={{ maxWidth: measure, lineHeight: 1.6 }}>
+                <T id='welcome.mcp.body'/>
+              </Typography>
+            </Box>
+            <Box sx={{ minWidth: 0 }}>
+              <Markdown html={mcpSnippet.html} compact/>
+            </Box>
+          </Box>
+        </Section>
+
+        {/* The iPhone app: the words and its eight points, then every screen
             in a row the reader scrolls, as wide as the window. */}
-        <Section id='iphone' wide={<PhoneGallery/>}>
+        <Section id='iphone' band={coreFeatures.length % 2 === 1} wide={<PhoneGallery/>}>
           <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 1fr) minmax(0, 1fr)' }, gap: { xs: 3, md: 6 }, alignItems: 'start' }}>
             <Box sx={{ minWidth: 0 }}>
               <Overline><T id='welcome.phone.heading'/></Overline>
@@ -369,133 +531,6 @@ export const WelcomePage = () => {
               ))}
             </Box>
           </Box>
-        </Section>
-
-        {/* The agent. The words on the left, the thing itself on the right:
-            a recording of the drawer, drawn the way the dashboard draws it.
-            The four points go underneath, where they read as a list rather
-            than competing with the conversation for the same column. */}
-        <Section id='assistant' band>
-          <Overline><T id='welcome.agent.heading'/></Overline>
-          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr auto' }, gap: { xs: 4, md: 6 }, alignItems: 'start' }}>
-            <Box sx={{ minWidth: 0 }}>
-              <Typography sx={{ mb: 2 }}><T id='welcome.agent.lead'/></Typography>
-              <Typography variant='body2' color='text.secondary' sx={{ lineHeight: 1.6, mb: 2.5 }}>
-                <T id='welcome.agent.privacy'/>
-              </Typography>
-              <Typography variant='body2' color='text.secondary' sx={{ mb: 1 }}>
-                <T id='welcome.agent.reachLead'/>
-              </Typography>
-              <Stack direction='row' sx={{ flexWrap: 'wrap', gap: 0.75 }}>
-                {agentReach.map((key) => (
-                  <Chip key={key} variant='outlined' label={translate(`welcome.agent.reach.${key}`)} sx={{ height: 26, fontSize: 12.5 }}/>
-                ))}
-              </Stack>
-            </Box>
-            <Box sx={{ minWidth: 0, justifySelf: { xs: 'center', md: 'end' }, width: '100%', maxWidth: 440 }}>
-              <Conversation/>
-            </Box>
-          </Box>
-          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', lg: 'repeat(4, 1fr)' }, gap: 1.5, mt: { xs: 4, md: 5 } }}>
-            {agentPoints.map(({ key, Icon }) => (
-              <Box key={key} sx={{ minWidth: 0 }}>
-                <Tile sx={{ mb: 1, width: 34, height: 34, borderRadius: '9px' }}>
-                  <Icon sx={{ fontSize: 18 }}/>
-                </Tile>
-                <Typography sx={{ fontWeight: 600, fontSize: 14.5 }}>
-                  <T id={`welcome.agent.points.${key}.title`}/>
-                </Typography>
-                <Typography variant='body2' color='text.secondary' sx={{ lineHeight: 1.5 }}>
-                  <T id={`welcome.agent.points.${key}.body`}/>
-                </Typography>
-              </Box>
-            ))}
-          </Box>
-
-          {/* Talking to it, and the coding sessions it works in beside the
-              person: each a thing of its own, the words on the left and
-              what it does on the right. */}
-          <PointsBlock section='voice' docId='voice' points={voicePoints}/>
-          <PointsBlock id='coding' section='coding' docId='coding-sessions' points={codingPoints}/>
-
-          {/* The points above are the agent working inside TeaNode's own
-              apps. This is the same kit reached from outside them, which is
-              a different claim and reads badly folded into one of them. */}
-          <Box
-            sx={{
-              display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 1fr) minmax(0, 1fr)' },
-              gap: { xs: 2.5, md: 5 }, alignItems: 'start',
-              mt: { xs: 4, md: 5 }, pt: { xs: 3, md: 4 }, borderTop: 1, borderColor: 'divider',
-            }}
-          >
-            <Box sx={{ minWidth: 0 }}>
-              <Overline><T id='welcome.mcp.heading'/></Overline>
-              <Typography sx={{ maxWidth: measure, mb: 1.5 }}><T id='welcome.mcp.lead'/></Typography>
-              <Typography variant='body2' color='text.secondary' sx={{ maxWidth: measure, lineHeight: 1.6 }}>
-                <T id='welcome.mcp.body'/>
-              </Typography>
-            </Box>
-            <Box sx={{ minWidth: 0 }}>
-              <Markdown html={mcpSnippet.html} compact/>
-            </Box>
-          </Box>
-        </Section>
-
-        {/* Money, taxes and meetings: the paperwork of a life, each a page
-            of its own in the apps as much as a thing to ask about. */}
-        <Section>
-          <PointsBlock id='money' section='finance' docId='finance' points={financePoints} first/>
-          <PointsBlock id='taxes' section='taxes' docId='finance' docHash={translate('welcome.taxes.anchor')} points={taxPoints}/>
-          <PointsBlock id='meetings' section='meetings' points={meetingPoints}/>
-        </Section>
-
-        {/* What it keeps between conversations. It follows the agent
-            because it is the agent's, and it is the other way round on the
-            page (the thing on the left, the words on the right) so two
-            sections of the same shape do not run together.
-
-            The drawing is a page out of the graph, with the link a dream
-            drew across it. That link is the argument for a graph over a
-            list, so it is the thing that moves. */}
-        <Section id='memory' band>
-          <Overline><T id='welcome.memory.heading'/></Overline>
-          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'auto 1fr' }, gap: { xs: 4, md: 6 }, alignItems: 'start' }}>
-            <Box sx={{ minWidth: 0, justifySelf: { xs: 'center', md: 'start' }, width: '100%', maxWidth: 440, order: { xs: 1, md: 0 } }}>
-              <Knowledge/>
-            </Box>
-            <Box sx={{ minWidth: 0, order: { xs: 0, md: 1 } }}>
-              <Typography sx={{ maxWidth: measure, mb: 2 }}><T id='welcome.memory.lead'/></Typography>
-              <Typography variant='body2' color='text.secondary' sx={{ maxWidth: measure, lineHeight: 1.6, mb: 2.5 }}>
-                <T id='welcome.memory.body'/>
-              </Typography>
-              <Typography variant='body2' color='text.secondary' sx={{ mb: 1 }}>
-                <T id='welcome.memory.sourcesLead'/>
-              </Typography>
-              <Stack direction='row' sx={{ flexWrap: 'wrap', gap: 0.75 }}>
-                {memorySources.map((key) => (
-                  <Chip key={key} variant='outlined' label={translate(`welcome.memory.sources.${key}`)} sx={{ height: 26, fontSize: 12.5 }}/>
-                ))}
-              </Stack>
-
-              {/* The three things it does, beside the drawing rather than
-                  under it: the drawing is tall, and a row of cards under a
-                  half-empty column is a hole in the page. */}
-              <Stack sx={{ gap: 2.5, mt: 4, maxWidth: measure }}>
-                {memoryPoints.map(({ key, Icon }) => (
-                  <Point key={key} Icon={Icon} id={`welcome.memory.points.${key}`}/>
-                ))}
-              </Stack>
-            </Box>
-          </Box>
-        </Section>
-
-        {/* The same thing in a browser: the dashboard, one page at a time. */}
-        <Section sx={{ pb: { xs: 4, md: 8 } }}>
-          <Overline><T id='welcome.screenshotsHeading'/></Overline>
-          <Typography color='text.secondary' sx={{ maxWidth: measure, mb: 3 }}>
-            <T id='welcome.screenshotsLead'/>
-          </Typography>
-          <Carousel/>
         </Section>
 
         {/* The mail server it can also be. Everything about mail lives here,
@@ -608,6 +643,16 @@ export const WelcomePage = () => {
               <Chip key={key} variant='outlined' label={translate(`welcome.extras.${key}`)} sx={{ height: 26, fontSize: 12.5 }}/>
             ))}
           </Stack>
+
+          {/* The pages set up once: the agent's settings, people and
+              access, devices and domains. */}
+          <Box sx={{ mt: { xs: 5, md: 7 } }}>
+            <Overline><T id='welcome.screenshotsHeading'/></Overline>
+            <Typography color='text.secondary' sx={{ maxWidth: measure, mb: 3 }}>
+              <T id='welcome.screenshotsLead'/>
+            </Typography>
+            <Carousel pages={screenshotGroups.setup} label={translate('welcome.screenshotsHeading')}/>
+          </Box>
         </Section>
 
         {/* Getting started: the assistant alone, or with mail, side by side,
@@ -689,6 +734,80 @@ export const WelcomePage = () => {
         </Section>
       </PublicShell>
     </div>
+  )
+}
+
+// One core feature: its name, a line that says what it is, a paragraph,
+// its points and where to read more across the top; then the dashboard's
+// pages of it in a browser window, with the app's screen of it beside them.
+// On a phone the app's screen is left out: the window is already as wide as
+// the screen, and every app screen is in the iPhone section's row.
+const FeatureSection = ({ feature, band }: { feature: CoreFeature, band: boolean }) => {
+  const translate = useTranslate()
+  const theme = useTheme()
+  const language = useLanguageCode()
+  const { key, Icon, phone, points, docId, href, chips } = feature
+  // A part the dashboard has not been photographed for yet shows the app's
+  // screen alone, on a phone too, rather than an empty window.
+  const hasPicture = screenshotGroups[key].some((page) => screenshot(page, theme.palette.mode === 'dark' ? 'dark' : 'light', language))
+  const more = docId
+    ? <Button component={NavLink} to={generatePath(routes.docPath, { docId })} size='small' sx={{ ml: -1 }}><T id={`welcome.core.${key}.more`}/></Button>
+    : href && <Button href={href} size='small' sx={{ ml: -1 }}><T id={`welcome.core.${key}.more`}/></Button>
+  return (
+    <Section id={key} band={band}>
+      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 1fr) minmax(0, 1fr)' }, gap: { xs: 2.5, md: 6 }, alignItems: 'start' }}>
+        <Box sx={{ minWidth: 0 }}>
+          <Stack direction='row' sx={{ alignItems: 'center', gap: 1, mb: 1.5, color: brand.leaf }}>
+            <Icon sx={{ fontSize: 20 }}/>
+            <Typography component='span' sx={{ fontSize: 12.5, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'text.secondary' }}>
+              <T id={`welcome.core.${key}.name`}/>
+            </Typography>
+          </Stack>
+          <Typography component='h2' sx={{ fontSize: { xs: 22, md: 27 }, fontWeight: 650, lineHeight: 1.2, maxWidth: measure, mb: 1.5 }}>
+            <T id={`welcome.core.${key}.title`}/>
+          </Typography>
+          <Typography color='text.secondary' sx={{ maxWidth: measure, lineHeight: 1.6, mb: 1.5 }}>
+            <T id={`welcome.core.${key}.body`}/>
+          </Typography>
+          {chips && (
+            <Box sx={{ mb: 1.5 }}>
+              <Typography variant='body2' color='text.secondary' sx={{ mb: 1 }}><T id={chips.lead}/></Typography>
+              <Stack direction='row' sx={{ flexWrap: 'wrap', gap: 0.75 }}>
+                {chips.ids.map((id) => <Chip key={id} variant='outlined' label={translate(id)} sx={{ height: 26, fontSize: 12.5 }}/>)}
+              </Stack>
+            </Box>
+          )}
+          {more}
+        </Box>
+        <Stack spacing={1.75} sx={{ minWidth: 0 }}>
+          {points.map(({ id, Icon: PointIcon }) => <Point key={id} Icon={PointIcon} id={id}/>)}
+        </Stack>
+      </Box>
+      {hasPicture
+        ? (
+            <Box
+              sx={{
+                display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 1fr) auto' },
+                gap: { xs: 3, md: 5 }, alignItems: 'center', mt: { xs: 3.5, md: 5 },
+              }}
+            >
+              <Box sx={{ minWidth: 0 }}>
+                <Carousel pages={screenshotGroups[key]} label={translate(`welcome.core.${key}.name`)}/>
+              </Box>
+              <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+                <Phone screen={phone} width={230}/>
+              </Box>
+            </Box>
+          )
+        : (
+            <Stack sx={{ alignItems: 'center', mt: { xs: 3.5, md: 5 } }}>
+              <Phone screen={phone} width={250}/>
+              <Typography variant='body2' color='text.secondary' sx={{ mt: 1.75, maxWidth: 320, textAlign: 'center' }}>
+                {translate(`welcome.phone.captions.${phone}`)}
+              </Typography>
+            </Stack>
+          )}
+    </Section>
   )
 }
 
