@@ -2,7 +2,7 @@
 
 > A personal agent for every part of your life, on a server you own, with an iPhone app. Mail, calendar, contacts, photos, location, health, coding, memory, meetings, money and payments in one place, stored on your hardware and nowhere else.
 
-Your mail, calendar and contacts, your photos and where you have been, your health, your coding sessions, your meetings and your money, joined up in one agent that sees how they connect. It all runs on your own hardware, one program and one PostgreSQL, so your life is stored with you and nowhere else. You choose the model, you choose what it may reach, and you can take any of it back. Point it at an Ollama or a vLLM of your own and nothing leaves the machine at all.
+Your mail, calendar and contacts, your photos and where you have been, your health, your coding sessions, your meetings, your money and your passwords, joined up in one agent that sees how they connect. It all runs on your own hardware, one program and one PostgreSQL, so your life is stored with you and nowhere else. You choose the model, you choose what it may reach, and you can take any of it back. Point it at an Ollama or a vLLM of your own and nothing leaves the machine at all.
 
 To install the assistant, run `curl -fsSL https://teanode.com/get.sh | sh` on the computer it will live on, then follow the [Quick start](https://teanode.com/data/docs/en/quick-start.markdown) from step 2. The pages under https://teanode.com/doc/ show the same documents once JavaScript runs; the links below are the markdown itself.
 
@@ -26,6 +26,7 @@ To install the assistant, run `curl -fsSL https://teanode.com/get.sh | sh` on th
 - [Circles and chats](https://teanode.com/data/docs/en/circles.markdown): The people on one server in circles: chats with each other in the drawer and the app, with or without their agents, and calendars, albums, memory pages, skills and location shared at the level each owner picks.
 - [Photos](https://teanode.com/data/docs/en/photos.markdown): Photos and videos on your own server: backed up from the iPhone in the background, found by place, date or what is in them, faces grouped into people you name, and albums shared with your circle.
 - [Location](https://teanode.com/data/docs/en/location.markdown): Visits to named places recorded by the iPhone app, a map of your day, where you are shared with the people in your circle, and what leaves the server to name a place.
+- [Passwords](https://teanode.com/data/docs/en/passwords.markdown): Logins, passkeys, one-time codes, cards and notes, encrypted on your own devices: filled in Chrome and on the iPhone, shared with your circle, and used by your agent only on the logins you turn on.
 - [The command line](https://teanode.com/data/docs/en/command-line.markdown): The two programs: the server and the few things only its host can do, and the client that administers it from anywhere through the API.
 
 ## Security

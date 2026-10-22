@@ -335,6 +335,27 @@
     }
   },
   {
+    "slug": "passwords",
+    "group": {
+      "en": "Running it",
+      "zh": "运行它",
+      "ja": "動かす"
+    },
+    "title": {
+      "en": "Passwords",
+      "zh": "密码",
+      "ja": "パスワード"
+    },
+    "description": {
+      "en": "Logins, passkeys, one-time codes, cards and notes, encrypted on your own devices: filled in Chrome and on the iPhone, shared with your circle, and used by your agent only on the logins you turn on.",
+      "zh": "登录信息、通行密钥、一次性验证码、卡片和备注，在你自己的设备上加密：在 Chrome 和 iPhone 上自动填充，可与圈子共享，你的代理只能使用你逐一打开的登录信息。",
+      "ja": "ログイン、パスキー、ワンタイムコード、カード、メモを、自分のデバイスで暗号化。Chrome と iPhone で自動入力し、サークルと共有でき、エージェントはあなたが一つずつ許可したログインだけを使えます。"
+    },
+    "filename": {
+      "en": "en/passwords.markdown"
+    }
+  },
+  {
     "slug": "command-line",
     "group": {
       "en": "Running it",

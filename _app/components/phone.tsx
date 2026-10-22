@@ -28,7 +28,7 @@ for (const [path, url] of Object.entries(files)) {
 // The screens, in the order the gallery shows them: talking to it and to
 // the people it lives with first, then what it looks after.
 export const phoneScreens = [
-  'conversation', 'chats', 'mail', 'followups', 'calendar', 'contacts', 'photos', 'location', 'health', 'coding', 'knowledge', 'recording', 'finance', 'payment',
+  'conversation', 'chats', 'mail', 'followups', 'calendar', 'contacts', 'photos', 'location', 'health', 'coding', 'knowledge', 'recording', 'finance', 'payment', 'passwords', 'search',
 ] as const
 export type PhoneScreen = typeof phoneScreens[number]
 

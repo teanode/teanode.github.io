@@ -33,14 +33,7 @@ notFound:
   toDocs: Read the documentation
 welcome:
   headline: A personal agent for your whole life, on a server you own.
-  lead: >-
-    Your mail, calendar and contacts, your photos and where you have been, your
-    health, your coding sessions, your meetings and your money, joined up in one
-    agent that sees how they connect. It all runs on your own hardware, one
-    program and one PostgreSQL, so your life is stored with you and nowhere
-    else. You choose the model, you choose what it may reach, and you can take
-    any of it back. Point it at an Ollama or a vLLM of your own and nothing
-    leaves the machine at all.
+  lead: "Your mail, calendar and contacts, your photos and where you have been, your health, your coding sessions, your meetings, your money and your passwords, joined up in one agent that sees how they connect. It all runs on your own hardware, one program and one PostgreSQL, so your life is stored with you and nowhere else. You choose the model, you choose what it may reach, and you can take any of it back. Point it at an Ollama or a vLLM of your own and nothing leaves the machine at all."
   getStarted: Get started
   iphoneButton: The iPhone app
   coreHeading: Everything it looks after
@@ -58,6 +51,27 @@ welcome:
         call:
           title: Call it
           body: Press the telephone in the drawer or the app and talk. The answer is read back as it is written, and you can cut in whenever you like.
+        links:
+          title: "Links you can see before you open them"
+          body: "A link somebody sends shows short and clean, with its tracking words taken off and a card of the page it leads to. On the iPhone it opens inside the app."
+    search:
+      name: "Search"
+      tile: "One box that looks through mail, chats, photos, memory and the rest at once."
+      title: "One search across all of it"
+      body: "Type a word and your server looks in nine places at once: your conversations with your agent, mail, contacts, photos, memory, documents, recordings, places and finance. A few results from each, grouped, with a way into the full list. It asks no model and builds no new index."
+      points:
+        areas:
+          title: "Nine places at once"
+          body: "Each part is searched the way its own page searches it, side by side, and one that is slow never holds up the rest."
+        access:
+          title: "Only what you may open"
+          body: "Each part is searched under the same check as its own page, so a search never shows what you could not see there."
+        keys:
+          title: "From anywhere"
+          body: "The box at the top of the sidebar, Control-K or Command-K on any page, the Search tab on the iPhone, and teanode search on the command line."
+        agent:
+          title: "Your agent searches too"
+          body: "Asked about something it cannot place, the agent searches the same way, within what you granted it."
     mail:
       name: Mail
       tile: Sorted, summarized and followed through, with replies drafted in your voice.
@@ -100,6 +114,9 @@ welcome:
         circles:
           title: The people you live with
           body: A circle joins the accounts of a family or friends, and a contact who has an account on the server is linked to it, so a chat or a share is a tap away.
+        card:
+          title: "A card for each person"
+          body: "Open anyone from a chat, a circle, a photo or the map: who they are to you, what they share with you of where they are and their health, photos of them, your mail with them and the meetings they spoke in."
         agent:
           title: Your agent knows them
           body: It looks people up when it writes, schedules or files, and keeps a page in memory for each person who matters.
@@ -165,6 +182,10 @@ welcome:
         you wherever you are, and each session starts knowing what your agent
         knows.
       more: How coding sessions work
+      points:
+        agents:
+          title: "Every agent in a session"
+          body: "The agents a live session started show as a tree under it, each with its task, its model and whether it is still running."
     knowledge:
       name: Knowledge
       tile: A graph of the people, projects and places in your life, kept on your server.
@@ -219,6 +240,28 @@ welcome:
         approve:
           title: Approve from anywhere
           body: A card in your drawer and a notification on your phone, with the amount and the note their agent wrote. Ask me every time is there for a child.
+    passwords:
+      name: "Passwords"
+      tile: "Logins, passkeys and codes, encrypted on your devices, used by your agent only where you say."
+      title: "Passwords your server cannot read"
+      body: "Logins, passkeys, one-time codes, cards and notes are sealed on your phone or in your browser before they reach your server, so neither the server nor whoever runs it can read them. Fill them in Chrome and on the iPhone, share them with your circle, and let your agent sign in with the few you choose."
+      more: "How Passwords works"
+      points:
+        sealed:
+          title: "Encrypted on your devices"
+          body: "A passphrase only you know opens them, and then Face ID on the iPhone. The server, a backup and the agent see sealed text, sites and user names included."
+        fills:
+          title: "Filled where you sign in"
+          body: "The Chrome extension fills logins, saves new ones, and makes passwords and passkeys. On the iPhone, TeaNode fills Safari and every other app, one-time codes too."
+        share:
+          title: "Shared with your circle"
+          body: "Give a login to one person or the whole circle. It is sealed for their devices alone, and only you change it."
+        agent:
+          title: "Your agent signs in, and never reads"
+          body: "Turn on \"Let the agent use this\" for one login, and the agent can sign in with it on that login's own sites, in a conversation you started. The password goes into the page, never to the model."
+        import:
+          title: "Bring them with you"
+          body: "Import from Chrome, Apple Passwords, Bitwarden or a pass store, and export them again whenever you like."
   yours:
     heading: Yours, and only yours
     lead: >-
@@ -228,7 +271,7 @@ welcome:
     points:
       hardware:
         title: On your hardware
-        body: One program and one PostgreSQL on a machine you own. Your mail, photos, health and money are stored there, and there is no account with us at all.
+        body: "One program and one PostgreSQL on a machine you own. Your mail, photos, health and money are stored there, with no account with us at all, and your passwords are sealed on your own devices, so even the server cannot read them."
       model:
         title: Your choice of model
         body: A hosted model is sent only what a turn needs. Point it at an Ollama or a vLLM of your own and nothing leaves the machine at all.
@@ -272,23 +315,31 @@ welcome:
       location:
         title: Where you have been
         body: Visits to your places are kept while the app is closed, on a map of your day, and shared only with the people you choose.
+      search:
+        title: "Search everything"
+        body: "The Search tab looks through chats, mail, contacts, photos and the rest at once, and the three parts you use most sit in the tab bar."
+      passwords:
+        title: "Your passwords, in every app"
+        body: "TeaNode is an AutoFill provider: Safari and other apps offer its logins, passkeys and one-time codes, opened with Face ID."
       setup:
         title: Mail, calendars and contacts too
         body: One profile adds your mailbox, calendars and contacts to the iPhone's own apps, and your address book can come in from the phone.
     captions:
       conversation: "The conversation: a mail drafted, a coding session's question, and a reply waiting for your word."
-      chats: A family circle's chat, where Sam asked Sam's agent a question and the answer came back to everyone.
+      chats: "A chat with Sam: a link shows short and clean, with a card of the page it leads to."
       mail: The inbox, with what is important and what needs a reply marked.
       followups: "What your agent is following from your mail: a parcel that stalled, a bill overdue, a form due Friday."
       photos: Your photos, month by month, backed up from the phone.
-      location: A day of visits, on the map and in order, with how long each one took.
-      coding: A Claude Code session on your laptop, stopped to ask which way to go.
+      location: "The whole screen is the map, with you and the people who share with you, and the day in a drawer over it."
+      coding: "A live coding session's agents: what each was asked, its model, and whether it is still running."
       calendar: The month, with your reminders a tap away.
       finance: Where the money went, month by month.
       recording: "A recorded meeting: the summary, then the transcript, speaker by speaker."
       knowledge: "A page of memory Sam shared: a recipe, with the facts it holds."
-      contacts: The address book, kept in step with the server.
+      contacts: "Sam's card, from anywhere Sam appears: message, call, mail, directions, and where Sam is."
       payment: Sam's agent asked to pay with Robin's grocery skill, above the limit, so Robin decides.
+      search: "One search across chats, mail, contacts and the rest, a few results from each."
+      passwords: "Passwords, opened with Face ID: logins, one shared with the circle, a card and a note."
       health: Sleep over the last month, stage by stage, copied from Apple Health.
   readDocs: Read the documentation
   viewSource: View the source
@@ -333,7 +384,12 @@ welcome:
     circleChat: A family circle's chat. Its members write to each other, and an agent answers when somebody asks it.
     circles: A circle and its people, each with what they are to you, and a way to invite somebody or make them an account.
     drawerHerdr: A Claude Code session on your computer stopped to ask something. The question comes to you, with its options as buttons, wherever you are talking to your agent.
-    contacts: "The address book, with one contact open: phones, addresses and a note, synchronized to your phone over CardDAV."
+    contacts: "A contact's own page: the mail, photos and recordings they are in, and what your agent knows about them."
+    passwordsShare: "Sharing a login with a circle. It is sealed for each person, and a safety code lets you check you have the right key for them."
+    passwordsAgent: "One login the agent may use. It signs in on that login's own sites, the password goes into the page and never to the model, and each use is recorded."
+    passwords: "Passwords. Logins, cards and notes, sealed on your own devices, with the ones shared with your circle and the one your agent may use marked."
+    personCard: "A person's card, opened from a chat, a circle, a photo or the map: where they are, if they share it, and what you share with each other."
+    search: "One search across everything: mail, contacts, what your agent knows and your documents, each under its own access rules."
     financeSpending: Finance. Income and spending across twelve months, with what was left over; money moved between your own accounts is left out.
     financeCategories: A month by spending category, under its budgets. Each budget says how far it has gone and whether the month is on track.
     financeReceipt: A charge with its receipt, read from a photo line by line, checked against its printed total and matched to the charge on its own.
@@ -452,6 +508,7 @@ welcome:
       one. Nothing reaches a model while mail is being delivered; the work is
       queued afterwards. Point it at an Ollama or a vLLM of your own and nothing
       leaves the machine at all. Operators cap what it may spend, in tokens or in money.
+    browser: "When it works in your Chrome tab, you can watch that tab live from the dashboard on any device, take it over, and hand it back with a note. It asks you to when a step is yours to do."
     points:
       sorts:
         title: Sorts what arrives

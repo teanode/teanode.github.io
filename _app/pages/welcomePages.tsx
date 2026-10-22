@@ -15,6 +15,7 @@ import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined'
 import AccountBalanceOutlinedIcon from '@mui/icons-material/AccountBalanceOutlined'
 import AccountTreeOutlinedIcon from '@mui/icons-material/AccountTreeOutlined'
 import BackupOutlinedIcon from '@mui/icons-material/BackupOutlined'
+import BadgeOutlinedIcon from '@mui/icons-material/BadgeOutlined'
 import BedtimeOutlinedIcon from '@mui/icons-material/BedtimeOutlined'
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined'
 import CallSplitIcon from '@mui/icons-material/CallSplit'
@@ -31,6 +32,7 @@ import EventAvailableOutlinedIcon from '@mui/icons-material/EventAvailableOutlin
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import ExploreOutlinedIcon from '@mui/icons-material/ExploreOutlined'
 import FaceOutlinedIcon from '@mui/icons-material/FaceOutlined'
+import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined'
 import FamilyRestroomOutlinedIcon from '@mui/icons-material/FamilyRestroomOutlined'
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined'
 import ForumOutlinedIcon from '@mui/icons-material/ForumOutlined'
@@ -43,12 +45,16 @@ import ImageSearchOutlinedIcon from '@mui/icons-material/ImageSearchOutlined'
 import InboxOutlinedIcon from '@mui/icons-material/InboxOutlined'
 import IosShareOutlinedIcon from '@mui/icons-material/IosShareOutlined'
 import KeyOutlinedIcon from '@mui/icons-material/KeyOutlined'
+import KeyboardCommandKeyOutlinedIcon from '@mui/icons-material/KeyboardCommandKeyOutlined'
 import LabelOutlinedIcon from '@mui/icons-material/LabelOutlined'
 import LibraryBooksOutlinedIcon from '@mui/icons-material/LibraryBooksOutlined'
+import LinkOutlinedIcon from '@mui/icons-material/LinkOutlined'
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import MailOutlineIcon from '@mui/icons-material/EmailOutlined'
 import MicNoneOutlinedIcon from '@mui/icons-material/MicNoneOutlined'
 import NewspaperOutlinedIcon from '@mui/icons-material/NewspaperOutlined'
 import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined'
+import PasswordOutlinedIcon from '@mui/icons-material/PasswordOutlined'
 import PaymentsOutlinedIcon from '@mui/icons-material/PaymentsOutlined'
 import PeopleOutlineOutlinedIcon from '@mui/icons-material/PeopleOutlineOutlined'
 import PhoneInTalkOutlinedIcon from '@mui/icons-material/PhoneInTalkOutlined'
@@ -64,6 +70,8 @@ import RemoveIcon from '@mui/icons-material/Remove'
 import RequestQuoteOutlinedIcon from '@mui/icons-material/RequestQuoteOutlined'
 import RocketLaunchOutlinedIcon from '@mui/icons-material/RocketLaunchOutlined'
 import SavingsOutlinedIcon from '@mui/icons-material/SavingsOutlined'
+import SchemaOutlinedIcon from '@mui/icons-material/SchemaOutlined'
+import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
 import ShowChartOutlinedIcon from '@mui/icons-material/ShowChartOutlined'
 import SmartphoneOutlinedIcon from '@mui/icons-material/SmartphoneOutlined'
 import SortOutlinedIcon from '@mui/icons-material/SortOutlined'
@@ -126,6 +134,16 @@ const coreFeatures: CoreFeature[] = [
       { id: 'welcome.people.points.chats', Icon: ForumOutlinedIcon },
       { id: 'welcome.core.chat.points.call', Icon: PhoneInTalkOutlinedIcon },
       { id: 'welcome.phone.points.notify', Icon: NotificationsActiveOutlinedIcon },
+      { id: 'welcome.core.chat.points.links', Icon: LinkOutlinedIcon },
+    ],
+  },
+  {
+    key: 'search', Icon: SearchOutlinedIcon, phone: 'search',
+    points: [
+      { id: 'welcome.core.search.points.areas', Icon: SearchOutlinedIcon },
+      { id: 'welcome.core.search.points.access', Icon: VerifiedUserOutlinedIcon },
+      { id: 'welcome.core.search.points.keys', Icon: KeyboardCommandKeyOutlinedIcon },
+      { id: 'welcome.core.search.points.agent', Icon: AutoAwesomeOutlinedIcon },
     ],
   },
   {
@@ -151,6 +169,7 @@ const coreFeatures: CoreFeature[] = [
     points: [
       { id: 'welcome.core.contacts.points.sync', Icon: DevicesOutlinedIcon },
       { id: 'welcome.core.contacts.points.circles', Icon: Diversity3OutlinedIcon },
+      { id: 'welcome.core.contacts.points.card', Icon: BadgeOutlinedIcon },
       { id: 'welcome.people.points.relationships', Icon: FamilyRestroomOutlinedIcon },
       { id: 'welcome.core.contacts.points.agent', Icon: AutoAwesomeOutlinedIcon },
     ],
@@ -189,6 +208,7 @@ const coreFeatures: CoreFeature[] = [
       { id: 'welcome.coding.points.sees', Icon: TerminalOutlinedIcon },
       { id: 'welcome.coding.points.page', Icon: WebOutlinedIcon },
       { id: 'welcome.coding.points.asks', Icon: HelpOutlineOutlinedIcon },
+      { id: 'welcome.core.coding.points.agents', Icon: SchemaOutlinedIcon },
       { id: 'welcome.coding.points.remembers', Icon: AccountTreeOutlinedIcon },
       { id: 'welcome.coding.points.anywhere', Icon: DirectionsCarOutlinedIcon },
     ],
@@ -231,6 +251,16 @@ const coreFeatures: CoreFeature[] = [
       { id: 'welcome.core.payments.points.approve', Icon: NotificationsActiveOutlinedIcon },
     ],
   },
+  {
+    key: 'passwords', Icon: KeyOutlinedIcon, phone: 'passwords', docId: 'passwords',
+    points: [
+      { id: 'welcome.core.passwords.points.sealed', Icon: LockOutlinedIcon },
+      { id: 'welcome.core.passwords.points.fills', Icon: PasswordOutlinedIcon },
+      { id: 'welcome.core.passwords.points.share', Icon: Diversity3OutlinedIcon },
+      { id: 'welcome.core.passwords.points.agent', Icon: AutoAwesomeOutlinedIcon },
+      { id: 'welcome.core.passwords.points.import', Icon: FileDownloadOutlinedIcon },
+    ],
+  },
 ]
 
 // What makes it safe to give an agent all of that: where it runs, which
@@ -244,7 +274,7 @@ const yoursPoints: { key: string, Icon: SvgIconComponent }[] = [
 
 // The iPhone app: talking to it, hearing from it, calling it, handing it
 // things, recording with it, what it keeps from the phone (its photos and
-// where it has been), and the phone's own apps it fills in.
+// where it has been), finding things, and the phone's own apps it fills in.
 const phonePoints: { key: string, Icon: SvgIconComponent }[] = [
   { key: 'chat', Icon: ChatBubbleOutlineOutlinedIcon },
   { key: 'notify', Icon: NotificationsActiveOutlinedIcon },
@@ -253,6 +283,8 @@ const phonePoints: { key: string, Icon: SvgIconComponent }[] = [
   { key: 'record', Icon: MicNoneOutlinedIcon },
   { key: 'photos', Icon: BackupOutlinedIcon },
   { key: 'location', Icon: PlaceOutlinedIcon },
+  { key: 'search', Icon: SearchOutlinedIcon },
+  { key: 'passwords', Icon: KeyOutlinedIcon },
   { key: 'setup', Icon: SmartphoneOutlinedIcon },
 ]
 
@@ -462,8 +494,11 @@ export const WelcomePage = () => {
           <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr auto' }, gap: { xs: 4, md: 6 }, alignItems: 'start' }}>
             <Box sx={{ minWidth: 0 }}>
               <Typography sx={{ mb: 2 }}><T id='welcome.agent.lead'/></Typography>
-              <Typography variant='body2' color='text.secondary' sx={{ lineHeight: 1.6, mb: 2.5 }}>
+              <Typography variant='body2' color='text.secondary' sx={{ lineHeight: 1.6, mb: 2 }}>
                 <T id='welcome.agent.privacy'/>
+              </Typography>
+              <Typography variant='body2' color='text.secondary' sx={{ lineHeight: 1.6, mb: 2.5 }}>
+                <T id='welcome.agent.browser'/>
               </Typography>
               <Typography variant='body2' color='text.secondary' sx={{ mb: 1 }}>
                 <T id='welcome.agent.reachLead'/>
@@ -503,7 +538,7 @@ export const WelcomePage = () => {
           </Box>
         </Section>
 
-        {/* The iPhone app: the words and its eight points, then every screen
+        {/* The iPhone app: the words and its points, then every screen
             in a row the reader scrolls, as wide as the window. */}
         <Section id='iphone' band={coreFeatures.length % 2 === 1} wide={<PhoneGallery/>}>
           <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 1fr) minmax(0, 1fr)' }, gap: { xs: 3, md: 6 }, alignItems: 'start' }}>
