@@ -16,6 +16,8 @@ https://teanode.com/doc/circles
 https://teanode.com/doc/photos
 https://teanode.com/doc/location
 https://teanode.com/doc/passwords
+https://teanode.com/doc/journal
+https://teanode.com/doc/shopping
 https://teanode.com/doc/command-line
 https://teanode.com/doc/security
 https://teanode.com/doc/security-review

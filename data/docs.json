@@ -356,6 +356,48 @@
     }
   },
   {
+    "slug": "journal",
+    "group": {
+      "en": "Running it",
+      "zh": "运行它",
+      "ja": "動かす"
+    },
+    "title": {
+      "en": "Journal",
+      "zh": "日记",
+      "ja": "日記"
+    },
+    "description": {
+      "en": "A page for each day that links everything that happened, with your words, your mood and the weather, and the story your agent writes of it; weeks, months and years above the days.",
+      "zh": "每天一页，链接当天发生的一切，有你的文字、心情和天气，以及助手写下的这一天的故事；日子之上还有周、月和年。",
+      "ja": "一日一ページ。その日に起きたことすべてをリンクし、あなたの言葉、気分、天気、エージェントが書いたその日の物語を添えます。日の上には週、月、年があります。"
+    },
+    "filename": {
+      "en": "en/journal.markdown"
+    }
+  },
+  {
+    "slug": "shopping",
+    "group": {
+      "en": "Running it",
+      "zh": "运行它",
+      "ja": "動かす"
+    },
+    "title": {
+      "en": "Shopping lists",
+      "zh": "购物清单",
+      "ja": "買い物リスト"
+    },
+    "description": {
+      "en": "Lists shared with your circle, shopped store by store and aisle by aisle, checked off live and by the receipt, with pictures, prices and a reminder at the store.",
+      "zh": "与圈子共享的清单，按商店和货架购物，实时勾选，收据自动划掉，附带图片、价格和到店提醒。",
+      "ja": "サークルと共有するリスト。店ごと、通路ごとに買い物し、リアルタイムとレシートでチェック。写真、価格、店での通知つき。"
+    },
+    "filename": {
+      "en": "en/shopping.markdown"
+    }
+  },
+  {
     "slug": "command-line",
     "group": {
       "en": "Running it",

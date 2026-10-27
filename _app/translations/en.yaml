@@ -1,7 +1,7 @@
 ---
 language: English
 title: TeaNode
-tagline: A personal agent for every part of your life, on a server you own, with an iPhone app. Mail, calendar, contacts, photos, location, health, coding, memory, meetings, money and payments in one place, stored on your hardware and nowhere else.
+tagline: A personal agent for every part of your life, on a server you own, with an iPhone app. Mail, calendar, contacts, photos, location, health, coding, memory, meetings, money, shopping, payments and a journal of your days in one place, stored on your hardware and nowhere else.
 nav:
   docs: Documentation
   github: GitHub
@@ -33,7 +33,7 @@ notFound:
   toDocs: Read the documentation
 welcome:
   headline: A personal agent for your whole life, on a server you own.
-  lead: "Your mail, calendar and contacts, your photos and where you have been, your health, your coding sessions, your meetings, your money and your passwords, joined up in one agent that sees how they connect. It all runs on your own hardware, one program and one PostgreSQL, so your life is stored with you and nowhere else. You choose the model, you choose what it may reach, and you can take any of it back. Point it at an Ollama or a vLLM of your own and nothing leaves the machine at all."
+  lead: "Your mail, calendar and contacts, your photos and where you have been, your health, your coding sessions, your meetings, your money, your shopping and your passwords, joined up in one agent that sees how they connect and keeps a journal of your days. It all runs on your own hardware, one program and one PostgreSQL, so your life is stored with you and nowhere else. You choose the model, you choose what it may reach, and you can take any of it back. Point it at an Ollama or a vLLM of your own and nothing leaves the machine at all."
   getStarted: Get started
   iphoneButton: The iPhone app
   coreHeading: Everything it looks after
@@ -54,6 +54,9 @@ welcome:
         links:
           title: "Links you can see before you open them"
           body: "A link somebody sends shows short and clean, with its tracking words taken off and a card of the page it leads to. On the iPhone it opens inside the app."
+        mentions:
+          title: "Mentions, and quiet chats"
+          body: "Mention one person with @ or everybody with @all, and choose for each chat whether your phone hears every message, only mentions, or nothing."
     search:
       name: "Search"
       tile: "One box that looks through mail, chats, photos, memory and the rest at once."
@@ -72,6 +75,28 @@ welcome:
         agent:
           title: "Your agent searches too"
           body: "Asked about something it cannot place, the agent searches the same way, within what you granted it."
+    journal:
+      name: "Journal"
+      tile: "A page for each day, with your words and its story, linked to everything that happened."
+      title: "Every day, put back together"
+      body: "Your server already holds your day: the photos, the places you went, the mail, the meetings, the money, the coding sessions and the steps. Journal joins them into one page for each day, in the order they happened. You add your own words and how the day felt, and your agent writes the story of it in its dreams, every mention a link to the real thing."
+      more: "How the journal works"
+      points:
+        links:
+          title: "Linked, never copied"
+          body: "A day reads each photo, visit, event, mail and payment live from its own page, with the weather of the day. A deleted photo or a corrected charge is right on the day too."
+        words:
+          title: "Your words stay yours"
+          body: "Write what you want to remember and pick one of five moods. TeaNode never changes your words; ask it to touch them up and your original stays a tap away."
+        story:
+          title: "The story of the day"
+          body: "Your agent writes a headline and a few paragraphs, picks the mail and work messages that mattered and says why. Tell it what it got wrong and it writes the day again."
+        zoom:
+          title: "Weeks, months and years"
+          body: "Zoom out to a week side by side, a month of photos and moods, or a year colored by how it felt, each with its own story and room for your looking back."
+        ask:
+          title: "Ask about any day"
+          body: "\"What did I do last Thursday?\" is answered from your journal, and in the evening TeaNode can ask how today was."
     mail:
       name: Mail
       tile: Sorted, summarized and followed through, with replies drafted in your voice.
@@ -117,6 +142,9 @@ welcome:
         card:
           title: "A card for each person"
           body: "Open anyone from a chat, a circle, a photo or the map: who they are to you, what they share with you of where they are and their health, photos of them, your mail with them and the meetings they spoke in."
+        sharing:
+          title: "Share almost anything"
+          body: "Calendars, albums, location, health, finance accounts, recordings and a circle's own address book, each at the level you choose, with every share in one place on the Sharing page."
         agent:
           title: Your agent knows them
           body: It looks people up when it writes, schedules or files, and keeps a page in memory for each person who matters.
@@ -147,6 +175,9 @@ welcome:
         places:
           title: Places you name
           body: Home, work, school or the gym. A name you give is never replaced, and arriving at one can tell the people you share with.
+        paths:
+          title: "Paths, pauses and quiet"
+          body: "Choose somebody who shares and their day's path is drawn on the map. Pause your own recording for an hour or until tomorrow, mute one person's arrivals, and you are never told somebody arrived where you were with them."
         agent:
           title: It learns your routine
           body: Ask when you last went to the dentist, or whether Sam is home yet. Erase a day, a range or all of it whenever you like.
@@ -218,6 +249,28 @@ welcome:
         taxes:
           title: The tax year, put together
           body: Paystubs, W-2s, 1099s and 1098s read from a PDF or a photo, checked against each other, and the year added up into what you are likely to owe or get back.
+    shopping:
+      name: "Shopping"
+      tile: "Shared lists, checked off live at the store and by the receipt."
+      title: "Shopping lists the whole house shares"
+      body: "Keep lists like Groceries or Hardware and share them with your circle. At the store you shop the store, not a list: everything your lists need there, by aisle. The others see the cart fill as you go, and the receipt checks off what you bought."
+      more: "How shopping lists work"
+      points:
+        live:
+          title: "Checked off live"
+          body: "The first item in your cart tells the others you are shopping, and every check shows on their screens at once. Done buys the cart."
+        receipts:
+          title: "The receipt does the rest"
+          body: "A receipt from a photo, a mail or one sent to your agent checks off what it bought and keeps each price at that store. An unsure match waits for you, and Undo puts it back."
+        arrive:
+          title: "Reminded at the door"
+          body: "Arrive at a store and your phone tells you what your lists need there."
+        pictures:
+          title: "Pictures and prices"
+          body: "Each item finds its picture on the web through your server, and remembers what it cost at each store over time."
+        agent:
+          title: "Tell your agent"
+          body: "Say \"add eggs and rice to the groceries\", or send a photo of a handwritten list, and the items go on it."
     payments:
       name: Payments
       tile: Your agent pays for you, within limits you set, and only with your word.
@@ -318,6 +371,12 @@ welcome:
       search:
         title: "Search everything"
         body: "The Search tab looks through chats, mail, contacts, photos and the rest at once, and the three parts you use most sit in the tab bar."
+      shopping:
+        title: "Shopping at the store"
+        body: "Your lists by store and aisle, checked off with the others watching, and a reminder when you arrive."
+      journal:
+        title: "Your journal"
+        body: "Today's mood in a tap, your words, and each day as TeaNode saw it, with the weeks and months above it."
       passwords:
         title: "Your passwords, in every app"
         body: "TeaNode is an AutoFill provider: Safari and other apps offer its logins, passkeys and one-time codes, opened with Face ID."
@@ -339,6 +398,8 @@ welcome:
       contacts: "Sam's card, from anywhere Sam appears: message, call, mail, directions, and where Sam is."
       payment: Sam's agent asked to pay with Robin's grocery skill, above the limit, so Robin decides.
       search: "One search across chats, mail, contacts and the rest, a few results from each."
+      shopping: "Shopping a store: what every list needs there, with pictures, prices and who has it in the cart."
+      journal: "The journal: today so far, a mood in a tap, and each day's headline with its photos."
       passwords: "Passwords, opened with Face ID: logins, one shared with the circle, a card and a note."
       health: Sleep over the last month, stage by stage, copied from Apple Health.
   readDocs: Read the documentation
@@ -366,7 +427,7 @@ welcome:
     payments: A payment skill lent to somebody in the circle, with its limits, and every call made through it.
     drawerPayment: Sam's agent asked to pay more than the limit Robin set, so it waits for Robin, with the amount and Sam's note.
     recording: "A recorded meeting: the summary of what was decided, then the transcript, speaker by speaker."
-    coding: The Coding page. A session's transcript as it happens, with a box for the next prompt.
+    coding: "The Coding page. A session asks which storage to use, with its options as buttons and a box to answer in."
     health: Health. Steps, sleep, heart rate and workouts from the iPhone, a day at a time or across the year.
     photoAlbums: Albums, made by hand or from the trips the server suggests, and the ones shared with your circle.
     followups: "What your agent is following from your mail: bills, parcels and deadlines, each closed when it is paid, delivered or done."
@@ -383,13 +444,17 @@ welcome:
     location: Location. A day of visits at named places, on a map drawn through your own server, with each visit and how long it lasted under it.
     circleChat: A family circle's chat. Its members write to each other, and an agent answers when somebody asks it.
     circles: A circle and its people, each with what they are to you, and a way to invite somebody or make them an account.
-    drawerHerdr: A Claude Code session on your computer stopped to ask something. The question comes to you, with its options as buttons, wherever you are talking to your agent.
     contacts: "A contact's own page: the mail, photos and recordings they are in, and what your agent knows about them."
     passwordsShare: "Sharing a login with a circle. It is sealed for each person, and a safety code lets you check you have the right key for them."
     passwordsAgent: "One login the agent may use. It signs in on that login's own sites, the password goes into the page and never to the model, and each use is recorded."
     passwords: "Passwords. Logins, cards and notes, sealed on your own devices, with the ones shared with your circle and the one your agent may use marked."
     personCard: "A person's card, opened from a chat, a circle, a photo or the map: where they are, if they share it, and what you share with each other."
     search: "One search across everything: mail, contacts, what your agent knows and your documents, each under its own access rules."
+    shoppingStore: "Shopping a store: what every list needs at Harbor Market, by aisle, while Sam is there checking things off."
+    shopping: "A shared grocery list by aisle, with what each item is for, how many, and what it last cost."
+    journalMonth: "October as a calendar of days, each with its first photo, high temperature and mood, and the month's own story beside it."
+    journal: "The timeline: each day's headline, mood, weather and photos, newest first, with this week so far beside it."
+    journalDay: "A Saturday in the journal: the story your agent wrote, each mention a link, the one mail that mattered and why, and the day's places in the order they happened."
     financeSpending: Finance. Income and spending across twelve months, with what was left over; money moved between your own accounts is left out.
     financeCategories: A month by spending category, under its budgets. Each budget says how far it has gone and whether the month is on track.
     financeReceipt: A charge with its receipt, read from a photo line by line, checked against its printed total and matched to the charge on its own.
@@ -621,7 +686,7 @@ welcome:
         body: One process, one history and one screen, which you and the agent share. You can take over at any moment.
       asks:
         title: Their questions come to you
-        body: In the drawer with the options as buttons, and in your chat app. Whoever answers first wins, and a stale answer is refused.
+        body: "Your phone is told, and tapping it opens the session on the Coding page, with the options as buttons. Whoever answers first wins, and a stale answer is refused."
       page:
         title: A page of their own
         body: The Coding page and the iPhone app show each session's transcript as it happens or its screen, with a box for the next prompt and a new tab beside it.

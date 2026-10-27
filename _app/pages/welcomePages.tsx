@@ -71,6 +71,16 @@ import RequestQuoteOutlinedIcon from '@mui/icons-material/RequestQuoteOutlined'
 import RocketLaunchOutlinedIcon from '@mui/icons-material/RocketLaunchOutlined'
 import SavingsOutlinedIcon from '@mui/icons-material/SavingsOutlined'
 import SchemaOutlinedIcon from '@mui/icons-material/SchemaOutlined'
+import AutoStoriesOutlinedIcon from '@mui/icons-material/AutoStoriesOutlined'
+import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined'
+import CalendarViewMonthOutlinedIcon from '@mui/icons-material/CalendarViewMonthOutlined'
+import QuestionAnswerOutlinedIcon from '@mui/icons-material/QuestionAnswerOutlined'
+import ShoppingCartCheckoutOutlinedIcon from '@mui/icons-material/ShoppingCartCheckoutOutlined'
+import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined'
+import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined'
+import AlternateEmailOutlinedIcon from '@mui/icons-material/AlternateEmailOutlined'
+import ShareOutlinedIcon from '@mui/icons-material/ShareOutlined'
+import RouteOutlinedIcon from '@mui/icons-material/RouteOutlined'
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
 import ShowChartOutlinedIcon from '@mui/icons-material/ShowChartOutlined'
 import SmartphoneOutlinedIcon from '@mui/icons-material/SmartphoneOutlined'
@@ -135,6 +145,7 @@ const coreFeatures: CoreFeature[] = [
       { id: 'welcome.core.chat.points.call', Icon: PhoneInTalkOutlinedIcon },
       { id: 'welcome.phone.points.notify', Icon: NotificationsActiveOutlinedIcon },
       { id: 'welcome.core.chat.points.links', Icon: LinkOutlinedIcon },
+      { id: 'welcome.core.chat.points.mentions', Icon: AlternateEmailOutlinedIcon },
     ],
   },
   {
@@ -144,6 +155,16 @@ const coreFeatures: CoreFeature[] = [
       { id: 'welcome.core.search.points.access', Icon: VerifiedUserOutlinedIcon },
       { id: 'welcome.core.search.points.keys', Icon: KeyboardCommandKeyOutlinedIcon },
       { id: 'welcome.core.search.points.agent', Icon: AutoAwesomeOutlinedIcon },
+    ],
+  },
+  {
+    key: 'journal', Icon: AutoStoriesOutlinedIcon, phone: 'journal', docId: 'journal',
+    points: [
+      { id: 'welcome.core.journal.points.links', Icon: LinkOutlinedIcon },
+      { id: 'welcome.core.journal.points.words', Icon: EditNoteOutlinedIcon },
+      { id: 'welcome.core.journal.points.story', Icon: AutoAwesomeOutlinedIcon },
+      { id: 'welcome.core.journal.points.zoom', Icon: CalendarViewMonthOutlinedIcon },
+      { id: 'welcome.core.journal.points.ask', Icon: QuestionAnswerOutlinedIcon },
     ],
   },
   {
@@ -170,6 +191,7 @@ const coreFeatures: CoreFeature[] = [
       { id: 'welcome.core.contacts.points.sync', Icon: DevicesOutlinedIcon },
       { id: 'welcome.core.contacts.points.circles', Icon: Diversity3OutlinedIcon },
       { id: 'welcome.core.contacts.points.card', Icon: BadgeOutlinedIcon },
+      { id: 'welcome.core.contacts.points.sharing', Icon: ShareOutlinedIcon },
       { id: 'welcome.people.points.relationships', Icon: FamilyRestroomOutlinedIcon },
       { id: 'welcome.core.contacts.points.agent', Icon: AutoAwesomeOutlinedIcon },
     ],
@@ -190,6 +212,7 @@ const coreFeatures: CoreFeature[] = [
       { id: 'welcome.core.location.points.visits', Icon: PlaceOutlinedIcon },
       { id: 'welcome.core.location.points.places', Icon: EditLocationAltOutlinedIcon },
       { id: 'welcome.people.points.location', Icon: Diversity3OutlinedIcon },
+      { id: 'welcome.core.location.points.paths', Icon: RouteOutlinedIcon },
       { id: 'welcome.core.location.points.agent', Icon: AutoAwesomeOutlinedIcon },
     ],
   },
@@ -243,6 +266,16 @@ const coreFeatures: CoreFeature[] = [
     ],
   },
   {
+    key: 'shopping', Icon: ShoppingCartOutlinedIcon, phone: 'shopping', docId: 'shopping',
+    points: [
+      { id: 'welcome.core.shopping.points.live', Icon: ShoppingCartCheckoutOutlinedIcon },
+      { id: 'welcome.core.shopping.points.receipts', Icon: ReceiptLongOutlinedIcon },
+      { id: 'welcome.core.shopping.points.arrive', Icon: StorefrontOutlinedIcon },
+      { id: 'welcome.core.shopping.points.pictures', Icon: ImageOutlinedIcon },
+      { id: 'welcome.core.shopping.points.agent', Icon: AutoAwesomeOutlinedIcon },
+    ],
+  },
+  {
     key: 'payments', Icon: PaymentsOutlinedIcon, phone: 'payment', docId: 'circles',
     points: [
       { id: 'welcome.core.payments.points.agent', Icon: PaymentsOutlinedIcon },
@@ -284,6 +317,8 @@ const phonePoints: { key: string, Icon: SvgIconComponent }[] = [
   { key: 'photos', Icon: BackupOutlinedIcon },
   { key: 'location', Icon: PlaceOutlinedIcon },
   { key: 'search', Icon: SearchOutlinedIcon },
+  { key: 'journal', Icon: AutoStoriesOutlinedIcon },
+  { key: 'shopping', Icon: ShoppingCartOutlinedIcon },
   { key: 'passwords', Icon: KeyOutlinedIcon },
   { key: 'setup', Icon: SmartphoneOutlinedIcon },
 ]

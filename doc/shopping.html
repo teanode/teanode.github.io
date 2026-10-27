@@ -1,0 +1,67 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Shopping lists - TeaNode</title><meta name="description" content="Lists shared with your circle, shopped store by store and aisle by aisle, checked off live and by the receipt, with pictures, prices and a reminder at the store."><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><link rel="canonical" href="https://teanode.com/doc/shopping"><meta property="og:type" content="article"><meta property="og:site_name" content="TeaNode"><meta property="og:locale" content="en_US"><meta property="og:locale:alternate" content="zh_CN"><meta property="og:locale:alternate" content="ja_JP"><meta property="og:url" content="https://teanode.com/doc/shopping"><meta property="og:title" content="Shopping lists - TeaNode"><meta property="og:description" content="Lists shared with your circle, shopped store by store and aisle by aisle, checked off live and by the receipt, with pictures, prices and a reminder at the store."><meta property="og:image" content="https://teanode.com/static/og.4USaP8AH.png"><meta property="og:image:type" content="image/png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="TeaNode: a personal assistant that lives on your own server, beside its iPhone app."><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Shopping lists - TeaNode"><meta name="twitter:description" content="Lists shared with your circle, shopped store by store and aisle by aisle, checked off live and by the receipt, with pictures, prices and a reminder at the store."><meta name="twitter:image" content="https://teanode.com/static/og.4USaP8AH.png"><meta name="twitter:image:alt" content="TeaNode: a personal assistant that lives on your own server, beside its iPhone app."><meta name="color-scheme" content="light dark"><link rel="icon" href="/static/favicon.B_wSAv8O.svg" type="image/svg+xml"><link rel="alternate icon" href="/favicon.ico"><link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.Umm5t7C-.png"><meta name="theme-color" content="#ffffff"><script>
+(function () {
+try {
+var stored = window.localStorage.getItem('teanode.theme');
+if (stored === 'light' || stored === 'dark') {
+document.documentElement.setAttribute('data-theme', stored);
+}
+var dark = stored === 'dark' || (stored !== 'light' &&
+window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+if (dark) {
+document.documentElement.style.background = '#141416';
+document.querySelector('meta[name="theme-color"]').setAttribute('content', '#141416');
+}
+} catch (error) {
+// Site data blocked. The default theme is correct either way.
+}
+})();
+</script><script async src="https://www.googletagmanager.com/gtag/js?id=G-XD5JSLP4RH"></script><script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XD5JSLP4RH', {send_page_view: false});
+</script><script type="module" crossorigin src="/static/teanode.DM_KTpby.js"></script></head><body><div id="teanode"><style>.teanode-static{max-width:760px;margin:0 auto;padding:24px 16px 48px;font:16px/1.6 system-ui,sans-serif;opacity:0;animation:teanode-static 0s 2s forwards}.teanode-static pre{overflow-x:auto}@keyframes teanode-static{to{opacity:1}}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .teanode-static{color:#e8e8ea}:root:not([data-theme=light]) .teanode-static a{color:#9ccc65}}:root[data-theme=dark] .teanode-static{color:#e8e8ea}:root[data-theme=dark] .teanode-static a{color:#9ccc65}</style><div class="teanode-static"><p><a href="/">TeaNode</a> · <a href="/doc">Documentation</a> · <a href="https://github.com/ziyan/teanode">Source</a></p><h1>Shopping lists</h1><p>Shopping keeps named lists, such as Groceries or Hardware, that you share with
+a <a href="/doc/circles">circle</a> or a person. At the store everybody the list reaches
+sees what goes into the cart as it happens, and a receipt checks off what it
+bought. Every item remembers what it cost at each store, finds its own
+picture, and your phone reminds you what your lists need when you arrive at a
+store.</p>
+<h2>Lists and items</h2>
+<p>An item has a description, details for whoever shops (&quot;Fuji preferred&quot;), how
+many and of what, the store to get it from or any store, an aisle, a picture
+and its latest price. It is <strong>needed</strong>, <strong>in the cart</strong>, or <strong>not needed</strong>. A
+bought item stays on its list with its picture and prices, so a list is used
+week after week: <strong>Need again</strong> puts it back. Adding something already on
+the list needs the one that is there again instead of adding a second.</p>
+<h2>Shopping a store</h2>
+<p>At the store you shop the store, not a list. The store&#39;s screen gathers what
+every list you reach needs there, and what any store will do, in aisle order,
+each item saying which list it is on.</p>
+<p>There is no Start button. The first item you put in the cart starts your
+trip and tells the others the list reaches that you are shopping. Each
+check shows on their screens at once. <strong>Done</strong> buys what is in your cart.</p>
+<h2>Receipts</h2>
+<p>Every receipt TeaNode keeps, whether photographed on a list, sorted from your
+mail or sent to your agent, is matched against your lists. A sure match checks
+the item off and records the price at that store; an unsure one waits for you
+to apply or dismiss. <strong>Undo</strong> puts back exactly what a match changed.</p>
+<h2>Sharing</h2>
+<p>Share a list with one person in your circle or the whole circle. Everybody it
+reaches can add, change and check off items; only you share it further or
+delete it. Shared lists show on the Sharing page with everything else you
+share. Leaving the circle ends the shares it made possible.</p>
+<h2>Pictures and reminders</h2>
+<p>A new item looks for its picture on the web: your agent searches, picks the
+product&#39;s own page and keeps its picture only if it really shows the item.
+Pictures are served by your server, so your phone never loads anything from
+the shop&#39;s site. You can upload your own instead.</p>
+<p>When your phone arrives at a store, with <a href="/doc/location">Location</a> on, it tells
+you what your lists need there. Mute a list or a store if you would rather
+not hear about it.</p>
+<h2>Your agent</h2>
+<p>Tell your agent &quot;add eggs and rice to the groceries&quot;, or paste or photograph
+a list, and the items go on it. It reads and changes the lists you reach, like
+you do, and asks first before it deletes, removes items or shares.</p>
+<p>On the command line it is <code>teanode shopping</code>; <code>teanode shopping --help</code> lists
+every command.</p>
+<h2>Documentation</h2><h3>Getting started</h3><ul><li><a href="/doc/introduction">What is TeaNode</a>: Send and receive mail at your own domains: mailboxes read here or over IMAP, forwarding, what it does, and what you need to run it.</li><li><a href="/doc/quick-start">Quick start</a>: TeaNode running with docker compose in a few minutes: the assistant first, with no domain, then mail at your own domain if you want it.</li><li><a href="/doc/getting-started">Getting started</a>: Standing up a mail server for one domain, from nothing to mail arriving in a mailbox you can read in a mail program, including the DNS records and the port 25 problem.</li></ul><h3>Running it</h3><ul><li><a href="/doc/deploying">Deploying</a>: The container image and the compose file, what runs beside the server, how it upgrades itself, and what to back up.</li><li><a href="/doc/configuration">Configuration</a>: Where the settings live, the environment variables that say how to reach them, and every field an operator can set.</li><li><a href="/doc/agents">Agents</a>: The personal agent: what it needs, what it does with a mailbox, and what to weigh before turning it on.</li><li><a href="/doc/memory">Memory</a>: What your agent keeps between conversations: a graph of pages it writes without being asked, the places it reads from, and what it does with all of it in its dreams.</li><li><a href="/doc/voice">Voice</a>: Call your agent from the chat drawer: say what you want, hear the answer as it is written, and cut in when you like. On a laptop or a phone.</li><li><a href="/doc/coding-sessions">Coding sessions</a>: Your Claude Code and Codex sessions in herdr, on every computer you attached: your agent reads them, types into them where you can see, and brings you their questions to answer from anywhere.</li><li><a href="/doc/coding-memory">Memory in coding sessions</a>: Claude Code and Codex shown what your agent knows about the checkout they run in: the project page and the last session when one starts, recall kept to the project before each prompt, and the transcript read within a minute.</li><li><a href="/doc/mcp">Model Context Protocol</a>: TeaNode on both ends of the protocol: answering it, so your editor can use your agent's tools and ask it questions, and connecting out to servers of your own.</li><li><a href="/doc/finance">Finance</a>: Your banks, cards and brokerages linked through Plaid or SimpleFIN: transactions in your own categories, budgets that say where the month is heading, savings targets, net worth, and a tax year put together from your paystubs, W-2s, 1099s and 1098s, all kept in your own database.</li><li><a href="/doc/circles">Circles and chats</a>: The people on one server in circles: chats with each other in the drawer and the app, with or without their agents, and calendars, albums, memory pages, skills and location shared at the level each owner picks.</li><li><a href="/doc/photos">Photos</a>: Photos and videos on your own server: backed up from the iPhone in the background, found by place, date or what is in them, faces grouped into people you name, and albums shared with your circle.</li><li><a href="/doc/location">Location</a>: Visits to named places recorded by the iPhone app, a map of your day, where you are shared with the people in your circle, and what leaves the server to name a place.</li><li><a href="/doc/passwords">Passwords</a>: Logins, passkeys, one-time codes, cards and notes, encrypted on your own devices: filled in Chrome and on the iPhone, shared with your circle, and used by your agent only on the logins you turn on.</li><li><a href="/doc/journal">Journal</a>: A page for each day that links everything that happened, with your words, your mood and the weather, and the story your agent writes of it; weeks, months and years above the days.</li><li><a href="/doc/shopping">Shopping lists</a>: Lists shared with your circle, shopped store by store and aisle by aisle, checked off live and by the receipt, with pictures, prices and a reminder at the store.</li><li><a href="/doc/command-line">The command line</a>: The two programs: the server and the few things only its host can do, and the client that administers it from anywhere through the API.</li></ul><h3>Security</h3><ul><li><a href="/doc/security">Reporting a security problem</a>: Where to report something exploitable, what is in scope, and what is not.</li><li><a href="/doc/security-review">Security review</a>: A review of the whole program: what was examined, what was found, what was fixed, and what is still open.</li></ul><h3>Contributing</h3><ul><li><a href="/doc/contributing">Contributing</a>: Naming, comments, the invariants that bite, tests, commits and the changelog that cuts a release.</li><li><a href="/doc/local-development">Local development</a>: Getting a working build and a database to point it at, a development server that cannot send mail, and the optional scanners.</li><li><a href="/doc/project-structure">Project structure</a>: What each package is for and which way the dependencies point.</li></ul><p>Every document is also plain markdown, listed in <a href="/llms.txt">/llms.txt</a>.</p></div></div></body></html>
