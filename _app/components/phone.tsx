@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Box from '@mui/material/Box'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
@@ -33,7 +33,12 @@ export const phoneScreens = [
 export type PhoneScreen = typeof phoneScreens[number]
 
 // One phone: a rounded frame, the island, a status bar, and the screen.
-export const Phone = ({ screen, width = 260 }: { screen: PhoneScreen, width?: number }) => {
+//
+// The picture's size is given so the phone is full height before it arrives,
+// and its alt text is transparent so a screen reader has it but nobody sees
+// the words in the phone while the picture loads. A browser waits for a lazy
+// picture until it is near the window; isLoadedAhead asks for it right away.
+export const Phone = ({ screen, width = 260, isLoadedAhead = false }: { screen: PhoneScreen, width?: number, isLoadedAhead?: boolean }) => {
   const theme = useTheme()
   const translate = useTranslate()
   const mode = theme.palette.mode === 'dark' ? 'dark' : 'light'
@@ -81,9 +86,12 @@ export const Phone = ({ screen, width = 260 }: { screen: PhoneScreen, width?: nu
           <Box
             component='img'
             src={source}
-            alt={translate(`welcome.phone.screens.${screen}`)}
-            loading='lazy'
-            sx={{ display: 'block', width: '100%', height: 'auto' }}
+            alt={translate(`welcome.phone.captions.${screen}`)}
+            width={600}
+            height={1232}
+            loading={isLoadedAhead ? 'eager' : 'lazy'}
+            decoding={isLoadedAhead ? 'sync' : 'async'}
+            sx={{ display: 'block', width: '100%', height: 'auto', color: 'transparent' }}
           />
         )}
       </Box>
@@ -101,6 +109,13 @@ export const Phone = ({ screen, width = 260 }: { screen: PhoneScreen, width?: nu
 // the window to the last when it reaches the top. On a phone, or for a
 // reader who asked for less motion, it is a row they scroll themselves,
 // snapping one phone at a time.
+//
+// Either way the row clips its phones, and a browser's early start for lazy
+// pictures stops at that clip: a phone further along the row would only start
+// loading as it slid into view. So the whole row is asked for at once, as the
+// page comes within a few screens of it.
+const loadAheadMargin = '2000px 0px'
+
 export const PhoneGallery = () => {
   const theme = useTheme()
   const translate = useTranslate()
@@ -109,6 +124,19 @@ export const PhoneGallery = () => {
   const isDrivenByPage = isWide && !isStill
   const frame = useRef<HTMLDivElement>(null)
   const track = useRef<HTMLDivElement>(null)
+  const [isLoadedAhead, setIsLoadedAhead] = useState(false)
+
+  useEffect(() => {
+    const frameElement = frame.current
+    if (!frameElement) return
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return
+      setIsLoadedAhead(true)
+      observer.disconnect()
+    }, { rootMargin: loadAheadMargin })
+    observer.observe(frameElement)
+    return () => observer.disconnect()
+  }, [])
 
   useEffect(() => {
     const frameElement = frame.current
@@ -163,7 +191,7 @@ export const PhoneGallery = () => {
       >
         {phoneScreens.map((screen) => (
           <Box key={screen} role='listitem' sx={{ flex: 'none', width: { xs: 220, md: 236 }, scrollSnapAlign: 'start' }}>
-            <Phone screen={screen} width={220}/>
+            <Phone screen={screen} width={220} isLoadedAhead={isLoadedAhead}/>
             <Typography variant='body2' color='text.secondary' sx={{ mt: 1.75, lineHeight: 1.45, pr: 1 }}>
               {translate(`welcome.phone.captions.${screen}`)}
             </Typography>
