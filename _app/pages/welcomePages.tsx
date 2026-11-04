@@ -81,6 +81,11 @@ import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined'
 import AlternateEmailOutlinedIcon from '@mui/icons-material/AlternateEmailOutlined'
 import ShareOutlinedIcon from '@mui/icons-material/ShareOutlined'
 import RouteOutlinedIcon from '@mui/icons-material/RouteOutlined'
+import VideocamOutlinedIcon from '@mui/icons-material/VideocamOutlined'
+import KeyboardVoiceOutlinedIcon from '@mui/icons-material/KeyboardVoiceOutlined'
+import ModeOfTravelOutlinedIcon from '@mui/icons-material/ModeOfTravelOutlined'
+import ScheduleSendOutlinedIcon from '@mui/icons-material/ScheduleSendOutlined'
+import SendOutlinedIcon from '@mui/icons-material/SendOutlined'
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
 import ShowChartOutlinedIcon from '@mui/icons-material/ShowChartOutlined'
 import SmartphoneOutlinedIcon from '@mui/icons-material/SmartphoneOutlined'
@@ -142,6 +147,8 @@ const coreFeatures: CoreFeature[] = [
     points: [
       { id: 'welcome.agent.points.asks', Icon: ChatBubbleOutlineOutlinedIcon },
       { id: 'welcome.people.points.chats', Icon: ForumOutlinedIcon },
+      { id: 'welcome.core.chat.points.calls', Icon: VideocamOutlinedIcon },
+      { id: 'welcome.core.chat.points.voice', Icon: KeyboardVoiceOutlinedIcon },
       { id: 'welcome.core.chat.points.call', Icon: PhoneInTalkOutlinedIcon },
       { id: 'welcome.phone.points.notify', Icon: NotificationsActiveOutlinedIcon },
       { id: 'welcome.core.chat.points.links', Icon: LinkOutlinedIcon },
@@ -174,6 +181,7 @@ const coreFeatures: CoreFeature[] = [
       { id: 'welcome.agent.points.drafts', Icon: ReplyOutlinedIcon },
       { id: 'welcome.agent.points.follows', Icon: TaskAltOutlinedIcon },
       { id: 'welcome.agent.points.answers', Icon: AutoAwesomeOutlinedIcon },
+      { id: 'welcome.core.mail.points.schedules', Icon: ScheduleSendOutlinedIcon },
     ],
   },
   {
@@ -211,6 +219,7 @@ const coreFeatures: CoreFeature[] = [
     points: [
       { id: 'welcome.core.location.points.visits', Icon: PlaceOutlinedIcon },
       { id: 'welcome.core.location.points.places', Icon: EditLocationAltOutlinedIcon },
+      { id: 'welcome.core.location.points.trips', Icon: ModeOfTravelOutlinedIcon },
       { id: 'welcome.people.points.location', Icon: Diversity3OutlinedIcon },
       { id: 'welcome.core.location.points.paths', Icon: RouteOutlinedIcon },
       { id: 'welcome.core.location.points.agent', Icon: AutoAwesomeOutlinedIcon },
@@ -232,6 +241,7 @@ const coreFeatures: CoreFeature[] = [
       { id: 'welcome.coding.points.page', Icon: WebOutlinedIcon },
       { id: 'welcome.coding.points.asks', Icon: HelpOutlineOutlinedIcon },
       { id: 'welcome.core.coding.points.agents', Icon: SchemaOutlinedIcon },
+      { id: 'welcome.core.coding.points.files', Icon: SendOutlinedIcon },
       { id: 'welcome.coding.points.remembers', Icon: AccountTreeOutlinedIcon },
       { id: 'welcome.coding.points.anywhere', Icon: DirectionsCarOutlinedIcon },
     ],
@@ -262,6 +272,7 @@ const coreFeatures: CoreFeature[] = [
       { id: 'welcome.finance.points.receipts', Icon: ReceiptLongOutlinedIcon },
       { id: 'welcome.finance.points.budgets', Icon: SavingsOutlinedIcon },
       { id: 'welcome.finance.points.netWorth', Icon: ShowChartOutlinedIcon },
+      { id: 'welcome.finance.points.share', Icon: Diversity3OutlinedIcon },
       { id: 'welcome.core.finance.points.taxes', Icon: RequestQuoteOutlinedIcon },
     ],
   },

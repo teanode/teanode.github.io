@@ -34,10 +34,17 @@ operator's `photos.trashRetention`). Search by
 place, date, camera, file name or what is in the photo, or ask your agent for
 "the pictures from the lake last summer".
 
-Your agent looks at a photo only when it needs to: when you ask about one,
-or when narrowing by date and place is not enough. What it saw is kept as a
-short description, so the next search finds that photo by it. A photo it
-looks at is sent to the model service your server uses.
+Each new picture taken in the last 30 days is read as it arrives: described
+in a few words, so a search finds it by what is in it. A receipt in one is
+recorded in [Finance](/doc/finance) and matched to its charge, unless the same
+purchase is recorded already from its mail; a statement's transactions go
+into the account you imported its statements into before; a paystub or a W-2
+is kept with your tax documents. A photo's details say what it was read as.
+Turn this off with **Read new photos** in your preferences.
+
+Older photos are looked at only when needed: when you ask about one, or when
+narrowing by date and place is not enough, and what was seen is kept the same
+way. A photo that is read is sent to the model service your server uses.
 
 ## People
 

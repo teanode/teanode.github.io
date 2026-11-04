@@ -21,6 +21,19 @@ the app and turn it on.
 What the phone records waits on the phone only until your server has it, so a
 day offline arrives whole when the network is back.
 
+## Trips and ways of travel
+
+Between two visits is a trip, and each part of it is sorted into a way of
+travel: walk, run, bike, car, bus, train, boat or plane. Walking, running,
+cycling and driving come from the iPhone's motion activity, which the app
+asks for as **Motion & Fitness** in Location setup; a flight is told by its
+distance and speed, and without motion activity the speed alone is a guess.
+A bus, a train or a boat is yours to say: open the part's menu and choose
+the right way, and your correction stays when the day is worked out again.
+
+The **Travel** tab adds up how far you went each way, by day, week, month and
+year, in the units you chose.
+
 ## Where the names come from
 
 A new place is first named after its nearest city, from a table that ships
@@ -40,8 +53,8 @@ Your location is yours. You share it with one person you share a
 
 - **Where I am now**: where you are and the place you are at, and nothing
   before it.
-- **Where I am and where I have been**: also your visits, your places and
-  your paths.
+- **Where I am and where I have been**: also your visits, your places, your
+  paths and your trips.
 
 The people you share with see you on a map, live, on the dashboard and in the
 app. When you arrive at or leave a place you named or labeled, they get a
@@ -52,7 +65,8 @@ ends the share at once.
 ## Your agent
 
 Your agent reads all of it with its `location` tool: where you are, where
-you were, which places you go to, and where the people who share with you
+you were, how you got there and how far you cycled this month, which places
+you go to, and where the people who share with you
 are. Each day you have visits also becomes a short journal page that the
 agent's dreams read, so it learns your routine. In a chat with other people
 it speaks only of your own location, never of somebody who shared theirs
@@ -66,5 +80,5 @@ removes one place and its visits. What your agent already learned from those
 days stays in its memory until you remove it there, and the screens say so
 when you erase. Turning Location off in the app stops the recording.
 
-On the command line it is `teanode location`, with `now`, `visits`, `places`,
-`share`, `erase` and the rest; `teanode location --help` lists them.
+On the command line it is `teanode location`, with `now`, `visits`, `trips`,
+`travel`, `places`, `share`, `erase` and the rest; `teanode location --help` lists them.

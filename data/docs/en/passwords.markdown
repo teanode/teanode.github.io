@@ -30,9 +30,11 @@ for a while.
 
 ## Where it fills
 
-- **Chrome.** The TeaNode extension fills a login on its site, offers to save
-  one after you sign in, makes up strong passwords, and makes and uses
-  passkeys.
+- **Chrome.** The TeaNode extension's button opens a list of the logins saved
+  for the site in front of you, and Control-Shift-L then Enter fills the
+  first one. A login you just typed puts a **+** on the button, and the list
+  offers to save or update it. It also makes up strong passwords, and makes
+  and uses passkeys. It draws nothing into the websites themselves.
 - **The iPhone.** Turn on TeaNode in Settings, General, AutoFill & Passwords,
   and Safari, Chrome and other apps offer its logins, passkeys and one-time
   codes. A passkey sign-in on a computer, through its QR code, can use it too.

@@ -20,7 +20,7 @@ window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-XD5JSLP4RH', {send_page_view: false});
-</script><script type="module" crossorigin src="/static/teanode.DM_KTpby.js"></script></head><body><div id="teanode"><style>.teanode-static{max-width:760px;margin:0 auto;padding:24px 16px 48px;font:16px/1.6 system-ui,sans-serif;opacity:0;animation:teanode-static 0s 2s forwards}.teanode-static pre{overflow-x:auto}@keyframes teanode-static{to{opacity:1}}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .teanode-static{color:#e8e8ea}:root:not([data-theme=light]) .teanode-static a{color:#9ccc65}}:root[data-theme=dark] .teanode-static{color:#e8e8ea}:root[data-theme=dark] .teanode-static a{color:#9ccc65}</style><div class="teanode-static"><p><a href="/">TeaNode</a> · <a href="/doc">Documentation</a> · <a href="https://github.com/ziyan/teanode">Source</a></p><h1>The command line</h1><p>TeaNode is two programs. <code>teanode-server</code> is the mail server, and the few
+</script><script type="module" crossorigin src="/static/teanode.UN7k4QJ-.js"></script></head><body><div id="teanode"><style>.teanode-static{max-width:760px;margin:0 auto;padding:24px 16px 48px;font:16px/1.6 system-ui,sans-serif;opacity:0;animation:teanode-static 0s 2s forwards}.teanode-static pre{overflow-x:auto}@keyframes teanode-static{to{opacity:1}}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .teanode-static{color:#e8e8ea}:root:not([data-theme=light]) .teanode-static a{color:#9ccc65}}:root[data-theme=dark] .teanode-static{color:#e8e8ea}:root[data-theme=dark] .teanode-static a{color:#9ccc65}</style><div class="teanode-static"><p><a href="/">TeaNode</a> · <a href="/doc">Documentation</a> · <a href="https://github.com/ziyan/teanode">Source</a></p><h1>The command line</h1><p>TeaNode is two programs. <code>teanode-server</code> is the mail server, and the few
 things only its own host can do. <code>teanode</code> is the client: it administers a
 server over the API, from anywhere, and is what an operator has open.</p>
 <p>Everything the client changes goes through the running server rather than
@@ -263,8 +263,24 @@ so one command serves a person and a script.</p>
 <td>your library of photos and videos: <code>list</code>, <code>read</code>, <code>describe</code>, <code>upload</code>, <code>download</code>, <code>favorite</code>, <code>set-date</code> (correct when a photo was taken), <code>search-places</code>, <code>set-location</code> and <code>remove-location</code> (where it was taken), <code>trash</code>, <code>restore</code>, <code>retry</code>, <code>save</code> (keep a photo of a shared album, or a file of a conversation), <code>delete</code>, <code>empty-trash</code>, <code>library</code>, <code>album</code> for named sets of photos, with sharing, and <code>people</code> and <code>faces</code> for the people found in them; see below</td>
 </tr>
 <tr>
+<td><code>shopping</code></td>
+<td>your shopping lists: <code>lists</code>, <code>show</code>, <code>create</code>, <code>add</code> (items, or a list read from a file or pictures), <code>check</code>, <code>store</code> and <code>shop</code> for the store, <code>receipt</code> for what a receipt did, and the rest; see below</td>
+</tr>
+<tr>
+<td><code>journal</code></td>
+<td>a page for each day, with your words and mood and your agent&#39;s story of it, and the weeks, months and years above the days; see below</td>
+</tr>
+<tr>
 <td><code>finance</code></td>
 <td>linked institutions, transactions, trades, net worth, budgets and savings targets; see below</td>
+</tr>
+<tr>
+<td><code>search</code></td>
+<td>your words across chats, mail, contacts, photos, memory, documents, recordings, places and finance at once; see below</td>
+</tr>
+<tr>
+<td><code>link</code></td>
+<td>web links as the dashboard and the app show them: <code>link preview --conversation &lt;id&gt; &lt;url&gt;...</code>; see below</td>
 </tr>
 <tr>
 <td><code>api</code></td>
@@ -332,7 +348,8 @@ agent does the same through <code>mail_read</code> with <code>invitation</code> 
 <code>answer_invitation</code>, which asks you first because it speaks for you.</p>
 <p>The rest of the group is the rest of the mailbox. <code>mailbox list</code> names the
 mailboxes you can open, and <code>--all</code> every mailbox on the server with its
-owner; <code>show</code> and <code>update</code> read and change a mailbox&#39;s name and signature.
+owner (for the operator or an account manager, not a domain manager);
+<code>show</code> and <code>update</code> read and change a mailbox&#39;s name and signature.
 <code>folder list|create|rename|move|pin|unpin|delete</code> is the tree in the rail.
 <code>rule list|add|remove|enable|disable|test|apply</code> is the filing.
 <code>subscription list|show|mail|unsubscribe</code> the mailing lists it receives,
@@ -373,6 +390,8 @@ and says underneath when something would stop a published record having any
 effect, most often a DMARC policy of none.</p>
 <p>Removing stops serving the file. Take the record down as well, or receivers
 keep fetching an address that answers nothing.</p>
+<h3>The units you read measurements in</h3>
+<p><code>teanode user update robin --units metric|us|automatic</code> chooses degrees Celsius and kilometers, degrees Fahrenheit and miles, or (the default) the units your language and region use. The dashboard&#39;s Profile page and the app&#39;s Profile screen set the same choice, and it decides how the Journal writes temperatures and distances, and Location its distances, on the dashboard, in the app, in <code>teanode journal day</code> and <code>teanode location</code>, and in the pages your agent writes; with <code>automatic</code> the command line reads the region of your shell&#39;s language (<code>LANG</code>), and a language with no region reads as metric. The agent sets it with the <code>account</code> tool&#39;s <code>update</code> and its <code>measurement_system</code> argument.</p>
 <h3>A person&#39;s picture</h3>
 <p><code>teanode user avatar set|remove</code> is the picture shown beside a person&#39;s name
 on the dashboard and in the app, and the initial on a
@@ -400,6 +419,8 @@ teanode circle accept &lt;invitation-id&gt;                # or: decline &lt;inv
 teanode circle show &lt;circle-id&gt;                      # members, roles, and for an admin who is still being waited for
 teanode circle role &lt;circle-id&gt; personb admin        # or member
 teanode circle people                                # everybody you share a circle with, once each (the username where there is no name), and what each is to you
+teanode circle person personb                        # personb&#39;s card: what they are to you, and a few items of everything of theirs you can see
+teanode circle person --contact &lt;address-book-id&gt;/&lt;contact-id&gt;   # or one of your contacts; --limit sets the items of each part, 3 to 10
 teanode circle relate personb father                 # personb is your father; they are told and see you as their son or daughter
 teanode circle unrelate personb                      # take it away, for both of you
 </code></pre>
@@ -407,7 +428,13 @@ teanode circle unrelate personb                      # take it away, for both of
 the circle and need you to be one of its admins; a member who is not one is
 told so. <code>leave</code> takes you out, and the last person to leave deletes the circle.
 A circle always keeps an admin, so the last admin cannot leave or be made a
-member while others remain; make somebody else an admin first, or delete it.</p>
+member while others remain; make somebody else an admin first, or delete it.
+Leaving, being taken out with <code>remove</code>, and <code>delete</code> end what the person (or,
+for <code>delete</code>, every member) shared with the circle and with anyone they then
+share no other circle with, and it does not come back if they join again; what
+others shared with the circle stops reaching them. <code>delete</code> also deletes the
+circle&#39;s calendar, albums, chat and address book with every contact in it. Each
+asks first, and says so.</p>
 <p><code>accept</code> and <code>decline</code> of an invitation that was already answered, or has
 expired, say so. <code>invite</code> answers the same whether or not the username is an account, and
 whether or not that person is in the circle already or may use circles, so it
@@ -416,6 +443,8 @@ is not a way to list who is on the server. An invitation lasts thirty days.</p>
 invitation, for somebody who will not set it up themselves:</p>
 <pre><code>teanode circle add &lt;circle-id&gt; personb               # --admin for an admin
 </code></pre>
+<p>The circle&#39;s admins are told, in the note and phone notification an invitation
+gives, and the audit log (<code>circle_member</code>) records who was put in.</p>
 <p>For an account that does not exist yet, <code>teanode user create</code> takes the circles
 in the same breath, so the person is in them as soon as they have a password
 (<code>--circle</code> is repeatable, and they join as members):</p>
@@ -425,6 +454,17 @@ in the same breath, so the person is in them as soon as they have a password
 error names the circle and the <code>circle add</code> that finishes the job. Without
 <code>user:manage</code>, <code>circle add</code> says it needs that permission; it does not answer
 that the circle was not found.</p>
+<p><code>person</code> prints a person&#39;s card, by username or account id, or by one of your
+contacts: your contact details for them, the circles you share, and a few items
+from each part of the app that concerns them. It prints where they are (or
+<code>Location paused until 15:00</code> when they paused recording, with no position) and
+their visits today, the health they share, photos of them and albums they
+shared, recent mail with them, recordings they speak in, and memory pages about
+them. A part says why it shows nothing: <code>not shared with you</code> when they have not
+shared it, or that no contact of yours is linked to them (<code>teanode contact link</code>
+links one), and a part you may not use is left out. Mail, photos of them,
+recordings and memory pages are found through your contact for them, so they
+need one. Somebody you share no circle with is not found, whoever they are.</p>
 <p><code>relate</code> says what somebody you share a circle with is to you, so that &quot;ask my
 father&quot; or &quot;where is my wife&quot; reaches the right account. It prints what the two
 of you now are to each other: <code>Sam Lee is your father; they will see you as their son.</code> The other person is told (at most once a day), sees you as the
@@ -443,9 +483,33 @@ other side of a relationship uses for you (<code>son</code> rather than <code>ch
 your agent speaks of you; without it, you are spoken of as they and never
 guessed at from a name. <code>circle relate</code> and <code>circle unrelate</code> need a circle in common with the person, and say that nobody by that
 name shares one otherwise.</p>
+<h3>Everything shared</h3>
+<p><code>teanode sharing</code> prints what you share and what is shared with you, across
+calendar, location, Health, memory pages, photo albums, recordings, finance
+accounts, skills and passwords. Each kind is still shared and stopped with its
+own command (<code>teanode calendar share</code> and <code>unshare</code>, <code>location</code>, <code>health</code>,
+<code>agent memory share</code>, <code>photo album share</code>, <code>recording share</code>, <code>finance share</code>,
+<code>agent skill share</code>); this is the one list.</p>
+<pre><code>teanode sharing                                      # two tables: shared by you, shared with you, each with the id of the share
+teanode sharing --json                               # { sharesMade, sharesReceived }
+teanode sharing decline calendar &lt;share-id&gt;          # stop receiving a share that was made to you by name; --force to skip the question
+</code></pre>
+<p>A share to a circle names the circle, a share made to you by name says <code>by name</code>, and a share of passwords is counted (&quot;3 items&quot;), never named. A share of a
+memory page that has since been deleted shows as <code>page deleted (&lt;path&gt;)</code>, and
+<code>teanode agent memory unshare</code> removes it. A calendar shared at <code>busy</code> shows the
+owner&#39;s name where the calendar&#39;s title would be. A finance
+account is named with the last digits of its number (<code>Everyday Checking ••0001</code>). The kinds are <code>calendar</code>, <code>location</code>, <code>health</code>, <code>memory_page</code>
+(<code>memory-page</code> is read the same), <code>photo_album</code>, <code>recording</code>, <code>finance</code>, <code>skill</code>
+and <code>passwords</code>. <code>decline</code> only ends a share that
+was made to you by name: one through a circle ends when you leave the circle,
+and passwords are removed by whoever shared them. The owner is not told, and
+has to share again for you to have it back. The agent does the same with the
+circle tool&#39;s <code>sharing</code> and <code>decline_share</code> actions, except that finance is not
+the agent&#39;s to read: its list leaves finance accounts out and it cannot decline
+one.</p>
 <p>Who sees whom, and what a circle is for, is in <a href="https://github.com/ziyan/teanode/blob/main/docs/subsystems/circles.md"><code>docs/subsystems/circles.md</code></a>.
 The agent does the same through its <code>circle</code> tool, with an action for each
-subcommand under the same word: <code>list</code>, <code>show</code>, <code>people</code>, <code>relate</code>, <code>unrelate</code>,
+subcommand under the same word: <code>list</code>, <code>show</code>, <code>people</code>, <code>person</code>, <code>relate</code>, <code>unrelate</code>,
 <code>create</code>, <code>rename</code>, <code>delete</code>, <code>invite</code>, <code>accept</code>, <code>decline</code>, <code>withdraw</code>, <code>role</code>,
 <code>remove</code> and <code>leave</code>, and for somebody who manages accounts <code>add</code>. Deleting a
 circle, removing a member and leaving are asked about as destructive, a role
@@ -604,7 +668,11 @@ have made.</p>
 </thead>
 <tbody><tr>
 <td><code>teanode agent ask &lt;message | -&gt;</code></td>
-<td>say something to your agent and print what it answers; <code>--new</code> starts a named conversation, <code>--conversation</code> continues one, <code>--attach FILE</code> (repeatable) hands it a file (a picture is shown to it, a text file read to it, anything else named), <code>--recording RECORDING_ID</code> (repeatable) points it at a recording, as Ask agent does on the recording&#39;s page, <code>--photo PHOTO_ID</code> (repeatable) points it at a photo of your library (a photo in the Trash too; one you may not read is refused, and that includes one that is not yours and is in no album shared with you or your circle; for a photo of a shared album the model is told no place unless the share includes places), <code>--reply-to MESSAGE_ID</code> answers a message of the conversation (ids from <code>conversation show --json</code>), <code>--json</code> streams every event, <code>--quiet</code> prints the answer alone. A tool that needs your word asks on the terminal, y or n, never a flag</td>
+<td>say something to your agent and print what it answers; <code>--new</code> starts a named conversation, <code>--conversation</code> continues one, <code>--attach FILE</code> (repeatable) hands it a file (a picture is shown to it, a text file read to it, anything else named), <code>--recording RECORDING_ID</code> (repeatable) points it at a recording, as Ask agent does on the recording&#39;s page, <code>--photo PHOTO_ID</code> (repeatable) points it at a photo of your library (a photo in the Trash too; one you may not read is refused, and that includes one that is not yours and is in no album shared with you or your circle; for a photo of a shared album the model is told no place unless the share includes places), <code>--reply-to MESSAGE_ID</code> answers a message of the conversation (ids from <code>conversation show --json</code>), <code>--voice-message FILE</code> sends a recording as a voice message in a chat (<code>--conversation</code>; half a second to two minutes, any common audio format, which the server makes a mono AAC file; it takes no message, <code>--attach</code>, <code>--address</code>, <code>--mention</code> or <code>--ask-agent</code>; the words appear under it when the server has written them, and <code>conversation show</code> prints it as <code>(voice message 0:07) words</code>, <code>(transcribing)</code> or <code>(no transcript)</code>), <code>--json</code> streams every event, <code>--quiet</code> prints the answer alone. A tool that needs your word asks on the terminal, y or n, never a flag</td>
+</tr>
+<tr>
+<td><code>teanode agent send-file &lt;file&gt; [file...]</code></td>
+<td>send yourself a file in your main chat, where the dashboard and the phone open, and have the phone tell you: <code>--caption</code> adds a line to it, <code>--type</code> names its type when the extension does not. A page or a PDF opens in place, a picture or a video plays. A file may be up to <code>agent.limits.maxSentFileBytes</code> (100 MB by default)</td>
 </tr>
 <tr>
 <td><code>teanode agent chat</code></td>
@@ -620,7 +688,7 @@ have made.</p>
 </tr>
 <tr>
 <td><code>teanode agent conversation direct &lt;username&gt;</code></td>
-<td>open your chat with somebody you share a circle with (<code>circle people</code> lists them) and print <code>conversation &lt;id&gt;: &lt;title&gt;</code>, the id being your own for it; the same chat every time, but each person has an id of their own for the same chat, so one person&#39;s id is not found by the other. <code>ask --conversation ID &lt;text&gt;</code> then says something there and prints that it was sent (a message starts no agent unless it addresses one), <code>ask --conversation ID --ask-agent &lt;text&gt;</code> also asks your own agent there, <code>--address &lt;agent id or owner username&gt;</code> (repeatable) asks another member&#39;s agent there that its owner let the chat ask, and <code>--reply-to &lt;message id&gt;</code> to an agent&#39;s message asks that agent, which answers everybody in the chat under its name while you follow the turn as you would an ordinary ask (what it did to answer stays yours), and <code>chat --conversation ID</code> shows what the others say, a couple of seconds after they say it, and sends each line you type (one that starts with <code>@agent</code> asks your agent)</td>
+<td>open your chat with somebody you share a circle with (<code>circle people</code> lists them) and print <code>conversation &lt;id&gt;: &lt;title&gt;</code>, the id being your own for it; the same chat every time, but each person has an id of their own for the same chat, so one person&#39;s id is not found by the other. <code>ask --conversation ID &lt;text&gt;</code> then says something there and prints that it was sent (a message starts no agent unless it addresses one), <code>ask --conversation ID --ask-agent &lt;text&gt;</code> also asks your own agent there, <code>--address &lt;agent id or owner username&gt;</code> (repeatable) asks another member&#39;s agent there that its owner let the chat ask, <code>--mention &lt;username&gt;</code> (repeatable) mentions somebody in the chat and <code>--mention-all</code> everybody, which tells a person whose phone hears only of mentions and asks nothing of their agent, and <code>--reply-to &lt;message id&gt;</code> to an agent&#39;s message asks that agent, which answers everybody in the chat under its name while you follow the turn as you would an ordinary ask (what it did to answer stays yours), and <code>chat --conversation ID</code> shows what the others say, a couple of seconds after they say it, and sends each line you type (one that starts with <code>@agent</code> asks your agent, and an @ before a member&#39;s name or <code>@all</code> mentions them)</td>
 </tr>
 <tr>
 <td><code>teanode agent conversation group &lt;title&gt; --with &lt;username&gt;,...</code></td>
@@ -651,8 +719,12 @@ have made.</p>
 <td>leave a group chat, which you can still read up to now; asks first. A circle&#39;s chat follows the circle: leave the circle instead</td>
 </tr>
 <tr>
-<td><code>teanode agent conversation mute &lt;id&gt; [--until TIME|--off]</code></td>
-<td>silence the chat&#39;s phone notifications for good, or until a time (<code>2026-11-01 09:00</code>, RFC 3339, or how long: <code>8h</code>, <code>3d</code>); <code>--off</code> ends it</td>
+<td><code>teanode agent conversation notifications &lt;id&gt; all|mentions|off</code></td>
+<td>what your phone is told of in the chat: every message, only a message that mentions you or everybody, or nothing; it stays until you change it</td>
+</tr>
+<tr>
+<td><code>teanode agent conversation say &lt;id&gt; &lt;text&gt;</code></td>
+<td>say something in a chat under your own name, as if you typed it, for a script or an agent working for you: an @ before a member&#39;s name, as <code>members</code> shows it, mentions them and <code>@all</code> everybody, <code>--reply-to &lt;message id&gt;</code> answers a message, and it asks no agent (<code>ask --conversation</code> does). <code>--as-agent</code> says it under your agent&#39;s name instead, which needs your agent on. Prints the message id. Your agent&#39;s <code>conversation</code> tool, which a harness reaches over MCP, does the same with <code>send</code> (<code>author_kind</code> <code>person</code> or <code>agent</code>)</td>
 </tr>
 <tr>
 <td><code>teanode agent conversation read &lt;id&gt;</code></td>
@@ -663,8 +735,20 @@ have made.</p>
 <td>change one of your messages in a chat; the others see it was edited</td>
 </tr>
 <tr>
+<td><code>teanode agent conversation transcribe &lt;message-id&gt;</code></td>
+<td>write the words of a voice message that has none, paid by your agent; everybody in the chat sees them</td>
+</tr>
+<tr>
 <td><code>teanode agent conversation delete-message &lt;message-id&gt;</code></td>
 <td>delete a message of yours in a chat, or any message in a group you are an admin of; asks first</td>
+</tr>
+<tr>
+<td><code>teanode agent conversation calls &lt;id&gt;</code></td>
+<td>the calls of a chat, newest first: who started each, how long it went or that it was missed or declined, and who was on it. Calls are made and answered in the dashboard and the app</td>
+</tr>
+<tr>
+<td><code>teanode agent conversation call &lt;call-id&gt;</code></td>
+<td>one call, with its transcript when somebody turned transcription on, each line under its speaker, and the recording it became (yours, or shared with you)</td>
 </tr>
 <tr>
 <td><code>teanode agent conversation list|show|new|rename|goal|main|archive|unarchive|delete</code></td>
@@ -672,7 +756,11 @@ have made.</p>
 </tr>
 <tr>
 <td><code>teanode agent waiting [--first N]</code></td>
-<td>the questions and approvals the agent waits on in every conversation, newest first, with how many there are in all (calls other people&#39;s agents make through a skill you shared wait for you too and are not listed here: <code>agent skill calls &lt;share-id&gt; --waiting</code> lists them); <code>waiting approve|deny &lt;id&gt;</code> and <code>waiting answer &lt;id&gt; &lt;answer&gt;</code> answer one, as its card in the chat would</td>
+<td>the questions and approvals the agent waits on in every conversation, newest first, with how many there are in all (calls other people&#39;s agents make through a skill you shared wait for you too and are not listed here: <code>agent skill calls &lt;share-id&gt; --waiting</code> lists them); <code>waiting approve|deny &lt;id&gt;</code> and <code>waiting answer &lt;id&gt; &lt;answer&gt;</code> answer one, as its card in the chat would (a request to take the browser tab over is answered in words this way too)</td>
+</tr>
+<tr>
+<td><code>teanode agent tab</code></td>
+<td>your browser as the agent reaches it through the extension: whether it is connected, its tabs (yours and the ones the agent opened, and which is in use), and whether you have taken the tab over on the dashboard&#39;s Browser page; <code>tab hand-back [note]</code> gives it back, with a note for the agent, and answers the agent&#39;s requests to take it over. Taking a tab over needs its picture, so it is the dashboard&#39;s</td>
 </tr>
 <tr>
 <td><code>teanode agent goal list [--state working|waiting|met|dropped]</code></td>
@@ -728,7 +816,7 @@ have made.</p>
 </tr>
 <tr>
 <td><code>teanode agent memory share &lt;path&gt; &lt;username|circle-id&gt;|shares|unshare &lt;share-id&gt;|shared</code></td>
-<td>pages of your memory shared with other people, read only. <code>share people/alice-chen ben</code> gives <code>ben</code>, who must be in a circle with you, the page and everything under it (<code>people/alice-chen/...</code>, never <code>people/alice-chen-two</code>); a circle by name or identifier shares it with everyone in it you are in (a username is that person even when a circle has the same name; a name two circles have is refused with their identifiers and sizes). The words each fact was read in (your mail, documents) stay private unless you add <code>--with-quotes</code>, and those from a chat never are shown; sharing again changes that. <code>--preview</code> prints exactly what they would see and how many pages it reaches, and shares nothing. <code>shares</code> lists what you shared, with whom and whether the quotes are shown; <code>unshare</code> takes one back and the reader loses the page at once, because nothing was copied, as they do when one of you leaves the circle you share. <code>shared</code> lists the pages other people shared with you, by who shared them, and <code>shared --query words [--first N]</code> finds the words in their names, openings and facts, saying whose each hit is and, when more matched than it shows (the hits of every owner are taken in turn before it stops), that there may be more. <code>memory get &lt;path&gt; --owner &lt;username&gt;</code> reads one of those, with its facts numbered as its owner numbers them, where each was read (&quot;from their mail&quot;) and the quotes only if they chose to share them (never those of a fact read in a chat), and no overview, which it says is not shared; a page not shared with you is not found</td>
+<td>pages of your memory shared with other people, read only. <code>share people/alice-chen ben</code> gives <code>ben</code>, who must be in a circle with you, the page and everything under it (<code>people/alice-chen/...</code>, never <code>people/alice-chen-two</code>); a circle by name or identifier shares it with everyone in it you are in (a username is that person even when a circle has the same name; a name two circles have is refused with their identifiers and sizes). The words each fact was read in (your mail, documents) stay private unless you add <code>--with-quotes</code>, and those from a chat or a recording never are shown; sharing again changes that. A fact whose evidence is all finance, recordings, location or a private calendar event is never shown either. <code>--preview</code> prints exactly what they would see, lists the pages it reaches (the first fifty, and a page added under it later is shared too) and how many facts stay private, and shares nothing. <code>shares</code> lists what you shared, with whom and whether the quotes are shown; <code>unshare</code> takes one back and the reader loses the page at once, because nothing was copied, as they do when one of you leaves the circle you share. <code>shared</code> lists the pages other people shared with you, by who shared them, and <code>shared --query words [--first N]</code> finds the words in their names, openings and facts, saying whose each hit is and, when more matched than it shows (the hits of every owner are taken in turn before it stops), that there may be more. <code>memory get &lt;path&gt; --owner &lt;username&gt;</code> reads one of those, with its facts numbered as its owner numbers them, where each was read (&quot;from their mail&quot;) and the quotes only if they chose to share them (never those of a fact read in a chat or a recording), and no overview, which it says is not shared; a page not shared with you is not found</td>
 </tr>
 <tr>
 <td><code>teanode agent memory recall &quot;&lt;question&gt;&quot;</code></td>
@@ -784,7 +872,7 @@ have made.</p>
 </tr>
 <tr>
 <td><code>teanode agent schedule list|add|set|enable|disable|remove|run</code></td>
-<td>what it does on its own at set times: <code>add Morning &quot;0 8 * * 1-5&quot; &quot;what needs me today?&quot; --deliver mail</code>, a cron line in your zone; or a single moment, <code>&quot;@at 2026-09-12 09:00&quot;</code>, or a distance from now, <code>&quot;@in 20m&quot;</code>, which is stored as the moment it means and runs once. <code>set &lt;id&gt; --cron &quot;0 7 * * 1-5&quot;</code> changes one in place — <code>--name</code>, <code>--cron</code>, <code>--prompt</code> (<code>-</code> reads it from standard input) and <code>--deliver</code>, and only what you give changes — and <code>disable &lt;id&gt;</code> stops it running without taking it away, <code>enable &lt;id&gt;</code> starts it again</td>
+<td>what it does on its own at set times: <code>add Morning &quot;0 8 * * 1-5&quot; &quot;what needs me today?&quot; --deliver mail</code>, a cron line in your zone; or a single moment, <code>&quot;@at 2026-09-12 09:00&quot;</code>, or a distance from now, <code>&quot;@in 20m&quot;</code>, which is stored as the moment it means and runs once. <code>add --on-mail from:contains:news@school.example &quot;School pictures&quot; &quot;save the pictures it links&quot;</code> runs it whenever such a message arrives instead, with no cron line: <code>--on-mail</code> takes a test written as a mailbox rule&#39;s <code>--when</code> is (from, to, subject, <code>header:Name:operator:value</code>, or <code>any</code>; contains, equals or matches), repeatable, and every one must pass. <code>set &lt;id&gt; --cron &quot;0 7 * * 1-5&quot;</code> changes one in place (<code>--name</code>, <code>--cron</code>, <code>--on-mail</code>, <code>--prompt</code>, where <code>-</code> reads it from standard input, and <code>--deliver</code>), and only what you give changes; <code>--cron</code> makes a schedule that ran on mail run at set times again, and <code>--on-mail</code> the reverse. <code>disable &lt;id&gt;</code> stops it running without taking it away, <code>enable &lt;id&gt;</code> starts it again. A schedule made or reworded from the command line is recorded as the agent&#39;s, not yours, so its runs cannot use Passwords; one you save on the dashboard or in the iPhone app is yours</td>
 </tr>
 <tr>
 <td><code>teanode agent brief on|off|now</code></td>
@@ -799,12 +887,12 @@ have made.</p>
 <td>the chat apps you talk to your agent from: your own Telegram or Discord bot. <code>set telegram --token -</code> reads the bot&#39;s token from standard input; <code>list</code> shows the code a chat sends the bot as <code>/link CODE</code> to become the linked one, and whether the bot runs; <code>unlink</code> draws a new code</td>
 </tr>
 <tr>
-<td><code>teanode contact list|show|add|edit|remove|remove-picture</code></td>
-<td>your address book: the people you keep, which your phone and your computer synchronize over CardDAV. <code>add --name &quot;Ada Lovelace&quot; --email ada@example.com</code> keeps one; <code>edit &lt;id&gt; --name &quot;Ada King&quot;</code> changes only what you give and leaves the rest of the card alone, so correcting a name does not throw away the photograph a phone put there; <code>--card -</code> reads a whole vCard from standard input; <code>remove-picture &lt;id&gt;</code> takes only the picture off a contact (asks first, or <code>--force</code>), whoever put it there, and leaves the rest of the card</td>
+<td><code>teanode contact list|show|add|edit|remove|remove-picture|link|unlink|suggestions|book</code></td>
+<td>your address book: the people you keep, which your phone and your computer synchronize over CardDAV. <code>add --name &quot;Ada Lovelace&quot; --email ada@example.com</code> keeps one; <code>edit &lt;id&gt; --name &quot;Ada King&quot;</code> changes only what you give and leaves the rest of the card alone, so correcting a name does not throw away the photograph a phone put there; <code>--card -</code> reads a whole vCard from standard input; <code>remove-picture &lt;id&gt;</code> takes only the picture off a contact (asks first, or <code>--force</code>), whoever put it there, and leaves the rest of the card. <code>link &lt;contact id&gt; &lt;username&gt;</code> links a contact to somebody you share a circle with (it looks in each of your address books for the contact, and with the id in more than one book it refuses until <code>--address-book &lt;id&gt;</code> chooses; it refuses your own account, someone outside your circles and someone another contact in that book already is); <code>unlink &lt;contact id&gt;</code> removes the link (also with <code>--address-book</code>); <code>show</code> and <code>list</code> then say <code>in your circles as &lt;username&gt;</code>. Only you see the link: that person is not told and sees nothing. <code>suggestions</code> lists your unlinked contacts that carry a mailbox address of someone in your circles, each with the <code>link</code> command that confirms it (and the address book it is in, when you have more than one), and never says which address matched. A link ends when you and that person stop sharing any circle. Your own address books are never shared. A circle has an address book of its own that everyone in it reads and edits, and your phone shows as another book: <code>contact book create --circle &lt;id or name&gt; [--name &lt;name&gt;]</code> makes it (anyone in the circle may, once), <code>contact book list</code> shows your books and your circles&#39; with whose each is, <code>contact book rename &lt;book id&gt; &lt;name&gt;</code> renames one and <code>contact book delete &lt;book id&gt;</code> deletes a circle&#39;s with every contact in it (asks first, or <code>--force</code>); renaming or deleting a circle&#39;s is for an admin of the circle. <code>list</code>, <code>add</code>, <code>edit</code>, <code>show</code>, <code>remove</code> and <code>remove-picture</code> work in your own book unless <code>--book &lt;id&gt;</code> chooses a circle&#39;s; a contact id is unique only within its book, so name the circle&#39;s book to reach a contact in it (without <code>--book</code>, <code>show</code>, <code>remove</code> and <code>remove-picture</code> look in your own books first and never act on a circle&#39;s contact of the same id). A card in a circle&#39;s book is never linked to an account, is not known as a sender, and is not read by your agent. Leaving the circle ends your access at once</td>
 </tr>
 <tr>
 <td><code>teanode calendar list|show|add|edit|remove</code></td>
-<td>your calendar, which your phone and your computer synchronize over CalDAV. <code>list --from 2026-09-14 --until 2026-09-21</code> prints one line for every time something happens, a repeating event once per occurrence; <code>add --title Standup --starts 2026-09-14T09:30 --repeat FREQ=WEEKLY;BYDAY=MO</code> puts something in it; <code>--invite ada@example.com</code> sends the invitation by mail, and moving or removing the event tells everybody invited; <code>--all-day</code> belongs to the day rather than to a time, and its <code>--ends</code> is the last day it is on, so the same date at both ends is one day; <code>--private</code> marks the event private (<code>--private=false</code> takes the mark off), so people your calendar is shared with see only that you are busy, and <code>list</code> and <code>show</code> say which events are private; <code>--file -</code> reads a whole iCalendar file from standard input. Times are read and written in the calendar&#39;s own zone unless they carry an offset</td>
+<td>your calendar, which your phone and your computer synchronize over CalDAV. <code>list --from 2026-09-14 --until 2026-09-21</code> prints one line for every time something happens, a repeating event once per occurrence; <code>add --title Standup --starts 2026-09-14T09:30 --repeat FREQ=WEEKLY;BYDAY=MO</code> puts something in it, <code>--repeat</code> taking an iCalendar rule as the dashboard and the iPhone app write it (<code>FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR</code> is every weekday, <code>FREQ=WEEKLY;INTERVAL=2;UNTIL=20261231T235959Z</code> every other week until the end of that day in UTC, <code>UNTIL=20261231</code> for an all-day event); <code>--invite ada@example.com</code> sends the invitation by mail, and moving or removing the event tells everybody invited; <code>--all-day</code> belongs to the day rather than to a time, and its <code>--ends</code> is the last day it is on, so the same date at both ends is one day; <code>--private</code> marks the event private (<code>--private=false</code> takes the mark off), so people your calendar is shared with see only that you are busy, and <code>list</code> and <code>show</code> say which events are private; <code>--file -</code> reads a whole iCalendar file from standard input. Times are read and written in the calendar&#39;s own zone unless they carry an offset</td>
 </tr>
 <tr>
 <td><code>teanode calendar request &lt;request-id&gt;</code></td>
@@ -827,6 +915,10 @@ have made.</p>
 <td>make the calendar a circle keeps for itself, which everyone in the circle reads and writes (admins only; a circle has one). Its events cannot have guests</td>
 </tr>
 <tr>
+<td><code>teanode calendar circle-delete &lt;circle-id&gt;</code></td>
+<td>delete the calendar a circle keeps for itself, with every event in it, for everyone in the circle (admins only; asks first, or <code>--force</code>). The circle stays and may make a new one. <code>teanode calendar set --calendar &lt;id&gt;</code> renames a circle&#39;s calendar, for an admin</td>
+</tr>
+<tr>
 <td><code>teanode calendar list --owner &lt;username|everyone&gt;</code></td>
 <td>what other people shared with you, at the level each was shared at, each line saying whose it is: one person&#39;s, or <code>everyone</code> for all of them and your circles&#39; own calendars. Time shared only as busy prints as <code>busy</code></td>
 </tr>
@@ -839,12 +931,48 @@ have made.</p>
 <td>the calendars themselves, yours, your circles&#39; and the ones shared with you, the last two with whose they are and the level you reach them at; for your own, what it is called, what a client paints them, the zone a new event is written in, and the day a week is drawn from: <code>set --timezone Europe/Berlin</code>, <code>set --week-start monday</code>. Weeks start on Sunday unless a calendar says otherwise; the five-day view is Monday to Friday either way, because that is what a working week is</td>
 </tr>
 <tr>
-<td><code>teanode location now|visits|places|path|nearby|search|addresses|save|forget|checkin|erase</code></td>
-<td>where you are and where you have been. The TeaNode app on your iPhone reports where you go (nothing on the command line reports a position); each visit is to a place, and place names come from OpenStreetMap unless you named the place: your server sends the position of each new place to the place provider to look up its name. <code>now</code> is your latest position and the visit in progress; <code>visits --from 2026-10-10 --until 2026-10-12</code> lists visits newest first (<code>--place &lt;id&gt;</code>, <code>--label home</code>, <code>--first</code> up to 200 and <code>--offset</code> to page); <code>places</code> lists your places, the ones with a label first (<code>--label</code>, <code>--query</code>); <code>path --day 2026-10-11</code> is one day&#39;s positions, oldest first. <code>nearby</code> is what OpenStreetMap calls the place at a position and your own places there (only your own while the server&#39;s place provider is switched off), and <code>search playground --radius 5000</code> finds places by words near where you were last reported to be (<code>--near-place &lt;id&gt;</code>, or <code>--latitude</code> and <code>--longitude</code>; <code>--first</code> up to 50); searching needs the server&#39;s place provider to be switched on. <code>addresses &quot;6 Rue Example, Exampleton&quot;</code> lists the addresses matching the words, nearest first to one of your places (<code>--near-place &lt;id&gt;</code>), to a position (<code>--latitude</code> and <code>--longitude</code>), or to where you were last reported to be, with their latitude and longitude and how far each is from there (<code>--first</code> up to 20, 8 by default); it needs the place provider too, and the words you type are sent to it. <code>save &lt;place-id&gt; --name &quot;Grandma&#39;s&quot; --label family --radius 100</code> names, labels and resizes a place (an empty <code>--name</code> goes back to OpenStreetMap&#39;s, <code>--label none</code> takes the label off, labels are home, work, school, family and gym), and without an id <code>save --latitude 40.0 --longitude -75.0 --name Piano</code> makes a place. <code>save &lt;place-id&gt; --address &quot;6 Rue Example, Exampleton&quot;</code> looks the words up, moves the place to the first match, the one nearest to the place, and keeps that address (the place keeps its label and any name you gave it, and OpenStreetMap does not rename it), then prints the address it chose and the other matches; if the first was wrong, rerun with <code>--latitude</code>, <code>--longitude</code> and <code>--address-text</code> copied from <code>addresses</code>. Without an id, <code>save --address &quot;...&quot; --label home</code> makes your home, or labels your own place that is already there. <code>checkin --place &lt;id&gt;</code> records that you are there now and ends the visit in progress (where you already are, nothing changes); <code>checkin --latitude 40.0 --longitude -75.0</code> checks you in at your own place that holds the position, or makes a new place there that is called after its city until OpenStreetMap names it. <code>forget &lt;place-id&gt;</code> forgets a place and every visit to it. <code>erase [--from &lt;time&gt;] [--until &lt;time&gt;]</code> erases your positions and visits (in the range, or all of them), and the places left with no visit that you did not name or label; places you named or labeled stay, and anything your agent already learned from those days stays in its memory until you remove it. Both ask first, and cannot be undone (<code>--force</code> skips the question)</td>
+<td><code>teanode location now|visits|places|path|nearby|search|addresses|save|forget|forget-visit|checkin|erase</code></td>
+<td>where you are and where you have been. The TeaNode app on your iPhone reports where you go (nothing on the command line reports a position); each visit is to a place, and place names come from OpenStreetMap unless you named the place: your server sends the position of each new place to the place provider to look up its name. <code>now</code> is your latest position and the visit in progress; <code>visits --from 2026-10-10 --until 2026-10-12</code> lists visits newest first, with a <code>photo count</code> column counting the photos you took during each of your own visits (<code>--json</code> carries <code>photoCount</code> and the first four <code>photos</code>), and <code>teanode photo list --after</code> and <code>--before</code> at the arrival and departure list them (<code>--place &lt;id&gt;</code>, <code>--label home</code>, <code>--first</code> up to 200 and <code>--offset</code> to page); <code>places</code> lists your places, the ones with a label first (<code>--label</code>, <code>--query</code>), and <code>place &lt;place id&gt;</code> shows one of them by its id; <code>path --day 2026-10-11</code> is one day&#39;s positions, oldest first. <code>nearby</code> is what OpenStreetMap calls the place at a position and your own places there (only your own while the server&#39;s place provider is switched off), and <code>search playground --radius 5000</code> finds places by words near where you were last reported to be (<code>--near-place &lt;id&gt;</code>, or <code>--latitude</code> and <code>--longitude</code>; <code>--first</code> up to 50); searching needs the server&#39;s place provider to be switched on. <code>addresses &quot;6 Rue Example, Exampleton&quot;</code> lists the addresses matching the words, nearest first to one of your places (<code>--near-place &lt;id&gt;</code>), to a position (<code>--latitude</code> and <code>--longitude</code>), or to where you were last reported to be, with their latitude and longitude and how far each is from there (<code>--first</code> up to 20, 8 by default); it needs the place provider too, and the words you type are sent to it. <code>save &lt;place-id&gt; --name &quot;Grandma&#39;s&quot; --label family --radius 100</code> names, labels and resizes a place (an empty <code>--name</code> goes back to OpenStreetMap&#39;s, <code>--label none</code> takes the label off, labels are home, work, school, family and gym), and without an id <code>save --latitude 40.0 --longitude -75.0 --name Piano</code> makes a place. <code>save &lt;place-id&gt; --address &quot;6 Rue Example, Exampleton&quot;</code> looks the words up, moves the place to the first match, the one nearest to the place, and keeps that address (the place keeps its label and any name you gave it, and OpenStreetMap does not rename it), then prints the address it chose and the other matches; if the first was wrong, rerun with <code>--latitude</code>, <code>--longitude</code> and <code>--address-text</code> copied from <code>addresses</code>. Without an id, <code>save --address &quot;...&quot; --label home</code> makes your home, or labels your own place that is already there. <code>checkin --place &lt;id&gt;</code> records that you are there now and ends the visit in progress (where you already are, nothing changes); <code>checkin --latitude 40.0 --longitude -75.0</code> checks you in at your own place that holds the position, or makes a new place there that is called after its city until OpenStreetMap names it. <code>forget &lt;place-id&gt;</code> forgets a place and every visit to it. <code>forget-visit &lt;visit-id&gt;</code> forgets one of your visits that did not happen, such as a stop at a place you only drove past: the visit goes, the trips around it are built again, and the place stays with its other visits (<code>visits</code> lists your own visits with a <code>visit id</code> column). <code>erase [--from &lt;time&gt;] [--until &lt;time&gt;]</code> erases your positions and visits (in the range, or all of them), and the places left with no visit that you did not name or label; places you named or labeled stay, and anything your agent already learned from those days stays in its memory until you remove it. All three ask first, and cannot be undone (<code>--force</code> skips the question)</td>
+</tr>
+<tr>
+<td><code>teanode location mute &lt;username&gt; [--for 1h30m | --until 2026-10-23T08:00]</code>, <code>unmute &lt;username&gt;</code></td>
+<td>stop being told on your phone when a person who shares their location with you arrives at or leaves a place, or be told again. <code>mute ben --for 1h30m</code> (or <code>2d</code>) mutes for that long, <code>mute ben --until 2026-10-23T08:00</code> until that moment, and <code>mute ben</code> alone until you <code>unmute ben</code>; the end must be in the future and at most 30 days ahead, <code>--for</code> and <code>--until</code> together are refused, and muting while muted changes when the mute ends. <code>mute</code> prints <code>notifications muted until 15:00</code> or <code>notifications muted</code>; <code>unmute</code> says whether there was a mute. <code>people</code> lists a muted person with the same words in its last column. Unmuting is not asked about. The agent&#39;s <code>location</code> tool has <code>mute</code> (with <code>person</code> and <code>muted_until</code>) and <code>unmute</code> (with <code>person</code>), and shows a mute in <code>people</code> and <code>now</code> as <code>notifications_muted</code></td>
+</tr>
+<tr>
+<td><code>teanode location pause [--for 1h30m | --until 2026-10-23T08:00]</code>, <code>resume</code></td>
+<td>stop your location being recorded for a while, or start it again. <code>pause --for 1h30m</code> (or <code>2d</code>) pauses for that long, <code>pause --until 2026-10-23T08:00</code> until that moment, and <code>pause</code> alone until you <code>resume</code>; the end must be in the future and at most 30 days ahead, and <code>--for</code> and <code>--until</code> together are refused. Pausing while paused changes when the pause ends. While paused nothing new is recorded, whatever sends it (your phone&#39;s reports inside the pause are dropped, so it cannot fill the gap later), the visit in progress ends, and the people your location is shared with read &quot;Location paused&quot; (and until when) instead of where you are. <code>resume</code> ends the pause now and says whether there was one. <code>now</code> prints <code>Paused until 15:00</code> or <code>Paused until you resume</code> with your own position, and for <code>--person ben</code> who paused, <code>Location paused until 15:00</code> and no position; <code>people</code> lists them the same way. <code>visits</code> lists the pauses of its range among the visits, newest first, as <code>paused 14:00 to 15:00</code> (not in a listing of <code>--place</code> or <code>--label</code>; <code>--json</code> carries them as <code>pauses</code>). <code>erase</code> erases the pauses that are over with the rest, and leaves the one in effect. The agent&#39;s <code>location</code> tool has <code>pause</code> (with <code>ended_at</code>) and <code>resume</code>, which waits for your confirmation</td>
+</tr>
+<tr>
+<td><code>teanode location trips [--day 2026-10-17 | --from &lt;time&gt; --until &lt;time&gt;] [--person ben]</code>, <code>travel [--by day|week|month|year]</code>, <code>travel-mode &lt;leg id&gt; &lt;way&gt;</code></td>
+<td>how you got from place to place. A trip is the travel between leaving one place and arriving at the next, made of legs, each with a way of travel: walk, run, bike, car, bus, train, boat or plane. The way is worked out from your phone&#39;s motion activity, or from speed and distance when there is none (past days too); bus, train and boat are never worked out, only set by you. <code>trips</code> lists today&#39;s trips by default, or <code>--day</code>, or a range with <code>--from</code> and <code>--until</code>, newest first (<code>--first</code> up to 200, <code>--offset</code> to page), as <code>2026-10-17 08:05 to 08:40</code>, the route, distance, duration, the legs (<code>walk 0.6 km, bus 11.8 km (corrected)</code>) and a last column of leg identifiers; <code>--json</code> carries the trips with their legs. <code>travel --by week</code> (day, week, month or year; week by default, weeks starting Monday) lists the distance per way of travel for each period, newest first, with a total, for the last 12 periods unless <code>--from</code> and <code>--until</code> say otherwise; a leg counts in the period it started in, in the zone you last used. <code>travel-mode &lt;leg id&gt; bus</code> corrects a leg, which is then counted as bus, also after the trip is rebuilt; <code>detected</code> takes your correction off. <code>trips</code> and <code>travel</code> take <code>--person ben</code> for somebody who shares their history with you, and only you correct your own legs. Distances are in kilometers, or miles when your account reads US units (<code>teanode user update --units</code>), as on the dashboard and the iPhone; so are the distances <code>nearby</code>, <code>search</code> and <code>addresses</code> list. The agent&#39;s <code>location</code> tool has <code>trips</code> (with <code>person</code>, <code>day</code>, or <code>from</code> and <code>until</code>), <code>travel_totals</code> (with <code>person</code>, <code>period</code>, <code>from</code> and <code>until</code>) and <code>travel_mode</code> (with <code>trip_leg_id</code> and <code>travel_mode</code>, empty to take the correction off)</td>
 </tr>
 <tr>
 <td><code>teanode location people|shares|share|unshare</code></td>
 <td>who sees whose location. <code>share ben --level current</code> shares where you are now (they see where you are now and the place you are at) with a person you are in a circle with, and <code>share Home --level history</code> shares where you are and where you have been (they also see your visits and the places they were at) with a circle you are in; sharing again changes the level, <code>shares</code> lists them with the identifiers <code>unshare</code> takes. <code>people</code> lists who shares with you and where each is, and <code>now</code> takes <code>--person ben</code> to read theirs; <code>visits</code>, <code>places</code> and <code>path</code> take it too for somebody who shares their history, and say &quot;ben shares only where they are now&quot; for somebody who does not. Someone you share no circle with is refused as if they did not exist</td>
+</tr>
+<tr>
+<td><code>teanode health types|summary|samples|route</code></td>
+<td>your Apple Health data, which the TeaNode app on your iPhone copies to this server (nothing on the command line reports it). A type is one kind of data, named as HealthKit names it without its prefix: <code>stepCount</code>, <code>heartRate</code>, <code>sleepAnalysis</code>, <code>workout</code>. <code>types</code> lists the ones you have with their Health category, unit, the days they cover, how many readings there are and the latest day, and then the facts about you that Health keeps, in words (date of birth with your age, <code>Female</code>, blood type <code>O+</code>, skin type, wheelchair use <code>Yes</code>, or <code>Not set</code>), and with nothing kept says where to start: Settings, then Health in the TeaNode app, and the data you allow on Apple&#39;s Health permissions screen (there is no command that sets Health up). <code>summary stepCount --since 7d</code> adds a type up by day, week or month (<code>--period day|week|month</code>, a week starts on Monday; <code>--from</code>, <code>--to</code> and <code>--since 30d</code> choose the days, the last 30 days by default): steps and energy are totals, heart rate and weight are averages with the lowest and highest, and sleep and workouts show the time covered in hours and minutes, sleep with the time asleep and in each stage (Deep, Core, REM, Awake). A week or a month also shows the days it holds data for and the average per day (per night for sleep) over those days, next to the total, as the dashboard does. Numbers carry the same words as the dashboard and the iPhone app (the table is at the top of <code>internal/health/words.go</code>): <code>8,412 steps</code>, <code>1 step</code>, <code>74 bpm</code>, <code>16 breaths/min</code>, <code>36.6°C</code>, <code>5.2 km</code>, <code>42 mL/kg·min</code>, and times as <code>7 h 12 min</code>. A day counts the readings of an iPhone and a Watch for the same walk once, as the Health app does. <code>samples heartRate --since 1d</code> lists the individual readings, newest first, for whole days in this machine&#39;s time zone (<code>--limit</code> 50 by default and up to 200, and <code>--offset</code> to page; it says on standard error where the next page starts, and how many readings there are in all, or that there are more than 100,000), and <code>route &lt;health-sample-id&gt;</code> is the path of a workout that has one (<code>--json</code> has every point as seconds from the start, latitude, longitude and altitude). <code>summary</code> and <code>types</code> take <code>--person ben</code> for somebody who shares Health with you, for the categories they share; readings and routes are only ever your own</td>
+</tr>
+<tr>
+<td><code>teanode health settings|erase|shares|share</code></td>
+<td>what you choose about Health. <code>settings</code> shows whether your agent may read your Health data, when the last reading arrived and how many are kept, and the facts about you that Health keeps, and <code>settings --agent-can-read off</code> turns it off: it is off until you turn it on, it is separate from whether your phone sends Health to this server, and what your agent reads goes to its model provider, which the command names. Turning it on is refused from a command line, with a sentence saying where to do it (the Settings tab of the Health page on the dashboard, or Health in the iPhone app&#39;s Settings), because commands run on your computer, by you or by an agent there, act with your own login. <code>erase [&lt;type&gt;]</code> erases the readings, day summaries and routes of one type, or of all of Health, which also tells your phone to stop sending until you turn Health on again; it asks first, and cannot be undone (<code>--force</code> skips the question), and what your agent said about your Health in conversations stays in those conversations. Erasing one type erases what the server keeps of it and does not stop the iPhone app: new readings of it keep arriving while Health is on. <code>shares</code> lists what you share and what is shared with you, and <code>share family activity sleep</code> shares those Health categories (activity, bodyMeasurements, cycleTracking, hearing, heart, mentalWellbeing, mobility, nutrition, respiratory, sleep, symptoms, vitals, other) with a person you are in a circle with or with a circle you are in. They see your day summaries of those categories, never your readings or routes. Sharing again replaces the categories, and <code>share family</code> with none stops sharing. Sharing a category the person or circle does not already have is refused from a command line, with a sentence saying where to do it (the dashboard or the iPhone app); fewer categories, or none, works. Your agent&#39;s <code>health</code> tool has the actions <code>types</code>, <code>summary</code> and <code>samples</code>, which only read your own Health, and only in a conversation with you, never in a dream, a subagent, a background task or any other run nobody is watching (and never what others share with you: a person who shares Health shares it with people, not with their agents&#39; model providers; what others share with you is on the Health page under Showing, on the dashboard and in the app), and <code>set_up</code>, which opens the Settings tab of the Health page where the switch is. The switch is also in Health in the iPhone app&#39;s Settings. Turning its own access on, erasing, sharing and the route of a workout are yours to do, not the agent&#39;s: the tool has no action for them, and the server takes the first and new shares only from your tap on the dashboard or in the iPhone app</td>
+</tr>
+<tr>
+<td><code>teanode passwords setup|unlock|lock|code|settings|change-passphrase|new-recovery-key|erase</code></td>
+<td>the keys behind your logins, cards and notes, which are encrypted on your devices so that this server keeps only what it cannot read. <code>setup</code> asks for a new passphrase twice (at least 12 characters; never an argument or an environment variable; <code>--passphrase-stdin</code> reads it from a line of standard input for scripts), makes the keys on this computer, sends only sealed values and prints the recovery key once, with words saying to keep it somewhere safe. The server asks for your tap to set up, which a command line cannot give, so with a token it is refused and the command says to set up on the Passwords page of the dashboard or in the iPhone app and then <code>unlock</code> here; <code>setup</code> asks the server that before it asks for the passphrase, by sending an empty setup, which the server refuses for want of a tap before it looks at it, so nothing is typed for nothing. <code>unlock</code> asks for the passphrase (<code>--recovery-key</code> for the recovery key), checks it with the server and keeps the opened keys in <code>passwords-unlock-&lt;profile&gt;.json</code>, readable by you only, in <code>$XDG_RUNTIME_DIR/teanode</code> (a directory of your login that is emptied at logout and is not backed up), until the lock time passes (but at most 8 hours) or <code>lock</code> removes it, as gpg-agent keeps a passphrase; the keys in that file are not encrypted, so anyone who can read your files while it exists can open your passwords. Nothing removes the file at the moment the lock time passes: a later passwords command removes it when it finds it expired, and the logout does otherwise. A computer with no <code>$XDG_RUNTIME_DIR</code> (macOS, some Linux sessions) does not unlock: <code>unlock</code> refuses before it asks for the passphrase and says each passwords command will ask for it instead (a script passes it with <code>--passphrase-stdin</code>), because the keys would otherwise sit on a disk and in backups. A file an earlier version left beside the profiles file is deleted by the next passwords command that finds it. A file that other people could read or change, a link, or a file that belongs to somebody else is refused with a sentence saying so, and an expired one is removed. Every other command uses that file, and without it asks for the passphrase and keeps nothing. With <code>--passphrase-stdin</code> a command always takes the first line of standard input as the passphrase, even when it uses that file (the line is then dropped), so what follows it, such as <code>--password-stdin</code>, <code>--text-stdin</code> or <code>import csv -</code>, is the same for a script whether or not <code>unlock</code> ran. Every Passwords command prints JSON with <code>--json</code>, except <code>copy</code> and <code>generate</code>. <code>code</code> prints your own safety code (eight groups of four digits), worked out on this computer from the public key of the key pair that unlocking opened and from nothing else (SHA-256 of a fixed label and the 65 byte key, the first 16 bytes as eight numbers of four digits), never from what the server reports about your key and not from any user id, which a server could choose; it is the code the people who share with you compare with the one their device shows for you (<code>--json</code> gives <code>username</code> and <code>safetyCode</code>; the user name is only shown beside the code). <code>settings</code> says whether Passwords is set up, how many items it holds and whether this computer is unlocked, and <code>--lock-after-minutes 60</code> sets the lock time on every device (1 to 10080). <code>change-passphrase</code> (<code>--recovery-key</code> to prove it with the recovery key when the passphrase is forgotten; with <code>--passphrase-stdin</code> the first line is the current one and the second the new one), <code>new-recovery-key</code> and <code>erase</code> (<code>--force</code> skips its question) are done on the Passwords page of the dashboard or in the iPhone app and are refused from a command line, as <code>setup</code> is: each sends the same empty setup first, so with a token it says so in one sentence before it asks for a passphrase or a yes. After <code>change-passphrase</code> or <code>new-recovery-key</code> the old one no longer opens Passwords on this server, but neither makes a new account key, so a copy of the database from before still opens with the old one; both say so. <code>erase</code> asks first and cannot be undone: it is the only way out when both the passphrase and the recovery key are lost</td>
+</tr>
+<tr>
+<td><code>teanode passwords list|show|copy|add|edit|delete|restore|versions|generate</code></td>
+<td>your items. An item is named by its name, a word in its name, site or user name, or its id; a name that matches two items lists them and asks for the id. <code>list [search]</code> shows name, kind (login, card or note), user name, first site, folder and marks (<code>shared</code>, <code>shared by &lt;owner&gt;</code>, <code>agent</code>, <code>needs a new key</code>, <code>sharing not checked</code>, <code>sharing changed back by the server</code>), never a secret, and under the table says <code>needs a new key: run teanode passwords rekey &lt;item&gt; (the new key goes to ben; the agent gets a copy)</code>, naming the same people <code>rekey</code> will ask about, for each item the server marks as needing one (<code>show</code> says it too; <code>--json</code> has <code>needsNewKey</code>). <code>agent</code> is shown, and <code>isUsableByAgent</code> is true in <code>--json</code>, only when the server&#39;s flag and the owner&#39;s signed record both say so, not on the server&#39;s flag alone. An item whose record of who may have it is missing, was not signed by your devices, or is an old one the server showed again says `sharing could not be checked: run teanode passwords share <id> &lt;username</td>
+</tr>
+<tr>
+<td><code>teanode passwords share|unshare|agent|trust|rekey</code></td>
+<td>who else, and what else, can use an item. <code>share &lt;item&gt; &lt;username|circle&gt;</code> seals the item&#39;s key on this computer for each person it reaches, with the public key they set up in Passwords, and asks nothing about that key: no question, no terminal and no <code>--force</code> (<code>share</code> takes no <code>--force</code>). This computer keeps one key for each person, the first it saw for them from any source (sharing with them, an item they shared with you, a person waiting for an item), in <code>passwords-keys-&lt;profile&gt;.json</code> beside the profiles file (readable by you only, keys kept by server so a profile pointed at another server does not lose them, written under a lock so two commands do not lose each other&#39;s), and seals for it. The first key for a person is recorded and one line says so (<code>first key for ben recorded</code>); an owner&#39;s key is recorded only after an item from them opened with it. When the server later gives another key for the same person, that key is used from then on, for sealing and for opening what they shared, and one line says <code>ben&#39;s key changed (they set Passwords up again): compare codes with them; your code: teanode passwords code</code>. A person has one key for all their devices, so a changed key means they erased Passwords and set it up again, or a server put a key of its own in their place, and only comparing safety codes (eight groups of four digits) with them, in person or on a call you trust, can tell which: ask them to open Passwords settings on their own device and read you their code (<code>teanode passwords code</code> prints yours). Nothing waits for that comparison. The lines go to the error output, so <code>--json</code> stays JSON. It seals only for people who do not have a key for the item yet. <code>trust &lt;username&gt; &lt;safety code&gt;</code> is the optional way to mark a key as compared, after you did: it reads that person&#39;s current Passwords public key from the server, works out its safety code, and marks the key as compared only if the code you gave matches (32 digits; spaces are optional); otherwise it says the codes do not match (the key the server gives for that person is not the one they read you: tell them, and do not rely on the item&#39;s sharing until you know why), records nothing, and does not say what code it expected. It also refuses when the server answers with another user id or user name than the one asked for, and it shows the user name you typed. <code>--code-stdin</code> reads the code from a line of standard input so it is not in the process list. It is a real comparison only if the code came from the person (off their own screen), not from this computer. The mark gates nothing, and a key that changes clears it. <code>trust</code> takes the user name of one person, not a circle, and the agent&#39;s shell is refused it as it is the other passwords commands. A file written by an earlier version, which kept a key you confirmed apart from one that was only seen, is read as one key for each person (the confirmed one, marked as compared, else the seen one). A person who has not set up Passwords yet is named and waits. A waiting share completes by itself only on a computer that sealed the item for that person before or where you named them in a <code>share</code>; every other case (a circle member who joins later, a computer that never saw the item) waits for you: <code>share --waiting</code> (all your items) or <code>rekey &lt;item&gt;</code> here, or &quot;Finish sharing&quot; on the dashboard and in the iPhone app (one item, or all at once from the list). <code>share --waiting</code> seals your items for people who have set up since, if you named them in a <code>share</code> on this computer or it sealed for them before (anyone else the server lists as waiting is left to <code>rekey</code>, in one <code>needs you</code> line); it prints how many keys the server stored, names a person who has too much shared with them (the server keeps at most 64 MiB of sealed text shared with one person, 8 MiB of it from any one owner) and skips them, and says <code>more are waiting: run this again</code> when the server&#39;s waiting list (at most 2,000 entries, newest items first) was cut short (<code>--json</code> has <code>sealedCount</code> and <code>hasMoreWaiting</code>). <code>share</code> names such a person too. The server also bounds the pairs of an item and a person it reaches at 50,000 for an owner. A circle&#39;s members are the server&#39;s word: when <code>share</code> or <code>rekey</code> seals an item for a member of a circle this computer never sealed it for, one line says <code>&lt;name&gt; got &lt;item&gt; through &lt;circle&gt;</code>. The people it reaches can use the item and only you change it. Who may have an item is also written inside the item&#39;s sealed fields (an <code>access</code> record of people and circles, and whether the agent may use it), which only your devices write: a key is sealed (by <code>share</code>, <code>share --waiting</code> and every re-key) only for somebody that record reaches, never for somebody the server&#39;s list alone names, so a share or a waiting person the server made up gets nothing. That record is signed: it carries a <code>recordVersion</code> and a <code>recordMac</code> (HMAC-SHA256 under a key made from your account key, over the item id, the kind, the version, the agent permission and the sorted grantees), because anybody who holds an item key (a person it is shared with, the server through the agent&#39;s copy) could otherwise seal a record of their own. Every write of the record (share, agent on, unshare, agent off) signs it at one version above the highest this computer has seen for that item, which <code>passwords-keys-&lt;profile&gt;.json</code> keeps by server and item as the highest version with its signature (<code>highestRecordVersion</code>, <code>highestRecordMac</code>), together with the people this computer itself sealed the item key for (<code>sealedForUserIds</code>, which also holds a person you named in a <code>share</code> while they had no key yet), whether this computer itself made the agent&#39;s copy (<code>hasMadeAgentCopy</code>) and when the item was last re-keyed without being asked. Nothing of the last three is ever copied from the server&#39;s list of who holds a key or whether the agent has a copy, and the version and signature are written down only from an item that is neither marked as needing a new key nor deleted (the view where an old record is most likely to be shown) or from a record this computer signed. When this computer signs, the new version is the highest of what it remembers and the verified record the server showed, plus one. Opening an item checks the signature. A record with none, or a wrong one, reaches nobody and gives the agent no copy: the item says its sharing could not be checked, nothing is re-keyed or sealed for anybody from it, and <code>rekey</code>, <code>edit</code>, <code>share --waiting</code> and <code>agent on</code> leave it alone; <code>share</code> and <code>agent on</code> ask you to run <code>unshare &lt;item&gt;</code> first when the server lists people on it, because <code>unshare</code> then starts again from a record that shares with nobody and signs it, and <code>share</code> sets sharing again from there. A signed record with a lower version than this computer saw before, or with the same version and another signature, is an old one shown again (it could list somebody you took off): nothing is done with the item and it says the server changed its sharing back. A re-key you did not ask for (the one <code>edit</code>, <code>share</code>, <code>agent on</code> and <code>share --waiting</code> do first when the server marks the item as needing a new key) never widens, and is done only for an item this computer remembers from an earlier command of its own (a computer that has never seen the item cannot tell an old signed record from the newest, so it prints <code>needs you: teanode passwords rekey &lt;item&gt;</code> and leaves the item as it is): it seals only for people the signed record reaches whom this computer itself sealed the item key for before, and for the agent only if the signed record says so, the server agrees and this computer itself made the agent&#39;s copy; anyone else is left out with one line that begins <code>needs you: teanode passwords rekey &lt;item&gt;</code>, and <code>share --waiting</code> follows the same rule. The re-key after <code>unshare</code> and <code>agent off</code> is your own narrowing and is not limited this way: it seals for everyone the signed record still reaches whose key is known, even people another device shared the item with, and keeps the agent&#39;s copy when the record still lets it use the item and the server agrees (<code>agent off</code> ends it), as the dashboard and the iPhone app do. A known limit: a computer that sees an item for the first time trusts the newest signed record the server shows it, so <code>rekey</code> there seals for what that record says; it is your own command, and the server can at most show an older signed record of yours, never write a new one. <code>rekey</code>, which you run on purpose, seals for everyone the record reaches, so before it seals anything it says who gets the new key, whether the agent gets a copy and who waits for having no Passwords set up yet (<code>Giving &lt;item&gt; a new key: the new key goes to ben; the agent gets a copy.</code>), and asks you to type <code>yes</code>; without a terminal to ask on it refuses and says to pass <code>--yes</code> (with <code>--json</code> the sentence goes to the error output, so standard output stays JSON). An item whose record cannot be believed is refused before the question. An item is given a new key without being asked at most once in 10 minutes, and a command does it for at most 20 items; after that it says to run <code>rekey</code>. No command ever narrows the record because the server said so, only your own <code>unshare</code> and <code>agent off</code> do. The keys that <code>share</code> sends to the server carry the item key they were sealed from, as <code>share --waiting</code> does, and the server refuses them if the item changed on another device in between. Sharing saves the fields with the wider record first and then asks the server. Adding somebody is done on the dashboard or in the iPhone app and is refused from a token with a sentence saying so, before the passphrase is asked for (<code>share &lt;item&gt; &lt;username|circle&gt;</code> always asks the server first, as <code>agent on</code> does); <code>unshare &lt;item&gt; [username|circle]</code> (everyone when none is named) works from a token. After it narrows who the item is shared with, it gives the item a new item key (the old one opens nothing saved from then on): the server stops sharing first, then this computer opens the item with the old key, seals its fields (with the narrower <code>access</code> record) under a new random 32-byte key, and sends the new key sealed for your account, for each person your record still reaches, and for the agent key only when the opened record says the agent may use the item (and the server agrees), in one <code>RekeyPasswordItem</code> call that needs no tap. A person who still reaches the item but has not set up Passwords yet waits: the command says so, and <code>share --waiting</code> seals the new key for them when this computer sealed for them or you named them in <code>share</code>. When the file of known keys cannot be read (a mode other people can read, say) no key can be recorded or sealed for, though items shared with you still open, with a note that says how to fix the file: the narrowing still happens, the people still shared with wait, and the message says how to fix the file (<code>chmod 600 &lt;path&gt;</code>); <code>lock</code> removes only the keys <code>unlock</code> kept, never that file. If the new key cannot be made the command says <code>Removed. The item could not be given a new key; run the command again</code>, and running it again, even naming a person who is already off, gives the new key; if the item changed on another device in between, it is read again and tried once more. <code>rekey &lt;item&gt; [--yes]</code> gives an item you own a new key with the record as it is, after saying who gets it and asking for a yes; the server marks an item as needing one when access to it narrowed (a person taken off, a member leaving a circle, a recipient losing the Passwords permission, the item deleted), and <code>edit</code>, <code>share</code>, <code>unshare</code> and <code>agent</code> give it first on a computer that remembers the item, and otherwise stop with <code>needs you: teanode passwords rekey &lt;item&gt;</code>. <code>agent on|off &lt;item&gt;</code> lets your agent use one of your own items or stops it: <code>on</code> saves the fields with a record that lets the agent use the item, then seals the item&#39;s key for the server&#39;s agent key so the agent can sign in with the login in its browser, with TeaNode typing the password in only on the item&#39;s own sites, and asks first (<code>--force</code>); a card is refused before anything is sent, and turning it on is done on the Passwords page of the dashboard or in the iPhone app, so <code>agent on</code> is refused from a command line before it asks for the passphrase or a yes, while <code>agent off</code> works here and gives the item a new item key in the same way as <code>unshare</code>, with the agent copy dropped and the people it is shared with kept (an item the agent could not use is left alone). It is off for every item until you turn it on</td>
+</tr>
+<tr>
+<td><code>teanode passwords import pass|import csv|export</code></td>
+<td>bring logins in, or take them out. <code>import pass [--store ~/.password-store] [--dry-run]</code> walks a <code>pass</code> store (<code>$PASSWORD_STORE_DIR</code> when <code>--store</code> is not given), decrypts each <code>.gpg</code> file with the <code>gpg</code> on this computer (one process per file, no shell, the path after <code>--</code>, so gpg asks for its own passphrase as <code>pass</code> does), and saves a login for each: the first line is the password, <code>login:</code>, <code>user:</code>, <code>username:</code> and <code>email:</code> lines the user name, <code>url:</code> lines the sites, an <code>otpauth://</code> line the one-time code and the rest the notes; the path gives the folder and name. <code>import csv &lt;file&gt;</code> reads an export from Chrome, Apple Passwords or Bitwarden (<code>-</code> for standard input), found by its header row; Bitwarden cards and identities are left out and named. Both skip an item whose kind, name, folder, first site, user name and the password (or note text) are the same as one you have (the secret itself is compared, in this command&#39;s memory for that run only; no hash of it is made), so running one again adds nothing but a changed password or another folder is kept as a second item, and print counts and the names of the items they skipped (found, imported, already there, failed), never a secret; <code>--dry-run</code> saves nothing. <code>export [file] [--format json|csv]</code> writes the items you own in the clear, readable by you only, after asking (<code>--force</code>), and never over a file that exists; with no file it writes <code>passwords-export-&lt;time&gt;.json</code> (or <code>.csv</code>) in the current directory, a name the computer program&#39;s file tool for the agent refuses to read, as it refuses any file that begins as an export does, and it says so when a name you chose is not one of those; it is written to a private temporary file beside it and put in place only when complete, and the temporary file is removed if the export fails or is interrupted; JSON has everything (passkeys and cards too) as `{&quot;version&quot;: 1, &quot;exportedAt&quot;: &quot;&lt;RFC 3339 time&gt;&quot;, &quot;items&quot;: [{&quot;id&quot;, &quot;itemKind&quot;: &quot;login</td>
 </tr>
 <tr>
 <td><code>teanode reminder list|add|edit|done|reopen|remove</code></td>
@@ -918,6 +1046,38 @@ have made.</p>
 <p>Every command sends the shell&#39;s time zone and language with the request,
 the way the dashboard sends the browser&#39;s, so a person who lives in the
 terminal is placed as well as one who lives in the browser.</p>
+<h3>teanode search</h3>
+<p><code>teanode search WORDS [--area AREA]... [--limit N] [--json]</code> looks for the
+words in everything of yours at once: the same operation as the dashboard&#39;s
+search box and the agent&#39;s <code>search</code> tool (<code>SearchEverything</code>). It prints a
+group for each area that found something, in a fixed order (chats, mail,
+contacts, photos, memory, documents, recordings, places, finance), with each
+result&#39;s id, when it happened, title and detail. A group that has more says so
+and prints the command that searches that area by itself. An area that did not
+answer in three seconds is named after the groups, and an area you may not use
+is left out without a word.</p>
+<p><code>--area</code> narrows the search to an area and can be given again for more;
+<code>--limit</code> is how many results from each area, 5 by default and 20 at most. The
+words are matched as the areas match them, by the words alone, so try a name or
+a distinctive word. <code>--json</code> prints <code>words</code>, <code>areas</code> (each with <code>searchArea</code>,
+<code>hasMore</code> and <code>results</code>) and <code>failedAreas</code>. How it works, and who may search
+what, is in <a href="https://github.com/ziyan/teanode/blob/main/docs/subsystems/search.md"><code>docs/subsystems/search.md</code></a>.</p>
+<h3>teanode link</h3>
+<p><code>teanode link preview --conversation ID URL... [--json]</code> prints, for each link
+(at most 10), the link with its tracking parameters taken off, and what the
+page behind it says about itself: its site, its title and its description. It
+is the card under a message in the dashboard and the iPhone app
+(<code>ReadLinkPreviews</code>). <code>--conversation</code> is required: a link gets a preview only
+if its exact text is in a message of that conversation that the agent did not
+write (yours, another person&#39;s, or what a tool answered), and any other link
+prints <code>preview: none</code> and is never fetched. A page the server could not read,
+or a link that is not a web address, prints <code>preview: none</code> too. The server
+fetches the page and keeps what it read for a day, or for an hour when the page
+could not be read, so asking again is cheap. <code>--json</code> prints the answer as it
+came: <code>url</code>, <code>cleanedUrl</code>, <code>displayText</code>, <code>isAvailable</code>, <code>title</code>,
+<code>description</code>, <code>siteName</code>, <code>imageUrl</code> and the picture&#39;s size in pixels
+(<code>imageWidthPixels</code>, <code>imageHeightPixels</code>). How it works is in
+<a href="https://github.com/ziyan/teanode/blob/main/docs/subsystems/conversations.md"><code>docs/subsystems/conversations.md</code></a>.</p>
 <h3>teanode recording</h3>
 <p>Your retained meeting recordings: the same operations as the Recordings page
 and the agent&#39;s <code>recording</code> tool, and named after them (the tool&#39;s
@@ -959,8 +1119,32 @@ takes <code>--json</code>.</p>
 <td>the same for a finished recording, by a passage or by a speaker of one transcription request; these check <code>--expected-source-generation</code></td>
 </tr>
 <tr>
+<td><code>teanode recording speaker-contact --recording-id ID --speaker-identity-id ID --expected-source-generation N (--contact BOOK-ID/CONTACT-ID | --none)</code></td>
+<td>tie a confirmed speaker name to one of your contacts, so the contact&#39;s card lists the recordings that voice speaks in, or take it off its contact with <code>--none</code>. The contact has to be in one of your own address books (for your agent, one you gave it), and the name has to be on a passage of this recording. It changes nothing else: the name and its passages stay as they are. <code>speaker-confirm</code> and <code>temporary-speaker-name</code> take the same <code>--contact</code> to tie the name they give, replacing an earlier tie of that name; <code>speaker-names</code> shows <code>addressBookId</code> and <code>contactId</code> for a name that is a contact or is tied to one. Deleting the contact unties the name and keeps it</td>
+</tr>
+<tr>
 <td><code>teanode recording speaker-undo</code></td>
 <td>takes a naming back whole, given any one of its corrections: every passage it named goes back to the speaker&#39;s label (<code>speaker-reset</code> takes back one passage); checks <code>--expected-source-generation</code></td>
+</tr>
+<tr>
+<td><code>teanode recording share RECORDING-ID USERNAME|CIRCLE --level summary|transcript [--force]</code></td>
+<td>share a recording with somebody you share a circle with, or with a whole circle (by its name or id; a name more than one circle has is refused with their ids and sizes). <code>summary</code> is the title, date, length, the generated summary and the speakers you named; <code>transcript</code> adds the words, with your corrections. Never the audio, a voice sample or a contact. It says first that the others who speak did not agree, and asks; <code>--force</code> goes past the question. Sharing again changes the level</td>
+</tr>
+<tr>
+<td><code>teanode recording shares RECORDING-ID</code></td>
+<td>who the recording is shared with, at what level, and the share&#39;s id</td>
+</tr>
+<tr>
+<td><code>teanode recording unshare SHARE-ID</code></td>
+<td>stop sharing it with that person or circle</td>
+</tr>
+<tr>
+<td><code>teanode recording shared [--before ID] [--limit N]</code></td>
+<td>the recordings others shared with you, newest first, with who shared each and the level</td>
+</tr>
+<tr>
+<td><code>teanode recording read-shared RECORDING-ID [--offset N] [--limit N]</code></td>
+<td>read one of them as far as its level goes: the title, who shared it, the summary and the speakers, and at <code>transcript</code> the words a page of passages at a time (<code>more: --offset N</code> says where the next begins)</td>
 </tr>
 </tbody></table>
 <h3>teanode photo</h3>
@@ -976,12 +1160,12 @@ prints data takes <code>--json</code>.</p>
 </tr>
 </thead>
 <tbody><tr>
-<td><code>teanode photo list [--favorites] [--trash] [--search WORDS] [--after DATE] [--before DATE] [--near LATITUDE,LONGITUDE,KILOMETERS] [--kind picture|video|livePhoto] [--album ID] [--face-group ID] [--contact ID] [--limit N] [--continue-after ID]</code></td>
-<td>the library, newest first (with <code>--trash</code>, the photos newest moved to the trash first): id, date (when it was taken, on the clock where the camera was, by the photo&#39;s own offset: a photo with a date always has one once it is processed, and a photo not processed yet is shown on UTC), kind, place, size, length, state and file name. <code>--search</code> finds photos by words, best match first (at most 500): the place, the file name, the camera, the titles of the albums a photo is in and, for a photo that has been described, its description and the text in the picture; a photo nobody described is found only by the rest. <code>--near 10.5,20.25,2</code> keeps the photos taken within 2 kilometers of that point (latitude from -90 to 90, longitude from -180 to 180, a distance above 0). With <code>--search</code> and <code>--after</code> or <code>--before</code> it also says on standard error, when there are some, how many photos in those dates have no description yet. A date is <code>2025-07-12</code> (that day in your zone) or an RFC 3339 time. A full page says on standard error how many photos match, and the id to continue after. <code>--face-group</code> keeps the photos with a face in one group of faces (the ids are in <code>people list</code>) and <code>--contact</code> the photos with a face in any group that contact names, so the photos of a person are found by whichever you have</td>
+<td><code>teanode photo list [--favorites] [--trash] [--search WORDS] [--after DATE] [--before DATE] [--near LATITUDE,LONGITUDE,KILOMETERS] [--kind picture|video|livePhoto] [--album ID] [--face-group ID] [--contact ID] [--person USERNAME] [--limit N] [--continue-after ID]</code></td>
+<td>the library, newest first (with <code>--trash</code>, the photos newest moved to the trash first): id, date (when it was taken, on the clock where the camera was, by the photo&#39;s own offset: a photo with a date always has one once it is processed, and a photo not processed yet is shown on UTC), kind, place, size, length, state and file name. <code>--search</code> finds photos by words, best match first (at most 500): the place, the file name, the camera, the titles of the albums a photo is in and, for a photo that has been described, its description and the text in the picture; a photo nobody described is found only by the rest. <code>--near 10.5,20.25,2</code> keeps the photos taken within 2 kilometers of that point (latitude from -90 to 90, longitude from -180 to 180, a distance above 0). With <code>--search</code> and <code>--after</code> or <code>--before</code> it also says on standard error, when there are some, how many photos in those dates have no description yet. A date is <code>2025-07-12</code> (that day in your zone) or an RFC 3339 time. A full page says on standard error how many photos match, and the id to continue after. <code>--face-group</code> keeps the photos with a face in one group of faces (the ids are in <code>people list</code>) and <code>--contact</code> the photos with a face in any group that contact names, so the photos of a person are found by whichever you have; <code>--person &lt;username&gt;</code> the photos of the contact you linked to that person in your circles (<code>teanode contact link</code>), nothing when there is none</td>
 </tr>
 <tr>
 <td><code>teanode photo read ID</code></td>
-<td>everything known about a photo: its date (with the offset where it was taken, when known), place, camera, size, files, the albums it is in, how its previews are going, and its description with the text in the picture (or that none was written yet, or is on its way). Each face found in it is a line <code>person</code>: the contact that names it, or that nobody has named its group yet, with the group and face ids to name or correct it</td>
+<td>everything known about a photo: its date (with the offset where it was taken, when known), place, camera, size, files, the albums it is in, how its previews are going, and its description with the text in the picture (or that none was written yet, or is on its way). Its place reads the name of your own Location place when the photo was taken inside one, else the street address when the server looks addresses up, else the city; <code>--json</code> adds <code>locationPlace</code> and <code>addressText</code>. Each face found in it is a line <code>person</code>: the contact that names it, or that nobody has named its group yet, with the group and face ids to name or correct it</td>
 </tr>
 <tr>
 <td><code>teanode photo describe ID [--again]</code></td>
@@ -1033,7 +1217,7 @@ prints data takes <code>--json</code>.</p>
 </tr>
 <tr>
 <td><code>teanode photo album list</code></td>
-<td>the albums you reach, the most recently changed first: yours, your circles&#39; and those shared with you. Each row has its id, title, how many photos are in it, the days they span, whose it is (<code>you</code>, a person&#39;s name, or <code>circle</code> and the circle&#39;s name) and your level (<code>owner</code>, <code>contribute</code> or <code>view</code>). A photo in the trash is not counted until it is restored</td>
+<td>the albums you reach, the most recently changed first: yours, your circles&#39; and those shared with you. Each row has its id, title, how many photos are in it, the days they span, whose it is (<code>you</code>, a person&#39;s name, or <code>circle</code> and the circle&#39;s name) and your level (<code>owner</code>, <code>contribute</code> or <code>view</code>). A photo in the trash is not counted until it is restored. <code>--circle &lt;id or name&gt;</code> lists only that circle&#39;s albums, as its page shows them: the circle&#39;s own and those shared with everyone in it</td>
 </tr>
 <tr>
 <td><code>teanode photo album read ID [--limit N] [--continue-after ID]</code></td>
@@ -1041,7 +1225,7 @@ prints data takes <code>--json</code>.</p>
 </tr>
 <tr>
 <td><code>teanode photo album create TITLE [PHOTO-ID...] [--circle CIRCLE]</code></td>
-<td>make an album, empty or with photos in it (at most 500 at once). A title is from 1 to 255 characters once trimmed. <code>--circle</code> (an id or a name from <code>teanode circle list</code>) makes it the album of a circle you are in: every member adds photos of their own to it, the photos stay theirs, and the circle&#39;s admins rename and delete it</td>
+<td>make an album, empty or with photos in it (at most 500 at once). A title is from 1 to 255 characters once trimmed. <code>--circle</code> (an id or a name from <code>teanode circle list</code>; a name that two circles have is refused with their ids) makes it the album of a circle you are in: every member adds photos of their own to it, the photos stay theirs, and the circle&#39;s admins rename and delete it</td>
 </tr>
 <tr>
 <td><code>teanode photo album rename ID TITLE</code></td>
@@ -1056,16 +1240,16 @@ prints data takes <code>--json</code>.</p>
 <td>put photos in an album, or take them out; they stay in your library either way. <code>add</code> leaves alone photos already in the album and says how many it added; a photo that is not yours is not found, and then nothing is added</td>
 </tr>
 <tr>
-<td><code>teanode photo album share ID (--person USERNAME | --circle CIRCLE) [--contribute] [--with-location]</code></td>
-<td>share one of your albums with somebody who shares a circle with you (<code>teanode circle people</code>), or with everyone in a circle you are in. They view it and save its photos; <code>--contribute</code> also lets them add photos of their own and take out the ones they added. Without <code>--with-location</code> they see no place and get the large preview where they download a photo, a picture made afresh that carries none; with it they see where the photos were taken and get the original files. Sharing again with the same person or circle changes what they have. A circle&#39;s own album is not shared further: every member has it</td>
+<td><code>teanode photo album share ID &lt;username|circle&gt; [--contribute] [--with-location] [--with-face-names]</code></td>
+<td>share one of your albums with somebody who shares a circle with you (<code>teanode circle people</code>), or with everyone in a circle you are in, as <code>calendar share</code> names its target: a username is that person even when a circle has the same name, and a circle name that two circles have is refused with their ids and sizes. They view it and save its photos; <code>--contribute</code> also lets them add photos of their own and take out the ones they added. Without <code>--with-location</code> they see no place and get the large preview where they download a photo, a picture made afresh that carries none; with it they see where the photos were taken and get the original files. Without <code>--with-face-names</code> they see the boxes round the faces in a photo and not the names you gave them. Sharing again with the same person or circle changes what they have. A circle&#39;s own album is not shared further: every member has it</td>
 </tr>
 <tr>
-<td><code>teanode photo album share-update ID SHARE-ID [--level view|contribute] [--with-location | --without-location]</code></td>
-<td>change one share of an album (<code>album shares</code> gives the share id), as the dashboard&#39;s sheet of shares does. Only what you name changes: a setting you leave out stays as the share has it, so <code>--level view</code> stops somebody adding photos and leaves them seeing where the photos were taken. Name at least one of the three. A change that would leave the share as it is sends nothing and says <code>nothing changed</code>. The agent&#39;s tool calls it <code>album-share-update</code></td>
+<td><code>teanode photo album share-update ID SHARE-ID [--level view|contribute] [--with-location | --without-location] [--with-face-names | --without-face-names]</code></td>
+<td>change one share of an album (<code>album shares</code> gives the share id), as the dashboard&#39;s sheet of shares does. Only what you name changes: a setting you leave out stays as the share has it, so <code>--level view</code> stops somebody adding photos and leaves them seeing where the photos were taken. Name at least one of the settings. A change that would leave the share as it is sends nothing and says <code>nothing changed</code>. The agent&#39;s tool calls it <code>album-share-update</code></td>
 </tr>
 <tr>
 <td><code>teanode photo album shares ID</code> / <code>unshare SHARE-ID</code></td>
-<td>who an album is shared with, at what level and whether places are included, with the id <code>share-update</code> and <code>unshare</code> take. Taking a share back takes with it the photos its people put in the album. Both are for the album&#39;s owner, or for a circle&#39;s album an admin of the circle</td>
+<td>who an album is shared with, at what level and whether places and face names are included, with the id <code>share-update</code> and <code>unshare</code> take. Taking a share back takes with it the photos its people put in the album. Both are for the album&#39;s owner, or for a circle&#39;s album an admin of the circle</td>
 </tr>
 <tr>
 <td><code>teanode photo save ID</code> / <code>save --attachment ATTACHMENT-ID</code></td>
@@ -1081,7 +1265,7 @@ prints data takes <code>--json</code>.</p>
 </tr>
 <tr>
 <td><code>teanode photo people list [--hidden]</code></td>
-<td>the people found in your photos: id, name, faces, photos and the contact that names the group. The group your own contact names (the card marked as you) has &quot;(you)&quot; after its name, and <code>--json</code> carries <code>isOwnContact</code> on every group. Groups a contact names come first, by name, and then the groups of at least three faces (faces, not photos) nobody has named, the largest first; the groups you hid are left out unless <code>--hidden</code>. Faces are found by a program on the server as photos are processed, and a face has to be sure and large enough to be grouped, so a person can take a while to appear</td>
+<td>the people found in your photos: id, name, faces, photos and the contact that names the group. The group your own contact names (the card marked as you) has &quot;(you)&quot; after its name, a group whose contact you linked to someone in your circles has &quot;[in your circles as <username>]&quot;, and <code>--json</code> carries <code>isOwnContact</code>, <code>accountUserId</code> and <code>account</code> on every group. Groups a contact names come first, by name, and then the groups of at least three faces (faces, not photos) nobody has named, the largest first; the groups you hid are left out unless <code>--hidden</code>. Faces are found by a program on the server as photos are processed, and a face has to be sure and large enough to be grouped, so a person can take a while to appear</td>
 </tr>
 <tr>
 <td><code>teanode photo people read GROUP-ID [--limit N] [--continue-after ID]</code></td>
@@ -1108,6 +1292,10 @@ prints data takes <code>--json</code>.</p>
 <td>leave a group out of the list, or list it again. A hidden group goes on taking the faces of its person, so they stay hidden</td>
 </tr>
 <tr>
+<td><code>teanode photo reading on</code> / <code>off</code></td>
+<td>switch reading your new photos on (the default) or off: each picture taken in the last 30 days is described as it arrives, and a receipt, a statement or a tax document in one is recorded in finance. Off keeps what was read. <code>teanode photo library</code> says whether it is on, and <code>teanode photo read</code> says what a photo was read as</td>
+</tr>
+<tr>
 <td><code>teanode photo faces on</code> / <code>off</code></td>
 <td>switch finding faces in your photos on (the default) or off. Off deletes every face and group found so far, so it asks first, or takes <code>--force</code>; on has the photos read again, a few at a time</td>
 </tr>
@@ -1132,6 +1320,211 @@ keeps nothing on disk. Run again
 after it was interrupted, it starts the interrupted file over (the library
 does not list a half-sent upload), and the server deletes the part it was left
 with after a week of silence.</p>
+<h3>Shopping lists (teanode shopping)</h3>
+<p>Your shopping lists: the same operations as the dashboard&#39;s Shopping page, the
+iPhone app and the agent&#39;s <code>shopping</code> tool, and named after them (the tool&#39;s
+<code>not_needed</code> is <code>teanode shopping not-needed</code>). It needs the <code>shopping:use</code>
+permission. Each command that prints data takes <code>--json</code>. A list is named by
+its name (case does not matter) or its id; a name more than one list has is
+refused with their ids. Items are named by the id <code>show</code> and <code>store</code> print. The
+live view of a list changing is the dashboard&#39;s and the app&#39;s; a command reads
+once.</p>
+<p>A list is a catalog: an item that was bought stays on it as <code>not needed</code>, with
+its picture, store and prices, and <code>need</code> brings it back with a count. Everybody a
+list is shared with can add, change and check off items, shop and
+upload receipts; only the owner shares it further or deletes it. Store names
+are compared without case or punctuation, so <code>Example Market</code> and
+<code>example-market</code> are one store.</p>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>teanode shopping lists</code></td>
+<td>the lists you reach, yours first: id, name, how many items are needed, in the cart and not needed, whose it is, whether it is shared and whether you are reminded on arriving at a store</td>
+</tr>
+<tr>
+<td><code>teanode shopping show LIST [--state needed|in_cart|not_needed]... [--limit N] [--offset N]</code></td>
+<td>one list and its items in the order the list keeps them (by aisle), and who is shopping it now. <code>--state</code> keeps the items in those states, every state by default. A page is 200 items, at most 500; a full page says on standard error where to continue</td>
+</tr>
+<tr>
+<td><code>teanode shopping item ITEM-ID</code></td>
+<td>one item: its details, count, store, aisle, state, latest price and where its picture came from</td>
+</tr>
+<tr>
+<td><code>teanode shopping create NAME</code> / <code>rename LIST NAME</code></td>
+<td>make a list, or give one another name</td>
+</tr>
+<tr>
+<td><code>teanode shopping delete LIST</code></td>
+<td>delete one of your own lists with its items and prices, for everybody it is shared with. It asks first, or takes <code>--force</code>; it cannot be undone</td>
+</tr>
+<tr>
+<td><code>teanode shopping share LIST USERNAME|CIRCLE</code></td>
+<td>share one of your lists with somebody who shares a circle with you (<code>teanode circle people</code>) or with everyone in a circle you are in, as <code>calendar share</code> names its target. It asks first, or takes <code>--force</code>. Sharing again changes nothing</td>
+</tr>
+<tr>
+<td><code>teanode shopping shares LIST</code> / <code>unshare SHARE-ID</code></td>
+<td>who one of your lists is shared with, with the id <code>unshare</code> takes. <code>unshare</code> asks first, or takes <code>--force</code>, and takes the list away from that person or circle</td>
+</tr>
+<tr>
+<td><code>teanode shopping remind LIST [--off]</code> / <code>store-remind STORE [--off]</code></td>
+<td>whether your phone tells you what a list needs, or what your lists need at one store, when you arrive at a store: on by default, <code>--off</code> stops it</td>
+</tr>
+<tr>
+<td><code>teanode shopping add LIST ITEM... [--store NAME] [--aisle NAME] [--quantity N] [--unit UNIT] [--details WORDS] [--store-brand] [--price AMOUNT] [--currency CODE]</code></td>
+<td>add items, each with the flags given. An item already on the list (the same description and store, compared loosely) is merged into: its count becomes the larger of the two and the new details are added, so adding the same list twice does not double it. A picture of each new item is searched for on its own</td>
+</tr>
+<tr>
+<td><code>teanode shopping add LIST (--from-file FILE|-) [--picture FILE]...</code></td>
+<td>read a list into items: the text in a file (<code>-</code> is standard input), or pictures and screenshots of a list. The server&#39;s model reads it, so it needs the assistant to be on and, for pictures, a model that reads them. It prints what was read, which items merge into items already on the list and what the section headings and the store became, then asks before adding, or takes <code>--force</code></td>
+</tr>
+<tr>
+<td><code>teanode shopping import-preview [LIST] (--from-file FILE|-) [--picture FILE]...</code></td>
+<td>the reading alone: nothing is added. With a list it says which items would merge</td>
+</tr>
+<tr>
+<td><code>teanode shopping edit ITEM-ID [--description WORDS] [--details WORDS] [--store NAME] [--aisle NAME] [--quantity N] [--unit UNIT] [--store-brand | --not-store-brand]</code></td>
+<td>change an item; only what you name changes, and <code>--store &quot;&quot;</code> makes it an item for any store</td>
+</tr>
+<tr>
+<td><code>teanode shopping remove ITEM-ID...</code></td>
+<td>take items off their lists for good, with their prices and pictures, at most 100 at once. It asks first, or takes <code>--force</code>. To keep an item in the catalog use <code>not-needed</code></td>
+</tr>
+<tr>
+<td><code>teanode shopping check ITEM-ID... [--store NAME]</code> / <code>uncheck ITEM-ID...</code></td>
+<td>put items in the cart, or back to needed. The first one starts your trip, at <code>--store</code> (the item&#39;s store by default), and tells the others the list reaches. An item stays in the cart until you are done, a receipt matches it, or a new trip starts on its list more than six hours later; then it is bought</td>
+</tr>
+<tr>
+<td><code>teanode shopping need ITEM-ID... [--quantity N]</code> / <code>not-needed ITEM-ID...</code></td>
+<td>need items again with a count (1 by default), or mark them bought or not wanted now</td>
+</tr>
+<tr>
+<td><code>teanode shopping out-of-stock ITEM-ID [--store NAME] [--in-stock]</code></td>
+<td>say a store had none of an item (the item&#39;s own store by default), or that it is in stock again</td>
+</tr>
+<tr>
+<td><code>teanode shopping price ITEM-ID PRICE [--store NAME] [--on DAY] [--currency CODE]</code> / <code>prices ITEM-ID</code></td>
+<td>remember the price of one that you saw, and list the prices remembered, newest first, from receipts and from people</td>
+</tr>
+<tr>
+<td><code>teanode shopping picture ITEM-ID</code> / <code>set-picture ITEM-ID FILE</code></td>
+<td>search the web for another picture of an item, which arrives in a minute or so; or give it a picture of your own, or take its picture away with <code>--remove</code></td>
+</tr>
+<tr>
+<td><code>teanode shopping stores</code> / <code>store STORE [--list LIST]... [--this-store-only]</code></td>
+<td>the stores your items are for, with how many are needed at each; and the store screen: what to get at one store across your lists, by aisle, each item saying which list it is on, and who is shopping there. The items for any store are listed too unless <code>--this-store-only</code></td>
+</tr>
+<tr>
+<td><code>teanode shopping watched-stores [--latitude LAT --longitude LON]</code></td>
+<td>the branches of the stores your lists need something from that the phone watches, near a position or where you were last reported to be: walking into one reminds you what your lists need there</td>
+</tr>
+<tr>
+<td><code>teanode shopping trips</code></td>
+<td>who is shopping now, on the lists you reach</td>
+</tr>
+<tr>
+<td><code>teanode shopping shop LIST... [--store NAME]</code> / <code>done [TRIP-ID]</code></td>
+<td>start shopping a store for some lists by hand, which tells the others the lists reach (checking an item does it too), and finish: what you put in the cart is bought, no receipt needed. <code>done</code> alone ends your own trip, or buys your cart when no trip is open</td>
+</tr>
+<tr>
+<td><code>teanode shopping receipt FINANCE-RECEIPT-ID</code></td>
+<td>what a receipt did to your lists: each item line with the items it was matched to (applied, or proposed and waiting) and the match ids, and what is still needed at that store. Every Finance receipt is matched to your lists on its own, wherever it came from</td>
+</tr>
+<tr>
+<td><code>teanode shopping match-receipt FINANCE-RECEIPT-ID</code></td>
+<td>match a receipt again, for one read before the list had its items. It is queued, and <code>receipt</code> shows the result a minute later</td>
+</tr>
+<tr>
+<td><code>teanode shopping decide MATCH-ID apply|dismiss</code></td>
+<td>apply a match the matcher was unsure of, which checks the item off and remembers its price, or dismiss one; dismissing an applied match undoes it</td>
+</tr>
+<tr>
+<td><code>teanode shopping match-line ITEM-ID FINANCE-RECEIPT-LINE-ID</code> / <code>add-from-receipt FINANCE-RECEIPT-LINE-ID LIST</code></td>
+<td>tie a receipt line to an item by hand, or put a receipt line on a list as an item</td>
+</tr>
+<tr>
+<td><code>teanode shopping undo-receipt FINANCE-RECEIPT-ID</code></td>
+<td>put everything a receipt changed back as it was: items back to needed with their old counts, and the prices it wrote forgotten</td>
+</tr>
+</tbody></table>
+<h3>teanode journal</h3>
+<p>A page for each day of your life: the same operations as the Journal page on
+the dashboard and in the iPhone app, and named after them. A journal day links
+to everything that happened in it, read from where it is kept (coding sessions,
+mail, photos, places, events, money, Health and the rest; a section you have no
+permission for is left out and named), and keeps what only the journal has: your
+words, your mood, the weather, and the story your agent writes about the day
+while it dreams. Your words are yours: your agent never changes them, the story
+is written apart from them, and a touched-up version of your words never
+replaces your original. Each takes <code>--json</code>. A day is written <code>2026-10-22</code>, or
+<code>today</code> or <code>yesterday</code>, and is today when left out; <code>week</code>, <code>month</code> and <code>year</code>
+take any day in the period (weeks start as your calendar starts them, on Monday
+when it says nothing). A journal is not written ahead: a day after today is
+refused.</p>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>teanode journal [list] [--from DAY] [--until DAY] [--page N]</code></td>
+<td>your days, the newest first, 14 to a page: the day, its mood, and its headline, or the start of your words when the story is not written. Only days with something in them are listed; it says on standard error where the next page starts</td>
+</tr>
+<tr>
+<td><code>teanode journal day [DAY]</code></td>
+<td>one day whole. The mood (marked when it came from Apple Health), the weather, the day&#39;s numbers, your words (when touching up is on, the touched-up version first and then <code>Original</code>), the headline and story with each mention replaced by the record&#39;s title (a record you can no longer see reads as such), your corrections numbered from 1, the records your agent chose with its reason and the ones you pinned (each with the link id <code>unlink</code> takes), then each source in a line or a few (work, documents, conversations, mail, recordings, photos, places, calendar, reminders, money, Health, shopping, notes, memory), and the day in the order it happened. A section you hold no permission for is named at the end</td>
+</tr>
+<tr>
+<td><code>teanode journal week|month|year [DAY]</code></td>
+<td>the period that holds the day: its story, your looking back, the records chosen, the totals and how many days had each mood, and its days (a year prints its months and chapters instead)</td>
+</tr>
+<tr>
+<td><code>teanode journal search TEXT [--page N]</code></td>
+<td>days and periods whose words, touched-up words, headline or story hold the text in any case, newest first, 20 to a page, each with the words around the match</td>
+</tr>
+<tr>
+<td><code>teanode journal write [DAY] (--text TEXT | --file FILE | -) [--append]</code></td>
+<td>write your words for a day: they replace the day&#39;s words, or with <code>--append</code> follow them after a blank line. The text comes from exactly one of <code>--text</code>, <code>--file</code> or standard input (<code>-</code>). The command reads the day first and sends the time its words were last saved, so a save made meanwhile on the dashboard or the phone is refused as a conflict instead of being lost; replacing words that were there says so on standard error. When touching up is on for the day, the touched-up version is made again from the new words</td>
+</tr>
+<tr>
+<td><code>teanode journal mood [DAY] awful|low|okay|good|great|none [--words WORDS]</code></td>
+<td>your mood for a day, five levels and a few words; <code>none</code> takes it away. A mood you choose replaces one that came from Apple Health, and one from Apple Health never replaces yours</td>
+</tr>
+<tr>
+<td><code>teanode journal look-back week|month|year [DAY] (--text TEXT | --file FILE | -)</code></td>
+<td>your own looking back on a week, month or year, with the same conflict check</td>
+</tr>
+<tr>
+<td><code>teanode journal touch-up [DAY] [--period week|month|year] [--how WHAT]</code>, <code>touch-up [DAY] --off</code></td>
+<td>have your words, or your looking back, touched up. Your original stays and is the only text you change; the touched-up version is shown first and made again whenever the original changes, within a minute or so. <code>--how</code> says what to change (<code>shorter</code>, <code>fix the grammar</code>), and asking again without it keeps the last instruction. <code>--off</code> stops and deletes the touched-up text. Words that are empty are refused</td>
+</tr>
+<tr>
+<td><code>teanode journal correct [DAY] [--period ...] TEXT</code>, <code>uncorrect [DAY] [--period ...] N</code></td>
+<td>tell your agent what its story got wrong, in your words (<code>It was Sam at lunch</code>): the correction is kept with the day, given to every later telling as a fact to keep to, and the story is written again at once. At most 20 corrections of 500 characters; <code>uncorrect</code> takes back the one numbered N in <code>journal day</code>, counting from 1, and writes the story again. The first word of a correction is a day only when words follow it</td>
+</tr>
+<tr>
+<td><code>teanode journal rewrite [DAY] [--period ...]</code>, <code>forget-narrative [DAY] [--period ...]</code></td>
+<td>have the story written again now (also how to ask for a day older than the 92 days your agent writes back to on its own; it is then kept written like a recent one; today cannot be written), or delete the story and headline (a later dream writes it again, except for a day older than that; your corrections stay)</td>
+</tr>
+<tr>
+<td><code>teanode journal pin DAY KIND:ID [--reason WHY]</code>, <code>unlink LINK-ID</code></td>
+<td>pin one of your records to a day, named as the day shows it (<code>mail:3f9a</code>, <code>contact:81c2</code>); it has to be a record you can read, and one that is not yours or is not there is not found. <code>unlink</code> takes a pin off, or hides one of your agent&#39;s choices, which stays hidden so that a later dream does not choose it again</td>
+</tr>
+<tr>
+<td><code>teanode journal settings [--weather on|off] [--evening-question on|off] [--evening-question-time HH:MM]</code></td>
+<td>whether the weather of your days is fetched (from a weather service, at the coordinates of the place you spent most of the day, rounded to about 11 km; a day with no place has none), and whether and when TeaNode asks <code>How was today?</code> in the evening (on by default, at 21:00). With no flag it shows them, the day your weeks start on, how far back stories are written on their own, and the provider your agent&#39;s model is run by: what it reads of your journal, your words included, goes there</td>
+</tr>
+<tr>
+<td><code>teanode journal erase --yes</code></td>
+<td>erase your whole journal: every day, week, month and year with your words, moods, weather, stories, corrections and pins, and the memory pages made from the month stories. Nothing they linked to is touched. It asks first, and cannot be undone (<code>--yes</code> or <code>--force</code> skips the question)</td>
+</tr>
+</tbody></table>
 <h3>teanode hook</h3>
 <p>What Claude Code and Codex run, so a coding session on this computer sees
 what your agent knows about the checkout it is in. <code>teanode hook install claude-code</code> adds the hooks to <code>~/.claude/settings.json</code>, and <code>teanode hook install codex</code> to <code>~/.codex/hooks.json</code>, keeping every other hook in the
@@ -1235,7 +1628,19 @@ Amounts are printed with their currency; <code>--json</code> keeps full precisio
 </tr>
 <tr>
 <td><code>teanode finance accounts|transactions|spending-summary</code></td>
-<td>finance accounts with their balances; transactions with <code>--from</code>, <code>--to</code>, <code>--since 30d</code>, <code>--month 2026-09</code>, <code>--text</code>, <code>--finance-account</code>, <code>--is-uncategorized</code> (those that need a spending category, shown as <code>(needs a category)</code>), <code>--duplicate-of &lt;id&gt;</code> (the mirrored copies of one transaction), <code>--is-duplicate-included</code> (the mirrored copies are left out otherwise, and a note says how many), and <code>--offset</code> or <code>--after</code> for the next page, a note saying which rows of how many are shown; a mirrored copy is marked <code>(duplicate of &lt;id&gt;, not counted)</code>; spending and income grouped by <code>--group-by spendingCategory|merchant|month|financeAccount|providerCategory</code></td>
+<td>finance accounts with their balances (<code>--person &lt;username&gt;</code> on each shows what somebody shares with you instead: their accounts at the level each was shared at, then for <code>transactions</code> one account&#39;s day, amount, merchant and category and for <code>spending-summary</code> the months by spending category, with <code>--finance-account</code> to choose among several; at the spending level <code>--from</code> and <code>--to</code> are widened to whole months. When the person shares all their finance with you at a level that reaches the read, and <code>--finance-account</code> is not given, <code>transactions</code> and <code>spending-summary</code> read it as one view across all their accounts, with no account column, and <code>accounts</code> says that they share all of it); transactions with <code>--from</code>, <code>--to</code>, <code>--since 30d</code>, <code>--month 2026-09</code>, <code>--text</code>, <code>--finance-account</code>, <code>--is-uncategorized</code> (those that need a spending category, shown as <code>(needs a category)</code>), <code>--duplicate-of &lt;id&gt;</code> (the mirrored copies of one transaction), <code>--is-duplicate-included</code> (the mirrored copies are left out otherwise, and a note says how many), and <code>--offset</code> or <code>--after</code> for the next page, a note saying which rows of how many are shown; a mirrored copy is marked <code>(duplicate of &lt;id&gt;, not counted)</code>; spending and income grouped by <code>--group-by spendingCategory|merchant|month|financeAccount|providerCategory</code></td>
+</tr>
+<tr>
+<td><code>teanode finance share &lt;finance-account&gt; &lt;username|circle&gt; --level balance|spending|transactions</code></td>
+<td>shares one of your accounts, by its id or name, with a person you share a circle with or with a circle, at a level: <code>balance</code> (name, kind and balance, and a card&#39;s usage against its limit), <code>spending</code> (and your money out and in by month and spending category) or <code>transactions</code> (and each transaction&#39;s day, amount, merchant and category). Receipts, notes, the provider&#39;s data, paystubs, tax forms and budgets are never shared, and your agent cannot read what is shared with you. Sharing again changes the level. Starting a share or widening one is refused here, as for Health, and done on the Finance tab of the agent page or in the iPhone app; a lower level and <code>unshare</code> work</td>
+</tr>
+<tr>
+<td><code>teanode finance share all &lt;username|circle&gt; --level spending|transactions</code></td>
+<td>shares all of your finance, every account you have now and every one you link later, with a person you share a circle with or with a circle, as one combined view with no account name, mask or balance: <code>spending</code> (your money out and in by month and spending category, across all your accounts, transfers between them left out as on your Spending page) or <code>transactions</code> (and each transaction&#39;s day, amount, merchant and category). There is no <code>balance</code> level for it. Sharing again changes the level, starting one or widening it is refused here and done on the Finance tab of the agent page or in the iPhone app, and a lower level and <code>unshare</code> work. An account that is itself named <code>all</code> is shared by its id</td>
+</tr>
+<tr>
+<td><code>teanode finance shares|unshare &lt;share-id&gt;</code></td>
+<td>your finance shares (an <code>all accounts</code> row for a share of all of it), who each is with and the level, then the accounts and the people sharing all their finance that others share with you (<code>--json</code> has <code>sharedByYou</code>, <code>allFinanceSharedByYou</code>, <code>sharedWithYou</code> and <code>allFinanceSharedWithYou</code>); <code>unshare</code> ends either kind</td>
 </tr>
 <tr>
 <td><code>teanode finance credit-usage</code></td>
@@ -1381,12 +1786,16 @@ program answers every request as it comes, however many are running.</p>
 <td>a session&#39;s last turns from its history file, 10 by default and 100 at most</td>
 </tr>
 <tr>
+<td><code>teanode computer herdr subagents &lt;pane&gt; [--computer NAME]</code></td>
+<td>the agents a Claude Code session started for its current request, as a tree: the session, then each agent on a line with its state (<code>running</code>, <code>done</code>, <code>stopped</code>), kind, task, model and how long it ran, indented under the agent that started it. A Codex session has none</td>
+</tr>
+<tr>
 <td><code>teanode computer herdr screen &lt;pane&gt; [--computer NAME] [--lines N]</code></td>
 <td>what the pane shows now, or its last <code>--lines</code> lines</td>
 </tr>
 <tr>
 <td><code>teanode computer herdr send &lt;pane&gt; &lt;text&gt; [--attach FILE]... [--computer NAME]</code></td>
-<td>type the text into the pane and press enter; a session at work reads it as a message in its turn. <code>--attach</code> hands it a file (a picture, a document): uploaded, written on the session&#39;s computer, and its path typed after the text; repeatable, and enough without text. Refused while the session asks a question</td>
+<td>type the text into the pane and press enter; a session at work reads it as a message in its turn. <code>--attach</code> hands it a file (a picture, a document): uploaded, written on the session&#39;s computer, and its path typed before the text; repeatable, and enough without text. Refused while the session asks a question</td>
 </tr>
 <tr>
 <td><code>teanode computer herdr wait &lt;pane&gt; [--computer NAME] [--seconds N]</code></td>
@@ -1419,4 +1828,4 @@ program answers every request as it comes, however many are running.</p>
 </tbody></table>
 <p>The operator can keep computers off for the whole server with
 <code>agent.features.computer</code>.</p>
-<h2>Documentation</h2><h3>Getting started</h3><ul><li><a href="/doc/introduction">What is TeaNode</a>: Send and receive mail at your own domains: mailboxes read here or over IMAP, forwarding, what it does, and what you need to run it.</li><li><a href="/doc/quick-start">Quick start</a>: TeaNode running with docker compose in a few minutes: the assistant first, with no domain, then mail at your own domain if you want it.</li><li><a href="/doc/getting-started">Getting started</a>: Standing up a mail server for one domain, from nothing to mail arriving in a mailbox you can read in a mail program, including the DNS records and the port 25 problem.</li></ul><h3>Running it</h3><ul><li><a href="/doc/deploying">Deploying</a>: The container image and the compose file, what runs beside the server, how it upgrades itself, and what to back up.</li><li><a href="/doc/configuration">Configuration</a>: Where the settings live, the environment variables that say how to reach them, and every field an operator can set.</li><li><a href="/doc/agents">Agents</a>: The personal agent: what it needs, what it does with a mailbox, and what to weigh before turning it on.</li><li><a href="/doc/memory">Memory</a>: What your agent keeps between conversations: a graph of pages it writes without being asked, the places it reads from, and what it does with all of it in its dreams.</li><li><a href="/doc/voice">Voice</a>: Call your agent from the chat drawer: say what you want, hear the answer as it is written, and cut in when you like. On a laptop or a phone.</li><li><a href="/doc/coding-sessions">Coding sessions</a>: Your Claude Code and Codex sessions in herdr, on every computer you attached: your agent reads them, types into them where you can see, and brings you their questions to answer from anywhere.</li><li><a href="/doc/coding-memory">Memory in coding sessions</a>: Claude Code and Codex shown what your agent knows about the checkout they run in: the project page and the last session when one starts, recall kept to the project before each prompt, and the transcript read within a minute.</li><li><a href="/doc/mcp">Model Context Protocol</a>: TeaNode on both ends of the protocol: answering it, so your editor can use your agent's tools and ask it questions, and connecting out to servers of your own.</li><li><a href="/doc/finance">Finance</a>: Your banks, cards and brokerages linked through Plaid or SimpleFIN: transactions in your own categories, budgets that say where the month is heading, savings targets, net worth, and a tax year put together from your paystubs, W-2s, 1099s and 1098s, all kept in your own database.</li><li><a href="/doc/circles">Circles and chats</a>: The people on one server in circles: chats with each other in the drawer and the app, with or without their agents, and calendars, albums, memory pages, skills and location shared at the level each owner picks.</li><li><a href="/doc/photos">Photos</a>: Photos and videos on your own server: backed up from the iPhone in the background, found by place, date or what is in them, faces grouped into people you name, and albums shared with your circle.</li><li><a href="/doc/location">Location</a>: Visits to named places recorded by the iPhone app, a map of your day, where you are shared with the people in your circle, and what leaves the server to name a place.</li><li><a href="/doc/passwords">Passwords</a>: Logins, passkeys, one-time codes, cards and notes, encrypted on your own devices: filled in Chrome and on the iPhone, shared with your circle, and used by your agent only on the logins you turn on.</li><li><a href="/doc/journal">Journal</a>: A page for each day that links everything that happened, with your words, your mood and the weather, and the story your agent writes of it; weeks, months and years above the days.</li><li><a href="/doc/shopping">Shopping lists</a>: Lists shared with your circle, shopped store by store and aisle by aisle, checked off live and by the receipt, with pictures, prices and a reminder at the store.</li><li><a href="/doc/command-line">The command line</a>: The two programs: the server and the few things only its host can do, and the client that administers it from anywhere through the API.</li></ul><h3>Security</h3><ul><li><a href="/doc/security">Reporting a security problem</a>: Where to report something exploitable, what is in scope, and what is not.</li><li><a href="/doc/security-review">Security review</a>: A review of the whole program: what was examined, what was found, what was fixed, and what is still open.</li></ul><h3>Contributing</h3><ul><li><a href="/doc/contributing">Contributing</a>: Naming, comments, the invariants that bite, tests, commits and the changelog that cuts a release.</li><li><a href="/doc/local-development">Local development</a>: Getting a working build and a database to point it at, a development server that cannot send mail, and the optional scanners.</li><li><a href="/doc/project-structure">Project structure</a>: What each package is for and which way the dependencies point.</li></ul><p>Every document is also plain markdown, listed in <a href="/llms.txt">/llms.txt</a>.</p></div></div></body></html>
+<h2>Documentation</h2><h3>Getting started</h3><ul><li><a href="/doc/introduction">What is TeaNode</a>: Send and receive mail at your own domains: mailboxes read here or over IMAP, forwarding, what it does, and what you need to run it.</li><li><a href="/doc/quick-start">Quick start</a>: TeaNode running with docker compose in a few minutes: the assistant first, with no domain, then mail at your own domain if you want it.</li><li><a href="/doc/getting-started">Getting started</a>: Standing up a mail server for one domain, from nothing to mail arriving in a mailbox you can read in a mail program, including the DNS records and the port 25 problem.</li></ul><h3>Running it</h3><ul><li><a href="/doc/deploying">Deploying</a>: The container image and the compose file, what runs beside the server, how it upgrades itself, and what to back up.</li><li><a href="/doc/configuration">Configuration</a>: Where the settings live, the environment variables that say how to reach them, and every field an operator can set.</li><li><a href="/doc/agents">Agents</a>: The personal agent: what it needs, what it does with a mailbox, and what to weigh before turning it on.</li><li><a href="/doc/memory">Memory</a>: What your agent keeps between conversations: a graph of pages it writes without being asked, the places it reads from, and what it does with all of it in its dreams.</li><li><a href="/doc/voice">Voice</a>: Call your agent from the chat drawer: say what you want, hear the answer as it is written, and cut in when you like. On a laptop or a phone.</li><li><a href="/doc/coding-sessions">Coding sessions</a>: Your Claude Code and Codex sessions in herdr, on every computer you attached: your agent reads them, types into them where you can see, and brings you their questions to answer from anywhere.</li><li><a href="/doc/coding-memory">Memory in coding sessions</a>: Claude Code and Codex shown what your agent knows about the checkout they run in: the project page and the last session when one starts, recall kept to the project before each prompt, and the transcript read within a minute.</li><li><a href="/doc/mcp">Model Context Protocol</a>: TeaNode on both ends of the protocol: answering it, so your editor can use your agent's tools and ask it questions, and connecting out to servers of your own.</li><li><a href="/doc/finance">Finance</a>: Your banks, cards and brokerages linked through Plaid or SimpleFIN: transactions in your own categories, budgets that say where the month is heading, savings targets, net worth, and a tax year put together from your paystubs, W-2s, 1099s and 1098s, all kept in your own database.</li><li><a href="/doc/circles">Circles and chats</a>: The people on one server in circles: chats with each other in the drawer and the app, with voice messages and voice and video calls, with or without their agents, and calendars, albums, memory pages, skills, finance and location shared at the level each owner picks.</li><li><a href="/doc/photos">Photos</a>: Photos and videos on your own server: backed up from the iPhone in the background, found by place, date or what is in them, faces grouped into people you name, and albums shared with your circle.</li><li><a href="/doc/location">Location</a>: Visits to named places recorded by the iPhone app, the trips between them and how you traveled, a map of your day, where you are shared with the people in your circle, and what leaves the server to name a place.</li><li><a href="/doc/passwords">Passwords</a>: Logins, passkeys, one-time codes, cards and notes, encrypted on your own devices: filled in Chrome and on the iPhone, shared with your circle, and used by your agent only on the logins you turn on.</li><li><a href="/doc/journal">Journal</a>: A page for each day that links everything that happened, with your words, your mood and the weather, and the story your agent writes of it; weeks, months and years above the days.</li><li><a href="/doc/shopping">Shopping lists</a>: Lists shared with your circle, shopped store by store and aisle by aisle, checked off live and by the receipt, with pictures, prices and a reminder at the store.</li><li><a href="/doc/command-line">The command line</a>: The two programs: the server and the few things only its host can do, and the client that administers it from anywhere through the API.</li></ul><h3>Security</h3><ul><li><a href="/doc/security">Reporting a security problem</a>: Where to report something exploitable, what is in scope, and what is not.</li><li><a href="/doc/security-review">Security review</a>: A review of the whole program: what was examined, what was found, what was fixed, and what is still open.</li></ul><h3>Contributing</h3><ul><li><a href="/doc/contributing">Contributing</a>: Naming, comments, the invariants that bite, tests, commits and the changelog that cuts a release.</li><li><a href="/doc/local-development">Local development</a>: Getting a working build and a database to point it at, a development server that cannot send mail, and the optional scanners.</li><li><a href="/doc/project-structure">Project structure</a>: What each package is for and which way the dependencies point.</li></ul><p>Every document is also plain markdown, listed in <a href="/llms.txt">/llms.txt</a>.</p></div></div></body></html>

@@ -180,6 +180,22 @@ documents means married filing jointly. It is a start for a return, not
 the return: state tax is taken as withheld, and credits other than those
 are not counted.
 
+## Sharing
+
+Share with somebody in your [circle](/doc/circles), or with the whole circle,
+one account at a time or all of your finance at once, the accounts you link
+later included. Either is at one of two levels:
+
+- **Spending**: money in and out by month and category, with money moved
+  between your own accounts left out, and no account names, numbers or
+  balances.
+- **Transactions**: also each transaction's day, amount, merchant and
+  category.
+
+Shared all at once, it reads as one combined view under **Showing**. Starting
+or widening a share is your own tap, never your agent's. On the command line
+it is `teanode finance share all <person|circle> --level spending`.
+
 ## Three ways in
 
 The same operations, under the same names, in three places:

@@ -70,6 +70,12 @@ Context Protocol, once it is [connected to your server](/doc/mcp): ask it
 from your phone, by voice in the car if you like, what your sessions are up
 to, and tell one what to do next.
 
+A session can also hand you what it made. A chart it drew, a screen recording
+or a page goes to your main chat through `share_file` with `to: "main_chat"`,
+uploaded straight from the session, and your phone is told. A page or a PDF
+sent this way opens in place. `teanode agent send-file <file>` does the same
+from any terminal.
+
 To an MCP client the tool says it is read-only, at your word, so these
 assistants run it without asking each time; most would not let you always
 allow a tool that writes. Sending and answering raise no confirmation card

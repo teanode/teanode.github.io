@@ -83,7 +83,8 @@ somebody up or keep somebody for you. Your own computer, attached with
 you, asking first for anything that changes the machine. The Claude Code and
 Codex sessions you keep in herdr on those computers, which it reads, types
 into and brings you the questions of (see [Coding sessions](/doc/coding-sessions)). Your own browser tab, through an extension,
-so it can act on a page only you can sign into while you watch. Your calendar,
+so it can act on a page only you can sign into while you watch; the same
+extension keeps your conversation open in Chrome's side panel. Your calendar,
 so it knows what your week already holds, and your reminders list beside it.
 The notes your phone's Notes app keeps in your mail account, which it can
 read and help write. Your finances, through banks and cards you link
@@ -130,6 +131,12 @@ my inbox", "chase the refund until it arrives") runs in the background, in a
 conversation of its own, for days if it needs to. Your chat hears from it
 only when it needs you; the Goals tab says what each goal is doing, what it
 did, and what it made along the way.
+
+**Starts when the mail does.** A schedule runs at set times, or whenever a
+message it waits for arrives, with the same conditions as a mailbox rule:
+"when the school mails pictures, save them to the album". Each run is told
+which messages set it off, and a run that mail started never counts as you
+asking, so it cannot use your Passwords.
 
 **Works while you are away, as far as you let it.** Schedules, goals and
 dreams run with nobody watching, and they reach your computers too. A call

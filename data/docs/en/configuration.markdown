@@ -316,6 +316,10 @@ came from one of these. Empty is the safe default and the right one for a
 server that faces the internet, where the connection's own address is the
 truth.
 
+Behind a reverse proxy, list it here: otherwise every sign-in limiter sees the
+proxy's address as one caller, and one person's failed attempts lock out
+everybody who comes through it.
+
 
 ### `sso`
 
@@ -844,6 +848,29 @@ at. A server cannot work this out alone: the address on its interface is
 usually private, and only something outside can say what a sending mail server
 sees.  Each is tried in turn until one answers. Empty disables the lookup, and
 the dashboard then asks the operator for the address instead.
+
+### `calls`
+
+Voice and video calls in chats. Everybody on a call sends their audio and
+video to the server's media server once, and it forwards each to the others,
+so a call can have any number of people. The media server listens on one UDP
+port and one TCP port, which must be reachable from the internet: forward
+both on the gateway when the server is behind one, and publish both from the
+container. See [docs/subsystems/chat-calls.md](https://github.com/ziyan/teanode/blob/main/docs/subsystems/chat-calls.md).
+
+**`enabled`** — Whether calls are offered in chats. On by default.
+
+**`publicAddress`** — The IPv4 address devices send a call's audio and video
+to. Leave it empty to use the address the dashboard's name resolves to when
+the server starts.
+
+**`udpPort`** — The UDP port the media server listens on, 3478 by default.
+
+**`tcpPort`** — The TCP port the media server listens on, for networks that
+let no UDP through, 3478 by default.
+
+**`ringSeconds`** — How long a call rings before whoever has not answered
+missed it, from 10 to 300; 60 by default.
 
 ### `antivirus`
 
@@ -1543,6 +1570,12 @@ person past it is refused, with how much they keep and what to do: delete old
 messages with files to make room. Not to be confused with `maxAttachmentBytes`
 above, which bounds one upload.
 
+**`maxSentFileBytes`** bounds one file sent to a person's main chat: by a
+program over MCP, by the agent from another conversation, or by a run nobody
+is present for (`share_file` with `to: "main_chat"`, `teanode agent
+send-file`); `100MB` when it is not set, which takes a few minutes of a
+screen recording.
+
 **`maxScannedAttachmentBytes`** — The largest file a knowledge source
 carries off a person's machine: a picture or a document that a record in a
 `records` folder said it came with, kept in object storage so that
@@ -1807,7 +1840,9 @@ talking, and each finished utterance is sent as an ordinary turn, the same as
 if they had typed it. The answer is spoken back through the provider's
 text-to-speech, and stops when the person starts talking. Off by default.
 
-**`enabled`** — Whether the drawer offers the microphone.
+**`enabled`**: whether the drawer offers the microphone. Dictation (words
+spoken into a box) and the words under a voice message use it too: with it off,
+a voice message still plays but has no transcript.
 
 **`provider`** — The provider of kind `openai` whose key and address the
 transcription uses. Empty is the first one.
@@ -1815,7 +1850,8 @@ transcription uses. Empty is the first one.
 **`transcriptionModel`** — The realtime transcription model. It has to be
 one that detects speech itself; `gpt-live-transcribe` and
 `gpt-realtime-whisper` need the application to end each turn and are refused.
-Empty is `gpt-4o-transcribe`.
+Empty is `gpt-4o-transcribe`. The words under a voice message are written by
+this model too, from the saved file, and are paid for by the sender's agent.
 
 **`silenceMS`** — How long a pause ends what somebody is saying, in
 milliseconds, up to 5000. Zero, the default, lets the provider judge from

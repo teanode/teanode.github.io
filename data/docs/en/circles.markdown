@@ -50,6 +50,41 @@ somebody asks:
 - **Somebody else's agent** answers you only if its owner allowed it in that
   chat, and then only from the chat and the web, never from its owner's mail,
   calendar or memory.
+- **Under your own name**, when you ask: your agent, a program you connected
+  over MCP, or `teanode agent conversation say` can write in a chat as you,
+  mentioning people with `@`. In your own conversations it asks first, and
+  the card says whose name the words go under.
+
+### Calls
+
+Anyone in a chat can call it, as a voice call or a video call, from the
+telephone at the top of the chat. Everybody else in it is rung: the iPhone
+rings as for any call, even when it is locked, and so does any dashboard they
+have open. Somebody who set the chat's notifications to off is not rung. In a
+group you can choose who is rung instead, and the others can still join from
+the banner the chat shows while the call goes.
+
+Each person turns their own camera on and off, and whoever has muted their
+microphone is marked beside their name. From five people, or once you tap
+somebody, one person is shown large above a row of the rest: whoever is
+speaking, or the one you chose. Only that picture comes to you at full size,
+so a big video call uses little data.
+
+Anyone on the call can turn on a transcript, which then covers everybody and
+says who turned it on; the transcript and a summary go into the chat when the
+call ends. The server carries the call's sound and pictures itself, with no
+outside service, so its call port has to be reachable from the internet: see
+`calls` in the [configuration](/doc/configuration#calls).
+
+### Voice messages
+
+The waveform button beside the message box switches it to voice. Hold **Hold
+to talk**, let go to send, or slide up to cancel; a message is up to two
+minutes long. Everybody in the chat can play it, and its words appear under
+it, written by the sender's agent. When the sender has no agent, anyone in the
+chat can press **Transcribe**, and their own agent writes the words for
+everybody. The microphone in the message box is dictation instead: what you
+say is typed into the box, and nothing is sent until you send it.
 
 ## Sharing
 
@@ -63,6 +98,8 @@ circle, at a level its owner picks.
   taken. See [Photos](/doc/photos).
 - **Where you are**, now or now and where you have been. See
   [Location](/doc/location).
+- **Finance**, one account at a time or all of it at once, at the spending or
+  the transactions level. See [Finance](/doc/finance).
 - **Pages of memory**, read only, with or without the words each fact came
   from.
 - **A skill that costs money**, with a limit per payment and per month;

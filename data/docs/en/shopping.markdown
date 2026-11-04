@@ -45,9 +45,12 @@ product's own page and keeps its picture only if it really shows the item.
 Pictures are served by your server, so your phone never loads anything from
 the shop's site. You can upload your own instead.
 
-When your phone arrives at a store, with [Location](/doc/location) on, it tells
-you what your lists need there. Mute a list or a store if you would rather
-not hear about it.
+With [Location](/doc/location) on, your phone watches the nearest branches of
+the stores your lists need something from, beside your own places, so walking
+into one tells you what your lists need there, even when the store is next
+door to somewhere you already were. The stop is in your location history too,
+and `teanode shopping watched-stores` says which branches are watched. Mute a
+list or a store if you would rather not hear about it.
 
 ## Your agent
 

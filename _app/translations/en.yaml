@@ -42,10 +42,7 @@ welcome:
       name: Chat
       tile: Your agent, and the people you live with, in one conversation list.
       title: Talk to your agent, and to your people
-      body: >-
-        One conversation with your agent on every page of the dashboard, in the
-        iPhone app and on a call, with your family's and friends' chats beside
-        it. Bring your agent into any of them with an @.
+      body: "One conversation with your agent on every page of the dashboard, in the iPhone app and on a call, with your family's and friends' chats beside it, where you can write, leave a voice message or call. Bring your agent into any of them with an @."
       more: How the agent works
       points:
         call:
@@ -57,6 +54,12 @@ welcome:
         mentions:
           title: "Mentions, and quiet chats"
           body: "Mention one person with @ or everybody with @all, and choose for each chat whether your phone hears every message, only mentions, or nothing."
+        calls:
+          title: "Voice and video calls"
+          body: "Call one person or the whole group, by voice or with video. The iPhone rings as for any call, even locked, and so does an open dashboard. In a big call the person speaking is shown large, and a transcript can be kept for everyone."
+        voice:
+          title: "Voice messages and dictation"
+          body: "Hold to talk and let go to send, and the words appear under the message. Or press the microphone in any message box, or in your journal, and what you say is typed for you."
     search:
       name: "Search"
       tile: "One box that looks through mail, chats, photos, memory and the rest at once."
@@ -70,8 +73,8 @@ welcome:
           title: "Only what you may open"
           body: "Each part is searched under the same check as its own page, so a search never shows what you could not see there."
         keys:
-          title: "From anywhere"
-          body: "The box at the top of the sidebar, Control-K or Command-K on any page, the Search tab on the iPhone, and teanode search on the command line."
+          title: "From anywhere, to anywhere"
+          body: "The box at the top of the sidebar, Control-K or Command-K on any page, the Search tab on the iPhone, and teanode search on the command line. Type the start of a page, a tab or a mail folder and Enter goes straight there."
         agent:
           title: "Your agent searches too"
           body: "Asked about something it cannot place, the agent searches the same way, within what you granted it."
@@ -87,7 +90,7 @@ welcome:
           body: "A day reads each photo, visit, event, mail and payment live from its own page, with the weather of the day. A deleted photo or a corrected charge is right on the day too."
         words:
           title: "Your words stay yours"
-          body: "Write what you want to remember and pick one of five moods. TeaNode never changes your words; ask it to touch them up and your original stays a tap away."
+          body: "Write or say what you want to remember and pick one of five moods. TeaNode never changes your words; ask it to touch them up and your original stays a tap away."
         story:
           title: "The story of the day"
           body: "Your agent writes a headline and a few paragraphs, picks the mail and work messages that mattered and says why. Tell it what it got wrong and it writes the day again."
@@ -107,6 +110,10 @@ welcome:
         the replies for you to send. It is a whole mail server for your own
         domain, read here, in the app or in any mail program.
       more: Run it as your mail server
+      points:
+        schedules:
+          title: "Work that starts when mail does"
+          body: "A schedule can wait for a message instead of a time: when the school mails pictures, save them to the album; when the gas bill comes, file it. Each run is told what came."
     calendar:
       name: Calendar
       tile: Calendars and reminders, in step with your phone and shared as you choose.
@@ -160,13 +167,9 @@ welcome:
       more: How photos work
     location:
       name: Location
-      tile: Where you have been, on a map of your day, shared only if you say so.
+      tile: "Where you have been and how you got there, on a map of your day, shared only if you say so."
       title: Where you have been, kept by you
-      body: >-
-        The iPhone app keeps your visits to places, also while it is closed, and
-        your server names them and draws your day on a map. Share where you are
-        with the people you choose, and ask your agent when you last went
-        somewhere.
+      body: "The iPhone app keeps your visits to places, also while it is closed, and your server names them, finds the trips between them and draws your day on a map. Share where you are with the people you choose, and ask your agent when you last went somewhere."
       more: How location works
       points:
         visits:
@@ -175,6 +178,9 @@ welcome:
         places:
           title: Places you name
           body: Home, work, school or the gym. A name you give is never replaced, and arriving at one can tell the people you share with.
+        trips:
+          title: "Trips, and how you went"
+          body: "The way between two visits, each part sorted into walk, run, bike, car, bus, train, boat or plane, and corrected with a tap when it is wrong. See how far you went each way by week, month and year."
         paths:
           title: "Paths, pauses and quiet"
           body: "Choose somebody who shares and their day's path is drawn on the map. Pause your own recording for an hour or until tomorrow, mute one person's arrivals, and you are never told somebody arrived where you were with them."
@@ -217,6 +223,9 @@ welcome:
         agents:
           title: "Every agent in a session"
           body: "The agents a live session started show as a tree under it, each with its task, its model and whether it is still running."
+        files:
+          title: "Files it makes, sent to you"
+          body: "A session that draws a chart or records the screen sends it to your main chat, and your phone is told. A page or a PDF opens right there."
     knowledge:
       name: Knowledge
       tile: A graph of the people, projects and places in your life, kept on your server.
@@ -264,7 +273,7 @@ welcome:
           body: "A receipt from a photo, a mail or one sent to your agent checks off what it bought and keeps each price at that store. An unsure match waits for you, and Undo puts it back."
         arrive:
           title: "Reminded at the door"
-          body: "Arrive at a store and your phone tells you what your lists need there."
+          body: "Your phone watches the nearest branches of the stores your lists need, so walking into one tells you what the lists need there."
         pictures:
           title: "Pictures and prices"
           body: "Each item finds its picture on the web through your server, and remembers what it cost at each store over time."
@@ -305,7 +314,7 @@ welcome:
           body: "A passphrase only you know opens them, and then Face ID on the iPhone. The server, a backup and the agent see sealed text, sites and user names included."
         fills:
           title: "Filled where you sign in"
-          body: "The Chrome extension fills logins, saves new ones, and makes passwords and passkeys. On the iPhone, TeaNode fills Safari and every other app, one-time codes too."
+          body: "The Chrome extension's button lists the logins for the site you are on, and Control-Shift-L then Enter fills one. It saves new ones and makes passwords and passkeys. On the iPhone, TeaNode fills Safari and every other app, one-time codes too."
         share:
           title: "Shared with your circle"
           body: "Give a login to one person or the whole circle. It is sealed for their devices alone, and only you change it."
@@ -337,12 +346,7 @@ welcome:
   phone:
     heading: TeaNode for iPhone
     lead: Your assistant, in your pocket.
-    body: >-
-      Chat with it, call it, answer it from a notification, and hand it what
-      you are looking at from any app. One app for every TeaNode server: scan the code your dashboard shows and
-      it connects as you, with nothing to type. It carries what the dashboard
-      does, from mail and the calendar to photos, finance and knowledge, drawn in the
-      system's own controls and at your text size.
+    body: "Chat with it, call it, answer it from a notification, and hand it what you are looking at from any app. One app for every TeaNode server: scan the code your dashboard shows and it connects as you, with nothing to type. It carries what the dashboard does, from mail and the calendar to photos, finance and knowledge, drawn in the system's own controls and at your text size, on the iPhone and on the iPad held either way."
     availability: In TestFlight now, and on its way to the App Store
     privacy: The app's privacy policy
     galleryLabel: Screens of the iPhone app, with invented data
@@ -354,8 +358,8 @@ welcome:
         title: Answer from the notification
         body: What needs you arrives as a notification you can reply to. A running turn sits on the lock screen as a Live Activity, and widgets show what is waiting and what is next.
       call:
-        title: Call it, or ask Siri
-        body: A real phone call you can cut into, on the speaker or in your headphones. Ask TeaNode and Call TeaNode work from Siri, Shortcuts and Control Center.
+        title: "Calls, with your people and your agent"
+        body: "Voice and video calls from any chat ring on the iPhone's own call screen, even locked. Your agent takes a real call you can cut into, and Siri, Shortcuts and Control Center reach it too."
       share:
         title: Share anything to it
         body: A picture, a file, a link or some words go to your agent with a note. Paystubs and W-2s go straight to Taxes, and a bank's export to your statements.
@@ -366,11 +370,11 @@ welcome:
         title: Your photos, backed up
         body: The library goes to your server in the background and carries on where the network cut it off. A photo you delete on the phone stays on TeaNode.
       location:
-        title: Where you have been
-        body: Visits to your places are kept while the app is closed, on a map of your day, and shared only with the people you choose.
+        title: "Where you have been"
+        body: "Visits to your places and the trips between them are kept while the app is closed, on a map of your day, and shared only with the people you choose."
       search:
         title: "Search everything"
-        body: "The Search tab looks through chats, mail, contacts, photos and the rest at once, and the three parts you use most sit in the tab bar."
+        body: "The Search tab looks through chats, mail, contacts, photos and the rest at once, and takes you to any screen or setting by its name."
       shopping:
         title: "Shopping at the store"
         body: "Your lists by store and aisle, checked off with the others watching, and a reminder when you arrive."
@@ -386,10 +390,12 @@ welcome:
     captions:
       conversation: "The conversation: a mail drafted, a coding session's question, and a reply waiting for your word."
       chats: "A chat with Sam: a link shows short and clean, with a card of the page it leads to."
+      call: "A chat with Sam: a voice message with its words under it, the calls you had, and one going now to join."
       mail: The inbox, with what is important and what needs a reply marked.
       followups: "What your agent is following from your mail: a parcel that stalled, a bill overdue, a form due Friday."
       photos: Your photos, month by month, backed up from the phone.
       location: "The whole screen is the map, with you and the people who share with you, and the day in a drawer over it."
+      travel: "Travel: how far you went each week, by car, bike, bus and on foot, corrected where the phone guessed wrong."
       coding: "A live coding session's agents: what each was asked, its model, and whether it is still running."
       calendar: The month, with your reminders a tap away.
       finance: Where the money went, month by month.
@@ -441,7 +447,8 @@ welcome:
     drawerCalendar: The same conversation, a question later. It reads both calendars and the school's message, offers times that suit you and Sam, and asks before writing anything.
     photos: Photos. The library by month or all at once, backed up from the phone, uploaded here or kept from a conversation, with albums and the people in it a click away.
     photoViewer: One photo, with when and where it was taken and on what. The place can be changed or removed, and your agent can be asked what is in it.
-    location: Location. A day of visits at named places, on a map drawn through your own server, with each visit and how long it lasted under it.
+    location: "Location. A day of visits at named places and the trips between them, each part a walk, a ride or a drive, with how far and how long."
+    locationTravel: "Travel. How far you went each week on foot, by bike, car, bus and train, with the parts you corrected counted the way you said."
     circleChat: A family circle's chat. Its members write to each other, and an agent answers when somebody asks it.
     circles: A circle and its people, each with what they are to you, and a way to invite somebody or make them an account.
     contacts: "A contact's own page: the mail, photos and recordings they are in, and what your agent knows about them."
@@ -450,6 +457,7 @@ welcome:
     passwords: "Passwords. Logins, cards and notes, sealed on your own devices, with the ones shared with your circle and the one your agent may use marked."
     personCard: "A person's card, opened from a chat, a circle, a photo or the map: where they are, if they share it, and what you share with each other."
     search: "One search across everything: mail, contacts, what your agent knows and your documents, each under its own access rules."
+    searchJump: "Control-K on any page: type the start of a name and the rest is filled in, with the pages, tabs and settings it could be listed under it."
     shoppingStore: "Shopping a store: what every list needs at Harbor Market, by aisle, while Sam is there checking things off."
     shopping: "A shared grocery list by aisle, with what each item is for, how many, and what it last cost."
     journalMonth: "October as a calendar of days, each with its first photo, high temperature and mood, and the month's own story beside it."
@@ -459,12 +467,14 @@ welcome:
     financeCategories: A month by spending category, under its budgets. Each budget says how far it has gone and whether the month is on track.
     financeReceipt: A charge with its receipt, read from a photo line by line, checked against its printed total and matched to the charge on its own.
     financeNetWorth: Net worth. Everything you own and owe, from linked accounts, values you enter, and estimates the agent makes where you allowed it.
+    financeShared: "Sam's view of Robin's finance, shared all at once: one combined view of money in and out, with no account names or balances."
     agent: >-
       Your agent's own page: what to call it, how it should write, which
       mailboxes it may reach, and what it has spent today.
     knowledge: One page of what your agent knows. Its path is its address, each fact is numbered so it can be cited, and the history says who wrote every line and what was there before.
     graph: The same knowledge as a graph. Pages by kind, links that say how, and a double click opens what a page is joined to.
     subscriptions: "Every mailing list this mailbox receives, with what each has sent, and the two ways out: leave it, or mute it and let it file itself."
+    scheduleMail: "A schedule that waits for mail: when a message from the school arrives, the agent saves its pictures to Alex's album."
     programs: An app password for each device, which signs a mail program in over IMAP and sends through the submission port.
     access: People, groups and roles. A group can be tied to one domain, so its permissions reach only that far.
     mail: The mail list, filtered to one domain. Every message the server has handled and what it decided about each one.
@@ -573,7 +583,7 @@ welcome:
       one. Nothing reaches a model while mail is being delivered; the work is
       queued afterwards. Point it at an Ollama or a vLLM of your own and nothing
       leaves the machine at all. Operators cap what it may spend, in tokens or in money.
-    browser: "When it works in your Chrome tab, you can watch that tab live from the dashboard on any device, take it over, and hand it back with a note. It asks you to when a step is yours to do."
+    browser: "When it works in your Chrome tab, you can watch that tab live from the dashboard on any device, take it over, and hand it back with a note. It asks you to when a step is yours to do. In Chrome, the extension keeps your conversation open in the side panel."
     points:
       sorts:
         title: Sorts what arrives
@@ -727,8 +737,8 @@ welcome:
         title: Backed up in the background
         body: Over Wi-Fi unless you allow mobile data, Live Photos and edits included, carrying on where the network cut it off. A photo you delete on the phone stays on TeaNode.
       find:
-        title: Found by what is in them
-        body: Search by place, date or camera, or ask your agent for the pictures from the lake last summer. It looks at a photo when it needs to and remembers what it saw.
+        title: "Found by what is in them"
+        body: "Search by place, date or camera, or ask your agent for the pictures from the lake last summer. Each new photo is described as it arrives, and a receipt or a tax form in one goes to Finance."
       people:
         title: People you name
         body: Faces grouped on your own server and named from your address book. Your agent never names a face by guessing.
@@ -747,14 +757,17 @@ welcome:
         title: Your own categories
         body: Filed by you, by your rules, by the bank's category, and only then by a model. Choose a page of transactions and file them, and their merchants, at once.
       receipts:
-        title: Receipts, line by line
-        body: Photographed into the chat or arriving as mail, checked against the printed total and matched to the charge, so you can search what you bought.
+        title: "Receipts, line by line"
+        body: "Photographed into the chat, simply taken with your phone, or arriving as mail, checked against the printed total and matched to the charge, so you can search what you bought."
       budgets:
         title: Budgets that look ahead
         body: Each says where the month is heading, counting the bills still to come. Savings targets say what they need each month.
       netWorth:
         title: Net worth
         body: Accounts, holdings, a house and a car, in any currency, with the agent estimating what you let it.
+      share:
+        title: "Shared, all at once"
+        body: "Share all your spending with your partner, or every transaction, accounts you link later included. They see one combined view, with no account names or balances. One account at a time works too."
   meetings:
     points:
       live:
