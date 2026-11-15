@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.teanode.app",
+      "sha256_cert_fingerprints": [
+        "FC:D1:D5:F4:1A:6C:0B:D8:2E:A0:84:D2:D6:EC:18:49:47:82:72:EE:03:45:F2:98:0D:58:6A:15:8F:F7:61:84"
+      ]
+    }
+  }
+]
