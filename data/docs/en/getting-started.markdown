@@ -284,15 +284,15 @@ box, then **Message someone**. Every circle has a chat of its own.
   that send as the domain rather than as a person.
 - **Photos.** On from the first start, with nothing to choose: each person has
   a Photos page in the rail. Upload from the dashboard or with
-  `teanode photo upload <folder>`, or turn on **Photo backup** in the iPhone
+  `teanode photo upload <folder>`, or turn on **Photo backup** in the phone
   app's settings to send the phone's whole library in the background. The
-  iPhone app only signs in over https (plain http is accepted only for
+  phone apps only sign in over https (plain http is accepted only for
   loopback, which a phone cannot reach), so a server reached at
   `http://localhost` or a local address needs a TLS address first (see
   "Photos and the iPhone app" in `reference/deployment.md`). Deleting a photo
   on the phone leaves it here. A photo with no place, or the wrong one, is
   given a city with **Change location** in its details on the dashboard or
-  the iPhone, for one photo or several chosen at once. The cities come with
+  the phone, for one photo or several chosen at once. The cities come with
   the server, so there is no map service to set up. A library is large: put
   the storage
   (`storage.directory`, or the S3 bucket) on a disk with room for it, and back

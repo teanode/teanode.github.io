@@ -12,7 +12,10 @@ many and of what, the store to get it from or any store, an aisle, a picture
 and its latest price. It is **needed**, **in the cart**, or **not needed**. A
 bought item stays on its list with its picture and prices, so a list is used
 week after week: **Need again** puts it back. Adding something already on
-the list needs the one that is there again instead of adding a second.
+the list needs the one that is there again instead of adding a second, and
+while you type, items on any of your lists that read like it are shown, in
+whatever state, so you can open one instead. Words in any order, a plural or
+a small misspelling still match; nothing is merged without you.
 
 ## Shopping a store
 
@@ -42,6 +45,9 @@ share. Leaving the circle ends the shares it made possible.
 
 A new item looks for its picture on the web: your agent searches, picks the
 product's own page and keeps its picture only if it really shows the item.
+When no page shows that very product, and it is not a store's own brand, it
+looks for a clear photo of the thing instead: a few pears, a plain carton of
+milk. **Find another** tries again.
 Pictures are served by your server, so your phone never loads anything from
 the shop's site. You can upload your own instead.
 

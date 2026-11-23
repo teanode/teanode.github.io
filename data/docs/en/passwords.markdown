@@ -6,11 +6,12 @@ exception is an item you choose to let your agent use.
 
 ## Setting it up
 
-Open **Passwords** on the dashboard or in the iPhone app and choose a
+Open **Passwords** on the dashboard or in the phone app and choose a
 passphrase. It is separate from your TeaNode sign-in and never leaves your
 device. Setup also makes a **recovery key**: print it or save it somewhere
 safe. A device asks for the passphrase once; after that the iPhone opens
-Passwords with Face ID, and Chrome keeps it open for as long as you choose.
+Passwords with Face ID, an Android phone with your fingerprint or face, and
+Chrome keeps it open for as long as you choose.
 
 If you lose both the passphrase and the recovery key, nobody can open your
 Passwords, the operator included. The only way on is to erase it and start
@@ -38,6 +39,9 @@ for a while.
 - **The iPhone.** Turn on TeaNode in Settings, General, AutoFill & Passwords,
   and Safari, Chrome and other apps offer its logins, passkeys and one-time
   codes. A passkey sign-in on a computer, through its QR code, can use it too.
+- **Android.** Choose TeaNode as the Autofill service and as a passkey
+  provider in the phone's settings, and apps and the browser offer its logins,
+  passkeys and one-time codes.
 - **The command line.** `teanode passwords` lists, shows, copies, adds and
   edits items, and makes up passwords.
 

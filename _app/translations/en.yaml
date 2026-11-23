@@ -1,7 +1,7 @@
 ---
 language: English
 title: TeaNode
-tagline: A personal agent for every part of your life, on a server you own, with an iPhone app. Mail, calendar, contacts, photos, location, health, coding, memory, meetings, money, shopping, payments and a journal of your days in one place, stored on your hardware and nowhere else.
+tagline: "A personal agent for every part of your life, on a server you own, with apps for iPhone and Android. Mail, calendar, contacts, photos, location, health, coding, memory, meetings, money, shopping, payments and a journal of your days in one place, stored on your hardware and nowhere else."
 nav:
   docs: Documentation
   github: GitHub
@@ -35,14 +35,14 @@ welcome:
   headline: A personal agent for your whole life, on a server you own.
   lead: "Your mail, calendar and contacts, your photos and where you have been, your health, your coding sessions, your meetings, your money, your shopping and your passwords, joined up in one agent that sees how they connect and keeps a journal of your days. It all runs on your own hardware, one program and one PostgreSQL, so your life is stored with you and nowhere else. You choose the model, you choose what it may reach, and you can take any of it back. Point it at an Ollama or a vLLM of your own and nothing leaves the machine at all."
   getStarted: Get started
-  iphoneButton: The iPhone app
+  iphoneButton: "The phone apps"
   coreHeading: Everything it looks after
   core:
     chat:
       name: Chat
       tile: Your agent, and the people you live with, in one conversation list.
       title: Talk to your agent, and to your people
-      body: "One conversation with your agent on every page of the dashboard, in the iPhone app and on a call, with your family's and friends' chats beside it, where you can write, leave a voice message or call. Bring your agent into any of them with an @."
+      body: "One conversation with your agent on every page of the dashboard, in the phone apps and on a call, with your family's and friends' chats beside it, where you can write, leave a voice message or call. Bring your agent into any of them with an @."
       more: How the agent works
       points:
         call:
@@ -50,16 +50,19 @@ welcome:
           body: Press the telephone in the drawer or the app and talk. The answer is read back as it is written, and you can cut in whenever you like.
         links:
           title: "Links you can see before you open them"
-          body: "A link somebody sends shows short and clean, with its tracking words taken off and a card of the page it leads to. On the iPhone it opens inside the app."
+          body: "A link somebody sends shows short and clean, with its tracking words taken off and a card of the page it leads to. In the phone apps it opens inside the app."
         mentions:
           title: "Mentions, and quiet chats"
           body: "Mention one person with @ or everybody with @all, and choose for each chat whether your phone hears every message, only mentions, or nothing."
         calls:
           title: "Voice and video calls"
-          body: "Call one person or the whole group, by voice or with video. The iPhone rings as for any call, even locked, and so does an open dashboard. In a big call the person speaking is shown large, and a transcript can be kept for everyone."
+          body: "Call one person or the whole group, by voice or with video. A phone rings as for any call, even locked, and so does an open dashboard. In a big call the person speaking is shown large, and a transcript can be kept for everyone."
         voice:
-          title: "Voice messages and dictation"
-          body: "Hold to talk and let go to send, and the words appear under the message. Or press the microphone in any message box, or in your journal, and what you say is typed for you."
+          title: "Voice messages, dictation and reading aloud"
+          body: "Hold to talk and let go to send, and the words appear under the message. Press the microphone in any message box, your journal or a coding session's box, and what you say is typed for you. Hold a message in the phone app to hear it read aloud in your agent's voice."
+        first:
+          title: "It speaks first"
+          body: "Your agent starts a conversation when something is worth your time, like a trip coming up or a goal that ended while you were away. It reaches your phone with the app closed, at most once a day and never in your quiet hours, and Not now pauses it."
     search:
       name: "Search"
       tile: "One box that looks through mail, chats, photos, memory and the rest at once."
@@ -74,7 +77,7 @@ welcome:
           body: "Each part is searched under the same check as its own page, so a search never shows what you could not see there."
         keys:
           title: "From anywhere, to anywhere"
-          body: "The box at the top of the sidebar, Control-K or Command-K on any page, the Search tab on the iPhone, and teanode search on the command line. Type the start of a page, a tab or a mail folder and Enter goes straight there."
+          body: "The box at the top of the sidebar, Control-K or Command-K on any page, the Search tab in the phone apps, and teanode search on the command line. Type the start of a page, a tab or a mail folder and Enter goes straight there."
         agent:
           title: "Your agent searches too"
           body: "Asked about something it cannot place, the agent searches the same way, within what you granted it."
@@ -130,6 +133,9 @@ welcome:
         invites:
           title: Invitations, answered
           body: An invitation that arrives as mail becomes an event you can accept from the conversation, and your agent makes one when you ask.
+        trips:
+          title: "Ready for a trip"
+          body: "A few days before a trip on your calendar your agent offers the forecast, the drive, what is still open from the booking and things to do there, and the day before, what has arrived since."
     contacts:
       name: Contacts
       tile: One address book, in step with your phone, that knows who is who.
@@ -159,22 +165,18 @@ welcome:
       name: Photos
       tile: Your library, backed up from the phone and found by what is in it.
       title: Your photo library, on your own server
-      body: >-
-        Your iPhone backs its library up in the background, and the Photos page,
-        the app and your agent all read the same library: by month, by album, by
-        place and by the people in it. The faces are found on your server
-        itself, never by a service elsewhere.
+      body: "Your phone backs its library up in the background, and the Photos page, the app and your agent all read the same library: by month, by album, by place and by the people in it. The faces are found on your server itself, never by a service elsewhere."
       more: How photos work
     location:
       name: Location
       tile: "Where you have been and how you got there, on a map of your day, shared only if you say so."
       title: Where you have been, kept by you
-      body: "The iPhone app keeps your visits to places, also while it is closed, and your server names them, finds the trips between them and draws your day on a map. Share where you are with the people you choose, and ask your agent when you last went somewhere."
+      body: "The phone app keeps your visits to places, also while it is closed, and your server names them, finds the trips between them and draws your day on a map. Share where you are with the people you choose, and ask your agent when you last went somewhere."
       more: How location works
       points:
         visits:
           title: Every visit, on a map
-          body: Arrivals and departures from the iPhone's own visit detection, with how long each lasted. A day offline arrives whole when the network is back.
+          body: "Arrivals and departures as the phone notices them, also while the app is closed, with how long each lasted. A day offline arrives whole when the network is back."
         places:
           title: Places you name
           body: Home, work, school or the gym. A name you give is never replaced, and arriving at one can tell the people you share with.
@@ -189,17 +191,14 @@ welcome:
           body: Ask when you last went to the dentist, or whether Sam is home yet. Erase a day, a range or all of it whenever you like.
     health:
       name: Health
-      tile: Your Apple Health data, charted on your server and shared by category.
+      tile: "Your Apple Health or Health Connect data, charted on your server and shared by category."
       title: Your health, on your server
-      body: >-
-        The iPhone app copies your Apple Health data to your own server: steps,
-        sleep, heart rate, workouts and the rest. The dashboard and the app
-        chart it, and nobody else sees any of it unless you share it.
+      body: "The phone app copies your Apple Health or Health Connect data to your own server: steps, sleep, heart rate, workouts and the rest. The dashboard and the app chart it, and nobody else sees any of it unless you share it."
       more: The app's privacy policy
       points:
         copied:
-          title: Copied from Apple Health
-          body: Everything HealthKit lets an app read, except clinical records, sent as it is saved. The phone keeps no copy of its own.
+          title: "Copied from the phone"
+          body: "On the iPhone, everything HealthKit lets an app read except clinical records; on Android, what Health Connect holds that means the same. Sent as it is saved, and the phone keeps no copy of its own."
         charts:
           title: By day, week and year
           body: Steps, sleep stages, heart rate, weight and workouts with their routes, on the dashboard, in the app and from the command line.
@@ -240,10 +239,7 @@ welcome:
       name: Recordings
       tile: Meetings recorded on the phone, transcribed by speaker and summarized.
       title: Meetings, written up for you
-      body: >-
-        Record a meeting on your iPhone and your agent writes it up: a transcript
-        as it happens, the speakers by name, a summary of what was decided, and
-        what it taught filed in memory. The original stays on your server.
+      body: "Record a meeting on your phone and your agent writes it up: a transcript as it happens, the speakers by name, a summary of what was decided, and what it taught filed in memory. The original stays on your server."
     finance:
       name: Finance
       tile: Accounts, spending, budgets, receipts, net worth and the tax year.
@@ -276,7 +272,10 @@ welcome:
           body: "Your phone watches the nearest branches of the stores your lists need, so walking into one tells you what the lists need there."
         pictures:
           title: "Pictures and prices"
-          body: "Each item finds its picture on the web through your server, and remembers what it cost at each store over time."
+          body: "Each item finds a picture through your server: the product's own when a page shows it, else a clear photo of the thing. It remembers what it cost at each store over time."
+        similar:
+          title: "No second carton of milk"
+          body: "Adding an item that reads like one already on your lists shows that one first, whatever its state, so you can need the bought one again instead of adding it twice."
         agent:
           title: "Tell your agent"
           body: "Say \"add eggs and rice to the groceries\", or send a photo of a handwritten list, and the items go on it."
@@ -311,10 +310,10 @@ welcome:
       points:
         sealed:
           title: "Encrypted on your devices"
-          body: "A passphrase only you know opens them, and then Face ID on the iPhone. The server, a backup and the agent see sealed text, sites and user names included."
+          body: "A passphrase only you know opens them, and then your face or fingerprint on the phone. The server, a backup and the agent see sealed text, sites and user names included."
         fills:
           title: "Filled where you sign in"
-          body: "The Chrome extension's button lists the logins for the site you are on, and Control-Shift-L then Enter fills one. It saves new ones and makes passwords and passkeys. On the iPhone, TeaNode fills Safari and every other app, one-time codes too."
+          body: "The Chrome extension's button lists the logins for the site you are on, and Control-Shift-L then Enter fills one. It saves new ones and makes passwords and passkeys. On the phones TeaNode fills every app, one-time codes too: Safari and the rest on the iPhone, any app through Autofill on Android."
         share:
           title: "Shared with your circle"
           body: "Give a login to one person or the whole circle. It is sealed for their devices alone, and only you change it."
@@ -344,22 +343,23 @@ welcome:
         title: Open, and yours to keep
         body: MIT licensed, every line on GitHub. Back it up, export it, erase any of it, or switch it off.
   phone:
-    heading: TeaNode for iPhone
+    heading: "TeaNode for iPhone and Android"
     lead: Your assistant, in your pocket.
-    body: "Chat with it, call it, answer it from a notification, and hand it what you are looking at from any app. One app for every TeaNode server: scan the code your dashboard shows and it connects as you, with nothing to type. It carries what the dashboard does, from mail and the calendar to photos, finance and knowledge, drawn in the system's own controls and at your text size, on the iPhone and on the iPad held either way."
-    availability: In TestFlight now, and on its way to the App Store
+    body: "Chat with it, call it, answer it from a notification, and hand it what you are looking at from any app. One app for every TeaNode server, on the iPhone and on Android: scan the code your dashboard shows and it connects as you, with nothing to type. It carries what the dashboard does, from mail and the calendar to photos, finance and knowledge, drawn in each system's own controls and at your text size, on the iPhone, the iPad held either way and an Android phone."
+    availability: "iPhone in TestFlight, on its way to the App Store. Android for testers, by invitation."
     privacy: The app's privacy policy
-    galleryLabel: Screens of the iPhone app, with invented data
+    galleryLabel: "Screens of the phone apps, with invented data"
+    platformLabel: "Which phone app to show"
     points:
       chat:
         title: The conversation, everywhere
         body: Every card the dashboard's drawer shows, including a coding session's question with its answers as buttons. Ask about a mail, a charge or a page from where it is.
       notify:
         title: Answer from the notification
-        body: What needs you arrives as a notification you can reply to. A running turn sits on the lock screen as a Live Activity, and widgets show what is waiting and what is next.
+        body: "What needs you arrives as a notification you can reply to. A running turn stays on the lock screen, as a Live Activity on the iPhone and an ongoing notification on Android, and widgets show what is waiting and what is next."
       call:
         title: "Calls, with your people and your agent"
-        body: "Voice and video calls from any chat ring on the iPhone's own call screen, even locked. Your agent takes a real call you can cut into, and Siri, Shortcuts and Control Center reach it too."
+        body: "Voice and video calls from any chat ring on the phone's own call screen, even locked. Your agent takes a real call you can cut into. On the iPhone Siri, Shortcuts and Control Center reach it, and on Android the widgets and the icon's menu."
       share:
         title: Share anything to it
         body: A picture, a file, a link or some words go to your agent with a note. Paystubs and W-2s go straight to Taxes, and a bank's export to your statements.
@@ -383,13 +383,13 @@ welcome:
         body: "Today's mood in a tap, your words, and each day as TeaNode saw it, with the weeks and months above it."
       passwords:
         title: "Your passwords, in every app"
-        body: "TeaNode is an AutoFill provider: Safari and other apps offer its logins, passkeys and one-time codes, opened with Face ID."
+        body: "TeaNode fills its logins, passkeys and one-time codes into other apps: as an AutoFill provider opened with Face ID on the iPhone, and through Autofill on Android."
       setup:
         title: Mail, calendars and contacts too
-        body: One profile adds your mailbox, calendars and contacts to the iPhone's own apps, and your address book can come in from the phone.
+        body: "On the iPhone one profile adds your mailbox, calendars and contacts to its own apps, and on either phone your address book can come in from the app."
     captions:
       conversation: "The conversation: a mail drafted, a coding session's question, and a reply waiting for your word."
-      chats: "A chat with Sam: a link shows short and clean, with a card of the page it leads to."
+      chats: "A link in the conversation shows short and clean, with a card of the page it leads to."
       call: "A chat with Sam: a voice message with its words under it, the calls you had, and one going now to join."
       mail: The inbox, with what is important and what needs a reply marked.
       followups: "What your agent is following from your mail: a parcel that stalled, a bill overdue, a form due Friday."
@@ -408,6 +408,30 @@ welcome:
       journal: "The journal: today so far, a mood in a tap, and each day's headline with its photos."
       passwords: "Passwords, opened with Face ID: logins, one shared with the circle, a card and a note."
       health: Sleep over the last month, stage by stage, copied from Apple Health.
+    androidCaptions:
+      conversation: "The conversation with Robin's agent: a park near the dentist, the file it sent, and a reminder set."
+      cards: "Planning a trip: a step to approve, a delete that waits for your word, and a question with its answers."
+      chat: "A chat with Sam: a link, a voice message with its words under it, and a missed call."
+      call: "A video call: whoever speaks, or whoever you choose, is shown large."
+      mail: "The inbox: what is important, a receipt, and a sender that could not be verified, marked."
+      thread: "A mail thread: a reply your agent sends at a set time unless you stop it, and an invitation to answer."
+      contacts: "Sam's card: message, call, mail or directions, where Sam is, and what Sam shares."
+      photos: "The library, day by day, backed up from the phone."
+      location: "A day on the map: home, a ride to the park and the office, each part of the way named."
+      travel: "Travel: how far you went each week, by car, train, bike and on foot."
+      health: "Sleep over the last month, stage by stage, copied from Health Connect."
+      coding: "A coding session's agents: what each was asked, its model, and whether it still runs, with a box for the next instruction."
+      recording: "A recorded meeting: the summary, then the transcript, speaker by speaker."
+      knowledge: "A page of memory about a person: a short story, then the mail, events and recordings it came from."
+      finance: "Where the money went this month, and each day against the month before."
+      passwords: "Passwords: a card, logins and a note, sealed on the phone."
+      journal: "The journal: today so far, a mood in a tap, and each day's headline."
+      shopping: "Shopping a store: one of four in the cart, the prices, and the receipt to scan at the end."
+      actions: "Hold a message to reply, copy it, hear it read aloud in your agent's voice, or share it."
+      setup: "No server yet? The app says how to set one up, with the command to copy."
+    platforms:
+      iphone: "iPhone"
+      android: "Android"
   readDocs: Read the documentation
   viewSource: View the source
   release:
@@ -434,7 +458,7 @@ welcome:
     drawerPayment: Sam's agent asked to pay more than the limit Robin set, so it waits for Robin, with the amount and Sam's note.
     recording: "A recorded meeting: the summary of what was decided, then the transcript, speaker by speaker."
     coding: "The Coding page. A session asks which storage to use, with its options as buttons and a box to answer in."
-    health: Health. Steps, sleep, heart rate and workouts from the iPhone, a day at a time or across the year.
+    health: "Health. Steps, sleep, heart rate and workouts from the phone, a day at a time or across the year."
     photoAlbums: Albums, made by hand or from the trips the server suggests, and the ones shared with your circle.
     followups: "What your agent is following from your mail: bills, parcels and deadlines, each closed when it is paid, delivered or done."
     chatAgent: "Chats: your agent and the people in your circle in one list, with the agent's conversation open beside it. What it looked at is listed above each answer."
@@ -667,7 +691,7 @@ welcome:
         remind: Send the reminder to Osborne & Sons?
   voice:
     heading: Call it
-    lead: Press the telephone in the chat drawer, or call it from the iPhone app, and talk. Each thing you finish saying goes to your agent as a turn, and the answer is read back to you as it is written.
+    lead: "Press the telephone in the chat drawer, or call it from the phone app, and talk. Each thing you finish saying goes to your agent as a turn, and the answer is read back to you as it is written."
     body: >-
       It works on any page, on a laptop or a phone, and a spoken turn reaches
       every tool a typed one does. What was said stays in the conversation, so
@@ -699,7 +723,7 @@ welcome:
         body: "Your phone is told, and tapping it opens the session on the Coding page, with the options as buttons. Whoever answers first wins, and a stale answer is refused."
       page:
         title: A page of their own
-        body: The Coding page and the iPhone app show each session's transcript as it happens or its screen, with a box for the next prompt and a new tab beside it.
+        body: "The Coding page and the phone apps show each session's transcript as it happens or its screen, with a box for the next prompt, which you can dictate, and a new tab beside it."
       remembers:
         title: They know what your agent knows
         body: With teanode hook installed, a session starts with the project's page and where the last one there stopped, and each prompt brings what it recalls from that project alone.
@@ -727,7 +751,7 @@ welcome:
         body: Share yours at busy, titles, details or edit, keep a calendar for the circle, and find a time that suits everyone. A private event stays busy.
       location:
         title: Where everyone is
-        body: Share where you are now, or that and where you have been, and hear when somebody arrives home. The people you share with see you on a live map.
+        body: "Share where you are now, or that and where you have been, on a live map. You see as much of each person as you share with them, and hear when somebody arrives home while you share your visits too."
       relationships:
         title: Who is who
         body: Say Sam is your father and Sam sees you as their child. Only the two of you see it, and your agent knows that ask my father means Sam.
@@ -738,7 +762,7 @@ welcome:
         body: Over Wi-Fi unless you allow mobile data, Live Photos and edits included, carrying on where the network cut it off. A photo you delete on the phone stays on TeaNode.
       find:
         title: "Found by what is in them"
-        body: "Search by place, date or camera, or ask your agent for the pictures from the lake last summer. Each new photo is described as it arrives, and a receipt or a tax form in one goes to Finance."
+        body: "Search by place, date or camera, or ask your agent for the pictures from the lake last summer. Each new photo and video is described as it arrives, a video from frames across the clip, and a receipt or a tax form in one goes to Finance."
       people:
         title: People you name
         body: Faces grouped on your own server and named from your address book. Your agent never names a face by guessing.
@@ -861,7 +885,7 @@ welcome:
   needs:
     host: A computer that stays on. The install command brings Docker on Linux, and PostgreSQL with it.
     model: A model to think with. An API key, a ChatGPT plan you already pay for, or an Ollama or vLLM of your own.
-    https: For the iPhone app and for away from home, an HTTPS address in front of it, from any reverse proxy.
+    https: "For the phone apps and for away from home, an HTTPS address in front of it, from any reverse proxy."
     mail: For your own mail, a domain whose DNS you can edit and ports 25, 80, 443, 587 and 993 open.
   needsAfter: >-
     No account with us, because there is nothing of ours to sign up for.
@@ -884,11 +908,8 @@ welcome:
         choices. Add hosted mail later from Server, then Setup, and what you
         already have stays.
     app:
-      question: Is the iPhone app on the App Store?
-      answer: >-
-        Not yet. It is in TestFlight and on its way to the App Store, as one
-        app that connects to any TeaNode server. Until then, the `ios`
-        directory of the repository builds it with your own developer account.
+      question: "Are the phone apps in the stores?"
+      answer: "Not yet. The iPhone app is in TestFlight and on its way to the App Store, and the Android app goes to testers first, by invitation. Each is one app that connects to any TeaNode server, and until they are in the stores the `ios` and `android` directories of the repository build them."
     model:
       question: Which model does it use, and who sees my data?
       answer: >-
@@ -984,7 +1005,7 @@ start:
       picture: The chat panel with the assistant's first message
   nextHeading: Next
   next:
-    phone: Reach it from your iPhone, with an HTTPS address in front of it
+    phone: "Reach it from your phone, with an HTTPS address in front of it"
     mail: Add mail at your own domain
     docs: Read the documentation
 footer:

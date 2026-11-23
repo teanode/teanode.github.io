@@ -8,7 +8,7 @@ Mail at your own domain can be added later without losing anything.
   PostgreSQL comes with it.
 - A model to think with: an API key from OpenAI, Anthropic or Gemini, a
   ChatGPT plan you already pay for, or an Ollama or vLLM of your own.
-- For the iPhone app, or to use it away from that computer, an HTTPS address
+- For the phone apps, or to use it away from that computer, an HTTPS address
   in front of it, from any reverse proxy.
 
 ## 1. Start the server
@@ -58,7 +58,7 @@ agent**.
 
 Put port 8080 behind a reverse proxy with an HTTPS address, add the proxy's
 address to the trusted proxies in the server's settings, and open the
-dashboard there. The iPhone app connects to that address.
+dashboard there. The iPhone and Android apps connect to that address.
 
 ## With your own mail
 

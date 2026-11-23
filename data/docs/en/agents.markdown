@@ -123,6 +123,20 @@ which town once, and never wants a street address) and adds the markets,
 events and things to do to that roundup. The list is on the Alerts tab, under
 Following, and `teanode agent follow list` reads it too.
 
+**Speaks first.** It starts a conversation for reasons of its own: to
+introduce itself, to show a new phone around, about a trip, to check what it
+remembers, or with an idea. What it says reaches your phone with the app
+closed. It waits half an hour after your last word, speaks once a day at most
+but for its introduction and a tour, never while you said **Not now**, and
+with no app or dashboard in front of you not in your quiet hours. A few days
+before a trip on your calendar it offers the forecast, the drive, what is
+still open from the booking and things to do there, with the day you leave
+planned around your calendar and check-in, and the day before it says what
+has arrived since. Every conversation also knows where you are, your
+calendar for the next three weeks and the bills, deadlines and parcels near;
+they are left out of chats with other people. When a goal finishes while you
+are away, your main chat hears how it ended.
+
 **Offers, and keeps at it.** In its dreams it looks through your mail for
 work it could do for you and writes each as an offer on the Ideas tab: what
 it would do, where it stops to ask, and what in your mail prompted it.

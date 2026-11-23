@@ -305,9 +305,9 @@
       "ja": "写真"
     },
     "description": {
-      "en": "Photos and videos on your own server: backed up from the iPhone in the background, found by place, date or what is in them, faces grouped into people you name, and albums shared with your circle.",
-      "zh": "照片和视频存在你自己的服务器上：iPhone 在后台备份，可按地点、日期或画面内容查找，人脸归成由你命名的人物，相册可与圈子共享。",
-      "ja": "写真とビデオを自分のサーバーに。iPhone からバックグラウンドでバックアップし、場所、日付、写っているもので探せ、顔はあなたが名前を付ける人物にまとまり、アルバムはサークルと共有できる。"
+      "en": "Photos and videos on your own server: backed up from the phone in the background, found by place, date or what is in them, faces grouped into people you name, and albums shared with your circle.",
+      "zh": "照片和视频存在你自己的服务器上：手机在后台备份，可按地点、日期或画面内容查找，人脸归成由你命名的人物，相册可与圈子共享。",
+      "ja": "写真とビデオを自分のサーバーに。スマートフォンからバックグラウンドでバックアップし、場所、日付、写っているもので探せ、顔はあなたが名前を付ける人物にまとまり、アルバムはサークルと共有できる。"
     },
     "filename": {
       "en": "en/photos.markdown"
@@ -326,9 +326,9 @@
       "ja": "位置情報"
     },
     "description": {
-      "en": "Visits to named places recorded by the iPhone app, the trips between them and how you traveled, a map of your day, where you are shared with the people in your circle, and what leaves the server to name a place.",
-      "zh": "iPhone App 记录你到访的有名字的地点，它们之间的行程和出行方式，一天的地图，与圈子里的人共享你在哪里，以及为了给地点命名有什么会离开服务器。",
-      "ja": "iPhone アプリが記録する名前の付いた場所への訪問、その間の移動と移動手段、一日の地図、サークルの人との現在地の共有、そして場所に名前を付けるためにサーバーの外へ出るもの。"
+      "en": "Visits to named places recorded by the phone app, the trips between them and how you traveled, a map of your day, where you are shared with the people in your circle, and what leaves the server to name a place.",
+      "zh": "手机应用记录你到访的有名字的地点，它们之间的行程和出行方式，一天的地图，与圈子里的人共享你在哪里，以及为了给地点命名有什么会离开服务器。",
+      "ja": "スマートフォンのアプリが記録する名前の付いた場所への訪問、その間の移動と移動手段、一日の地図、サークルの人との現在地の共有、そして場所に名前を付けるためにサーバーの外へ出るもの。"
     },
     "filename": {
       "en": "en/location.markdown"
@@ -347,9 +347,9 @@
       "ja": "パスワード"
     },
     "description": {
-      "en": "Logins, passkeys, one-time codes, cards and notes, encrypted on your own devices: filled in Chrome and on the iPhone, shared with your circle, and used by your agent only on the logins you turn on.",
-      "zh": "登录信息、通行密钥、一次性验证码、卡片和备注，在你自己的设备上加密：在 Chrome 和 iPhone 上自动填充，可与圈子共享，你的代理只能使用你逐一打开的登录信息。",
-      "ja": "ログイン、パスキー、ワンタイムコード、カード、メモを、自分のデバイスで暗号化。Chrome と iPhone で自動入力し、サークルと共有でき、エージェントはあなたが一つずつ許可したログインだけを使えます。"
+      "en": "Logins, passkeys, one-time codes, cards and notes, encrypted on your own devices: filled in Chrome and on iPhone and Android, shared with your circle, and used by your agent only on the logins you turn on.",
+      "zh": "登录信息、通行密钥、一次性验证码、卡片和备注，在你自己的设备上加密：在 Chrome、iPhone 和 Android 上自动填充，可与圈子共享，你的代理只能使用你逐一打开的登录信息。",
+      "ja": "ログイン、パスキー、ワンタイムコード、カード、メモを、自分のデバイスで暗号化。Chrome、iPhone、Android で自動入力し、サークルと共有でき、エージェントはあなたが一つずつ許可したログインだけを使えます。"
     },
     "filename": {
       "en": "en/passwords.markdown"

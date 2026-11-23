@@ -1,5 +1,6 @@
 Your photos and videos are kept on your server, beside your mail, contacts and
-calendars. The iPhone app backs up its library in the background; the
+calendars. The phone app, on an iPhone or on Android, backs up its library
+in the background; the
 dashboard's Photos page, the app and the command line browse, upload and
 organize it; and your agent finds, looks at and files photos for you. Photos
 are on from the first start, also on a server that runs only the assistant,
@@ -7,7 +8,7 @@ and an operator can turn them off under **Manage → Server → Setup**.
 
 ## Getting them in
 
-- **From the iPhone.** Turn on **Photo backup** in the Photos screen's
+- **From the phone.** Turn on **Photo backup** in the Photos screen's
   **More** menu. The library goes to the server in the background, over
   Wi-Fi unless you allow mobile data and without the Hidden album unless you
   include it, Live Photos and edits included (an edit is kept beside the
@@ -34,8 +35,9 @@ operator's `photos.trashRetention`). Search by
 place, date, camera, file name or what is in the photo, or ask your agent for
 "the pictures from the lake last summer".
 
-Each new picture taken in the last 30 days is read as it arrives: described
-in a few words, so a search finds it by what is in it. A receipt in one is
+Each new picture or video taken in the last 30 days is read as it arrives:
+described in a few words, so a search finds it by what is in it. A video is
+read from up to six frames cut evenly across the clip. A receipt in one is
 recorded in [Finance](/doc/finance) and matched to its charge, unless the same
 purchase is recorded already from its mail; a statement's transactions go
 into the account you imported its statements into before; a paystub or a W-2

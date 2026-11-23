@@ -8,7 +8,7 @@ and **weather**, and the **story** your agent writes of it.
 
 ## A day
 
-Open **Journal** on the dashboard, or in the iPhone app under **More** (and
+Open **Journal** on the dashboard, or in the phone app under **More** (and
 make it one of your tabs if you like). The timeline lists your days, newest
 first, each with its headline, mood and a photo. Opening a day shows:
 

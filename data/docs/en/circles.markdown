@@ -11,7 +11,7 @@ to share, and leaving a circle ends every share that depended on it at once.
 ## Making a circle
 
 Open **Circles** from the account menu at the foot of the rail, or in the
-iPhone app's side menu, and make one with a name and a kind: family, friends
+phone app's side menu, and make one with a name and a kind: family, friends
 or colleagues. The kind is only how screens describe it.
 
 - **Somebody with an account** is invited by username, and joins when they
@@ -37,7 +37,7 @@ teanode user create --circle <circle-id> alex
 ## Chats
 
 Once two people share a circle they can message each other. Chats live in the
-same drawer as your agent, and in the iPhone app's Chats: start one with
+same drawer as your agent, and in the phone app's Chats: start one with
 **New conversation**, then **Message someone** or **New group**. Every circle
 also has a chat of its own, whose members follow the circle's.
 
@@ -58,7 +58,7 @@ somebody asks:
 ### Calls
 
 Anyone in a chat can call it, as a voice call or a video call, from the
-telephone at the top of the chat. Everybody else in it is rung: the iPhone
+telephone at the top of the chat. Everybody else in it is rung: a phone
 rings as for any call, even when it is locked, and so does any dashboard they
 have open. Somebody who set the chat's notifications to off is not rung. In a
 group you can choose who is rung instead, and the others can still join from
@@ -104,7 +104,7 @@ circle, at a level its owner picks.
   from.
 - **A skill that costs money**, with a limit per payment and per month;
   anything above the limit waits for the owner, who approves it on the
-  dashboard or in the iPhone app.
+  dashboard or in the phone app.
 
 ## Who is who
 

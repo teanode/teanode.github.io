@@ -67,12 +67,16 @@ kind `voice`, so the operator's limits apply.
 
 ## Dictation and voice messages
 
-The same microphone is in the message box of a conversation and a chat, and
-in your journal's own words: what you say is typed into the box as you speak,
+The same microphone is in the message box of a conversation and a chat, in
+the box that sends a coding session its next instruction, and in your
+journal's own words: what you say is typed into the box as you speak,
 and nothing is sent until you send or save. In a chat with people you can
 also send a voice message, whose words are written under it by the same
 transcription model (see [Circles and chats](/doc/circles)). Both show only
 where voice is on.
+
+In the phone apps, hold a message and choose **Read aloud** to hear it in your
+agent's voice, or in the phone's own voice when the server has none.
 
 ## What it does not do yet
 

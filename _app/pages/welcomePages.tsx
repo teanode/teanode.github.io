@@ -12,6 +12,9 @@ import Typography from '@mui/material/Typography'
 import { useTheme } from '@mui/material/styles'
 import type { SvgIconComponent } from '@mui/icons-material'
 import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined'
+import CampaignOutlinedIcon from '@mui/icons-material/CampaignOutlined'
+import FlightTakeoffOutlinedIcon from '@mui/icons-material/FlightTakeoffOutlined'
+import PlaylistAddCheckOutlinedIcon from '@mui/icons-material/PlaylistAddCheckOutlined'
 import AccountBalanceOutlinedIcon from '@mui/icons-material/AccountBalanceOutlined'
 import AccountTreeOutlinedIcon from '@mui/icons-material/AccountTreeOutlined'
 import BackupOutlinedIcon from '@mui/icons-material/BackupOutlined'
@@ -58,7 +61,6 @@ import PasswordOutlinedIcon from '@mui/icons-material/PasswordOutlined'
 import PaymentsOutlinedIcon from '@mui/icons-material/PaymentsOutlined'
 import PeopleOutlineOutlinedIcon from '@mui/icons-material/PeopleOutlineOutlined'
 import PhoneInTalkOutlinedIcon from '@mui/icons-material/PhoneInTalkOutlined'
-import PhoneIphoneOutlinedIcon from '@mui/icons-material/PhoneIphoneOutlined'
 import PhotoLibraryOutlinedIcon from '@mui/icons-material/PhotoLibraryOutlined'
 import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined'
 import PriceCheckOutlinedIcon from '@mui/icons-material/PriceCheckOutlined'
@@ -118,7 +120,7 @@ import routes, { links } from '../routes'
 // WelcomePage
 //
 // The front page: a personal assistant on a server of your own. What it looks
-// after, the iPhone app it lives in, what it does in each part of a life, what
+// after, the phone apps it lives in, what it does in each part of a life, what
 // it remembers, and then the mail server it can also be. Pictures where a
 // picture will do; the words are the documents'.
 //
@@ -149,6 +151,7 @@ const coreFeatures: CoreFeature[] = [
       { id: 'welcome.people.points.chats', Icon: ForumOutlinedIcon },
       { id: 'welcome.core.chat.points.calls', Icon: VideocamOutlinedIcon },
       { id: 'welcome.core.chat.points.voice', Icon: KeyboardVoiceOutlinedIcon },
+      { id: 'welcome.core.chat.points.first', Icon: CampaignOutlinedIcon },
       { id: 'welcome.core.chat.points.call', Icon: PhoneInTalkOutlinedIcon },
       { id: 'welcome.phone.points.notify', Icon: NotificationsActiveOutlinedIcon },
       { id: 'welcome.core.chat.points.links', Icon: LinkOutlinedIcon },
@@ -189,6 +192,7 @@ const coreFeatures: CoreFeature[] = [
     points: [
       { id: 'welcome.core.calendar.points.sync', Icon: DevicesOutlinedIcon },
       { id: 'welcome.core.calendar.points.invites', Icon: EventAvailableOutlinedIcon },
+      { id: 'welcome.core.calendar.points.trips', Icon: FlightTakeoffOutlinedIcon },
       { id: 'welcome.people.points.calendars', Icon: GroupsOutlinedIcon },
       { id: 'welcome.agent.points.nearby', Icon: ExploreOutlinedIcon },
     ],
@@ -283,6 +287,7 @@ const coreFeatures: CoreFeature[] = [
       { id: 'welcome.core.shopping.points.receipts', Icon: ReceiptLongOutlinedIcon },
       { id: 'welcome.core.shopping.points.arrive', Icon: StorefrontOutlinedIcon },
       { id: 'welcome.core.shopping.points.pictures', Icon: ImageOutlinedIcon },
+      { id: 'welcome.core.shopping.points.similar', Icon: PlaylistAddCheckOutlinedIcon },
       { id: 'welcome.core.shopping.points.agent', Icon: AutoAwesomeOutlinedIcon },
     ],
   },
@@ -316,7 +321,7 @@ const yoursPoints: { key: string, Icon: SvgIconComponent }[] = [
   { key: 'open', Icon: GitHubIcon },
 ]
 
-// The iPhone app: talking to it, hearing from it, calling it, handing it
+// The phone apps: talking to it, hearing from it, calling it, handing it
 // things, recording with it, what it keeps from the phone (its photos and
 // where it has been), finding things, and the phone's own apps it fills in.
 const phonePoints: { key: string, Icon: SvgIconComponent }[] = [
@@ -376,7 +381,7 @@ const examples: { key: string, Icon: SvgIconComponent }[] = [
 const needs: { key: string, Icon: SvgIconComponent }[] = [
   { key: 'host', Icon: WidgetsOutlinedIcon },
   { key: 'model', Icon: AutoAwesomeOutlinedIcon },
-  { key: 'https', Icon: PhoneIphoneOutlinedIcon },
+  { key: 'https', Icon: SmartphoneOutlinedIcon },
   { key: 'mail', Icon: DnsOutlinedIcon },
 ]
 
@@ -462,7 +467,7 @@ export const WelcomePage = () => {
                 <Button component={NavLink} to={routes.startPath} variant='contained' size='large'>
                   <T id='welcome.getStarted'/>
                 </Button>
-                <Button href='#iphone' variant='outlined' size='large' startIcon={<PhoneIphoneOutlinedIcon/>}>
+                <Button href='#iphone' variant='outlined' size='large' startIcon={<SmartphoneOutlinedIcon/>}>
                   <T id='welcome.iphoneButton'/>
                 </Button>
                 <Button href={links.repository} target='_blank' rel='noopener' variant='text' size='large' startIcon={<GitHubIcon/>}>
@@ -584,7 +589,7 @@ export const WelcomePage = () => {
           </Box>
         </Section>
 
-        {/* The iPhone app: the words and its points, then every screen
+        {/* The phone apps: the words and its points, then every screen
             in a row the reader scrolls, as wide as the window. */}
         <Section id='iphone' band={coreFeatures.length % 2 === 1} wide={<PhoneGallery/>}>
           <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 1fr) minmax(0, 1fr)' }, gap: { xs: 3, md: 6 }, alignItems: 'start' }}>
@@ -597,10 +602,10 @@ export const WelcomePage = () => {
                 <T id='welcome.phone.body'/>
               </Typography>
               <Chip
-                icon={<PhoneIphoneOutlinedIcon/>}
+                icon={<SmartphoneOutlinedIcon/>}
                 label={translate('welcome.phone.availability')}
                 variant='outlined'
-                sx={{ borderColor: brand.leaf, color: 'text.primary', '& .MuiChip-icon': { color: brand.leaf } }}
+                sx={{ borderColor: brand.leaf, color: 'text.primary', '& .MuiChip-icon': { color: brand.leaf }, height: 'auto', minHeight: 32, py: 0.5, '& .MuiChip-label': { whiteSpace: 'normal' } }}
               />
               <Link href='/app/privacy.html' color='text.secondary' variant='body2' sx={{ display: 'block', mt: 1.5 }}>
                 <T id='welcome.phone.privacy'/>
@@ -822,7 +827,7 @@ export const WelcomePage = () => {
 // its points and where to read more across the top; then the dashboard's
 // pages of it in a browser window, with the app's screen of it beside them.
 // On a phone the app's screen is left out: the window is already as wide as
-// the screen, and every app screen is in the iPhone section's row.
+// the screen, and every app screen is in the phone section's row.
 const FeatureSection = ({ feature, band }: { feature: CoreFeature, band: boolean }) => {
   const translate = useTranslate()
   const theme = useTheme()
