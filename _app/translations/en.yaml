@@ -60,9 +60,9 @@ welcome:
         voice:
           title: "Voice messages, dictation and reading aloud"
           body: "Hold to talk and let go to send, and the words appear under the message. Press the microphone in any message box, your journal or a coding session's box, and what you say is typed for you. Hold a message in the phone app to hear it read aloud in your agent's voice."
-        first:
-          title: "It speaks first"
-          body: "Your agent starts a conversation when something is worth your time, like a trip coming up or a goal that ended while you were away. It reaches your phone with the app closed, at most once a day and never in your quiet hours, and Not now pauses it."
+        feed:
+          title: "It speaks first, in a feed"
+          body: "What your agent says without being asked arrives as cards in a feed, not in your chat: an alert, an idea, a trip coming up, the morning brief, what a goal found, a coding session's question. Answer with a button, tap a stack to fan it out, and a heart tells it what you want more of. Only what cannot wait sends a notification, and one setting sends it all back to your chat."
     search:
       name: "Search"
       tile: "One box that looks through mail, chats, photos, memory and the rest at once."
@@ -114,9 +114,9 @@ welcome:
         domain, read here, in the app or in any mail program.
       more: Run it as your mail server
       points:
-        schedules:
+        mailGoals:
           title: "Work that starts when mail does"
-          body: "A schedule can wait for a message instead of a time: when the school mails pictures, save them to the album; when the gas bill comes, file it. Each run is told what came."
+          body: "A goal can wait for a message as well as a time: when the school mails pictures, save them to the album; when the gas bill comes, file it. Each turn is told what came, and what it finds is in your feed."
     calendar:
       name: Calendar
       tile: Calendars and reminders, in step with your phone and shared as you choose.
@@ -498,7 +498,6 @@ welcome:
     knowledge: One page of what your agent knows. Its path is its address, each fact is numbered so it can be cited, and the history says who wrote every line and what was there before.
     graph: The same knowledge as a graph. Pages by kind, links that say how, and a double click opens what a page is joined to.
     subscriptions: "Every mailing list this mailbox receives, with what each has sent, and the two ways out: leave it, or mute it and let it file itself."
-    scheduleMail: "A schedule that waits for mail: when a message from the school arrives, the agent saves its pictures to Alex's album."
     programs: An app password for each device, which signs a mail program in over IMAP and sends through the submission port.
     access: People, groups and roles. A group can be tied to one domain, so its permissions reach only that far.
     mail: The mail list, filtered to one domain. Every message the server has handled and what it decided about each one.
@@ -611,7 +610,7 @@ welcome:
     points:
       sorts:
         title: Sorts what arrives
-        body: A category, a priority, whether somebody is waiting on an answer, and a line of summary, as chips on the row, with a Priority view beside Starred. A brief each morning says what the day holds, and anything that cannot wait reaches you when it arrives.
+        body: "A category, a priority, whether somebody is waiting on an answer, and a line of summary, as chips on the row, with a Priority view beside Starred. A brief each morning in your feed says what the day holds, and anything that cannot wait reaches you when it arrives."
       drafts:
         title: Drafts in your voice
         body: A summary folded above a long conversation, and a reply written for you to read, change and send. Sending stays with you.

@@ -74,8 +74,9 @@ Your agent cannot read Passwords. For one login at a time you can turn on
   model says;
 - in its own browser or in your Chrome tab, with the password, one-time code
   or passkey put into the page by TeaNode, never shown to the model;
-- only in a conversation you started or a schedule you wrote yourself. A run
-  that a mail, a webhook or a chat app started cannot use it.
+- only in a conversation you started, or a goal you wrote yourself on the
+  dashboard or in the app, on times you chose. A run that a mail, a webhook
+  or a chat app started cannot use it.
 
 Each use is recorded on the item, with the site. A note you turn on is read
 by the model in full, since that is what you chose. A card can never be

@@ -101,8 +101,7 @@ time the same kind of work comes up it is shown the two nearest lessons.
 
 **Tells you what cannot wait.** When the mail it sorts shows something you
 should know now (a notice from your child's school, a run of sign-in codes you
-did not ask for), it says so in the conversation drawer and in the chat app
-you linked, unasked. Several messages about one thing make one alert. It
+did not ask for), it says so unasked, as a card in your feed. Several messages about one thing make one alert. It
 sends five a day at most, nothing between 22:00 and 07:00 unless it cannot
 wait, and never the same thing twice in a week. Say "don't tell me about
 these" and that sender, domain or kind is muted; the Alerts tab lists what it
@@ -125,8 +124,8 @@ Following, and `teanode agent follow list` reads it too.
 
 **Speaks first.** It starts a conversation for reasons of its own: to
 introduce itself, to show a new phone around, about a trip, to check what it
-remembers, or with an idea. What it says reaches your phone with the app
-closed. It waits half an hour after your last word, speaks once a day at most
+remembers, or with an idea. The introduction and the tour are conversations; the rest
+arrive as cards in your feed. It waits half an hour after your last word, speaks once a day at most
 but for its introduction and a tour, never while you said **Not now**, and
 with no app or dashboard in front of you not in your quiet hours. A few days
 before a trip on your calendar it offers the forecast, the drive, what is
@@ -137,23 +136,41 @@ calendar for the next three weeks and the bills, deadlines and parcels near;
 they are left out of chats with other people. When a goal finishes while you
 are away, your main chat hears how it ended.
 
+**In a feed, not in your chat.** What it says without being asked arrives
+as cards in **Feed**, on the dashboard and in the phone apps, and on the
+command line as `teanode agent feed`: alerts, ideas, notes before a trip, the
+morning brief, what goals find and the questions your coding sessions ask. A
+card is a headline and a few lines, sometimes a short table, a list, the
+weather or an agenda, with pictures. A card that needs an answer carries the
+choices as buttons: a tap answers it without opening a conversation, and the
+card then shows what came of it. **Discuss** opens your main conversation about
+the card. Cards from one source pile into a stack that fans out when you tap
+it, and a card about the same thing replaces the earlier one instead of piling
+up. A heart tells your agent you want more like it, and **Show less like this**
+the opposite. Only what cannot wait sends a notification. Set **Feed** to your
+main conversation on your agent's settings, and it all goes back there.
+
 **Offers, and keeps at it.** In its dreams it looks through your mail for
 work it could do for you and writes each as an offer on the Ideas tab: what
 it would do, where it stops to ask, and what in your mail prompted it.
 Nothing happens until you start one. A goal ("keep the newsletters out of
 my inbox", "chase the refund until it arrives") runs in the background, in a
 conversation of its own, for days if it needs to. Your chat hears from it
-only when it needs you; the Goals tab says what each goal is doing, what it
+only when it needs you, what it finds is in your feed, and the Goals tab says what each goal is doing, what it
 did, and what it made along the way.
 
-**Starts when the mail does.** A schedule runs at set times, or whenever a
-message it waits for arrives, with the same conditions as a mailbox rule:
-"when the school mails pictures, save them to the album". Each run is told
-which messages set it off, and a run that mail started never counts as you
-asking, so it cannot use your Passwords.
+**On set times, or when the mail does.** A goal keeps its own pace unless
+you give it times, a cron line in your zone or a single moment, or mail to wait
+for, with the same conditions as a mailbox rule: "when the school mails
+pictures, save them to the album". Each turn is told which messages set it off,
+and what it finds goes to your feed, each morning's brief a stack of its own. A
+goal can be paused, resumed and run now, on the dashboard, in the phone apps,
+with `teanode agent goal` or by asking. A turn counts as you asking, which your
+Passwords need, only for a goal you wrote yourself on a screen, on times you
+chose and waiting for no mail.
 
-**Works while you are away, as far as you let it.** Schedules, goals and
-dreams run with nobody watching, and they reach your computers too. A call
+**Works while you are away, as far as you let it.** Goals and dreams
+run with nobody watching, and they reach your computers too. A call
 that would ask you first is refused then, and the run says what it would
 have done, unless you chose to allow that kind of thing for when you are not
 there: speaking for you, spending or moving money, what cannot be undone,

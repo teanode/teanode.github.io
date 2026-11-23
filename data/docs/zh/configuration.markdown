@@ -689,7 +689,7 @@ llama.cpp、OpenRouter、xAI、Mistral）、`anthropic`，或者 `gemini`。
 
 **`ask`**——和代理说话。
 
-**`schedules`**——提醒和定时运行。
+**`schedules`**——在设定时间或邮件到达时运行的目标，以及它们留下的提醒；关掉后，目标只能自行决定节奏。
 
 **`browser`**——浏览器。需要配置一个。
 

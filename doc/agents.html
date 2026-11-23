@@ -20,7 +20,7 @@ window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-XD5JSLP4RH', {send_page_view: false});
-</script><script type="module" crossorigin src="/static/teanode.DQqmglc-.js"></script></head><body><div id="teanode"><style>.teanode-static{max-width:760px;margin:0 auto;padding:24px 16px 48px;font:16px/1.6 system-ui,sans-serif;opacity:0;animation:teanode-static 0s 2s forwards}.teanode-static pre{overflow-x:auto}@keyframes teanode-static{to{opacity:1}}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .teanode-static{color:#e8e8ea}:root:not([data-theme=light]) .teanode-static a{color:#9ccc65}}:root[data-theme=dark] .teanode-static{color:#e8e8ea}:root[data-theme=dark] .teanode-static a{color:#9ccc65}</style><div class="teanode-static"><p><a href="/">TeaNode</a> · <a href="/doc">Documentation</a> · <a href="https://github.com/ziyan/teanode">Source</a></p><h1>Agents</h1><p>Every account on a TeaNode server can have an agent of its own: something
+</script><script type="module" crossorigin src="/static/teanode.CfCQyPNQ.js"></script></head><body><div id="teanode"><style>.teanode-static{max-width:760px;margin:0 auto;padding:24px 16px 48px;font:16px/1.6 system-ui,sans-serif;opacity:0;animation:teanode-static 0s 2s forwards}.teanode-static pre{overflow-x:auto}@keyframes teanode-static{to{opacity:1}}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .teanode-static{color:#e8e8ea}:root:not([data-theme=light]) .teanode-static a{color:#9ccc65}}:root[data-theme=dark] .teanode-static{color:#e8e8ea}:root[data-theme=dark] .teanode-static a{color:#9ccc65}</style><div class="teanode-static"><p><a href="/">TeaNode</a> · <a href="/doc">Documentation</a> · <a href="https://github.com/ziyan/teanode">Source</a></p><h1>Agents</h1><p>Every account on a TeaNode server can have an agent of its own: something
 that reads the mail that arrives, sorts it, writes drafts, and answers
 questions about it. This page is what an operator turns on and what a person
 then does with it.</p>
@@ -106,8 +106,7 @@ lesson, but only when a command it names actually succeeded, and the next
 time the same kind of work comes up it is shown the two nearest lessons.</p>
 <p><strong>Tells you what cannot wait.</strong> When the mail it sorts shows something you
 should know now (a notice from your child&#39;s school, a run of sign-in codes you
-did not ask for), it says so in the conversation drawer and in the chat app
-you linked, unasked. Several messages about one thing make one alert. It
+did not ask for), it says so unasked, as a card in your feed. Several messages about one thing make one alert. It
 sends five a day at most, nothing between 22:00 and 07:00 unless it cannot
 wait, and never the same thing twice in a week. Say &quot;don&#39;t tell me about
 these&quot; and that sender, domain or kind is muted; the Alerts tab lists what it
@@ -128,8 +127,8 @@ events and things to do to that roundup. The list is on the Alerts tab, under
 Following, and <code>teanode agent follow list</code> reads it too.</p>
 <p><strong>Speaks first.</strong> It starts a conversation for reasons of its own: to
 introduce itself, to show a new phone around, about a trip, to check what it
-remembers, or with an idea. What it says reaches your phone with the app
-closed. It waits half an hour after your last word, speaks once a day at most
+remembers, or with an idea. The introduction and the tour are conversations; the rest
+arrive as cards in your feed. It waits half an hour after your last word, speaks once a day at most
 but for its introduction and a tour, never while you said <strong>Not now</strong>, and
 with no app or dashboard in front of you not in your quiet hours. A few days
 before a trip on your calendar it offers the forecast, the drive, what is
@@ -139,21 +138,38 @@ has arrived since. Every conversation also knows where you are, your
 calendar for the next three weeks and the bills, deadlines and parcels near;
 they are left out of chats with other people. When a goal finishes while you
 are away, your main chat hears how it ended.</p>
+<p><strong>In a feed, not in your chat.</strong> What it says without being asked arrives
+as cards in <strong>Feed</strong>, on the dashboard and in the phone apps, and on the
+command line as <code>teanode agent feed</code>: alerts, ideas, notes before a trip, the
+morning brief, what goals find and the questions your coding sessions ask. A
+card is a headline and a few lines, sometimes a short table, a list, the
+weather or an agenda, with pictures. A card that needs an answer carries the
+choices as buttons: a tap answers it without opening a conversation, and the
+card then shows what came of it. <strong>Discuss</strong> opens your main conversation about
+the card. Cards from one source pile into a stack that fans out when you tap
+it, and a card about the same thing replaces the earlier one instead of piling
+up. A heart tells your agent you want more like it, and <strong>Show less like this</strong>
+the opposite. Only what cannot wait sends a notification. Set <strong>Feed</strong> to your
+main conversation on your agent&#39;s settings, and it all goes back there.</p>
 <p><strong>Offers, and keeps at it.</strong> In its dreams it looks through your mail for
 work it could do for you and writes each as an offer on the Ideas tab: what
 it would do, where it stops to ask, and what in your mail prompted it.
 Nothing happens until you start one. A goal (&quot;keep the newsletters out of
 my inbox&quot;, &quot;chase the refund until it arrives&quot;) runs in the background, in a
 conversation of its own, for days if it needs to. Your chat hears from it
-only when it needs you; the Goals tab says what each goal is doing, what it
+only when it needs you, what it finds is in your feed, and the Goals tab says what each goal is doing, what it
 did, and what it made along the way.</p>
-<p><strong>Starts when the mail does.</strong> A schedule runs at set times, or whenever a
-message it waits for arrives, with the same conditions as a mailbox rule:
-&quot;when the school mails pictures, save them to the album&quot;. Each run is told
-which messages set it off, and a run that mail started never counts as you
-asking, so it cannot use your Passwords.</p>
-<p><strong>Works while you are away, as far as you let it.</strong> Schedules, goals and
-dreams run with nobody watching, and they reach your computers too. A call
+<p><strong>On set times, or when the mail does.</strong> A goal keeps its own pace unless
+you give it times, a cron line in your zone or a single moment, or mail to wait
+for, with the same conditions as a mailbox rule: &quot;when the school mails
+pictures, save them to the album&quot;. Each turn is told which messages set it off,
+and what it finds goes to your feed, each morning&#39;s brief a stack of its own. A
+goal can be paused, resumed and run now, on the dashboard, in the phone apps,
+with <code>teanode agent goal</code> or by asking. A turn counts as you asking, which your
+Passwords need, only for a goal you wrote yourself on a screen, on times you
+chose and waiting for no mail.</p>
+<p><strong>Works while you are away, as far as you let it.</strong> Goals and dreams
+run with nobody watching, and they reach your computers too. A call
 that would ask you first is refused then, and the run says what it would
 have done, unless you chose to allow that kind of thing for when you are not
 there: speaking for you, spending or moving money, what cannot be undone,

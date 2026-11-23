@@ -43,10 +43,10 @@ with the server, and then named properly by the server's place provider:
 OpenStreetMap's public Nominatim service unless the operator sets another
 (a Photon of their own) or none. The provider is sent the place's position
 and nothing else: not your name, not the time, not your other places. The
-dashboard's maps are drawn from OpenFreeMap's tiles, fetched through your
-server, so your browser talks to nobody else; the iPhone app draws its maps
-with Apple Maps, and the Android app with OpenStreetMap's own tiles, fetched
-from OpenStreetMap by the phone. Both are set under `places` in the
+dashboard's and the Android app's maps are drawn from OpenFreeMap's tiles,
+fetched through your server, so your browser and your phone talk to nobody
+else; the iPhone app draws its maps with Apple Maps. Both are set under
+`places` in the
 [configuration](/doc/configuration).
 
 ## Sharing with your circle

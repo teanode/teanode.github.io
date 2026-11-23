@@ -12,7 +12,7 @@ import Typography from '@mui/material/Typography'
 import { useTheme } from '@mui/material/styles'
 import type { SvgIconComponent } from '@mui/icons-material'
 import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined'
-import CampaignOutlinedIcon from '@mui/icons-material/CampaignOutlined'
+import DynamicFeedOutlinedIcon from '@mui/icons-material/DynamicFeedOutlined'
 import FlightTakeoffOutlinedIcon from '@mui/icons-material/FlightTakeoffOutlined'
 import PlaylistAddCheckOutlinedIcon from '@mui/icons-material/PlaylistAddCheckOutlined'
 import AccountBalanceOutlinedIcon from '@mui/icons-material/AccountBalanceOutlined'
@@ -151,7 +151,7 @@ const coreFeatures: CoreFeature[] = [
       { id: 'welcome.people.points.chats', Icon: ForumOutlinedIcon },
       { id: 'welcome.core.chat.points.calls', Icon: VideocamOutlinedIcon },
       { id: 'welcome.core.chat.points.voice', Icon: KeyboardVoiceOutlinedIcon },
-      { id: 'welcome.core.chat.points.first', Icon: CampaignOutlinedIcon },
+      { id: 'welcome.core.chat.points.feed', Icon: DynamicFeedOutlinedIcon },
       { id: 'welcome.core.chat.points.call', Icon: PhoneInTalkOutlinedIcon },
       { id: 'welcome.phone.points.notify', Icon: NotificationsActiveOutlinedIcon },
       { id: 'welcome.core.chat.points.links', Icon: LinkOutlinedIcon },
@@ -184,7 +184,7 @@ const coreFeatures: CoreFeature[] = [
       { id: 'welcome.agent.points.drafts', Icon: ReplyOutlinedIcon },
       { id: 'welcome.agent.points.follows', Icon: TaskAltOutlinedIcon },
       { id: 'welcome.agent.points.answers', Icon: AutoAwesomeOutlinedIcon },
-      { id: 'welcome.core.mail.points.schedules', Icon: ScheduleSendOutlinedIcon },
+      { id: 'welcome.core.mail.points.mailGoals', Icon: ScheduleSendOutlinedIcon },
     ],
   },
   {

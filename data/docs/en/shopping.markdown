@@ -25,7 +25,14 @@ each item saying which list it is on.
 
 There is no Start button. The first item you put in the cart starts your
 trip and tells the others the list reaches that you are shopping. Each
-check shows on their screens at once. **Done** buys what is in your cart.
+check shows on their screens at once. **Done** shows your cart first, with
+about what it comes to, then buys what is in it; a Done tapped by mistake can
+be taken back for three hours, with the cart as it was.
+
+Not at a store at all? Check an item off the list and it is bought now, with
+no trip and nobody told; unchecked within three hours, it is as if it never
+was. Every list has a search field that finds items by any of their words,
+checked-off ones too.
 
 ## Receipts
 

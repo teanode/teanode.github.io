@@ -20,7 +20,7 @@ window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-XD5JSLP4RH', {send_page_view: false});
-</script><script type="module" crossorigin src="/static/teanode.DQqmglc-.js"></script></head><body><div id="teanode"><style>.teanode-static{max-width:760px;margin:0 auto;padding:24px 16px 48px;font:16px/1.6 system-ui,sans-serif;opacity:0;animation:teanode-static 0s 2s forwards}.teanode-static pre{overflow-x:auto}@keyframes teanode-static{to{opacity:1}}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .teanode-static{color:#e8e8ea}:root:not([data-theme=light]) .teanode-static a{color:#9ccc65}}:root[data-theme=dark] .teanode-static{color:#e8e8ea}:root[data-theme=dark] .teanode-static a{color:#9ccc65}</style><div class="teanode-static"><p><a href="/">TeaNode</a> · <a href="/doc">Documentation</a> · <a href="https://github.com/ziyan/teanode">Source</a></p><h1>The command line</h1><p>TeaNode is two programs. <code>teanode-server</code> is the mail server, and the few
+</script><script type="module" crossorigin src="/static/teanode.CfCQyPNQ.js"></script></head><body><div id="teanode"><style>.teanode-static{max-width:760px;margin:0 auto;padding:24px 16px 48px;font:16px/1.6 system-ui,sans-serif;opacity:0;animation:teanode-static 0s 2s forwards}.teanode-static pre{overflow-x:auto}@keyframes teanode-static{to{opacity:1}}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .teanode-static{color:#e8e8ea}:root:not([data-theme=light]) .teanode-static a{color:#9ccc65}}:root[data-theme=dark] .teanode-static{color:#e8e8ea}:root[data-theme=dark] .teanode-static a{color:#9ccc65}</style><div class="teanode-static"><p><a href="/">TeaNode</a> · <a href="/doc">Documentation</a> · <a href="https://github.com/ziyan/teanode">Source</a></p><h1>The command line</h1><p>TeaNode is two programs. <code>teanode-server</code> is the mail server, and the few
 things only its own host can do. <code>teanode</code> is the client: it administers a
 server over the API, from anywhere, and is what an operator has open.</p>
 <p>Everything the client changes goes through the running server rather than
@@ -763,28 +763,72 @@ have made.</p>
 <td>your browser as the agent reaches it through the extension: whether it is connected, its tabs (yours and the ones the agent opened, and which is in use), and whether you have taken the tab over on the dashboard&#39;s Browser page; <code>tab hand-back [note]</code> gives it back, with a note for the agent, and answers the agent&#39;s requests to take it over. Taking a tab over needs its picture, so it is the dashboard&#39;s</td>
 </tr>
 <tr>
-<td><code>teanode agent goal list [--state working|waiting|met|dropped]</code></td>
-<td>what the agent keeps at in the background between conversations, the most recently active first: each goal&#39;s id, where it stands (tracking, needs you, done, dropped), its title and its one-line status; the same list as the Goals tab of the agent&#39;s page</td>
+<td><code>teanode agent goal list [--state working|waiting|paused|met|dropped]</code></td>
+<td>what the agent keeps at in the background, the most recently active first: each goal&#39;s id, where it stands (tracking, needs you, paused, done, dropped), its title, when it runs (its times, the mail it waits for, or its own pace) and its one-line status; the same list as the Goals tab of the agent&#39;s page</td>
 </tr>
 <tr>
 <td><code>teanode agent goal show &lt;goal-id&gt;</code></td>
-<td>one goal: what it is for, its status, when it looks again, what it made (schedules, background work, mail rules, reminders, alert mutes) and what happened on it, newest first</td>
+<td>one goal: what it is for, its status, when it runs and when it looks again, what it made (background work, mail rules, reminders, alert mutes) and what happened on it, newest first</td>
 </tr>
 <tr>
-<td><code>teanode agent goal start &lt;title&gt; &lt;description&gt;</code></td>
-<td>start a goal in the background: a title of a few words, then what it is for and what done looks like. Its first turn runs at once, in its own conversation; you hear from it in your main conversation only when it needs you</td>
+<td><code>teanode agent goal start &lt;title&gt; &lt;description | -&gt;</code></td>
+<td>start a goal in the background: a title of a few words, then what it is for and what done looks like. With <code>--time</code> (repeatable) its turns are at those times, a cron line in your zone (<code>--time &quot;30 7 * * 1-5&quot;</code>), a moment (<code>--time &quot;@at 2026-09-12 09:00&quot;</code>) or a distance from now (<code>--time &quot;@in 20m&quot;</code>, stored as the moment it means); with <code>--on-mail from:contains:news@school.example</code> it also takes a turn whenever such mail arrives; <code>--notify</code> sends one quiet notification when a turn&#39;s first card is posted. Without either it keeps its own pace, its first turn at once. It runs in its own conversation; what it finds is in your feed, and you hear from it in your main conversation when it needs you</td>
 </tr>
 <tr>
 <td><code>teanode agent goal tell &lt;goal-id&gt; &lt;text&gt;</code></td>
 <td>answer a goal that waits for you, or tell it something it should know; it goes on a minute later</td>
 </tr>
 <tr>
-<td><code>teanode agent goal take-schedule &lt;goal-id&gt; &lt;schedule-id&gt;</code></td>
-<td>make a schedule the goal&#39;s: its runs take place in the goal&#39;s conversation as its turns, and the goal takes none of its own while it has one</td>
+<td><code>teanode agent goal set &lt;goal-id&gt;</code></td>
+<td>change a goal: <code>--title</code>, <code>--description</code> (<code>-</code> reads it from stdin), <code>--time</code> (replaces its times) or <code>--no-times</code>, <code>--on-mail</code> (replaces its mail) or <code>--no-mail</code>, <code>--notify</code>; only what you give changes</td>
 </tr>
 <tr>
-<td><code>teanode agent goal done|drop|reopen &lt;goal-id&gt;</code></td>
-<td>mark a goal met, stop it, or take one that was met or dropped up again</td>
+<td><code>teanode agent goal run &lt;goal-id&gt;</code></td>
+<td>give a working goal a turn now, out of its times</td>
+</tr>
+<tr>
+<td><code>teanode agent goal pause|resume|done|drop &lt;goal-id&gt;</code></td>
+<td>switch a goal off for now, take one that is paused, done or dropped up again (at its next time), mark one met, or stop it</td>
+</tr>
+<tr>
+<td><code>teanode agent feed list [--all] [--limit N] [--after CURSOR]</code></td>
+<td>the cards the agent posted without being asked, newest first, with how many are unread; cards of one source are one line with &quot;+N more&quot;, and <code>--all</code> includes the ones you dismissed</td>
+</tr>
+<tr>
+<td><code>teanode agent feed stack &lt;stack-key&gt;</code></td>
+<td>the cards of one stack, those with a position first and then newest first</td>
+</tr>
+<tr>
+<td><code>teanode agent feed show &lt;card-id&gt;</code></td>
+<td>one card: its text, facts, sources and buttons, and what came of the button chosen</td>
+</tr>
+<tr>
+<td><code>teanode agent feed choose &lt;card-id&gt; &lt;choice-key&gt;</code></td>
+<td>press a button of a card; a card is answered once. An action says your choice in your main conversation as your own message with the card attached; a dismiss only closes it; a coding session&#39;s option answers the session</td>
+</tr>
+<tr>
+<td><code>teanode agent feed like|unlike &lt;card-id&gt;</code></td>
+<td>tell the agent you want more like it, or take that back</td>
+</tr>
+<tr>
+<td><code>teanode agent feed less &lt;card-id&gt;</code></td>
+<td>show less like this: the agent remembers, and the card is dismissed</td>
+</tr>
+<tr>
+<td><code>teanode agent feed dismiss &lt;card-id&gt;</code></td>
+<td>close a card</td>
+</tr>
+<tr>
+<td><code>teanode agent feed read &lt;card-id&gt;...</code></td>
+<td>mark cards read</td>
+</tr>
+<tr>
+<td><code>teanode agent feed discuss &lt;card-id&gt;</code></td>
+<td>print the id of the main conversation to talk about a card in</td>
+</tr>
+<tr>
+<td><code>teanode agent feed post --title ... [--body ...] [--kind ...] [--symbol ...] [--urgency now|today|whenever] [--coalesce-key ...] [--stack ...] [--stack-position N] [--stack-title ...] [--layout list|weather|agenda --layout-content JSON] [--fact label=value]... [--link url[=title]]... [--photo id[=caption]]... [--picture url[=caption]]... [--choice key=Label[:role]]... [--card ID]</code></td>
+<td>post a card of your own to your feed, or with <code>--card</code> change one where it stands; the same coalesce key replaces a card, and a page already in an open card of the last 30 days is refused. <code>--photo</code> shows one of your photos or videos on the card and <code>--picture</code> the picture of a page, which the server fetches; without either, the card shows its first link&#39;s picture</td>
 </tr>
 <tr>
 <td><code>teanode agent phone pair</code></td>
@@ -871,12 +915,8 @@ have made.</p>
 <td>the dreams: the runs that read, file and rehearse; <code>runs &lt;id&gt;</code> lists every model call one dream made, each a run <code>agent run show</code> opens; <code>now</code> starts one within the minute, whatever the agent&#39;s hours; <code>bootstrap on</code> keeps it running with wider limits until nothing waits to be read, for a first ingest; <code>reread --minutes 60</code> puts back what a night marked read in that window</td>
 </tr>
 <tr>
-<td><code>teanode agent schedule list|add|set|enable|disable|remove|run</code></td>
-<td>what it does on its own at set times: <code>add Morning &quot;0 8 * * 1-5&quot; &quot;what needs me today?&quot; --deliver mail</code>, a cron line in your zone; or a single moment, <code>&quot;@at 2026-09-12 09:00&quot;</code>, or a distance from now, <code>&quot;@in 20m&quot;</code>, which is stored as the moment it means and runs once. <code>add --on-mail from:contains:news@school.example &quot;School pictures&quot; &quot;save the pictures it links&quot;</code> runs it whenever such a message arrives instead, with no cron line: <code>--on-mail</code> takes a test written as a mailbox rule&#39;s <code>--when</code> is (from, to, subject, <code>header:Name:operator:value</code>, or <code>any</code>; contains, equals or matches), repeatable, and every one must pass. <code>set &lt;id&gt; --cron &quot;0 7 * * 1-5&quot;</code> changes one in place (<code>--name</code>, <code>--cron</code>, <code>--on-mail</code>, <code>--prompt</code>, where <code>-</code> reads it from standard input, and <code>--deliver</code>), and only what you give changes; <code>--cron</code> makes a schedule that ran on mail run at set times again, and <code>--on-mail</code> the reverse. <code>disable &lt;id&gt;</code> stops it running without taking it away, <code>enable &lt;id&gt;</code> starts it again. A schedule made or reworded from the command line is recorded as the agent&#39;s, not yours, so its runs cannot use Passwords; one you save on the dashboard or in the TeaNode phone app is yours</td>
-</tr>
-<tr>
 <td><code>teanode agent brief on|off|now</code></td>
-<td>a brief each morning, by mail: what the day holds, what is waiting for an answer, what is being held. <code>on --at 07:30 --days 1-5</code> says when; <code>now</code> sends one immediately. It writes an ordinary schedule called &quot;Daily brief&quot;, so <code>agent schedule list</code> shows it and anybody may rewrite what it asks for</td>
+<td>a brief each morning, in your feed: what the day holds, what is waiting for an answer, what is being held. <code>on --at 07:30 --days 1-5</code> says when; <code>off</code> pauses it; <code>now</code> gives it a turn immediately. It starts an ordinary goal called &quot;Daily brief&quot;, so <code>agent goal list</code> shows it and anybody may rewrite what it asks for</td>
 </tr>
 <tr>
 <td><code>teanode agent feedback</code></td>
@@ -996,7 +1036,7 @@ have made.</p>
 </tr>
 <tr>
 <td><code>teanode agent settings show|set</code></td>
-<td>your agent: <code>set enabled=true name=Bertie instructions=-</code> reads the long value from standard input; keys are listed by <code>set --help</code>. <code>set alerts=false</code> stops it telling you about your mail unasked; <code>alert-quiet-start=22:00 alert-quiet-end=07:00</code> is the night in which only what cannot wait is said, <code>alert-daily-most=5</code> the most a day, and <code>look-around-weekday=thursday look-around-time=17:00</code> when it looks around your town for what is on. <code>unattended=outward,destructive</code> lets it do those kinds of thing, which otherwise wait for your word, when you are not there (<code>money</code>, <code>granting</code> and <code>listed</code> are the others; empty allows none)</td>
+<td>your agent: <code>set enabled=true name=Bertie instructions=-</code> reads the long value from standard input; keys are listed by <code>set --help</code>. <code>set alerts=false</code> stops it telling you about your mail unasked; <code>alert-quiet-start=22:00 alert-quiet-end=07:00</code> is the night in which only what cannot wait is said, <code>alert-daily-most=5</code> the most a day, <code>feed-destination=main</code> sends what it says unasked back to your main conversation instead of your feed (<code>feed</code>, the default), and <code>look-around-weekday=thursday look-around-time=17:00</code> when it looks around your town for what is on. <code>unattended=outward,destructive</code> lets it do those kinds of thing, which otherwise wait for your word, when you are not there (<code>money</code>, <code>granting</code> and <code>listed</code> are the others; empty allows none)</td>
 </tr>
 <tr>
 <td><code>teanode agent alert list|mute|mutes|unmute</code></td>
@@ -1347,8 +1387,8 @@ are compared without case or punctuation, so <code>Example Market</code> and
 <td>the lists you reach, yours first: id, name, how many items are needed, in the cart and not needed, whose it is, whether it is shared and whether you are reminded on arriving at a store</td>
 </tr>
 <tr>
-<td><code>teanode shopping show LIST [--state needed|in_cart|not_needed]... [--limit N] [--offset N]</code></td>
-<td>one list and its items in the order the list keeps them (by aisle), and who is shopping it now. <code>--state</code> keeps the items in those states, every state by default. A page is 200 items, at most 500; a full page says on standard error where to continue</td>
+<td><code>teanode shopping show LIST [--state needed|in_cart|not_needed]... [--search WORDS] [--limit N] [--offset N]</code></td>
+<td>one list and its items in the order the list keeps them (by aisle), and who is shopping it now. <code>--state</code> keeps the items in those states, every state by default. <code>--search</code> keeps the items whose description, details, store or aisle hold every word, without case. A page is 200 items, at most 500; a full page says on standard error where to continue</td>
 </tr>
 <tr>
 <td><code>teanode shopping item ITEM-ID</code></td>
@@ -1403,6 +1443,10 @@ are compared without case or punctuation, so <code>Example Market</code> and
 <td>put items in the cart, or back to needed. The first one starts your trip, at <code>--store</code> (the item&#39;s store by default), and tells the others the list reaches. An item stays in the cart until you are done, a receipt matches it, or a new trip starts on its list more than six hours later; then it is bought</td>
 </tr>
 <tr>
+<td><code>teanode shopping check-off ITEM-ID...</code> / <code>undo-check-off ITEM-ID...</code></td>
+<td>check items off a list without shopping: each is bought now, no trip starts and nobody is told. <code>undo-check-off</code> needs them again; a purchase made in the last three hours is taken back, so the item was last bought when it was before</td>
+</tr>
+<tr>
 <td><code>teanode shopping need ITEM-ID... [--quantity N]</code> / <code>not-needed ITEM-ID...</code></td>
 <td>need items again with a count (1 by default), or mark them bought or not wanted now</td>
 </tr>
@@ -1433,6 +1477,10 @@ are compared without case or punctuation, so <code>Example Market</code> and
 <tr>
 <td><code>teanode shopping shop LIST... [--store NAME]</code> / <code>done [TRIP-ID]</code></td>
 <td>start shopping a store for some lists by hand, which tells the others the lists reach (checking an item does it too), and finish: what you put in the cart is bought, no receipt needed. <code>done</code> alone ends your own trip, or buys your cart when no trip is open</td>
+</tr>
+<tr>
+<td><code>teanode shopping resumable</code> / <code>resume TRIP-ID</code></td>
+<td>the trip you finished in the last three hours and how many items it bought; <code>resume</code> opens it again with those items back in your cart, for a Done made by mistake. Not while you are shopping another trip</td>
 </tr>
 <tr>
 <td><code>teanode shopping receipt FINANCE-RECEIPT-ID</code></td>
@@ -1732,7 +1780,7 @@ Amounts are printed with their currency; <code>--json</code> keeps full precisio
 agent has two more tools — <code>shell</code>, which runs a command here, and
 <code>filesystem</code>, which reads, edits, writes, copies, lists, searches and greps your files —
 as you, anywhere on the machine, the way a terminal of yours would. A
-scheduled run, a goal and the nightly run use them too, with nobody
+goal and the nightly run use them too, with nobody
 watching; what would ask you first is refused then. The runs that read mail
 from strangers (sorting, drafting, research) only read and never see it. A command runs as you
 typed it: nothing here reads it first and decides whether it looks

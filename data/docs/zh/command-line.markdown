@@ -228,12 +228,14 @@ Shell 补全由二进制文件自己提供：
 | `teanode agent ask <message \| ->` | 对你的代理说点什么，并打印它的回答；`--new` 开一个具名对话，`--conversation` 接着某一个，`--attach FILE`（可重复）递给它一个文件——图片给它看，文本文件念给它听，其他的报个名字——`--reply-to MESSAGE_ID` 回复对话里的某一条消息（消息的 id 来自 `conversation show --json`），`--json` 流式输出每一个事件，`--quiet` 只打印答案。需要你点头的工具会在终端上问，y 或者 n——绝不做成一个开关 |
 | `teanode agent chat` | 同样的事，一轮一轮来，直到一个空行 |
 | `teanode agent conversation list\|show\|new\|rename\|goal\|main\|archive\|unarchive\|delete` | 主对话和那些命名的对话；`list --query` 按标题或者说过的话里的词找一个，`list --archived` 列出收起来的那些而不是还开着的；`show` 在消息上方打印目标（如果有的话），在下方打印任务清单、做完的打勾，并用 `--first` 和 `--offset` 往回翻长对话；`main` 把一个命名对话变成主对话，或者开一个新的主对话、把旧的留成命名的；`archive <id>` 把一个连同里面的一切收起来，`unarchive <id>` 再拿回来，两个都不会先问，因为两个都不丢东西；`delete` 会先问，并且会带走随它一起来的文件 |
-| `teanode agent goal list [--state working\|waiting\|met\|dropped]` | 代理在对话之外、在后台一直在做的事，最近活跃的在前：每个目标的 id、它进展到哪里（进行中、等你回应、已达成、已放弃）、它的标题和一行状态；和代理页面的「目标」页是同一份清单 |
-| `teanode agent goal show <goal-id>` | 一个目标：它是为了什么、它的状态、它下次什么时候再看、它建了些什么（日程、后台工作、邮件规则、提醒事项、主动通知的静音），以及它上面发生过什么，最新的在前 |
-| `teanode agent goal start <title> <description>` | 在后台开始一个目标：先是几个词的标题，再是它为了什么、做完是什么样子。它的第一轮立刻在它自己的对话里运行；只有需要你的时候，你才会在主对话里听到它 |
+| `teanode agent goal list [--state working\|waiting\|paused\|met\|dropped]` | 代理在后台一直在做的事，最近活跃的在前：每个目标的 id、它进展到哪里（进行中、等你回应、已暂停、已达成、已放弃）、它的标题、它什么时候运行（它的时间、它等的邮件，或者自行决定）和一行状态；和代理页面的「目标」页是同一份清单 |
+| `teanode agent goal show <goal-id>` | 一个目标：它是为了什么、它的状态、它下次什么时候再看、它什么时候运行，它建了些什么（后台工作、邮件规则、提醒事项、主动通知的静音），以及它上面发生过什么，最新的在前 |
+| `teanode agent goal start <title> <description \| ->` | 在后台开始一个目标：先是几个词的标题，再是它为了什么、做完是什么样子。`--time`（可重复）让它在那些时间运行：一行你所在时区的 cron（`--time "30 7 * * 1-5"`）、一个时刻（`--time "@at 2026-09-12 09:00"`），或者一个从现在起的间隔（`--time "@in 20m"`，存成它所指的那个时刻）；`--on-mail from:contains:news@school.example` 让它在这样的邮件到达时也跑一轮；`--notify` 在一轮的第一张卡片发出时送一条安静的通知。两样都没有，它就自行决定节奏，第一轮立刻开始。它在自己的对话里运行；它的发现在你的「动态」里，需要你的时候你会在主对话里听到它 |
 | `teanode agent goal tell <goal-id> <text>` | 回答一个在等你的目标，或者告诉它一件它该知道的事；一分钟之后它接着做 |
-| `teanode agent goal take-schedule <goal-id> <schedule-id>` | 把一个日程交给这个目标：日程的每次运行都在目标的对话里进行，算作目标的回合；目标有日程的时候，不再自己安排回合 |
-| `teanode agent goal done\|drop\|reopen <goal-id>` | 把一个目标标成已达成、停下它，或者把一个已达成或已放弃的目标重新拿起来 |
+| `teanode agent goal set <goal-id>` | 改一个目标：`--title`、`--description`（`-` 从标准输入读）、`--time`（替换它的时间）或 `--no-times`、`--on-mail`（替换它等的邮件）或 `--no-mail`、`--notify`；只改你给出的 |
+| `teanode agent goal run <goal-id>` | 让一个进行中的目标现在就跑一轮，不等它的时间 |
+| `teanode agent goal pause\|resume\|done\|drop <goal-id>` | 暂时关掉一个目标，把已暂停、已达成或已放弃的目标重新拿起来（在它的下一个时间），把一个目标标成已达成，或者停下它 |
+| `teanode agent feed list\|stack\|show\|choose\|like\|unlike\|less\|dismiss\|read\|discuss\|post` | 代理没被问起就发给你的卡片，最新的在前：`list` 列出它们和未读的数量，同一来源的卡片算一行；`choose <card-id> <choice-key>` 按下一张卡片的按钮，一张卡片只能回答一次；`like` 想多看这类，`less` 少显示这类并关掉它；`post` 自己往「动态」里发一张卡片 |
 | `teanode agent idea list\|get\|propose\|start\|done\|dismiss\|reopen` | 你的代理提出要为你做的事，以及每一条提议后来怎样了：和「想法」页、代理的 `idea` 工具是同一份清单。`list` 列出还开着的，`--status dismissed` 或 `--all` 列出其余的，`--limit` 加 `--offset` 列出其中一页；`get <id>` 完整显示一条，连同开始它时你要说的话，以及是什么引出了它；`start <id>` 开一个以这条想法命名的对话，并打印要在里面说的话，加 `--send` 就直接说出去；`done`、`dismiss` 和 `reopen` 说明一条的结果。`propose` 保存一条你自己写的，并像代理的那样核对：它只能用到你的代理有的工具，在工具要代表你对别人做事时必须说明会先问，并用 `--evidence message:<item-id>:<它是什么>` 说明是什么引出了它 |
 | `teanode agent conversation todo list` | 一个对话保存的任务清单：代理自己的，它在分好几步做一件事时写下，并且每一轮都拿给自己看。`todo list <conversation-id>` 把它打印出来；只有代理会改它 |
 | `teanode agent run list\|show\|stop` | 代理自己做过什么：每一次模型调用都是一次运行，`list` 用 `--first` 和 `--offset` 翻页；`--kind triage --kind reply` 或者 `--kind triage,reply` 把范围缩到某几类运行，`--query` 缩到它们是关于什么的；有 `agent:act` 的运维者可以用 `--all` 或者 `--agent <id>` 列出所有人的；`stop <run-id>` 就地停下一个，已经做完的那些算数 |
@@ -253,8 +255,7 @@ Shell 补全由二进制文件自己提供：
 | `teanode agent source-type list\|search\|install\|update\|add-local\|show\|remove` | 这台服务器能读的那些知识来源类型，从签过名的来源类型仓库里装：`search` 说明仓库里有什么，`install rss` 在保存之前先核对签名，`update` 装一个更新的版本，`add-local <source.md>` 加一个你自己的类型，没有签名、标成本地，`show` 说明一种类型会运行什么、要哪些设置。某种类型的来源用 `teanode agent knowledge add <name> --type rss --setting url=https://example.com/feed.xml` 来加 |
 | `teanode agent knowledge secret list\|set` | 一个来源的类型所要的密钥，比如某个服务的令牌：是你的，每个来源一套。`secret list <source>` 说明它要什么、每一项有没有填；`secret set <source> <key>` 不带值时会不回显地读入 |
 | `teanode agent dream log\|runs\|now\|bootstrap\|reread` | 那些梦：负责读取、归档和自测的运行；`runs <id>` 列出某一趟梦做过的每一次模型调用，每一次都是一个可以用 `agent run show` 打开的运行；`now` 会在一分钟之内开始一趟，不管代理的时段是什么；`bootstrap on` 会用更宽的限额一直跑下去，直到没有东西等着被读，用于第一次全量读取；`reread --minutes 60` 把某一趟梦在那段时间里标成已读的东西放回去 |
-| `teanode agent schedule list\|add\|set\|enable\|disable\|remove\|run` | 它在设定的时间自己做的那些事：`add Morning "0 8 * * 1-5" "今天有什么需要我？" --deliver mail`，一行你所在时区的 cron；或者一个单独的时刻 `"@at 2026-09-12 09:00"`，又或者一个从现在起的间隔 `"@in 20m"`——它会被存成它所指的那个时刻，并且只跑一次。`set <id> --cron "0 7 * * 1-5"` 就地改一个——`--name`、`--cron`、`--prompt`（`-` 从标准输入读）和 `--deliver`，你给什么才改什么——而 `disable <id>` 让它不再运行但不拿掉它，`enable <id>` 再让它跑起来 |
-| `teanode agent brief on\|off\|now` | 每天早上一封简报，以邮件寄来：这一天有什么、什么在等回复、什么被扣着。`on --at 07:30 --days 1-5` 说什么时候；`now` 立刻寄一封。它会写一个名叫「Daily brief」的普通日程，所以 `agent schedule list` 看得到它，任何人都可以改写它问的是什么 |
+| `teanode agent brief on\|off\|now` | 每天早上一份简报，在你的「动态」里：这一天有什么、什么在等回复、什么被扣着。`on --at 07:30 --days 1-5` 说什么时候；`off` 暂停它；`now` 立刻让它跑一轮。它会开始一个名叫「Daily brief」的普通目标，所以 `agent goal list` 看得到它，任何人都可以改写它问的是什么 |
 | `teanode agent feedback` | 从你的所作所为记录下来的更正，代理会把它们当例子看 |
 | `teanode agent channel list\|set\|unlink\|remove` | 你用来和代理说话的聊天应用：你自己的 Telegram 或者 Discord 机器人。`set telegram --token -` 从标准输入读机器人的令牌；`list` 显示某个聊天要发给机器人的 `/link CODE` 里的那个码，以及机器人是否在跑；`unlink` 会画一个新码 |
 | `teanode contact list\|show\|add\|edit\|remove` | 你的通讯录：你留着的那些人，你的手机和电脑通过 CardDAV 同步它们。`add --name "Ada Lovelace" --email ada@example.com` 留下一个；`edit <id> --name "Ada King"` 只改你给的那部分，名片上其余的原样不动，所以改个名字不会把手机放上去的那张照片扔掉；`--card -` 从标准输入读一整张 vCard |

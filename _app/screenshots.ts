@@ -27,7 +27,7 @@ export const screenshot = (page: string, theme: ScreenshotTheme, language: strin
 // them, in the order each part shows them.
 export const screenshotGroups = {
   chat: ['chatAgent', 'drawerMail', 'circleChat'],
-  mail: ['mailbox', 'priority', 'followups', 'subscriptions', 'scheduleMail'],
+  mail: ['mailbox', 'priority', 'followups', 'subscriptions'],
   calendar: ['calendar', 'drawerCalendar'],
   search: ['search', 'searchJump'],
   journal: ['journalDay', 'journal', 'journalMonth'],
@@ -56,7 +56,6 @@ export const screenshotPaths: Record<ScreenshotPage, string> = {
   priority: '/mailbox/priority',
   followups: '/mailbox/inbox',
   subscriptions: '/mailbox/subscriptions',
-  scheduleMail: '/settings/agent?tab=schedules',
   calendar: '/calendar',
   drawerCalendar: '/calendar',
   contacts: '/contacts',

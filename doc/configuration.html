@@ -20,7 +20,7 @@ window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-XD5JSLP4RH', {send_page_view: false});
-</script><script type="module" crossorigin src="/static/teanode.DQqmglc-.js"></script></head><body><div id="teanode"><style>.teanode-static{max-width:760px;margin:0 auto;padding:24px 16px 48px;font:16px/1.6 system-ui,sans-serif;opacity:0;animation:teanode-static 0s 2s forwards}.teanode-static pre{overflow-x:auto}@keyframes teanode-static{to{opacity:1}}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .teanode-static{color:#e8e8ea}:root:not([data-theme=light]) .teanode-static a{color:#9ccc65}}:root[data-theme=dark] .teanode-static{color:#e8e8ea}:root[data-theme=dark] .teanode-static a{color:#9ccc65}</style><div class="teanode-static"><p><a href="/">TeaNode</a> · <a href="/doc">Documentation</a> · <a href="https://github.com/ziyan/teanode">Source</a></p><h1>Configuration</h1><h3><code>services</code></h3>
+</script><script type="module" crossorigin src="/static/teanode.CfCQyPNQ.js"></script></head><body><div id="teanode"><style>.teanode-static{max-width:760px;margin:0 auto;padding:24px 16px 48px;font:16px/1.6 system-ui,sans-serif;opacity:0;animation:teanode-static 0s 2s forwards}.teanode-static pre{overflow-x:auto}@keyframes teanode-static{to{opacity:1}}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .teanode-static{color:#e8e8ea}:root:not([data-theme=light]) .teanode-static a{color:#9ccc65}}:root[data-theme=dark] .teanode-static{color:#e8e8ea}:root[data-theme=dark] .teanode-static a{color:#9ccc65}</style><div class="teanode-static"><p><a href="/">TeaNode</a> · <a href="/doc">Documentation</a> · <a href="https://github.com/ziyan/teanode">Source</a></p><h1>Configuration</h1><h3><code>services</code></h3>
 <p>Deployment-wide hosted services. Omitted switches preserve existing installations;
 new assistant seeds write explicit false values for mail routing, mailboxes,
 calendar, reminders and contacts, and leave Photos on. Disabling preserves data, roles,
@@ -912,10 +912,10 @@ provider of your own. A caller that would wait more than a few seconds is told
 the provider is busy instead. Photon is for a server you run yourself. The
 address must be https; plain http is accepted only for localhost and private
 addresses.</p>
-<p><strong><code>mapStyleUrl</code></strong>: The address of the map style the dashboard draws its maps
-from, fetched through the server so that a viewer&#39;s browser talks to nothing
-else; the map host sees this server&#39;s address and the tiles it asks for, never
-a person. The default is OpenFreeMap&#39;s <code>liberty</code> style. The same address rules
+<p><strong><code>mapStyleUrl</code></strong>: The address of the map style the dashboard and the Android
+app draw their maps from, fetched through the server so that a viewer&#39;s browser
+or phone talks to nothing else; the map host sees this server&#39;s address and the
+tiles it asks for, never a person. The default is OpenFreeMap&#39;s <code>liberty</code> style. The same address rules
 apply. Only accounts that may use Location are served, up to 600 files a minute
 each.</p>
 <h3><code>storage</code></h3>
@@ -1274,7 +1274,8 @@ arrival.</p>
 connected servers.</p>
 <p><strong><code>autoReply</code></strong> — Answering mail on a person&#39;s behalf.</p>
 <p><strong><code>ask</code></strong> — Talking to the agent.</p>
-<p><strong><code>schedules</code></strong> — Reminders and scheduled runs.</p>
+<p><strong><code>schedules</code></strong> — Goals that run at set times or when mail arrives, and the
+reminders they keep; off, a goal keeps its own pace only.</p>
 <p><strong><code>browser</code></strong> — The browser. Needs one configured.</p>
 <p><strong><code>connectedServers</code></strong> — Servers speaking the Model Context Protocol. Needs
 one declared.</p>
@@ -1405,13 +1406,14 @@ the model. 150 by default; it was 40, which a turn working through a long
 errand on the person&#39;s computer ran out of.</p>
 <p><strong><code>maxRoundsPerSubagent</code></strong> — How many rounds one subagent may take. Zero
 resolves to <code>20</code>.</p>
-<p><strong><code>goalTurnsPerDay</code></strong> — How many turns of its own one goal takes in a day,
-counting its own check-ins, not the runs of a schedule it keeps. Zero
+<p><strong><code>goalTurnsPerDay</code></strong> — How many turns of its own one goal takes in a day, for a
+goal at its own pace; a goal on set times is bounded by its times. Zero
 resolves to <code>48</code>, a turn every half hour.</p>
 <p><strong><code>goalTurnsAlone</code></strong> — How many of those turns a goal takes without a word
 from the person before it stops and asks them. Zero resolves to <code>24</code>.</p>
-<p><strong><code>goalsInProgress</code></strong> — How many goals one person may have working or waiting
-at once. Zero resolves to <code>20</code>.</p>
+<p><strong><code>goalsInProgress</code></strong> — How many goals at their own pace one person may have
+working or waiting at once; goals on set times are not counted. Zero resolves
+to <code>20</code>.</p>
 <p><strong><code>backgroundWakesAlone</code></strong> — How many turns finished background commands and
 work may wake in one conversation before the person writes there again; past
 it, endings are written into the conversation and wake nothing. Zero resolves

@@ -1010,10 +1010,10 @@ the provider is busy instead. Photon is for a server you run yourself. The
 address must be https; plain http is accepted only for localhost and private
 addresses.
 
-**`mapStyleUrl`**: The address of the map style the dashboard draws its maps
-from, fetched through the server so that a viewer's browser talks to nothing
-else; the map host sees this server's address and the tiles it asks for, never
-a person. The default is OpenFreeMap's `liberty` style. The same address rules
+**`mapStyleUrl`**: The address of the map style the dashboard and the Android
+app draw their maps from, fetched through the server so that a viewer's browser
+or phone talks to nothing else; the map host sees this server's address and the
+tiles it asks for, never a person. The default is OpenFreeMap's `liberty` style. The same address rules
 apply. Only accounts that may use Location are served, up to 600 files a minute
 each.
 
@@ -1480,7 +1480,8 @@ connected servers.
 
 **`ask`** — Talking to the agent.
 
-**`schedules`** — Reminders and scheduled runs.
+**`schedules`** — Goals that run at set times or when mail arrives, and the
+reminders they keep; off, a goal keeps its own pace only.
 
 **`browser`** — The browser. Needs one configured.
 
@@ -1653,15 +1654,16 @@ errand on the person's computer ran out of.
 **`maxRoundsPerSubagent`** — How many rounds one subagent may take. Zero
 resolves to `20`.
 
-**`goalTurnsPerDay`** — How many turns of its own one goal takes in a day,
-counting its own check-ins, not the runs of a schedule it keeps. Zero
+**`goalTurnsPerDay`** — How many turns of its own one goal takes in a day, for a
+goal at its own pace; a goal on set times is bounded by its times. Zero
 resolves to `48`, a turn every half hour.
 
 **`goalTurnsAlone`** — How many of those turns a goal takes without a word
 from the person before it stops and asks them. Zero resolves to `24`.
 
-**`goalsInProgress`** — How many goals one person may have working or waiting
-at once. Zero resolves to `20`.
+**`goalsInProgress`** — How many goals at their own pace one person may have
+working or waiting at once; goals on set times are not counted. Zero resolves
+to `20`.
 
 **`backgroundWakesAlone`** — How many turns finished background commands and
 work may wake in one conversation before the person writes there again; past
